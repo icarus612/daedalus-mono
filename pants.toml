@@ -1,0 +1,14 @@
+[GLOBAL]
+pants_version = "2.18.1"
+
+backend_packages = [
+  "pants.backend.experimental.go",
+  "pants.backend.python",
+  "pants.backend.python.lint.black",
+]
+
+[python]
+interpreter_constraints = ["CPython>=3.7,<4"]
+
+[python-bootstrap]
+search_path = ["<PYENV_LOCAL>", "/usr/bin"]

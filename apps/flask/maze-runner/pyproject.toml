@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "flask-maze-runner"
+version = "0.1.0"
+description = ""
+authors = ["icarus64 <ellishogan95@gmail.com>"]
+readme = "README.md"
+packages = [
+  { include = "flask_app" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+maze-runner = { path = "../../../libs/maze-runner" }
+flask = "^3.0.0"
+flask-bootstrap = "^3.3.7.1"
+flask-fontawesome = "^0.1.5"
+flask-sslify = "^0.1.5"
+requests = "^2.31.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+start = "flask_app.main:app"
