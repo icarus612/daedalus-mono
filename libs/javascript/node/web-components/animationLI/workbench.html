@@ -1,0 +1,213 @@
+<section class="text-darkblue pt-5 pb-3"  id="dot-outer">
+    <div class="container basic-box" id="dot-start">
+        <div class="d-flex flex-column flex-sm-row flex-wrap flex-lg-nowrap justify-content-start align-items-stretch workflow large landing">
+
+            <div class="col-12 ml-4 pt-5 text-left">
+                <h3 class="">
+                    Our AI-powered platform is unparalleled when it comes to customer analytics. Here’s what sets us apart:
+                </h3>
+            </div>
+        </div>
+
+
+
+        <div class="d-flex flex-column flex-wrap flex-lg-nowrap justify-content-center align-items-end workflow landing" id="stage">
+            <div class="li-animation-pulse mid-throbber">
+                <div class="animated-dot mv-1"></div>
+                <div class="animated-dot mv-2"></div>
+                <div class="animated-dot mv-3"></div>
+                <div class="throbber-inner pulse2"></div>
+
+            </div>
+            <div class="col-6 step">
+                <div id="first-throbber" class="throbber li-animation-pulse">
+                    <div class="throbber-inner pulse3"></div>
+                </div>
+                <div>
+                    <h4 class="description">
+                        Speed
+                    </h4>
+
+                    <p class="description">
+                        We have the fastest time to insights platform, delivering insights from customer data in real time. This saves analysts weeks and months of time to focus on mission-critical tasks.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-6 step">
+                <div class="throbber li-animation-pulse">
+                    <div class="throbber-inner pulse4"></div>
+                </div>
+                <div>
+                    <h4 class="description">
+                        Depth
+                    </h4>
+
+                    <p class="description">
+                        Our platform ingests omni-channel structured and unstructured data, meaning analysts are never limited to only seeing insights from a portion of customer data. Plus, results are shown in various visualizations on one convenient dashboard to make analyzing and reporting quick and easy.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-6 step">
+                <div class="throbber li-animation-pulse">
+                    <div class="throbber-inner pulse5"></div>
+                </div>
+                <div>
+                    <h4 class="description">
+                        Functionality
+                    </h4>
+                    <p class="description">
+                        We utilize unsupervised machine learning, natural language understanding, topic modeling, predictive intelligence, and more to deliver the most comprehensive datasets for our clients to analyze.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    let start = document.querySelector(".mid-throbber").getBoundingClientRect(),
+        end1 = document.querySelector(".pulse3").getBoundingClientRect(),
+        end2= document.querySelector(".pulse4").getBoundingClientRect(),
+        end3 = document.querySelector(".pulse5").getBoundingClientRect(),
+        endY = (s, e, p=0) =>  (e.top + e.bottom)/2 - (s.top + s.bottom)/2 +p,
+        endX = (s, e, p=0) =>  (e.left + e.right)/2 - (s.left + s.right)/2 +p,
+        steps = [];
+
+    let animate = () =>{
+        let animation = anime.timeline({
+            easing: "easeInOutCubic",
+            complete: function(anim) {
+                animate()
+            }
+        }).add({
+            targets: ".mv-1",
+            translateX: [0, endX(start, end1)],
+            translateY: [0, endY(start, end1)],
+            duration: 600,
+            easing: "easeOutCubic"
+        }).add({
+            targets: ".mv-1",
+            opacity: [1, 0],
+            duration: 1,
+            easing: "linear"
+        }).add({
+            targets: ".pulse3",
+            opacity: [1, 0],
+            scale: [
+                {value: [1, 2]},
+            ],
+            easing: "easeOutCubic",
+            duration: 1000,
+        }).add({
+            targets: ".mv-3",
+            translateY: [
+                {value: [0,  endY(start, end1, -20)]},
+                {value: [endY(start, end1, -20),  endY(start, end3, 20)]},
+                {value: [endY(start, end3, 20),  endY(start, end2)]}
+            ],
+            translateX: {
+                value: [0,  endX(start, end2)],
+                easing: "linear",
+            },
+            duration: 1300,
+            delay: 100
+        }).add({
+            targets: ".mv-3",
+            opacity: [1, 0],
+            duration: 1,
+            easing: "linear"
+        }).add({
+            targets: ".pulse4",
+            opacity: [1, 0],
+            scale: [
+                {value: [1, 2]},
+            ],
+            easing: "easeOutCubic",
+            duration: 1000,
+        }).add({
+            targets: ".mv-2",
+            translateX: [
+                {
+                    value: [0, endX(start, end3)/3],
+                    duration: 500,
+                    easing: "linear"
+                },
+                {
+                    value: [endX(start, end3)],
+                    duration: 910,
+                    easing: "linear"
+                },
+            ],
+            translateY: [
+                {
+                    value: [0, endY(start, end3)],
+                    duration: 500,
+                    easing: "easeInQuad"
+                },
+                {
+                    value: [endY(start, end3), 0],
+                    duration: 450,
+                    easing: "easeOutCirc"
+                },
+                {
+                    value: [0, endY(start, end3)],
+                    duration: 450,
+                    easing: "easeInCirc"
+                },
+            ],
+            height: [
+                {
+                    value: ["10px", "1px"],
+                    delay: 480,
+                    duration: 30
+                },
+                {
+                    value: ["1px", "10px"],
+                    duration: 30
+                },
+            ],
+            backgroundColor: {
+                value: ["#2D80C3", "#fff"],
+                delay: 450,
+                duration: 100
+            },
+            border: [0, "2px solid #2D80C3"],
+            borderRadius: {
+                value: ["50%", "0px"],
+                delay: 450,
+                duration: 100
+            },
+            rotateZ: {
+                value: [0, 720],
+                delay: 500,
+                duration: 800,
+                easing: "easeInOutCirc"
+            },
+
+        }).add({
+            targets: ".mv-2",
+            opacity: [1, 0],
+            duration: 1,
+            easing: "linear"
+        }).add({
+            targets: ".pulse5",
+            opacity: [1, 0],
+            scale: [
+                {value: [1, 2]},
+            ],
+            easing: "easeOutCubic",
+            duration: 1000,
+        })
+        return animation
+    }
+    animate()
+    anime({
+        targets: ".pulse2",
+        scale: 1.3,
+        easing: "easeInCubic",
+        direction: "alternate",
+        loop: true,
+        duration: 1500,
+    })
+</script>

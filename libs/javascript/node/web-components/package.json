@@ -1,0 +1,14 @@
+{
+  "name": "@modules/web-components",
+  "version": "1.0.0",
+  "description": "This is just a place where I store anything cool that i made from js that arn't quite big enough or \"stand alone\" enough to be  their own repo.  #### For selfbuilt functions check out the workbench folder.",
+  "main": "None",
+  "dependencies": {
+    "request": "^2.88.0"
+
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

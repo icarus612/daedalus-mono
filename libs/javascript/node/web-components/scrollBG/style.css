@@ -1,0 +1,159 @@
+h1,  a {
+    font-family: 'Indie Flower', cursive;
+    font-weight: 600;
+}
+h2, h3, h4, h5, h6, p, button {
+    font-family: 'Quicksand', sans-serif;
+    color: rgb(255, 255, 255);
+}
+code {
+    text-align: left;
+    padding: 10px;
+    margin: auto;
+    color: white !important;
+}
+.white {
+    color: rgba(255, 255, 255, 1.5) !important;
+}
+
+.btn-Purple{
+    background-color: #D8BFD8 !important;
+    border-color: #BA55D3 !important;
+    border-radius: 15px;
+    margin: 3px;
+    box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.42), 0 4px 25px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+.transWhite1{
+    background-color: rgba(255, 255, 255, .95) !important;
+    padding: 5px;
+}
+.white2{
+    background-color: rgba(255, 255, 255, 1) !important;
+    padding: 5px;
+}
+
+.transBorder{
+    border: 30px solid;
+    border-color:  #193C70 !important;
+    padding: 5px;
+    box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.42), 0 4px 25px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+.transBlack{
+    background-color: rgba(0,0,0,.4) !important;
+    padding: 5px;
+}
+
+.transGray {
+    background-color: rgba(105,105,105,.4) !important;
+    padding: 5px;
+}
+
+.transPurple {
+    background-image: linear-gradient(to bottom right, rgba(175, 70, 211, .9), rgba(147, 112, 219, .5)) !important;
+    padding: 5px;
+    border: 5px solid;
+    border-color: rgba(225,225,225,1.8) !important;
+    padding: 5px;
+    box-shadow: 0 10px 30px -12px rgba(250, 250, 250, 0.50), 0 4px 25px 0px rgba(250, 250, 250, 0.16), 0 8px 10px -5px rgba(250, 250, 250, 0.25) !important;
+}
+
+
+.mv1 {
+    height: 33px;
+    width: 100%;
+}
+
+.mv2 {
+    transform: translateX(40%);
+    transform-origin: center;
+}
+
+.rv1 {
+    transform: rotateX(180deg) translateX(28%);
+    transform-origin: center;
+    transform-style: inital;
+}
+
+.rv2 {
+    transform: rotateX(180deg) translateX(42%);
+    transform-origin: center;
+    transform-style: inital;
+}
+
+@media screen and (max-width: 720px){
+    .dots300 {
+        background-image: url("../images/300px.png");
+        background-repeat: no-repeat;
+        background-size: 300px 330px;
+        z-index: 3000;
+        height: 303px;
+        width: 100vw !important;
+        margin-right: 2px;
+    }
+
+    .dotMobileFix {
+        width: 100vw !important;
+        margin-right: 2px;
+    }
+
+
+    .rv1{
+        transform: rotateX(180deg) translateX(10%);
+        transform-origin: center;
+        transform-style: inital;
+    }
+
+    .rv2 {
+        transform: rotateX(180deg) translateX(10%);
+        transform-origin: center;
+        transform-style: inital;
+    }
+}
+.parallaxHeader {
+    overflow: hidden !important;
+}
+
+.white {
+    color: white;
+}
+
+.softDark{
+    color: rgb(105,105,105);
+}
+
+.dark{
+    color: rgb(90,90,90) !important;
+}
+
+#parallaxHeader {
+    margin-top: 23% !important;
+}
+
+.bg-landing {
+    background: url('../images/bg9.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center bottom;
+    color: #0D2D47;
+    font-weight: 600;
+    height: 2400px;
+    overflow: hidden !important;
+}
+.dot > circle {
+    fill: rgba(175, 70, 211, .9);
+}
+#contactMe{
+    background: url('../images/bg11.png');
+    background-repeat: no-repeat;
+    background-size: 600px;
+    background-position: center;
+}
+
+@media screen and (max-width: 1000px) {
+    .bg-entertainment-landing {
+        height: 2700px;
+    }
+}
+

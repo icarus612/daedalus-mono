@@ -1,0 +1,156 @@
+@import 'styles/theme';
+
+.info_card {
+  box-shadow: 0 0 20px -1px rgba(50, 50, 50, .5);
+  margin-top: 80px;
+  border-radius: 6px;
+
+  input, select {
+    max-width: 100px;
+    background-color: #fff;
+    border: 1px solid #aaa;
+    border-radius: 6px;
+    margin: 5px 10px 5px 0;
+    block-size: 25px;
+  }
+  
+  .card_content {
+    padding: 20px;
+
+    h3 {
+      margin-bottom: 15px;
+    }
+  }
+
+  .back_btn {
+    width: fit-content;
+    color: #0077be;
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    user-select: none;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  }
+}
+
+.price_card {
+  width: 100%;
+
+  h4 {
+    margin: 5px 0 5px 0;
+  }
+}
+
+.thin {
+  font-weight: 300;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.link {
+  cursor: pointer;
+}
+
+.cursive {
+  font-family: $cursive;
+}
+
+.sans {
+  font-family: $sans;
+}
+
+.legal {
+  color: $grey;
+}
+
+.text_white {
+  color: $white;
+}
+
+.text_grey {
+  color: $grey;
+}
+
+.text_black {
+  color: $black;
+}
+
+.text_primary {
+  color: $primary;
+}
+
+.text_secondary {
+  color: $secondary;
+}
+
+.text_complementary {
+  color: $complementary;
+}
+
+.first_card {
+
+  h1 {
+    margin-bottom: 20px;
+  }
+
+  .card {
+    border: none;
+    box-shadow: 2px 1px 8px -1px rgba(50,50,50,.3);
+    border-radius: 6px;
+    overflow: visible;
+    transition: .2s;
+    width: 100%;
+    padding-top: 10px;
+    margin-bottom: 30px;
+    position: relative;
+    
+    &:hover {
+      cursor: pointer;
+      box-shadow: 2px 1px 8px -1px rgba(50,50,50,.5);
+    }
+
+    .basic {
+      margin: 20px 0 -20px;
+    }
+    
+    .basic {
+      background-color: #0077be;
+      color: #f1f1f1;
+      width: 80%;
+    }
+  }
+}
+
+.middle_line {
+  width: 1px;
+  height: 100%;
+  position: relative;
+  background-color: #CCC;
+}
+
+.float_right {
+  float: right;
+}
+
+@media screen and (max-width: 600px) {
+  .info_card {
+    box-shadow: unset;
+    
+    .back_btn {
+      margin-left: 10px;
+    }
+  }
+}

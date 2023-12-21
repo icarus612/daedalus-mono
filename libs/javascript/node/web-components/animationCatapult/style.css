@@ -1,0 +1,79 @@
+.background {
+    background: -moz-linear-gradient(340deg, rgba(2,0,36,1) -5%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 95%);
+    background: -webkit-linear-gradient(340deg, rgba(2,0,36,1)1 -5%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 95%);
+    background: linear-gradient(340deg, rgba(2,0,36,1) -5%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 95%);
+}
+.container{
+    background-color: #eee;
+    border-radius: 10px;
+    box-shadow: 5px 10px 100px -15px #999
+}
+.throbber {
+    display: block;
+    width: 14px;
+    height: 14px;
+    background: #02A9F7;
+    border-radius: 100%;
+    box-shadow: 0 0 0 2px #02A9F7;
+    z-index: 3000;
+    margin-top: -8px;
+    top: 50%;
+    left: -8px;
+    position: absolute;
+}
+
+.throbber-inner {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: block;
+    margin: -7px 0 0 -7px;
+    width: 14px;
+    height: 14px;
+    border: 1px solid hsla(0%,0%,0%,.1);
+    border-radius: 100%;
+    box-shadow: 0 0 0 2px #02A9F7;
+    background: hsla(.55, .99 , .59, .2);
+}
+.mid-throbber {
+    top: 50%;
+    left: 50%;
+}
+
+.wall{
+  height: 200px;
+  margin-top: 100px;
+  margin-bottom: 100px;    border-right: 2px solid #0c1b5d;
+    padding-left: 30px !important;
+    flex-basis: 100%;
+}
+.description {
+    text-align: left;
+}
+.animated-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #2D80C3;
+    position: absolute;
+    left: 0;
+}
+.wall{
+    flex: 1 0 200px;
+    text-align: center;
+    transition: all 0.25s;
+    position: relative;
+    padding: 0.5em;
+}
+
+.wall > div{
+    margin-bottom: 25px
+}
+.wall > .image {
+    display: inline-block
+}
+.catapult{
+  height: 800px
+
+}
