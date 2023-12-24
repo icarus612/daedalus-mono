@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "neural-networks"
+name = "digit-recognition"
 version = "0.1.0"
 description = ""
 authors = ["icarus64 <ellishogan95@gmail.com>"]
