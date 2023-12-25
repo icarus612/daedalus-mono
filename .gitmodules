@@ -1,6 +1,3 @@
-[submodule "cli-tools"]
-	path = cli-tools
-	url = git@github.com:icarus612/cliTools-lib-SH.git
-[submodule "libs/bash/cli-tool"]
-	path = libs/bash/cli-tool
+[submodule "libs/bash/cli-tools"]
+	path = libs/bash/cli-tools
 	url = git@github.com:icarus612/cliTools-lib-SH.git
