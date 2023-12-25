@@ -5,7 +5,6 @@ function install_all() {
   if [[ $USER == "root" ]]
   then
     home_dir=$(eval echo ~$($SUDO_USER))
-    echo $home_dir
   fi
   local dae_dir=$home_dir/.daedalus
   local dae_sh="$dae_dir/bash"
