@@ -7,75 +7,42 @@ import json
 from flask_sslify import SSLify
 
 app = Flask(__name__)
-if "DYNO" in os.environ:  # only trigger SSLify if the app is running on Heroku
+if 'DYNO' in os.environ: # only trigger SSLify if the app is running on Heroku
     sslify = SSLify(app)
 Bootstrap(app)
 fa = FontAwesome(app)
 
-
-@app.route("/")
+@app.route('/')
 def index():
-    pokemon = [
-        " ".join(i["name"].split("-")).title()
-        for i in requests.get(f"https://pokeapi.co/api/v2/pokemon/?limit=-1").json()[
-            "results"
-        ]
-    ]
-    return render_template("index.html", pokemon=pokemon)
+	pokemon = [" ".join(i["name"].split("-")).title() for i in requests.get(f'https://pokeapi.co/api/v2/pokemon/?limit=-1').json()["results"]]
+	return render_template('index.html', pokemon=pokemon)
 
-
-@app.route("/<pokemon>")
+@app.route('/<pokemon>')
 def pokemon(pokemon):
-    try:
-        req = requests.get(f"https://pokeapi.co/api/v2/pokemon/{pokemon}").json()
-        print(req["id"])
-        stats = req["stats"]
-        types = req["types"]
-        sprites = [req["sprites"][i] for i in req["sprites"]]
-        name = " ".join(req["name"].split("-")).title()
-        weight = req["weight"]
-        (
-            sprites[0],
-            sprites[1],
-            sprites[2],
-            sprites[3],
-            sprites[4],
-            sprites[5],
-            sprites[6],
-            sprites[7],
-        ) = (
-            sprites[4],
-            sprites[0],
-            sprites[5],
-            sprites[1],
-            sprites[6],
-            sprites[2],
-            sprites[7],
-            sprites[3],
-        )
-        sprites = [i if i != None else "" for i in sprites]
-        return render_template(
-            "pokemon.html",
-            stats=stats,
-            types=types,
-            sprites=sprites,
-            name=name,
-            weight=weight,
-        )
-    except:
-        return redirect(url_for("index"))
+	try:
+		req = requests.get(f'https://pokeapi.co/api/v2/pokemon/{pokemon}').json()
+		print(req["id"])
+		stats = req['stats']
+		types = req['types']
+		sprites = [req['sprites'][i] for i in req['sprites']]
+		name = " ".join(req['name'].split("-")).title()
+		weight = req['weight']
+		sprites[0], sprites[1], sprites[2], sprites[3], sprites[4], sprites[5], sprites[6], sprites[7] = sprites[4], sprites[0], sprites[5], sprites[1], sprites[6], sprites[2], sprites[7], sprites[3]
+		sprites = [i if i != None else "" for i in sprites]
+		return render_template('pokemon.html', stats=stats, types=types, sprites=sprites, name = name, weight = weight)
+	except:
+		return redirect(url_for('index'))
 
-
-@app.route("/get_pokemon", methods=["POST"])
+@app.route('/get_pokemon', methods=['POST'])
 def get_pokemon():
-    try:
-        pokemon = request.form["pokemon"]
-        pk = "-".join(pokemon.split(" ")).lower()
-        return redirect(url_for("pokemon", pokemon=pk))
-    except:
-        return redirect(url_for("index"))
+	try:
+		pokemon = request.form['pokemon']
+		pk = "-".join(pokemon.split(" ")).lower()
+		return redirect(url_for('pokemon', pokemon=pk))
+	except:
+		return redirect(url_for('index'))
 
+port = int(os.environ.get('PORT', 5000)) 
+if __name__ == '__main__':
+	app.run(threaded=True, port=port, debug=True)
 
-port = int(os.environ.get("PORT", 5000))
-if __name__ == "__main__":
-    app.run(threaded=True, port=port, debug=True)
