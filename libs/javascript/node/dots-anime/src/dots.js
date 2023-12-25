@@ -221,7 +221,7 @@ let fillColor = (e, t, svg) => {
 
 
 }
-const whereTarget = (po, el) => {
+let whereTarget = (po, el) => {
   let start = document.querySelector(po).getBoundingClientRect()
   let element = el.getBoundingClientRect()
   let x = ((start.left + start.right) / 2 - (element.left + element.right) / 2);
@@ -252,7 +252,7 @@ let animation = (e, t, svg, mvX, mvY, crv, clr, d) => {
 
 }
 
-const dotsMovement = (params) => {
+export let dotsMovement = (params) => {
   let delay = (el, time, n) => {
     return 3.5 * time / el.children.length * n
   }
@@ -288,5 +288,3 @@ const dotsMovement = (params) => {
     }
   }
 }
-
-export default dotsMovement;

@@ -1,8 +1,7 @@
 {
-  "name": "@module/maze-runner",
+  "name": "mazerunner",
   "version": "1.0.0",
-  "main": "src/exports.js",
-  "type": "module",
+  "main": "maze.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,5 +10,13 @@
   "directories": {
     "example": "examples"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/icarus612/mazeRunner-JS.git"
+  },
+  "bugs": {
+    "url": "https://github.com/icarus612/mazeRunner-JS/issues"
+  },
+  "homepage": "https://github.com/icarus612/mazeRunner-JS#readme",
   "description": ""
 }
