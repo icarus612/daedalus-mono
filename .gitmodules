@@ -1,0 +1,21 @@
+[submodule "apps/cli/tools-installer"]
+	path = apps/cli/tools-installer
+	url = git@github.com:icarus612/toolsInstaller-app-cli.git
+[submodule "apps/flask/weather-fortcast"]
+	path = apps/flask/weather-fortcast
+	url = git@github.com:icarus612/weatherFortcast-app-flask.git
+[submodule "apps/flask/maze-runner"]
+	path = apps/flask/maze-runner
+	url = git@github.com:icarus612/mazeRunner-app-flask.git
+[submodule "apps/flask/pokedex"]
+	path = apps/flask/pokedex
+	url = git@github.com:icarus612/pokedex-app-flask.git
+[submodule "apps/microservices/market-bots"]
+	path = apps/microservices/market-bots
+	url = git@github.com:icarus612/marketbots-app-microservice.git
+[submodule "apps/next/dev-icarus"]
+	path = apps/next/dev-icarus
+	url = git@github.com:icarus612/devicarus-app-next.git
+[submodule "libs/bash/cli-tools"]
+	path = libs/bash/cli-tools
+	url = git@github.com:icarus612/cliTools-lib-SH.git
