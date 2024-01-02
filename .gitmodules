@@ -76,3 +76,6 @@
 [submodule "libs/javascript/react/markdown-builder"]
 	path = libs/javascript/react/markdown-builder
 	url = git@github.com:icarus612/markdownbuilder-react-js.git
+[submodule "libs/javascript/node/build-scripts"]
+	path = libs/javascript/node/build-scripts
+	url = git@github.com:icarus612/buildScripts-node-JS.git
