@@ -79,3 +79,6 @@
 [submodule "libs/javascript/node/build-scripts"]
 	path = libs/javascript/node/build-scripts
 	url = git@github.com:icarus612/buildScripts-node-JS.git
+[submodule "libs/python/maze-runner"]
+	path = libs/python/maze-runner
+	url = git@github.com:icarus612/mazeRunner-lib-PY.git
