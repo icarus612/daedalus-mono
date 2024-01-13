@@ -11,6 +11,53 @@ Each of my projects has its own dedicated repository. You can browse them by vis
 
 - **Code Insights**: Dive into the code to see my coding style and the technologies I work with. Feel free to explore the commit history for a deeper understanding of the development process.
 
+## Monorepo Structure 
+
+[daedalus-mono](https://github.com/icarus612/daedalus-mono)
+|
+├── apps
+│   ├── cli
+│   │   └── [tools-installer](https://github.com/icarus612/toolsInstaller-app-cli)
+│   ├── flask
+│   │   ├── [maze-runner](https://github.com/icarus612/mazeRunner-app-flask)
+│   │   ├── [pokedex](https://github.com/icarus612/pokedex-app-flask)
+│   │   └── [weather-forecast](https://github.com/icarus612/weatherFortcast-app-flask)
+│   ├── microservices
+│   │   └── [market-bots](https://github.com/icarus612/marketBots-app-microservice)
+│   └── next
+│       └── [dev-icarus](https://github.com/icarus612/devIcarus-app-next)
+|
+└── libs
+    ├── bash
+    │   └── [cli-tools](https://github.com/icarus612/cliTools-lib-SH)
+    ├── golang
+    │   ├── [crud-server](https://github.com/icarus612/crudServer-lib-GO)
+    │   └── [maze-runner](https://github.com/icarus612/mazeRunner-lib-GO)
+    ├── javascript
+    │   ├── node
+    │   │   ├── [build-scripts](https://github.com/icarus612/buildScripts-node-JS)
+    │   │   ├── [dots-anime](https://github.com/icarus612/dotsAnime-node-JS)
+    │   │   ├── [maze-runner](https://github.com/icarus612/mazeRunner-node-JS)
+    │   │   └── [web-crawlers](https://github.com/icarus612/webCrawlers-node-JS)
+    │   └── react
+    │       ├── [e-card](https://github.com/icarus612/eCard-react-JS)
+    │       ├── [labyrinth](https://github.com/icarus612/labyrinth-react-JS)
+    │       ├── [markdown-builder](https://github.com/icarus612/markdownBuilder-react-JS)
+    │       ├── [maze-runner](https://github.com/icarus612/mazeRunner-react-JS)
+    │       ├── [quest](https://github.com/icarus612/quest-react-JS)
+    │       └── [quote-builder](https://github.com/icarus612/quotebuilder-react-JS)
+    └── python
+        ├── [anki-build-tools](https://github.com/icarus612/ankiBuilTools-lib-PY)
+        ├── [cli-tools](https://github.com/icarus612/cliTools-lib-PY)
+        ├── [maze-runner](https://github.com/icarus612/mazeRunner-lib-PY)
+        ├── neural-networks
+        │   ├── [abstract-base-classes](https://github.com/icarus612/abc-ANN-PY)
+        │   ├── [digit-recognition](https://github.com/icarus612/digitRecognition-ANN-PY)
+        │   ├── [market-analyzer](https://github.com/icarus612/marketAnalyzer-ANN-PY)
+        │   └── [open-ai-gym](https://github.com/icarus612/openAIGym-ANN-PY)
+        ├── [pyto-widgets](https://github.com/icarus612/pytoWidgets-lib-PY)
+        └── [web-crawlers](https://github.com/icarus612/webCrawlers-lib-PY)
+				
 ## Collaboration
 
 While this repository is not open for collaboration, I'm definitely open to it on other projects if you're interested. If you're looking to contribute to my active open source projects, I'd recommend visiting [The Icarus Project](https://github.com/the-icarus-project). That's where you'll find projects specifically designed for collaboration, complete with all the details and guidelines you need to get started.
