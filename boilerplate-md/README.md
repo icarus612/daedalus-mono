@@ -32,8 +32,6 @@ I love to connect with fellow developers and tech enthusiasts. Follow me on GitH
 
 Thank you for visiting, and happy coding!
 
-#### Built by: dev.icarus
-
 ---
 
-© 2024 Icarus612. All Rights Reserved.
+© 2024 dev.icarus - All Rights Reserved.
