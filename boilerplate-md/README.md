@@ -1,4 +1,4 @@
-### Built by: dev.icarus
+# dev.icarus
 
 Hello there! 👋 I'm dev.icarus, a full-stack developer with a passion for building scalable and efficient applications. This repository serves as a gateway to my diverse range of projects. Here's how you can explore them:
 
@@ -31,6 +31,8 @@ For a more curated experience and in-depth insights about my work and interests,
 I love to connect with fellow developers and tech enthusiasts. Follow me on GitHub to stay updated with my latest projects. For real-time updates and professional networking, connect with me on [LinkedIn](https://www.linkedin.com/in/ellis-hogan-99a646161) or [GitHub](https://github.com/icarus612).
 
 Thank you for visiting, and happy coding!
+
+#### Built by: dev.icarus
 
 ---
 
