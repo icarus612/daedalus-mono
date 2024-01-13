@@ -1,5 +1,4 @@
-# Daedalus Monorepo
-## Built by: dev.icarus
+# Built by: dev.icarus
 
 Hello there! 👋 I'm dev.icarus, a full-stack developer with a passion for building scalable and efficient applications. This repository serves as a gateway to my diverse range of projects. Here's how you can explore them:
 
@@ -13,7 +12,7 @@ Each of my projects has its own dedicated repository. You can browse them by vis
 
 ## Collaboration
 
-While this repository is not open for collaboration, I'm definitely open to it on other projects if you're interested. If you're looking to contribute to my active open source projects, I'd recommend visiting [The Icarus Project](https://github.com/the-icarus-project). That's where you'll find projects specifically designed for collaboration, complete with all the details and guidelines you need to get started.
+While this repository is just a personal project and not really set up for collaboration, I'm definitely open to it if you're interested. However, if you're looking to contribute to my active open source projects, I'd recommend visiting [The Icarus Project](https://github.com/the-icarus-project). That's where you'll find projects specifically designed for collaboration, complete with all the details and guidelines you need to get started. If you are still undeterred and wish to contribute please make a PR detailing the bug or feature, and I'll get to it as soon as I can.
 
 ## Licensing
 
@@ -22,6 +21,10 @@ All my public projects are open-source and licensed under the MIT License. This 
 ## My Website
 
 For a more curated experience and in-depth insights about my work and interests, check out my personal website at [devicarus.com](https://devicarus.com).
+
+- **Portfolio**: Discover my professional work, personal projects, and contributions to the developer community.
+- **Blog**: Read my thoughts on the latest in tech, development tips, and more.
+- **Contact Information**: Reach out to me for project collaborations, freelance opportunities, or just to say hi!
 
 ## Stay Connected
 
