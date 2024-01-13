@@ -13,53 +13,51 @@ Each of my projects has its own dedicated repository. You can browse them by vis
 
 ## Monorepo Structure 
 
-```
-[Daedalus Mono](https://github.com/icarus612/daedalus-mono)
-|
-├── apps
-│   ├── cli
-│   │   └── [Tools Installer](https://github.com/icarus612/toolsInstaller-app-cli)
-│   ├── flask
-│   │   ├── [Maze Runner](https://github.com/icarus612/mazeRunner-app-flask)
-│   │   ├── [Pokedex](https://github.com/icarus612/pokedex-app-flask)
-│   │   └── [Weather Forecast](https://github.com/icarus612/weatherFortcast-app-flask)
-│   ├── microservices
-│   │   └── [Market Bots](https://github.com/icarus612/marketBots-app-microservice)
-│   └── next
-│       └── [Dev Icarus](https://github.com/icarus612/devIcarus-app-next)
-|
-└── libs
-    ├── bash
-    │   └── [Cli Tools](https://github.com/icarus612/cliTools-lib-SH)
-    ├── golang
-    │   ├── [Crud Server](https://github.com/icarus612/crudServer-lib-GO)
-    │   └── [Maze Runner](https://github.com/icarus612/mazeRunner-lib-GO)
-    ├── javascript
-    │   ├── node
-    │   │   ├── [Build Scripts](https://github.com/icarus612/buildScripts-node-JS)
-    │   │   ├── [Dots Anime](https://github.com/icarus612/dotsAnime-node-JS)
-    │   │   ├── [Maze Runner](https://github.com/icarus612/mazeRunner-node-JS)
-    │   │   └── [Web Crawlers](https://github.com/icarus612/webCrawlers-node-JS)
-    │   └── react
-    │       ├── [E Card](https://github.com/icarus612/eCard-react-JS)
-    │       ├── [Labyrinth](https://github.com/icarus612/labyrinth-react-JS)
-    │       ├── [Markdown Builder](https://github.com/icarus612/markdownBuilder-react-JS)
-    │       ├── [Maze Runner](https://github.com/icarus612/mazeRunner-react-JS)
-    │       ├── [Quest](https://github.com/icarus612/quest-react-JS)
-    │       └── [Quote Builder](https://github.com/icarus612/quotebuilder-react-JS)
-    └── python
-        ├── [Anki Build Tools](https://github.com/icarus612/ankiBuilTools-lib-PY)
-        ├── [Cli Tools](https://github.com/icarus612/cliTools-lib-PY)
-        ├── [Maze Runner](https://github.com/icarus612/mazeRunner-lib-PY)
-        ├── neural-networks
-        │   ├── [Abstract Base Classes](https://github.com/icarus612/abc-ANN-PY)
-        │   ├── [Digit Recognition](https://github.com/icarus612/digitRecognition-ANN-PY)
-        │   ├── [Market Analyzer](https://github.com/icarus612/marketAnalyzer-ANN-PY)
-        │   └── [Open Ai Gym](https://github.com/icarus612/openAIGym-ANN-PY)
-        ├── [Pyto Widgets](https://github.com/icarus612/pytoWidgets-lib-PY)
-        └── [Web Crawlers](https://github.com/icarus612/webCrawlers-lib-PY)
-```
-				
+<pre>
+<a href="https://github.com/icarus612/daedalus-mono">Daedalus Mono</a>
+├── Apps
+│   ├── CLI
+│   │   └── <a href="https://github.com/icarus612/toolsInstaller-app-cli">Tools Installer</a>
+│   ├── Flask
+│   │   ├── <a href="https://github.com/icarus612/mazeRunner-app-flask">Maze Runner</a>
+│   │   ├── <a href="https://github.com/icarus612/pokedex-app-flask">Pokedex</a>
+│   │   └── <a href="https://github.com/icarus612/weatherFortcast-app-flask">Weather Forecast</a>
+│   ├── Microservices
+│   │   └── <a href="https://github.com/icarus612/marketBots-app-microservice">Market Bots</a>
+│   └── Next
+│       └── <a href="https://github.com/icarus612/devIcarus-app-next">Dev Icarus</a>
+└── Libraries
+    ├── Bash
+    │   └── <a href="https://github.com/icarus612/cliTools-lib-SH">Cli Tools</a>
+    ├── Golang
+    │   ├── <a href="https://github.com/icarus612/crudServer-lib-GO">Crud Server</a>
+    │   └── <a href="https://github.com/icarus612/mazeRunner-lib-GO">Maze Runner</a>
+    ├── JavaScript
+    │   ├── Node
+    │   │   ├── <a href="https://github.com/icarus612/buildScripts-node-JS">Build Scripts</a>
+    │   │   ├── <a href="https://github.com/icarus612/dotsAnime-node-JS">Dots Anime</a>
+    │   │   ├── <a href="https://github.com/icarus612/mazeRunner-node-JS">Maze Runner</a>
+    │   │   └── <a href="https://github.com/icarus612/webCrawlers-node-JS">Web Crawlers</a>
+    │   └── React
+    │       ├── <a href="https://github.com/icarus612/eCard-react-JS">E Card</a>
+    │       ├── <a href="https://github.com/icarus612/labyrinth-react-JS">Labyrinth</a>
+    │       ├── <a href="https://github.com/icarus612/markdownBuilder-react-JS">Markdown Builder</a>
+    │       ├── <a href="https://github.com/icarus612/mazeRunner-react-JS">Maze Runner</a>
+    │       ├── <a href="https://github.com/icarus612/quest-react-JS">Quest</a>
+    │       └── <a href="https://github.com/icarus612/quotebuilder-react-JS">Quote Builder</a>
+    └── Python
+        ├── <a href="https://github.com/icarus612/ankiBuilTools-lib-PY">Anki Build Tools</a>
+        ├── <a href="https://github.com/icarus612/cliTools-lib-PY">Cli Tools</a>
+        ├── <a href="https://github.com/icarus612/mazeRunner-lib-PY">Maze Runner</a>
+        ├── Neural Networks
+        │   ├── <a href="https://github.com/icarus612/abc-ANN-PY">Abstract Base Classes</a>
+        │   ├── <a href="https://github.com/icarus612/digitRecognition-ANN-PY">Digit Recognition</a>
+        │   ├── <a href="https://github.com/icarus612/marketAnalyzer-ANN-PY">Market Analyzer</a>
+        │   └── <a href="https://github.com/icarus612/openAIGym-ANN-PY">Open Ai Gym</a>
+        ├── <a href="https://github.com/icarus612/pytoWidgets-lib-PY">Pyto Widgets</a>
+        └── <a href="https://github.com/icarus612/webCrawlers-lib-PY">Web Crawlers</a>
+</pre>
+
 ## Collaboration
 
 While this repository is not open for collaboration, I'm definitely open to it on other projects if you're interested. If you're looking to contribute to my active open source projects, I'd recommend visiting [The Icarus Project](https://github.com/the-icarus-project). That's where you'll find projects specifically designed for collaboration, complete with all the details and guidelines you need to get started.
