@@ -1,0 +1,28 @@
+{
+  "name": "daedalus-mono",
+  "description": "Hello there! 👋 I'm dev.icarus, a full-stack developer with a passion for building scalable and efficient applications. This repository serves as a gateway to my diverse range of projects. Here's how you can explore them:",
+  "version": "1.0.0",
+  "author": "icarus",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/icarus612/daedalus-mono.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "turbo-linux-64": "^1.12.4"
+  },
+  "devDependencies": {
+    "turbo": "^1.12.4"
+  },
+  "workspaces": [
+    "apps/next/*",
+    "libs/javascript/*/*"
+  ],
+  "bugs": {
+    "url": "https://github.com/icarus612/daedalus-mono/issues"
+  },
+  "homepage": "https://github.com/icarus612/daedalus-mono#readme"
+}
