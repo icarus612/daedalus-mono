@@ -1,0 +1,6 @@
+{
+  "watch": ["src/**"],
+  "ext": "js, jsx",
+  "exec": "node src/build-scripts/index.js && vinxi dev",
+  "ignore": ["node_modules", "src/components/index.js", "src/build-scripts/index.js"]
+}

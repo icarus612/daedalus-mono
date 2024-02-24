@@ -1,0 +1,33 @@
+{
+	"name": "anna-and-ellis-together-forever-svelte",
+	"version": "0.0.1",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "nodemon",
+		"build": "vite build",
+		"preview": "vite preview",
+		"test": "playwright test",
+		"lint": "prettier --check . && eslint .",
+		"format": "prettier --write ."
+	},
+	"devDependencies": {
+		"@playwright/test": "^1.28.1",
+		"@sveltejs/adapter-auto": "^2.0.0",
+		"@sveltejs/kit": "^1.27.4",
+		"autoprefixer": "^10.4.16",
+		"eslint": "^8.28.0",
+		"eslint-config-prettier": "^9.0.0",
+		"eslint-plugin-svelte": "^2.30.0",
+		"nodemon": "^3.0.1",
+		"postcss": "^8.4.31",
+		"prettier": "^3.0.0",
+		"prettier-plugin-svelte": "^3.0.0",
+		"svelte": "^4.0.5",
+		"tailwindcss": "^3.3.5",
+		"vite": "^4.4.2"
+	},
+	"dependencies": {
+		"scss": "^0.2.4"
+	}
+}
