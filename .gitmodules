@@ -9,7 +9,7 @@
 	url = git@github.com:icarus612/mazeRunner-app-flask.git
 [submodule "apps/flask/pokedex"]
 	path = apps/flask/pokedex
-	url = git@github.com:icarus612/pokedex-app-flask.git
+	url = git@github.com:icarƒus612/pokedex-app-flask.git
 [submodule "apps/microservices/market-bots"]
 	path = apps/microservices/market-bots
 	url = git@github.com:icarus612/marketbots-app-microservice.git
@@ -25,9 +25,6 @@
 [submodule "libs/golang/crud-server"]
 	path = libs/golang/crud-server
 	url = git@github.com:icarus612/crudserver-lib-go.git
-[submodule "libs/python/anki-build-tools"]
-	path = libs/python/anki-build-tools
-	url = git@github.com:icarus612/ankibuildtools-lib-py.git
 [submodule "libs/python/web-crawlers"]
 	path = libs/python/web-crawlers
 	url = git@github.com:icarus612/webcrawlers-lib-py.git
