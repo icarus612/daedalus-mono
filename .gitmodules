@@ -82,3 +82,6 @@
 [submodule "libs/golang/logger"]
 	path = libs/golang/logger
 	url = git@github.com:icarus612/logger-lib-go.git
+[submodule "libs/python/anki-tools"]
+	path = libs/python/anki-tools
+	url = git@github.com:icarus612/ankiTools-lib-py.git
