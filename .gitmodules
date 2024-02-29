@@ -79,3 +79,6 @@
 [submodule "libs/python/maze-runner"]
 	path = libs/python/maze-runner
 	url = git@github.com:icarus612/mazeRunner-lib-PY.git
+[submodule "libs/golang/logger"]
+	path = libs/golang/logger
+	url = git@github.com:icarus612/logger-lib-go.git
