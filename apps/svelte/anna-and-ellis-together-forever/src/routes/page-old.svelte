@@ -18,19 +18,19 @@
 		<div class="flex justify-center space-x-10">
 			<!-- Image cards -->
 			<DateCard
-				imgSrc="images/fullrez/first-date.jpg"
+				imgSrc="first-date.jpg"
 				imgText="01"
 				header="12 MAR 2022"
 				subHeader="THE FIRST DATE"
 			/>
 			<DateCard
-				imgSrc="images/fullrez/engagement.jpg"
+				imgSrc="engagement.jpg"
 				imgText="02"
 				header="07 MAY 2023"
 				subHeader="THE ENGAGEMENT"
 			/>
 			<DateCard
-				imgSrc="images/fullrez/forever-journey.jpg"
+				imgSrc="forever-journey.jpg"
 				imgText="03"
 				header="24 SEP 2023"
 				subHeader="THE FOREVER JOURNEY"
@@ -43,7 +43,7 @@
 	header="The First Date"
 	subHeader="March 12, 2022"
 	img={{
-		src: "images/fullrez/first-date.jpg",
+		src: "first-date.jpg",
 		alt: "First date piture"
 	}}/>
 
@@ -51,7 +51,7 @@
 	header="The Engagement"
 	subHeader="May 7, 2023"
 	img={{
-		src: "images/fullrez/engagement.jpg",
+		src: "engagement.jpg",
 		alt: "Engagement piture"
 	}}
 	reversed={true}

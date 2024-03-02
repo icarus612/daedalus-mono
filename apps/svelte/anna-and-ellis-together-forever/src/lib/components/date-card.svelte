@@ -1,8 +1,10 @@
 <script>
+	import Image from "./image.svelte";
+
   export let imgText = "01.";
   export let header = "24 JUNE 2022";
   export let subHeader = "THE NEXT JOURNEY";
-  export let imgSrc = "images/fullrez/default.jpg"
+  export let imgSrc = "default.jpg"
   export let imgAlt = "A pretty picture"
   export let imgDim = {}
   
@@ -12,7 +14,7 @@
 <div class="space-y-4 flex flex-col items-center">
   <div class="relative">
     <div class="rounded-full overflow-hidden z-10 relative">
-      <img
+      <Image
         class="object-cover w-64"
         src="{imgSrc}"
         alt="{imgAlt}"

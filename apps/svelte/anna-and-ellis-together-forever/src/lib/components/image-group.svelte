@@ -3,29 +3,29 @@
 	export let imageColumns = [
 		[
 			{
-				src: 'images/fullrez/forever-journey.jpg',
+				src: 'forever-journey.jpg',
 				alt: 'Forever journey',
 				height: '500px'
 			},
       {
-        src: 'images/fullrez/engagement.jpg',
+        src: 'engagement.jpg',
         alt: 'Engagement',
         height: '350px'
       },
 		],
 		[
       {
-        src: 'images/fullrez/first-date.jpg',
+        src: 'first-date.jpg',
         alt: 'First date',
         height: '350px'
       },
 			{
-				src: 'images/fullrez/pond-v1.jpg',
+				src: 'pond-v1.jpg',
 				alt: 'First date',
 				height: '300px'
 			},
 			{
-				src: 'images/fullrez/sunny-piglet.jpg',
+				src: 'sunny-piglet.jpg',
 				alt: 'Engagement',
 				height: '350px'
 			}
@@ -37,13 +37,10 @@
 	{#each imageColumns as imageGroup}
 		<div class="h-min">
 			{#each imageGroup as { src, alt, height }}
-				<img
+				<Image
 					class="rounded-full object-cover p-2"
 					{src}
 					{alt}
-					{width}
-					{height}
-					style={`width: ${width}; height: ${height};`}
 				/>
 			{/each}
 		</div>

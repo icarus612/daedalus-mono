@@ -1,4 +1,6 @@
 <script>
+	import Image from "./image.svelte";
+
 	export let src = ''
 	export let alt = ''
 	export let isOpen = false
@@ -22,7 +24,7 @@
 			</svg>
 		</button>
 		<div class="modal-content">
-			<img src={src} alt={alt} />
+			<Image src={src} alt={alt} />
 		</div>
 	</div>
 {/if}

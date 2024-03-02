@@ -18,19 +18,19 @@
 		<div class="flex justify-center space-x-10">
 			<!-- Image cards -->
 			<DateCard
-				imgSrc="images/fullrez/first-date.jpg"
+				imgSrc="first-date.jpg"
 				imgText="01"
 				header="12 MAR 2022"
 				subHeader="THE FIRST DATE"
 			/>
 			<DateCard
-				imgSrc="images/fullrez/engagement.jpg"
+				imgSrc="engagement.jpg"
 				imgText="02"
 				header="07 MAY 2023"
 				subHeader="THE ENGAGEMENT"
 			/>
 			<DateCard
-				imgSrc="images/fullrez/forever-journey.jpg"
+				imgSrc="forever-journey.jpg=w500"
 				imgText="03"
 				header="24 SEP 2023"
 				subHeader="THE FOREVER JOURNEY"

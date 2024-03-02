@@ -1,4 +1,6 @@
 <script>
+	import Image from "./image.svelte";
+
 	export let header;
 	export let subHeader;
 	export let text;
@@ -9,7 +11,7 @@
 <div class="flex w-full justify-center min-h-[500px] max-h-fit " style={`flex-direction: ${reversed ? 'row-reverse': 'row'}`}>
 	<div class="basis-1/2 relative">
 		<div class="absolute inset-0 overflow-hidden">
-			<img 
+			<Image
 				class="object-cover w-full h-full"
 				src={img?.src} 
 				alt={img?.alt}

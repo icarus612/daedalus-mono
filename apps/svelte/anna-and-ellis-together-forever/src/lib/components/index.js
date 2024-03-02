@@ -8,3 +8,4 @@ export { default as HeroSection } from './hero-section.svelte';
 export { default as ImageGroup } from './image-group.svelte';
 export { default as ImageModal } from './image-modal.svelte';
 export { default as ImageSection } from './image-section.svelte';
+export { default as Image } from './image.svelte';

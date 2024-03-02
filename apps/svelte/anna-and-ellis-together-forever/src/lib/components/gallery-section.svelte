@@ -1,6 +1,7 @@
 <script>
 	import images from '$lib/static-exports/images.js';
 	import { ImageModal } from '$components';
+	import Image from './image.svelte';
 	let currentImage = false;
 	
 </script>
@@ -16,7 +17,7 @@
 <div class="flex flex-wrap w-full gap-2">
 	{#each images as image}
 		<div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 md:h-1/2 lg:w-1/3 overflow-hidden hover:cursor-pointer grow-0">
-			<img 
+			<Image 
 				src={image} 
 				alt="Wedding Photo" 
 				class="
