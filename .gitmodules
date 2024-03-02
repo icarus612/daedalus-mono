@@ -85,3 +85,6 @@
 [submodule "libs/python/anki-tools"]
 	path = libs/python/anki-tools
 	url = git@github.com:icarus612/ankiTools-lib-py.git
+[submodule "apps/svelte/anna-and-ellis-together-forever"]
+	path = apps/svelte/anna-and-ellis-together-forever
+	url = git@github.com:icarus612/annaAndEllisTogetherForever-app-svelte.git
