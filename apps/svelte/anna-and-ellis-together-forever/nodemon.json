@@ -1,0 +1,5 @@
+{
+  "watch": ["src/lib/**"],
+  "ext": "svelte,js",
+  "exec": "node src/lib/build-scripts/index.js && vite dev"
+}
