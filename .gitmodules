@@ -88,3 +88,15 @@
 [submodule "apps/svelte/anna-and-ellis-together-forever"]
 	path = apps/svelte/anna-and-ellis-together-forever
 	url = git@github.com:icarus612/annaAndEllisTogetherForever-app-svelte.git
+[submodule "apps/next/maze-runner"]
+	path = apps/next/maze-runner
+	url = git@github.com:icarus612/mazeRunner-app-next.git
+[submodule "libs/javascript/express/file-metadata-mircroservice"]
+	path = libs/javascript/express/file-metadata-mircroservice
+	url = git@github.com:icarus612/fileMetadataMicroservice-express-JS.git
+[submodule "libs/javascript/react/dyode-landing"]
+	path = libs/javascript/react/dyode-landing
+	url = git@github.com:icarus612/dyodeLanding-reactJS.git
+[submodule "libs/javascript/react/web-resume"]
+	path = libs/javascript/react/web-resume
+	url = git@github.com:icarus612/webResume-react-JS.git
