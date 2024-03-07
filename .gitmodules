@@ -100,3 +100,6 @@
 [submodule "libs/javascript/react/web-resume"]
 	path = libs/javascript/react/web-resume
 	url = git@github.com:icarus612/webResume-react-JS.git
+[submodule "libs/python/tensorflow/open-ai-gym"]
+	path = libs/python/tensorflow/open-ai-gym
+	url = git@github.com:icarus612/openAIGym-ANN-PY.git
