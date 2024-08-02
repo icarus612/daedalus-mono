@@ -11,7 +11,7 @@ Each of my projects has its own dedicated repository. You can browse them by vis
 
 - **Code Insights**: Dive into the code to see my coding style and the technologies I work with. Feel free to explore the commit history for a deeper understanding of the development process.
 
-## Monorepo Structure 
+## Monorepo Structure
 
 <pre>
 <a href="https://github.com/icarus612/daedalus-mono">daedalus-mono</a>
