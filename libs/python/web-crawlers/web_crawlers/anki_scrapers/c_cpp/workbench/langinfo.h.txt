@@ -1,0 +1,1 @@
+<b>Langinfo Function:</b> char *nl_langinfo(nl_item <span class="ph synph"><span class="ph var">item</span></span>); | <b>Langinfo function</b> used to retrieve from the current locale the string that describes the requested information specified by item. 

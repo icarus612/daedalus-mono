@@ -1,0 +1,39 @@
+<b>Keyword:</b> as | <b>Rust keyword</b> used to perform primitive casting, disambiguate the specific trait containing an item, or rename items in use statements.
+<b>Keyword:</b> async | <b>Rust keyword</b> used to return a Future instead of blocking the current thread.
+<b>Keyword:</b> await | <b>Rust keyword</b> used to suspend execution until the result of a Future is ready.
+<b>Keyword:</b> break | <b>Rust keyword</b> used to exit a loop immediately.
+<b>Keyword:</b> const | <b>Rust keyword</b> used to define constant items or constant raw pointers.
+<b>Keyword:</b> continue | <b>Rust keyword</b> used to continue to the next loop iteration.
+<b>Keyword:</b> crate | <b>Rust keyword</b> used to refer to the crate root in a module path.
+<b>Keyword:</b> dyn | <b>Rust keyword</b> used to enable dynamic dispatch to a trait object.
+<b>Keyword:</b> else | <b>Rust keyword</b> used to provide a fallback for if and if let control flow constructs.
+<b>Keyword:</b> enum | <b>Rust keyword</b> used to define an enumeration.
+<b>Keyword:</b> extern | <b>Rust keyword</b> used to link an external function or variable.
+<b>Keyword:</b> false | <b>Rust keyword</b> used to represent the Boolean false literal.
+<b>Keyword:</b> fn | <b>Rust keyword</b> used to define a function or the function pointer type.
+<b>Keyword:</b> for | <b>Rust keyword</b> used to loop over items from an iterator, implement a trait, or specify a higher-ranked lifetime.
+<b>Keyword:</b> if | <b>Rust keyword</b> used to branch based on the result of a conditional expression.
+<b>Keyword:</b> impl | <b>Rust keyword</b> used to implement inherent or trait functionality.
+<b>Keyword:</b> in | <b>Rust keyword</b> used to specify the collection to iterate over in a for loop.
+<b>Keyword:</b> let | <b>Rust keyword</b> used to bind a variable.
+<b>Keyword:</b> loop | <b>Rust keyword</b> used to execute a loop unconditionally.
+<b>Keyword:</b> match | <b>Rust keyword</b> used to match a value against patterns.
+<b>Keyword:</b> mod | <b>Rust keyword</b> used to define a module.
+<b>Keyword:</b> move | <b>Rust keyword</b> used to make a closure take ownership of all its captures.
+<b>Keyword:</b> mut | <b>Rust keyword</b> used to denote mutability in references, raw pointers, or pattern bindings.
+<b>Keyword:</b> pub | <b>Rust keyword</b> used to denote public visibility in struct fields, impl blocks, or modules.
+<b>Keyword:</b> ref | <b>Rust keyword</b> used to bind by reference.
+<b>Keyword:</b> return | <b>Rust keyword</b> used to return from a function.
+<b>Keyword:</b> Self | <b>Rust keyword</b> used to refer to a type alias for the type being defined or implemented.
+<b>Keyword:</b> self | <b>Rust keyword</b> used to refer to the method subject or current module.
+<b>Keyword:</b> static | <b>Rust keyword</b> used to denote a global variable or a lifetime lasting the entire program execution.
+<b>Keyword:</b> struct | <b>Rust keyword</b> used to define a structure.
+<b>Keyword:</b> super | <b>Rust keyword</b> used to refer to the parent module of the current module.
+<b>Keyword:</b> trait | <b>Rust keyword</b> used to define a trait.
+<b>Keyword:</b> true | <b>Rust keyword</b> used to represent the Boolean true literal.
+<b>Keyword:</b> type | <b>Rust keyword</b> used to define a type alias or associated type.
+<b>Keyword:</b> union | <b>Rust keyword</b> used to define a union; is only a keyword when used in a union declaration.
+<b>Keyword:</b> unsafe | <b>Rust keyword</b> used to denote unsafe code, functions, traits, or implementations.
+<b>Keyword:</b> use | <b>Rust keyword</b> used to bring symbols into scope.
+<b>Keyword:</b> where | <b>Rust keyword</b> used to denote clauses that constrain a type.
+<b>Keyword:</b> while | <b>Rust keyword</b> used to loop conditionally based on the result of an expression.

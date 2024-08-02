@@ -1,0 +1,23 @@
+{
+  "name": "javascript-web-crawlers",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "request": "^2.88.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/icarus612/daedalus-crawlers-JS.git"
+  },
+  "author": "dev.icarus",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/icarus612/daedalus-crawlers-JS/issues"
+  },
+  "homepage": "https://github.com/icarus612/daedalus-crawlers-JS#readme"
+}

@@ -1,0 +1,294 @@
+@import 'styles/theme';
+
+.container_margin {
+  padding: 100px 25px;
+}
+
+.content_top {
+  position: relative;
+  padding-top: 100px;
+}
+
+.content_middle {
+  position: relative;
+}
+
+.content_bottom {
+  position: relative;
+  .card {
+    .throbber {
+      top: 50%;
+      left: -8px;
+    }
+  }
+}
+
+.position_relative {
+  position: relative;
+}
+
+.thin {
+  font-weight: 300;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.link {
+  cursor: pointer;
+}
+
+.cursive {
+  font-family: $cursive;
+}
+
+.sans {
+  font-family: $sans;
+}
+
+.legal {
+  color: $grey;
+}
+
+.text_white {
+  color: $white;
+}
+
+.text_grey {
+  color: $grey;
+}
+
+.text_black {
+  color: $black;
+}
+
+.text_primary {
+  color: $primary;
+}
+
+.text_secondary {
+  color: $secondary;
+}
+
+.text_complementary {
+  color: $complementary;
+}
+
+.btn_purple{
+  background-color: $secondary;
+  border-color: $secondary;
+  border-radius: 8px;
+  margin: 3px;
+  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.42), 0 4px 25px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+  &:hover {
+    background-color: $secondary;
+    transition: .5s transform;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.52), 0 4px 25px 0px rgba(0, 0, 0, 0.18), 0 8px 10px -5px rgba(0, 0, 0, 0.25);
+    color: white !important;
+    border-color: transparent !important;
+  }
+}
+
+.btn_purple_basic {
+  background-color: transparent;
+  border: 1px solid $white;
+  padding: 10px 20px;
+  color: $white;
+  border-radius: 8px;
+  margin: 20px;
+  margin-left: 0;
+  transition: .5s;
+  width: fit-content;
+  cursor: pointer;
+
+  &:hover{
+    background-color: $white;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.42), 0 4px 25px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+    color: $complementary !important;
+    border-color: $complementary !important;
+  }
+}
+
+.card {
+  position: relative;
+  margin: 12px;
+  padding-left: 30px !important;
+  flex-basis: 100%;
+  box-shadow: 1px 2px 8px -2px rgba(50,50,50,.5);
+  border-left: 1px solid rgb(175, 70, 211);
+  flex: 1 0 200px;
+  position: relative;
+  padding: 0.5em;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #fff;
+  position: absolute;
+  left: 3px;
+}
+
+.animated_dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color:  rgba(175, 70, 211, 1);
+  position: absolute;
+  left: 0;
+  opacity: 0;
+  z-index: -1
+}
+
+.animated_dot2 {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color:  rgba(175, 70, 211, 1);
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  z-index: -1
+}
+
+.throbber {
+  display: block;
+  width: 14px;
+  height: 14px;
+  background:  rgba(175, 70, 211, 1);
+  border-radius: 100%;
+  box-shadow: 0 0 0 2px  rgba(175, 70, 211, 1);
+  z-index: 3000;
+  margin-top: -8px;
+  position: absolute;
+}
+
+.throbber_inner {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  margin: -7px 0 0 -7px;
+  width: 14px;
+  height: 14px;
+  border: 1px solid hsla(0%,0%,0%,.1);
+  border-radius: 100%;
+  box-shadow: 0 0 0 2px  rgba(175, 70, 211, .9);
+  background: rgba(105, 50, 151, .9);
+}
+
+.first_throbber {
+  top: 50%;
+  right: -7px;
+}
+
+.top_throbber {
+  top: 55%;
+  left: 68px;
+}
+
+.hidden_block {
+  height: 100px;
+}
+
+.second_throbber {
+  top: 50%;
+  right: 8px !important;
+}
+
+.catapult_throbber {
+  top: 50%;
+  left: 15% !important;
+}
+
+.catapult {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-top: -1px;
+  height: 2px;
+  background-color:  rgba(105, 50, 151, .9);
+}
+
+.mid_throbber {
+  top: 50%;
+  left: 68px !important;
+}
+
+.wheel_end_throbber {
+  top: 50%;
+  left: 50% !important;
+}
+
+.spring {
+  position: absolute;
+  border-bottom: 2px solid rgba(175, 70, 211, 1);
+  width: 30px;
+  height: 30px;
+  top: 50%;
+  left: 60px !important;
+  position: absolute;
+  transform: rotateZ(-40deg);
+}
+
+.top_box {
+  background-color: rgba(255,255,255,.8) !important;
+  padding: 20px;
+  box-shadow: 1px 2px 8px -2px rgba(50,50,50,.5);
+}
+
+.step3 {
+  text-align: center;
+  transition: all 0.25s;
+  position: relative;
+  padding: 0.5em;
+  height: 120px !important;
+
+}
+
+.step4 {
+  text-align: center;
+  transition: all 0.25s;
+  position: relative;
+  padding: 0.5em;
+  height: 280px !important;
+  border-left: 2px solid rgb(175, 70, 211);
+}
+
+.step2 {
+  box-shadow: 1px 2px 10px -2px rgba(50,50,50,.5);
+}
+
+.pulsar1,
+.pulsar2,
+.animated_li1,
+.animated_li2,
+.animated_li3,
+.pulsar6,
+.pulsar7,
+.pulsar8,
+.start,
+.middle,
+.wall,
+.path_top,
+.path_bottom,
+.step5,
+.step4,
+.step3,
+.mv_1,
+.mv_2,
+.mv_3,
+.mv_4,
+.mv_5,
+.mv_6 {
+  visibility: visible;
+}

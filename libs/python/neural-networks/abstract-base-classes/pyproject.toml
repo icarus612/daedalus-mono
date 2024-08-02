@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "abstract_base_classes"
+version = "0.1.0"
+description = ""
+authors = ["icarus64 <ellishogan95@gmail.com>"]
+readme = "README.md"
+packages = [
+    { include = "src" }
+]
+
+[tool.poetry.dependencies]
+python = "<4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,111 @@
+@import 'styles/theme';
+
+.container_margin {
+  padding: 100px 25px;
+}
+
+.thin {
+  font-weight: 300;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.link {
+  cursor: pointer;
+}
+
+.cursive {
+  font-family: $cursive;
+}
+
+.sans {
+  font-family: $sans;
+}
+
+.legal {
+  color: $grey;
+}
+
+.text_white {
+  color: $white;
+}
+
+.text_grey {
+  color: $grey;
+}
+
+.text_black {
+  color: $black;
+}
+
+.text_primary {
+  color: $primary;
+}
+
+.text_secondary {
+  color: $secondary;
+}
+
+.text_complementary {
+  color: $complementary;
+}
+
+.btn_purple{
+  background-color: $secondary;
+  border-color: $secondary;
+  border-radius: 8px;
+  margin: 3px;
+  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.42), 0 4px 25px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+  &:hover {
+    background-color: $secondary;
+    transition: .5s transform;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.52), 0 4px 25px 0px rgba(0, 0, 0, 0.18), 0 8px 10px -5px rgba(0, 0, 0, 0.25);
+    color: white !important;
+    border-color: transparent !important;
+  }
+}
+
+.btn_purple_basic {
+  background-color: transparent;
+  border: 1px solid $white;
+  padding: 10px 20px;
+  color: $white;
+  border-radius: 8px;
+  margin: 20px;
+  margin-left: 0;
+  transition: .5s;
+  width: fit-content;
+  cursor: pointer;
+
+  &:hover{
+    background-color: $white;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.42), 0 4px 25px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+    color: #BA55D3 !important;
+    border-color: #BA55D3 !important;
+  }
+}
+
+.card {
+  padding: 25px;
+  box-shadow: 2px 3px 20px -3px rgba(50, 50, 50, 0.5);
+  border-radius: 8px;
+  background-image: linear-gradient(to bottom right, rgba(175, 70, 211, .7), rgba(147, 112, 219, .7)) !important;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #fff;
+  position: absolute;
+  left: 2px;
+  margin-top: -3px;
+}
