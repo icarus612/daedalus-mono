@@ -1,0 +1,112 @@
+{
+	"sections": [
+		{
+			"header": "john",
+			"src": "/new-testament/JOHN.doc"
+		},
+		{
+			"header": "ii peter",
+			"src": "/new-testament/II_Peter.doc"
+		},
+		{
+			"header": "colossians",
+			"src": "/new-testament/COLOSSIANS.doc"
+		},
+		{
+			"header": "i timothy",
+			"src": "/new-testament/I_Timothy.doc"
+		},
+		{
+			"header": "romans",
+			"src": "/new-testament/ROMANS.doc"
+		},
+		{
+			"header": "ii corinthians",
+			"src": "/new-testament/II_CORINTHIANS.doc"
+		},
+		{
+			"header": "mark",
+			"src": "/new-testament/MARK.doc"
+		},
+		{
+			"header": "ii thessalonians",
+			"src": "/new-testament/II_Thessalonians.doc"
+		},
+		{
+			"header": "jude",
+			"src": "/new-testament/JUDE.doc"
+		},
+		{
+			"header": "james",
+			"src": "/new-testament/JAMES.doc"
+		},
+		{
+			"header": "ii timothy",
+			"src": "/new-testament/II_Timothy.doc"
+		},
+		{
+			"header": "philemon",
+			"src": "/new-testament/PHILEMON.doc"
+		},
+		{
+			"header": "luke",
+			"src": "/new-testament/LUKE.doc"
+		},
+		{
+			"header": "i john",
+			"src": "/new-testament/I_John.doc"
+		},
+		{
+			"header": "matthew",
+			"src": "/new-testament/MATTHEW.doc"
+		},
+		{
+			"header": "revelation",
+			"src": "/new-testament/REVELATION.doc"
+		},
+		{
+			"header": "i corinthians",
+			"src": "/new-testament/I_Corinthians.doc"
+		},
+		{
+			"header": "acts",
+			"src": "/new-testament/ACTS.doc"
+		},
+		{
+			"header": "ephesians",
+			"src": "/new-testament/EPHESIANS.doc"
+		},
+		{
+			"header": "ii john",
+			"src": "/new-testament/II_John.doc"
+		},
+		{
+			"header": "philippians",
+			"src": "/new-testament/PHILIPPIANS.doc"
+		},
+		{
+			"header": "iii john",
+			"src": "/new-testament/III_John.doc"
+		},
+		{
+			"header": "i thessalonians",
+			"src": "/new-testament/I_THESSALONIANS.doc"
+		},
+		{
+			"header": "galatians",
+			"src": "/new-testament/GALATIANS.doc"
+		},
+		{
+			"header": "titus",
+			"src": "/new-testament/TITUS.doc"
+		},
+		{
+			"header": "hebrews",
+			"src": "/new-testament/HEBREWS.doc"
+		},
+		{
+			"header": "i peter",
+			"src": "/new-testament/I_Peter.doc"
+		}
+	]
+}
