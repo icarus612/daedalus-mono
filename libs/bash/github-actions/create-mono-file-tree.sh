@@ -1,40 +1,73 @@
 #!/bin/bash
 
-function generate_tree() {
-    local dir="$1"
+is_subdirectory() {
+    local file="$1"
+    local dir="$2"
+
+    local file_path=$(realpath "$file")
+    local dir_path=$(realpath "$dir")
+
+    if [[ "$file_path" == "$dir_path"* ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+check_all_subdirs() {
+	local is_subdir=false
+	local projects=("$@")
+	for project in "${projects[@]}"; do
+			if is_subdirectory "$file" "$project"; then
+					is_subdir=true
+					break
+			fi
+	done
+	echo "$is_subdir"
+}
+
+# Function to create file tree
+function find_readmes() {
+		local base="$1"
+		local to_search=()
+		local projects=()
+		for file in "$base"/*; do
+				if [ -d "$file" ] && []; then
+						to_search+=("$file")
+				elif [[ "$(basename "$file")" == "README.md" ]]; then
+						projects+=($(dirname "$file"))
+				fi
+		done
+		echo "${files[@]}"
+}
+
+function create_tree() {
+    local base="$1"
     local prefix="$2"
+    local files=find_readmes "$base"
+    local i=0
+    local last=${#files[@]}
 
-    # Get list of directories and README.md files, sorted alphabetically
-    local items=($(ls -1p "$dir" | grep -E "/$|README\.md$" | sort))
-    local num_items=${#items[@]}
-
-    for ((i=0; i<num_items; i++)); do
-        local item="${items[$i]}"
-        local is_last=$([[ $i -eq $((num_items-1)) ]] && echo 1 || echo 0)
-        
-        if [[ "$item" == */ ]]; then
-            # It's a directory
-            local dirname="${item%/}"
-            if [[ $is_last -eq 1 ]]; then
-                echo "${prefix}└── $dirname"
-                generate_tree "$dir/$dirname" "$prefix    " 1
+    for file in "${files[@]}"; do
+        ((i++))
+        if [ -d "$file" ]; then
+            if [ $i -eq $last ]; then
+                echo "${prefix}└── $(basename "$file")"
+                create_tree "$file" "$prefix    "
             else
-                echo "${prefix}├── $dirname"
-                generate_tree "$dir/$dirname" "$prefix│   " 0
+                echo "${prefix}├── $(basename "$file")"
+                create_tree "$file" "$prefix│   "
             fi
-        elif [[ "$item" == "README.md" ]]; then
-            # It's a README.md file
-            local link=$(grep -m 1 "https://github.com" "$dir/$item" | sed -E 's/.*\((https:\/\/github.com[^)]+)\).*/\1/')
-            local name=$(basename "$(dirname "$dir/$item")")
-            if [[ -n "$link" ]]; then
-                if [[ $is_last -eq 1 ]]; then
-                    echo "${prefix}└── [$name]($link)"
-                else
-                    echo "${prefix}├── [$name]($link)"
-                fi
+        elif [[ "$(basename "$file")" == "README.md" ]]; then
+            if [ $i -eq $last ]; then
+                echo "${prefix}└── $(basename "$file") (Project Root)"
+            else
+                echo "${prefix}├── $(basename "$file") (Project Root)"
             fi
         fi
     done
 }
 
-generate_tree $@
+# Start mapping from the current directory
+echo "$(basename "$(pwd)")"
+create_tree "." ""
