@@ -20,13 +20,13 @@ jobs:
 
     - name: Copy content
       run: |
-        cp -R  dest-repo/apps/flask/maze-runner/ dest-repo/apps/flask 2>/dev/null
+        cp -R  daedalus-mono/apps/flask/maze-runner/ dest-repo/apps/flask 2>/dev/null
         cp -R  dest-repo/apps/next/maze-runner/ dest-repo/apps/next 2>/dev/null
 
-        cp -R  dest-repo/libs/python/maze-runner/ dest-repo/libs/python 2>/dev/null
-        cp -R  dest-repo/libs/javascript/node/maze-runner/ dest-repo/libs/javascript 2>/dev/null
-        cp -R  dest-repo/libs/javascript/react/maze-runner/ dest-repo/libs/react-js 2>/dev/null
-        cp -R  dest-repo/libs/javascript/solid/maze-runner/ dest-repo/libs/solid-js 2>/dev/null
+        cp -R  daedalus-mono/libs/python/maze-runner/ dest-repo/libs/python 2>/dev/null
+        cp -R  daedalus-mono/libs/javascript/node/maze-runner/ dest-repo/libs/javascript 2>/dev/null
+        cp -R  daedalus-mono/libs/javascript/react/maze-runner/ dest-repo/libs/react-js 2>/dev/null
+        cp -R  daedalus-mono/libs/javascript/solid/maze-runner/ dest-repo/libs/solid-js 2>/dev/null
 
     - name: Commit and push
       run: |

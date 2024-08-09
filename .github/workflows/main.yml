@@ -20,6 +20,7 @@ jobs:
 
     - name: Copy content
       run: |
+        ls
         cp -R  daedalus-mono/apps/flask/maze-runner/ dest-repo/apps/flask 2>/dev/null
         cp -R  dest-repo/apps/next/maze-runner/ dest-repo/apps/next 2>/dev/null
 
