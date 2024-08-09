@@ -29,6 +29,8 @@ jobs:
 
     - name: Commit and push
       run: |
+        echo {{ secrets.PAT }}
+        echo {{ secrets}}
         cd maze-runner-mono
         git config user.name github-actions
         git config user.email github-actions@github.com
