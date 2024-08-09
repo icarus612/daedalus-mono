@@ -13,7 +13,6 @@ cp -R  daedalus-mono/libs/javascript/react/maze-runner/ maze-runner-mono/libs/re
 cp -R  daedalus-mono/libs/javascript/solid/maze-runner/ maze-runner-mono/libs/solid-js 2>/dev/null
 
 # Push destination repository
-
 cd maze-runner-mono
 git config user.name github-actions
 git config user.email github-actions@github.com
