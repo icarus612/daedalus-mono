@@ -1,0 +1,38 @@
+name: Sync Repositories
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout source repository
+      uses: actions/checkout@v2
+      with:
+        path: daedalus-mono
+
+    - name: Clone maze-runner-mono
+      run: |
+        git clone https://${{ secrets.PAT }}@github.com/icarus612/destination-repo.git dest-repo
+
+    - name: Copy content
+      run: |
+        cp -R  dest-repo/libs/flask/maze-runner/ dest-repo/apps/flask
+        cp -R  dest-repo/libs/next/maze-runner/ dest-repo/apps/next
+
+        cp -R  dest-repo/libs/python/maze-runner/ dest-repo/libs/python
+        cp -R  dest-repo/libs/javascript/node/maze-runner/ dest-repo/libs/javascript
+        cp -R  dest-repo/libs/javascript/react/maze-runner/ dest-repo/libs/react-js
+        cp -R  dest-repo/libs/javascript/solid/maze-runner/ dest-repo/libs/solid-js
+
+    - name: Commit and push
+      run: |
+        cd dest-repo
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add .
+        git commit -m "Sync content from source repository"
+        git push
