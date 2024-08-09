@@ -14,26 +14,7 @@ jobs:
       with:
         path: daedalus-mono
 
-    - name: Clone maze-runner-mono
-      run: |
-        git clone https://${{ secrets.PAT }}@github.com/icarus612/maze-runner-mono.git dest-repo
-
-    - name: Copy content
-      run: |
-        ls
-        cp -R  daedalus-mono/apps/flask/maze-runner/ dest-repo/apps/flask 2>/dev/null
-        cp -R  dest-repo/apps/next/maze-runner/ dest-repo/apps/next 2>/dev/null
-
-        cp -R  daedalus-mono/libs/python/maze-runner/ dest-repo/libs/python 2>/dev/null
-        cp -R  daedalus-mono/libs/javascript/node/maze-runner/ dest-repo/libs/javascript 2>/dev/null
-        cp -R  daedalus-mono/libs/javascript/react/maze-runner/ dest-repo/libs/react-js 2>/dev/null
-        cp -R  daedalus-mono/libs/javascript/solid/maze-runner/ dest-repo/libs/solid-js 2>/dev/null
-
-    - name: Commit and push
-      run: |
-        cd dest-repo
-        git config user.name github-actions
-        git config user.email github-actions@github.com
-        git add .
-        git commit -m "Sync content from source repository"
-        git push
+    - name: Build Maze Runner Mono
+      run: | 
+        ./daedalus-mono/libs/bash/github-actions/build-maze-runner.sh
+        
