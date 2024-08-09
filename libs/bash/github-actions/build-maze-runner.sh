@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Clone the destination repository
-git clone https://${{ secrets.PAT }}@github.com/icarus612/maze-runner-mono.git dest-repo
+git clone https://github.com/icarus612/maze-runner-mono.git dest-repo
 
 # Copy the content from all the source paths to the destination repository
 cp -R  daedalus-mono/apps/flask/maze-runner/ dest-repo/apps/flask 2>/dev/null
