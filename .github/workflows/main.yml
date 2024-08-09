@@ -17,8 +17,7 @@ jobs:
     - name: Build Maze Runner Mono
       run: |
         git clone https://${{ secrets.PAT }}@github.com/icarus612/maze-runner-mono.git
-      env:
-        PAT: ${{ secrets.PAT }}
+
     - name: Copy content
       run: |
         cp -R  daedalus-mono/apps/flask/maze-runner maze-runner-mono/apps/flask 
