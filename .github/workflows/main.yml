@@ -16,7 +16,7 @@ jobs:
 
     - name: Build Maze Runner Mono
       run: | 
-        EX_FILE=/daedalus-mono/libs/bash/github-actions/build-maze-runner.sh
+        EX_FILE=daedalus-mono/libs/bash/github-actions/build-maze-runner.sh
         chmod +x $EX_FILE
-        $EX_FILE
+        ./$EX_FILE
         
