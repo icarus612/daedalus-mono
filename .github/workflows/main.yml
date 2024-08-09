@@ -19,6 +19,11 @@ jobs:
       run: |
         git clone https://${{ secrets.PAT }}@github.com/icarus612/maze-runner-mono.git
 
+    -name: Remove old content
+      run: |
+        rm -rf maze-runner-mono/apps
+        rm -rf maze-runner-mono/libs
+
     - name: Copy content
       run: |
         cp -R  daedalus-mono/apps/flask/maze-runner maze-runner-mono/apps/flask 
@@ -30,8 +35,6 @@ jobs:
 
     - name: Commit and push
       run: |
-        echo {{ secrets.PAT }}
-        echo {{ secrets}}
         cd maze-runner-mono
         git config user.name github-actions
         git config user.email github-actions@github.com
