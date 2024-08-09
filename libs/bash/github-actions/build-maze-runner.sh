@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Clone the destination repository
-git clone https://github.com/icarus612/maze-runner-mono.git
+git clone https://${{ secrets.PAT }}@github.com/icarus612/maze-runner-mono.git
 
 # Copy the content from all the source paths to the destination repository
 cp -R  daedalus-mono/apps/flask/maze-runner/ maze-runner-mono/apps/flask 2>/dev/null
@@ -13,10 +13,10 @@ cp -R  daedalus-mono/libs/javascript/react/maze-runner/ maze-runner-mono/libs/re
 cp -R  daedalus-mono/libs/javascript/solid/maze-runner/ maze-runner-mono/libs/solid-js 2>/dev/null
 
 # Push destination repository
-cd maze-runner-mono
 
+cd maze-runner-mono
 git config user.name github-actions
 git config user.email github-actions@github.com
 git add .
 git commit -m "Sync content from source repository"
-git push
+git push https://${{ secrets.PAT }}@github.com/icarus612/maze-runner-mono.git

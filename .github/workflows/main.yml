@@ -38,5 +38,3 @@ jobs:
         git add .
         git commit -m "Sync content from source repository"
         git push https://${{ secrets.PAT }}@github.com/icarus612/maze-runner-mono.git
-      env:
-        PAT: ${{ secrets.PAT }}
