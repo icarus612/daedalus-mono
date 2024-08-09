@@ -16,7 +16,7 @@ jobs:
 
     - name: Build Maze Runner Mono
       run: |
-        git clone https://${{ secrets.PAT }}@github.com/icarus612/maze-runner-mono.git dest-repo
+        git clone https://${{ secrets.PAT }}@github.com/icarus612/maze-runner-mono.git
 
     - name: Copy content
       run: |
