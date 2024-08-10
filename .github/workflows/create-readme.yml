@@ -1,4 +1,4 @@
-name: Sync Repositories
+name: Update README.md
 
 on:
   push:
