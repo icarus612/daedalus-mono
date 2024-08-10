@@ -43,7 +43,7 @@ function print_tree() {
 
 function build_tree() {
     local base_dir="$1"
-    echo "$(basename "$base_dir")"
+    echo "$(basename "$base_dir")  "
     print_tree "$base_dir" "$base_dir" ""
 }
 
