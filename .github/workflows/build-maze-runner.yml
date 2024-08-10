@@ -21,8 +21,8 @@ jobs:
 
     - name: Remove old content
       run: |
-        rm -rf maze-runner-mono/apps
-        rm -rf maze-runner-mono/libs
+        rm -rf maze-runner-mono/apps/*
+        rm -rf maze-runner-mono/libs/*
 
     - name: Copy content
       run: |
