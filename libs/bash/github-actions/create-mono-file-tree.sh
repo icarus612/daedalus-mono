@@ -15,9 +15,9 @@ function print_tree() {
             if [[ -f "$dir/README.md" || -f "$dir/README.txt" || -f "$dir/README" ]]; then
                 local path=$(realpath --relative-to="$base_dir" "$dir")
 								if [ $count -eq $total_dirs ]; then
-                    echo "${prefix}└── <a href=\"/${path}\">${dir_name}<\/a>"
+                    echo "${prefix}└── <a href=\"/${path}\">${dir_name}</a>"
                 else
-                    echo "${prefix}├── <a href=\"/${path}\">${dir_name}<\/a>"
+                    echo "${prefix}├── <a href=\"/${path}\">${dir_name}</a>"
                 fi
             else
                 local subdirs=($dir/*)
