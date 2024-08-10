@@ -16,8 +16,9 @@ jobs:
         path: daedalus-mono
 
     - name: Build Maze Runner Mono
-      run: |
-        git clone https://${{ secrets.PAT }}@github.com/icarus612/maze-runner-mono.git
+      uses: actions/checkout@v2
+      with:
+        path: maze-runner-mono
 
     - name: Remove old content
       run: |
