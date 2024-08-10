@@ -1,5 +1,4 @@
-done
-}
+#!/bin/bash
 
 print_tree() {
     local base_dir="$1"
@@ -47,6 +46,3 @@ build_tree() {
     echo "$(basename "$base_dir")"
     print_tree "$base_dir" "$base_dir" ""
 }
-
-# Start building the tree from the current directory
-build_tree "$(pwd)"
