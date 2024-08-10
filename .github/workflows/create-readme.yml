@@ -18,6 +18,7 @@ jobs:
     - name: Build README.md
       run: |
         cd daedalus-mono
+        git config --global url."https://${{ secrets.PAN }}@github.com/".insteadOf "https://github.com/"
         git submodule update --init --recursive
         
         echo "
