@@ -64,7 +64,7 @@ jobs:
 
     - name: Commit and push
       run: |
-        ls -a
+        cd daedalus-mono
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add .
