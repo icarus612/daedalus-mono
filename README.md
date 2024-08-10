@@ -18,47 +18,47 @@ Each of my projects has its own dedicated repository. You can browse them by vis
 daedalus-mono  
 ├── apps  
 │   ├── flask  
-│   │   ├── [maze-runner](/apps/flask/maze-runner)  
-│   │   ├── [pokedex](/apps/flask/pokedex)  
-│   │   └── [weather-fortcast](/apps/flask/weather-fortcast)  
+│   │   ├── <a href="/apps/flask/maze-runner">maze-runner<\/a>
+│   │   ├── <a href="/apps/flask/pokedex">pokedex<\/a>
+│   │   └── <a href="/apps/flask/weather-fortcast">weather-fortcast<\/a>
 │   ├── microservices  
-│   │   └── [market-bots](/apps/microservices/market-bots)  
+│   │   └── <a href="/apps/microservices/market-bots">market-bots<\/a>
 │   └── next  
-│       └── [maze-runner](/apps/next/maze-runner)  
+│       └── <a href="/apps/next/maze-runner">maze-runner<\/a>
 └── libs  
     ├── bash  
-    │   ├── [cli-tools](/libs/bash/cli-tools)  
-    │   └── [github-actions](/libs/bash/github-actions)  
+    │   ├── <a href="/libs/bash/cli-tools">cli-tools<\/a>
+    │   └── <a href="/libs/bash/github-actions">github-actions<\/a>
     ├── golang  
-    │   ├── [crud-server](/libs/golang/crud-server)  
-    │   └── [maze-runner](/libs/golang/maze-runner)  
+    │   ├── <a href="/libs/golang/crud-server">crud-server<\/a>
+    │   └── <a href="/libs/golang/maze-runner">maze-runner<\/a>
     ├── javascript  
     │   ├── node  
-    │   │   ├── [build-scripts](/libs/javascript/node/build-scripts)  
+    │   │   ├── <a href="/libs/javascript/node/build-scripts">build-scripts<\/a>
     │   │   ├── dots-js  
-    │   │   ├── [maze-runner](/libs/javascript/node/maze-runner)  
-    │   │   └── [web-crawlers](/libs/javascript/node/web-crawlers)  
+    │   │   ├── <a href="/libs/javascript/node/maze-runner">maze-runner<\/a>
+    │   │   └── <a href="/libs/javascript/node/web-crawlers">web-crawlers<\/a>
     │   └── react  
-    │       ├── [e-card](/libs/javascript/react/e-card)  
-    │       ├── [labyrinth](/libs/javascript/react/labyrinth)  
-    │       ├── [markdown-builder](/libs/javascript/react/markdown-builder)  
-    │       ├── [maze-runner](/libs/javascript/react/maze-runner)  
-    │       ├── [quest](/libs/javascript/react/quest)  
-    │       ├── [quote-builder](/libs/javascript/react/quote-builder)  
-    │       └── [web-resume](/libs/javascript/react/web-resume)  
+    │       ├── <a href="/libs/javascript/react/e-card">e-card<\/a>
+    │       ├── <a href="/libs/javascript/react/labyrinth">labyrinth<\/a>
+    │       ├── <a href="/libs/javascript/react/markdown-builder">markdown-builder<\/a>
+    │       ├── <a href="/libs/javascript/react/maze-runner">maze-runner<\/a>
+    │       ├── <a href="/libs/javascript/react/quest">quest<\/a>
+    │       ├── <a href="/libs/javascript/react/quote-builder">quote-builder<\/a>
+    │       └── <a href="/libs/javascript/react/web-resume">web-resume<\/a>
     └── python  
-        ├── [anki-tools](/libs/python/anki-tools)  
-        ├── [cli-tools](/libs/python/cli-tools)  
-        ├── [maze-runner](/libs/python/maze-runner)  
+        ├── <a href="/libs/python/anki-tools">anki-tools<\/a>
+        ├── <a href="/libs/python/cli-tools">cli-tools<\/a>
+        ├── <a href="/libs/python/maze-runner">maze-runner<\/a>
         ├── neural-networks  
-        │   ├── [abstract-base-classes](/libs/python/neural-networks/abstract-base-classes)  
-        │   ├── [digit-recognition](/libs/python/neural-networks/digit-recognition)  
-        │   ├── [market-analyzer](/libs/python/neural-networks/market-analyzer)  
-        │   └── [open-ai-gym](/libs/python/neural-networks/open-ai-gym)  
-        ├── [pyto-widgets](/libs/python/pyto-widgets)  
+        │   ├── <a href="/libs/python/neural-networks/abstract-base-classes">abstract-base-classes<\/a>
+        │   ├── <a href="/libs/python/neural-networks/digit-recognition">digit-recognition<\/a>
+        │   ├── <a href="/libs/python/neural-networks/market-analyzer">market-analyzer<\/a>
+        │   └── <a href="/libs/python/neural-networks/open-ai-gym">open-ai-gym<\/a>
+        ├── <a href="/libs/python/pyto-widgets">pyto-widgets<\/a>
         ├── tensorflow  
-        │   └── [open-ai-gym](/libs/python/tensorflow/open-ai-gym)  
-        └── [web-crawlers](/libs/python/web-crawlers)  
+        │   └── <a href="/libs/python/tensorflow/open-ai-gym">open-ai-gym<\/a>
+        └── <a href="/libs/python/web-crawlers">web-crawlers<\/a>
 
 </pre>
 ## Collaboration
