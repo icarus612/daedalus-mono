@@ -1,6 +1,6 @@
 #!/bin/bash
 
-print_tree() {
+function print_tree() {
     local base_dir="$1"
     local current_dir="$2"
     local prefix="$3"
@@ -41,7 +41,7 @@ print_tree() {
     done
 }
 
-build_tree() {
+function build_tree() {
     local base_dir="$1"
     echo "$(basename "$base_dir")"
     print_tree "$base_dir" "$base_dir" ""
