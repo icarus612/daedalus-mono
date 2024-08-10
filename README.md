@@ -16,49 +16,49 @@ Each of my projects has its own dedicated repository. You can browse them by vis
 
 
 daedalus-mono
-├── apps
-│   \n├── flask
-│   \n│   \n├── (maze-runner)[/apps/flask/maze-runner]\n
-│   \n│   \n├── (pokedex)[/apps/flask/pokedex]\n
-│   \n│   \n└── (weather-fortcast)[/apps/flask/weather-fortcast]\n
-│   \n├── microservices
-│   \n│   \n└── (market-bots)[/apps/microservices/market-bots]\n
-│   \n└── next
-│   \n    \n└── (maze-runner)[/apps/next/maze-runner]\n
-└── libs
-    \n├── bash
-    \n│   \n├── (cli-tools)[/libs/bash/cli-tools]\n
-    \n│   \n└── (github-actions)[/libs/bash/github-actions]\n
-    \n├── golang
-    \n│   \n├── (crud-server)[/libs/golang/crud-server]\n
-    \n│   \n└── (maze-runner)[/libs/golang/maze-runner]\n
-    \n├── javascript
-    \n│   \n├── node
-    \n│   \n│   \n├── (build-scripts)[/libs/javascript/node/build-scripts]\n
-    \n│   \n│   \n├── dots-js
-    \n│   \n│   \n├── (maze-runner)[/libs/javascript/node/maze-runner]\n
-    \n│   \n│   \n└── (web-crawlers)[/libs/javascript/node/web-crawlers]\n
-    \n│   \n└── react
-    \n│   \n    \n├── (e-card)[/libs/javascript/react/e-card]\n
-    \n│   \n    \n├── (labyrinth)[/libs/javascript/react/labyrinth]\n
-    \n│   \n    \n├── (markdown-builder)[/libs/javascript/react/markdown-builder]\n
-    \n│   \n    \n├── (maze-runner)[/libs/javascript/react/maze-runner]\n
-    \n│   \n    \n├── (quest)[/libs/javascript/react/quest]\n
-    \n│   \n    \n├── (quote-builder)[/libs/javascript/react/quote-builder]\n
-    \n│   \n    \n└── (web-resume)[/libs/javascript/react/web-resume]\n
-    \n└── python
-    \n    \n├── (anki-tools)[/libs/python/anki-tools]\n
-    \n    \n├── (cli-tools)[/libs/python/cli-tools]\n
-    \n    \n├── (maze-runner)[/libs/python/maze-runner]\n
-    \n    \n├── neural-networks
-    \n    \n│   \n├── (abstract-base-classes)[/libs/python/neural-networks/abstract-base-classes]\n
-    \n    \n│   \n├── (digit-recognition)[/libs/python/neural-networks/digit-recognition]\n
-    \n    \n│   \n├── (market-analyzer)[/libs/python/neural-networks/market-analyzer]\n
-    \n    \n│   \n└── (open-ai-gym)[/libs/python/neural-networks/open-ai-gym]\n
-    \n    \n├── (pyto-widgets)[/libs/python/pyto-widgets]\n
-    \n    \n├── tensorflow
-    \n    \n│   \n└── (open-ai-gym)[/libs/python/tensorflow/open-ai-gym]\n
-    \n    \n└── (web-crawlers)[/libs/python/web-crawlers]\n
+├── apps\n
+│   ├── flask\n
+│   │   ├── [maze-runner](/apps/flask/maze-runner)\n
+│   │   ├── [pokedex](/apps/flask/pokedex)\n
+│   │   └── [weather-fortcast](/apps/flask/weather-fortcast)\n
+│   ├── microservices\n
+│   │   └── [market-bots](/apps/microservices/market-bots)\n
+│   └── next\n
+│       └── [maze-runner](/apps/next/maze-runner)\n
+└── libs\n
+    ├── bash\n
+    │   ├── [cli-tools](/libs/bash/cli-tools)\n
+    │   └── [github-actions](/libs/bash/github-actions)\n
+    ├── golang\n
+    │   ├── [crud-server](/libs/golang/crud-server)\n
+    │   └── [maze-runner](/libs/golang/maze-runner)\n
+    ├── javascript\n
+    │   ├── node\n
+    │   │   ├── [build-scripts](/libs/javascript/node/build-scripts)\n
+    │   │   ├── dots-js\n
+    │   │   ├── [maze-runner](/libs/javascript/node/maze-runner)\n
+    │   │   └── [web-crawlers](/libs/javascript/node/web-crawlers)\n
+    │   └── react\n
+    │       ├── [e-card](/libs/javascript/react/e-card)\n
+    │       ├── [labyrinth](/libs/javascript/react/labyrinth)\n
+    │       ├── [markdown-builder](/libs/javascript/react/markdown-builder)\n
+    │       ├── [maze-runner](/libs/javascript/react/maze-runner)\n
+    │       ├── [quest](/libs/javascript/react/quest)\n
+    │       ├── [quote-builder](/libs/javascript/react/quote-builder)\n
+    │       └── [web-resume](/libs/javascript/react/web-resume)\n
+    └── python\n
+        ├── [anki-tools](/libs/python/anki-tools)\n
+        ├── [cli-tools](/libs/python/cli-tools)\n
+        ├── [maze-runner](/libs/python/maze-runner)\n
+        ├── neural-networks\n
+        │   ├── [abstract-base-classes](/libs/python/neural-networks/abstract-base-classes)\n
+        │   ├── [digit-recognition](/libs/python/neural-networks/digit-recognition)\n
+        │   ├── [market-analyzer](/libs/python/neural-networks/market-analyzer)\n
+        │   └── [open-ai-gym](/libs/python/neural-networks/open-ai-gym)\n
+        ├── [pyto-widgets](/libs/python/pyto-widgets)\n
+        ├── tensorflow\n
+        │   └── [open-ai-gym](/libs/python/tensorflow/open-ai-gym)\n
+        └── [web-crawlers](/libs/python/web-crawlers)\n
 
 ## Collaboration
 
