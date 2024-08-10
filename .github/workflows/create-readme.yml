@@ -18,7 +18,7 @@ jobs:
     - name: Build README.md
       run: |
         cd daedalus-mono
-        git config --global url."https://${{ secrets.PAN }}@github.com/".insteadOf "https://github.com/"
+        git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
         git submodule update --init --recursive
         
         echo "
@@ -29,7 +29,7 @@ jobs:
 
         ## My Other Projects
 
-        Each of my projects has its own dedicated repository. You can browse them by visiting my [GitHub profile](https://github.com/icarus612). Here's what you can expect:
+        Each of my main projects has its own dedicated repository. You can browse them by visiting my [GitHub profile](https://github.com/icarus612). Here's what you can expect:
 
         - **Project Overviews**: In each repository, you'll find a detailed README explaining the project's purpose, technology stack, and how to get it up and running.
 
