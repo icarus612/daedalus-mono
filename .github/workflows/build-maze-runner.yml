@@ -19,7 +19,7 @@ jobs:
       run: |
         git clone https://${{ secrets.PAT }}@github.com/icarus612/maze-runner-mono.git
 
-    -name: Remove old content
+    - name: Remove old content
       run: |
         rm -rf maze-runner-mono/apps
         rm -rf maze-runner-mono/libs
