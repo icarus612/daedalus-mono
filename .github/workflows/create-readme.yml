@@ -18,7 +18,8 @@ jobs:
     - name: Build README.md
       run: |
         cd daedalus-mono
-
+        ls -a
+        
         echo "
         # Daedalus Monorepo
         ## Built by: dev.icarus
@@ -60,7 +61,7 @@ jobs:
         ---
 
         © 2024 Icarus612. All Rights Reserved.
-        "
+        " >> README.md
 
     - name: Commit and push
       run: |
