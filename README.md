@@ -6,7 +6,7 @@ Hello there! 👋 I'm dev.icarus, a full-stack developer with a passion for buil
 
 ## My Other Projects
 
-Each of my projects has its own dedicated repository. You can browse them by visiting my [GitHub profile](https://github.com/icarus612). Here's what you can expect:
+Each of my main projects has its own dedicated repository. You can browse them by visiting my [GitHub profile](https://github.com/icarus612). Here's what you can expect:
 
 - **Project Overviews**: In each repository, you'll find a detailed README explaining the project's purpose, technology stack, and how to get it up and running.
 
@@ -35,7 +35,7 @@ daedalus-mono
     ├── javascript
     │   ├── node
     │   │   ├── <a href="/libs/javascript/node/build-scripts">build-scripts</a>
-    │   │   ├── dots-js
+    │   │   ├── <a href="/libs/javascript/node/dots-js">dots-js</a>
     │   │   ├── <a href="/libs/javascript/node/maze-runner">maze-runner</a>
     │   │   └── <a href="/libs/javascript/node/web-crawlers">web-crawlers</a>
     │   └── react
