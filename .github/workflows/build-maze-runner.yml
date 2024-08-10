@@ -52,11 +52,9 @@ jobs:
           
           ## Project Structure
           <pre>
-          " > README.md
-
+          " > README.m
 
           ./../daedalus-mono/libs/bash/github-actions/create-mono-file-tree.sh >> README.md
-
 
           echo "
           </pre>
