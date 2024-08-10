@@ -48,7 +48,7 @@ function build_tree() {
 }
 
 build_dir="$(pwd)"
-if [ -n "$1"]; then
+if [ -n "$1" ]; then
 		build_dir="$1"
 fi
 
