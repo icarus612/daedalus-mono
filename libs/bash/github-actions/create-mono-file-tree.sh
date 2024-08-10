@@ -13,10 +13,11 @@ print_tree() {
         if [ -d "$dir" ]; then
             local dir_name=$(basename "$dir")
             if [[ -f "$dir/README.md" || -f "$dir/README.txt" || -f "$dir/README" ]]; then
-                if [ $count -eq $total_dirs ]; then
-                    echo "${prefix}└── ${dir_name}"
+                local path=$(realpath --relative-to="$base_dir" "$dir")
+								if [ $count -eq $total_dirs ]; then
+                    echo "${prefix}└── (${dir_name})[/${path}]"
                 else
-                    echo "${prefix}├── ${dir_name}"
+                    echo "${prefix}├── (${dir_name})[/${path}]"
                 fi
             else
                 local subdirs=($dir/*)
@@ -42,7 +43,13 @@ print_tree() {
 
 build_tree() {
     local base_dir="$1"
-    echo "Project Structure:"
     echo "$(basename "$base_dir")"
     print_tree "$base_dir" "$base_dir" ""
 }
+
+build_dir="$(pwd)"
+if [ -n "$1"]; then
+		build_dir="$1"
+fi
+
+build_tree "$build_dir"
