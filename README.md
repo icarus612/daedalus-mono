@@ -16,29 +16,29 @@ Each of my projects has its own dedicated repository. You can browse them by vis
 <pre>
 
 daedalus-mono  
-├── apps  
-│   ├── flask  
+├── apps
+│   ├── flask
 │   │   ├── <a href="/apps/flask/maze-runner">maze-runner<\/a>
 │   │   ├── <a href="/apps/flask/pokedex">pokedex<\/a>
 │   │   └── <a href="/apps/flask/weather-fortcast">weather-fortcast<\/a>
-│   ├── microservices  
+│   ├── microservices
 │   │   └── <a href="/apps/microservices/market-bots">market-bots<\/a>
-│   └── next  
+│   └── next
 │       └── <a href="/apps/next/maze-runner">maze-runner<\/a>
-└── libs  
-    ├── bash  
+└── libs
+    ├── bash
     │   ├── <a href="/libs/bash/cli-tools">cli-tools<\/a>
     │   └── <a href="/libs/bash/github-actions">github-actions<\/a>
-    ├── golang  
+    ├── golang
     │   ├── <a href="/libs/golang/crud-server">crud-server<\/a>
     │   └── <a href="/libs/golang/maze-runner">maze-runner<\/a>
-    ├── javascript  
-    │   ├── node  
+    ├── javascript
+    │   ├── node
     │   │   ├── <a href="/libs/javascript/node/build-scripts">build-scripts<\/a>
-    │   │   ├── dots-js  
+    │   │   ├── dots-js
     │   │   ├── <a href="/libs/javascript/node/maze-runner">maze-runner<\/a>
     │   │   └── <a href="/libs/javascript/node/web-crawlers">web-crawlers<\/a>
-    │   └── react  
+    │   └── react
     │       ├── <a href="/libs/javascript/react/e-card">e-card<\/a>
     │       ├── <a href="/libs/javascript/react/labyrinth">labyrinth<\/a>
     │       ├── <a href="/libs/javascript/react/markdown-builder">markdown-builder<\/a>
@@ -46,17 +46,17 @@ daedalus-mono
     │       ├── <a href="/libs/javascript/react/quest">quest<\/a>
     │       ├── <a href="/libs/javascript/react/quote-builder">quote-builder<\/a>
     │       └── <a href="/libs/javascript/react/web-resume">web-resume<\/a>
-    └── python  
+    └── python
         ├── <a href="/libs/python/anki-tools">anki-tools<\/a>
         ├── <a href="/libs/python/cli-tools">cli-tools<\/a>
         ├── <a href="/libs/python/maze-runner">maze-runner<\/a>
-        ├── neural-networks  
+        ├── neural-networks
         │   ├── <a href="/libs/python/neural-networks/abstract-base-classes">abstract-base-classes<\/a>
         │   ├── <a href="/libs/python/neural-networks/digit-recognition">digit-recognition<\/a>
         │   ├── <a href="/libs/python/neural-networks/market-analyzer">market-analyzer<\/a>
         │   └── <a href="/libs/python/neural-networks/open-ai-gym">open-ai-gym<\/a>
         ├── <a href="/libs/python/pyto-widgets">pyto-widgets<\/a>
-        ├── tensorflow  
+        ├── tensorflow
         │   └── <a href="/libs/python/tensorflow/open-ai-gym">open-ai-gym<\/a>
         └── <a href="/libs/python/web-crawlers">web-crawlers<\/a>
 
