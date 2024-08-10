@@ -1,11 +1,4 @@
-#!/bin/bash
-
-find_readme_dirs() {
-    find "$1" -type d \( ! -regex '.*/\..*' \) | while read -r dir; do
-        if [[ -f "$dir/README.md" || -f "$dir/README.txt" || -f "$dir/README" ]]; then
-            echo "$dir"
-        fi
-    done
+done
 }
 
 print_tree() {
@@ -13,17 +6,35 @@ print_tree() {
     local current_dir="$2"
     local prefix="$3"
     local dirs=($current_dir/*)
+    local total_dirs=${#dirs[@]}
+    local count=0
 
     for dir in "${dirs[@]}"; do
+        ((count++))
         if [ -d "$dir" ]; then
             local dir_name=$(basename "$dir")
             if [[ -f "$dir/README.md" || -f "$dir/README.txt" || -f "$dir/README" ]]; then
-                echo "${prefix}${dir_name}"
+                if [ $count -eq $total_dirs ]; then
+                    echo "${prefix}└── ${dir_name}"
+                else
+                    echo "${prefix}├── ${dir_name}"
+                fi
             else
                 local subdirs=($dir/*)
                 if [ ${#subdirs[@]} -gt 0 ]; then
-                    echo "${prefix}${dir_name}"
-                    print_tree "$base_dir" "$dir" "    $prefix"
+                    if [ $count -eq $total_dirs ]; then
+                        echo "${prefix}└── ${dir_name}"
+                        print_tree "$base_dir" "$dir" "${prefix}    "
+                    else
+                        echo "${prefix}├── ${dir_name}"
+                        print_tree "$base_dir" "$dir" "${prefix}│   "
+                    fi
+                else
+                    if [ $count -eq $total_dirs ]; then
+                        echo "${prefix}└── ${dir_name}"
+                    else
+                        echo "${prefix}├── ${dir_name}"
+                    fi
                 fi
             fi
         fi
@@ -34,7 +45,7 @@ build_tree() {
     local base_dir="$1"
     echo "Project Structure:"
     echo "$(basename "$base_dir")"
-    print_tree "$base_dir" "$base_dir" "    "
+    print_tree "$base_dir" "$base_dir" ""
 }
 
 # Start building the tree from the current directory
