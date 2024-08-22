@@ -3,8 +3,9 @@ from bs4 import BeautifulSoup as soup
 from sys import argv 
 from os import makedirs
 
-
-def download_lib(lib='builtin', version='1.21.0'):
+lib='builtin'
+version='1.23.0'
+def download_lib(lib=lib, version=version):
   page =  soup(requests.get(f'https://pkg.go.dev/{lib}@go{version}').content, 'html.parser')
   decks= {}
 
@@ -37,5 +38,7 @@ def download_lib(lib='builtin', version='1.21.0'):
       file.writelines([f'{" | ".join(i)} \n' for i in cards])	
     
 if __name__ == '__main__':
-    lib, version = argv
-    download_lib(lib=lib, version=version)
+	l = argv[1] if len(argv) > 1 else lib
+	v = argv[2] if len(argv) > 2 else version
+
+	download_lib(lib=l, version=v)
