@@ -38,7 +38,7 @@ def download_lib(lib=lib, version=version):
 
 	for deck, cards in decks.items():
 		with open(f'{lib}/{deck}.txt', 'w') as file:
-			file.writelines([f'{" | ".join(i)} \n' for i in cards])	
+			file.writelines([f'{"|".join(i)} \n' for i in cards])	
 		
 if __name__ == '__main__':
 	l = argv[1] if len(argv) > 1 else lib
