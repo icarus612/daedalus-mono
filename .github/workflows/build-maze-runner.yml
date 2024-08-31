@@ -1,4 +1,4 @@
-name: Sync Repositories
+name: Build Maze Runner 
 
 on:
   push:
