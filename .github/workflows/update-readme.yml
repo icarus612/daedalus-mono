@@ -19,7 +19,7 @@ jobs:
       run: |
         cd daedalus-mono
         git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "git@github.com:"
-        git submodule update --init --recursive
+        git submodule update --init --recursive --remote
         
         echo "
         # Daedalus Monorepo
