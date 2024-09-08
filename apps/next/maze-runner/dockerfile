@@ -39,4 +39,4 @@ USER nextjs
 ENV PORT=${PORT:-8080}
 EXPOSE ${PORT}
 
-CMD ["npm", "run", "start"]
+CMD ["node", "server.js"]
