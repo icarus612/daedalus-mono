@@ -26,4 +26,4 @@ images:
 
 substitutions:
   _SERVICE_NAME: maze-runner-next-js-icarus64
-  _REGION: non-regional 
+  _REGION: non-regional
