@@ -6,8 +6,8 @@ steps:
     - '-t'
     - 'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA'
     - '-f'
-    - 'apps/next/dockerfile'
-    - 'apps/next'
+    - '$SERVICE_DIR/$SERVICE_NAME/$DOCKERFILE'
+    - '$SERVICE_DIR/$SERVICE_NAME'
 # Push the container image to Container Registry
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA']
@@ -30,7 +30,9 @@ images:
 - 'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA'
 
 substitutions:
-  _SERVICE_NAME: project-name (replace with your service name)
+  _SERVICE_DIR: ''
+  _DOCKERFILE: 'dockerfile'
+  _SERVICE_NAME: 'project-name (replace with your service name)'
   _REGION: us-central1
 options:
   defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
