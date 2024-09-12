@@ -6,8 +6,8 @@ steps:
     - '-t'
     - 'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA'
     - '-f'
-    - '$SERVICE_DIR/$SERVICE_NAME/$DOCKERFILE'
-    - '$SERVICE_DIR/$SERVICE_NAME'
+    - '$_SERVICE_DIR/$_SERVICE_NAME/$_DOCKERFILE'
+    - '$_SERVICE_DIR/$_SERVICE_NAME'
 # Push the container image to Container Registry
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA']
