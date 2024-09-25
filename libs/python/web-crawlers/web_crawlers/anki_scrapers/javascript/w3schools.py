@@ -45,12 +45,12 @@ for idx, t in enumerate(title_placement):
 					ref = soup(requests.get(f'https://www.w3schools.com/jsref/{tr.find("a")["href"]}').content, 'html.parser')
 					b = [i.text for i in tr.find_all('td')]
 					try: 		
-						back_extended = ref.find('h2', text='Syntax').findNext().findChild('div').decode_contents().strip()
+						back_extended = ref.find('h2', string='Syntax').findNext().findChild('div').decode_contents().strip()
 						front = f'{bold}: {back_extended}'
 					except Exception as e:
 						back_extended = ''
 						front = f'{bold}: {b[0].lower()}'
-						print(f'Error at {ref.find("h2", text="Syntax")}: {e}')
+						print(f'Error at {ref.find("h2", string="Syntax")}: {e}')
 					back_basic = f'{bold} that {b[1].lower()}.'
 					additional_info = ''
 					version = ''
