@@ -52,6 +52,7 @@ function gup() {
 			echo "Entering $location"
 			cd $location
 			git add --all
+			git pull >/dev/null 2>&1
 			if ! git diff-index --quiet $branch HEAD; then
 				echo "Changes found"
 				git push origin $branch -q
