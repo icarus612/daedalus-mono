@@ -18,15 +18,7 @@ jobs:
     - name: Build Maze Runner Mono
       run: |
         git clone https://${{ secrets.PAT }}@github.com/icarus612/maze-runner-mono.git
-
-    - name: Debug
-      run: |
-        if [ -n "${{ secrets.PAT }}" ]; then
-          echo "NPM_TOKEN exists and is not empty ✅"
-          echo "Length of token: ${#NODE_AUTH_TOKEN}"
-        else
-          echo "NPM_TOKEN is empty or not set ❌"
-        fi      
+   
     - name: Remove old content
       run: |
         rm -rf maze-runner-mono/apps/*
