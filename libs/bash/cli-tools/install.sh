@@ -11,7 +11,7 @@ function install_all() {
 	local files_to_check=(.bashrc .bash_profile .zshrc .zprofile)
 	local source_found=false
 	local installed_items=()
-	local bash_files=$(dirname $0)/src/*.sh
+	local bash_files=$(find $(dirname $0)/src -name "*.sh" 2>/dev/null)
 
 	if [[ ! -d "$dae_dir" ]]; then
 		echo "Creating Daedalus directory"
@@ -20,8 +20,9 @@ function install_all() {
 
 	echo "Installing Daedalus: This is a linux/unix only script"
 	if [[ -d "$dae_sh" ]]; then
-		echo "Warning: This script will overwrite any existing daedalus bash installation"
-		read should_continue -p "Do you want to continue? (Y/n): " -n 1 -r
+		echo "Warning: This script will overwrite any existing daedalus bash installations"
+		read -p "Do you want to continue? (Y/n): " -n 1 -r should_continue < /dev/tty
+
 		if [[ $should_continue =~ ^[Nn]$ ]]; then
 			echo "Aborting installation"
 			exit 1

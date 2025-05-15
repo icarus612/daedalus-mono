@@ -44,7 +44,7 @@ function gup() {
 	done
 	shift $((OPTIND - 1))
 	OPTIND=1
-
+	echo $message
 	if [[ "$is_submodule" = true ]]; then
 		find $sub_base -type f -name .git | while read line; do
 			local location=$(dirname $line)
