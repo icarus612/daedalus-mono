@@ -82,6 +82,7 @@ function gup() {
 		fi
 	fi
 
+	git pull >/dev/null 2>&1
 	git add --all
 	git commit -m "$message"
 	if [[ "$is_origin" = true ]]; then
