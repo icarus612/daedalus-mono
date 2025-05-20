@@ -55,10 +55,10 @@ function gup() {
 			git pull >/dev/null 2>&1
 			if ! git diff-index --quiet $branch HEAD; then
 				echo "Changes found"
-				git push origin $branch -q
-
 				git commit -m "$message" -q
+
 				echo "Pushing changes to $loc_base"
+				git push origin $branch -q
 			else
 				echo "No changes in $loc_base"
 			fi
