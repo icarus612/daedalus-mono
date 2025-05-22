@@ -3,11 +3,11 @@ name: Sync Go Libraries
 on:
   push:
     branches: [main]
-    paths: ['libs/go/**']
+    paths: ['libs/golang/**']
   pull_request:
     branches: [main]
     types: [closed]
-    paths: ['libs/go/**']
+    paths: ['libs/golang/**']
   workflow_dispatch:
 
 jobs:
@@ -80,7 +80,7 @@ jobs:
               cat > README.md << EOF
           # ${lib_name}
           
-          This is a Go library extracted from the [dae-go monorepo](https://github.com/dae-go/monorepo).
+          This is a Go library extracted from the [dae-go monorepo](https://github.com/daedalus-mono/).
           
           ## Installation
           
@@ -96,7 +96,7 @@ jobs:
           
           ## Development
           
-          This library is automatically synced from the monorepo. Please make changes in the [main repository](https://github.com/dae-go/monorepo/tree/main/libs/go/${lib_name}).
+          This library is automatically synced from the monorepo. Please make changes in the [main repository](https://github.com/icarus612/daedalus-monorepo/tree/main/libs/golang/${lib_name}).
           EOF
             fi
             
@@ -142,7 +142,7 @@ jobs:
           
           # Find all Go libraries and sync them
           cd "${GITHUB_WORKSPACE}"
-          if [ -d "libs/go" ]; then
+          if [ -d "libs/golang" ]; then
             for lib_dir in libs/golang/*/; do
               if [ -d "$lib_dir" ]; then
                 lib_name=$(basename "$lib_dir")
@@ -150,7 +150,7 @@ jobs:
               fi
             done
           else
-            echo "No libs/go directory found"
+            echo "No libs/golang directory found"
             exit 1
           fi
 
