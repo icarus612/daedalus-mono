@@ -1,0 +1,160 @@
+name: Sync Go Libraries
+
+on:
+  push:
+    branches: [main]
+    paths: ['libs/go/**']
+  pull_request:
+    branches: [main]
+    types: [closed]
+    paths: ['libs/go/**']
+
+jobs:
+  sync-go-libs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout monorepo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history for proper git operations
+          token: ${{ secrets.PAT }}
+
+      - name: Setup Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Sync Go Libraries
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+          ORG_NAME: dae-go
+        run: |
+          # Function to sync a single library
+          sync_library() {
+            local lib_name=$1
+            local lib_path="libs/go/$lib_name"
+            local repo_name="$lib_name"
+            local target_repo="https://x-access-token:${GITHUB_TOKEN}@github.com/${ORG_NAME}/${repo_name}.git"
+            
+            echo "Syncing $lib_name..."
+            
+            # Create a temporary directory for the target repo
+            temp_dir=$(mktemp -d)
+            cd "$temp_dir"
+            
+            # Check if target repo exists, if not create it
+            if ! git ls-remote "$target_repo" &>/dev/null; then
+              echo "Creating repository ${ORG_NAME}/${repo_name}..."
+              curl -X POST \
+                -H "Authorization: token ${GITHUB_TOKEN}" \
+                -H "Accept: application/vnd.github.v3+json" \
+                "https://api.github.com/orgs/${ORG_NAME}/repos" \
+                -d "{\"name\":\"${repo_name}\",\"private\":false,\"description\":\"Go library: ${lib_name}\"}"
+              
+              # Wait a moment for repo creation
+              sleep 2
+            fi
+            
+            # Clone or initialize target repo
+            if git clone "$target_repo" . 2>/dev/null; then
+              echo "Cloned existing repository"
+            else
+              echo "Initializing new repository"
+              git init
+              git remote add origin "$target_repo"
+            fi
+            
+            # Copy library files from monorepo
+            rsync -av --delete \
+              --exclude='.git' \
+              "${GITHUB_WORKSPACE}/${lib_path}/" \
+              ./
+            
+            # Create/update README if it doesn't exist
+            if [ ! -f README.md ]; then
+              cat > README.md << EOF
+          # ${lib_name}
+          
+          This is a Go library extracted from the [dae-go monorepo](https://github.com/dae-go/monorepo).
+          
+          ## Installation
+          
+          \`\`\`bash
+          go get github.com/${ORG_NAME}/${repo_name}
+          \`\`\`
+          
+          ## Usage
+          
+          \`\`\`go
+          import "github.com/${ORG_NAME}/${repo_name}"
+          \`\`\`
+          
+          ## Development
+          
+          This library is automatically synced from the monorepo. Please make changes in the [main repository](https://github.com/dae-go/monorepo/tree/main/libs/go/${lib_name}).
+          EOF
+            fi
+            
+            # Validate Go module
+            if [ -f "${GITHUB_WORKSPACE}/${lib_path}/go.mod" ]; then
+              echo "Found go.mod for $lib_name"
+              # Update module path in go.mod to point to new repo
+              cd "${GITHUB_WORKSPACE}/${lib_path}"
+              module_name=$(go mod edit -print | grep "^module " | cut -d' ' -f2)
+              expected_module="github.com/${ORG_NAME}/${repo_name}"
+              
+              if [ "$module_name" != "$expected_module" ]; then
+                echo "Updating module path from $module_name to $expected_module"
+                cd "$temp_dir"
+                go mod edit -module="$expected_module"
+              fi
+            else
+              echo "No go.mod found for $lib_name, creating one..."
+              cd "$temp_dir"
+              go mod init "github.com/${ORG_NAME}/${repo_name}"
+            fi
+            
+            # Check if there are changes to commit
+            if ! git diff --staged --quiet; then
+              # Get the latest commit hash from the monorepo for this library
+              cd "${GITHUB_WORKSPACE}"
+              latest_commit=$(git log -1 --format="%H %s" -- "$lib_path")
+              commit_hash=$(echo "$latest_commit" | cut -d' ' -f1)
+              commit_msg=$(echo "$latest_commit" | cut -d' ' -f2-)
+              
+              cd "$temp_dir"
+              git commit -m "Sync from monorepo: $commit_msg" -m "Source commit: $commit_hash"
+              git push origin main
+              echo "Successfully synced $lib_name"
+            else
+              echo "No changes detected for $lib_name"
+            fi
+            
+            # Cleanup
+            cd "${GITHUB_WORKSPACE}"
+            rm -rf "$temp_dir"
+          }
+          
+          # Find all Go libraries and sync them
+          cd "${GITHUB_WORKSPACE}"
+          if [ -d "libs/go" ]; then
+            for lib_dir in libs/go/*/; do
+              if [ -d "$lib_dir" ]; then
+                lib_name=$(basename "$lib_dir")
+                sync_library "$lib_name"
+              fi
+            done
+          else
+            echo "No libs/go directory found"
+            exit 1
+          fi
+
+      - name: Summary
+        run: |
+          echo "✅ Go library sync completed"
+          echo "All libraries in libs/go/* have been synced to separate repositories in the dae-go organization"

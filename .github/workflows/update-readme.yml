@@ -2,7 +2,10 @@ name: Update README.md
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+  pull_request:
+    branches: [main]
+    types: [closed]
   workflow_dispatch:
 
 jobs:
