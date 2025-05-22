@@ -17,7 +17,6 @@ jobs:
       - name: Checkout monorepo
         uses: actions/checkout@v4
         with:
-          path: daedalus-mono
           fetch-depth: 0 # Full history for proper git operations
       - name: Setup Git
         run: |
