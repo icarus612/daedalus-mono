@@ -34,10 +34,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PAT }}
           ORG_NAME: dae-go
         run: |
+          pwd
+          ls
           # Function to sync a single library
           sync_library() {
-            pwd
-            ls
             local lib_name=$1
             local lib_path="libs/golang/$lib_name"
             local repo_name="$lib_name"
