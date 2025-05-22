@@ -19,8 +19,6 @@ jobs:
         with:
           path: daedalus-mono
           fetch-depth: 0 # Full history for proper git operations
-          token: ${{ secrets.PAT }}
-
       - name: Setup Git
         run: |
           git config --global user.name "github-actions[bot]"
