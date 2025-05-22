@@ -34,11 +34,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
         run: |
-          if [ -z "$GITHUB_TOKEN" ]; then
-            echo "❌ ERROR: SYNC_TOKEN secret is not set!"
-            echo "Please add your Personal Access Token as a repository secret named 'SYNC_TOKEN'"
-            exit 1
-          fi
           
           # Test token validity
           echo "🔐 Testing GitHub token..."
