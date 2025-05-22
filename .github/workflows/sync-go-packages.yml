@@ -13,11 +13,15 @@ on:
 jobs:
   sync-go-libs:
     runs-on: ubuntu-latest
+    # Only run on merged PRs or direct pushes to main
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     steps:
       - name: Checkout monorepo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Full history for proper git operations
+          token: ${{ secrets.SYNC_TOKEN }}
+
       - name: Setup Git
         run: |
           git config --global user.name "github-actions[bot]"
@@ -28,13 +32,40 @@ jobs:
         with:
           go-version: '1.21'
 
+      - name: Validate Token
+        env:
+          GITHUB_TOKEN: ${{ secrets.SYNC_TOKEN }}
+        run: |
+          if [ -z "$GITHUB_TOKEN" ]; then
+            echo "❌ ERROR: SYNC_TOKEN secret is not set!"
+            echo "Please add your Personal Access Token as a repository secret named 'SYNC_TOKEN'"
+            exit 1
+          fi
+          
+          # Test token validity
+          echo "🔐 Testing GitHub token..."
+          response=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
+            "https://api.github.com/user")
+          
+          if echo "$response" | grep -q '"login"'; then
+            username=$(echo "$response" | grep '"login"' | cut -d'"' -f4)
+            echo "✅ Token is valid for user: $username"
+          else
+            echo "❌ ERROR: Invalid GitHub token!"
+            echo "Response: $response"
+            echo ""
+            echo "Please check that your SYNC_TOKEN secret:"
+            echo "1. Is a valid Personal Access Token"
+            echo "2. Has 'repo' and 'admin:org' permissions"
+            echo "3. Is not expired"
+            exit 1
+          fi
+
       - name: Sync Go Libraries
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
+          GITHUB_TOKEN: ${{ secrets.SYNC_TOKEN }}
           ORG_NAME: dae-go
         run: |
-          pwd
-          ls
           # Function to sync a single library
           sync_library() {
             local lib_name=$1
@@ -42,33 +73,77 @@ jobs:
             local repo_name="$lib_name"
             local target_repo="https://x-access-token:${GITHUB_TOKEN}@github.com/${ORG_NAME}/${repo_name}.git"
             
-            echo "Syncing $lib_name..."
+            echo "🔄 Syncing $lib_name..."
+            
+            # Check if target repo exists first
+            repo_exists=$(curl -s -o /dev/null -w "%{http_code}" \
+              -H "Authorization: token ${GITHUB_TOKEN}" \
+              -H "Accept: application/vnd.github.v3+json" \
+              "https://api.github.com/repos/${ORG_NAME}/${repo_name}")
+            
+            if [ "$repo_exists" -eq 404 ]; then
+              echo "📦 Creating repository ${ORG_NAME}/${repo_name}..."
+              create_response=$(curl -s -X POST \
+                -H "Authorization: token ${GITHUB_TOKEN}" \
+                -H "Accept: application/vnd.github.v3+json" \
+                "https://api.github.com/orgs/${ORG_NAME}/repos" \
+                -d "{
+                  \"name\":\"${repo_name}\",
+                  \"description\":\"Go library: ${lib_name} (auto-synced from monorepo)\",
+                  \"private\":false,
+                  \"auto_init\":true,
+                  \"gitignore_template\":\"Go\"
+                }")
+              
+              # Check if repo creation was successful
+              if echo "$create_response" | grep -q '"id"'; then
+                echo "✅ Repository created successfully"
+                # Wait for repo to be fully initialized
+                sleep 5
+              else
+                echo "❌ Failed to create repository:"
+                echo "$create_response"
+                
+                # Check if it's a permission issue
+                if echo "$create_response" | grep -q "Bad credentials"; then
+                  echo ""
+                  echo "🔑 PERMISSION ERROR: Your token doesn't have the required permissions."
+                  echo "Please ensure your SYNC_TOKEN has:"
+                  echo "  - 'repo' (Full control of private repositories)"
+                  echo "  - 'admin:org' (Full control of orgs and teams)"
+                fi
+                return 1
+              fi
+            elif [ "$repo_exists" -eq 200 ]; then
+              echo "✅ Repository already exists"
+            else
+              echo "❌ Error checking repository (HTTP $repo_exists)"
+              return 1
+            fi
             
             # Create a temporary directory for the target repo
             temp_dir=$(mktemp -d)
             cd "$temp_dir"
             
-            # Check if target repo exists, if not create it
-            if ! git ls-remote "$target_repo" &>/dev/null; then
-              echo "Creating repository ${ORG_NAME}/${repo_name}..."
-              curl -X POST \
-                -H "Authorization: token ${GITHUB_TOKEN}" \
-                -H "Accept: application/vnd.github.v3+json" \
-                "https://api.github.com/orgs/${ORG_NAME}/repos" \
-                -d "{\"name\":\"${repo_name}\",\"private\":false,\"description\":\"Go library: ${lib_name}\"}"
-              
-              # Wait a moment for repo creation
-              sleep 2
-            fi
+            # Clone the target repo (it should exist now)
+            max_retries=3
+            retry_count=0
             
-            # Clone or initialize target repo
-            if git clone "$target_repo" . 2>/dev/null; then
-              echo "Cloned existing repository"
-            else
-              echo "Initializing new repository"
-              git init
-              git remote add origin "$target_repo"
-            fi
+            while [ $retry_count -lt $max_retries ]; do
+              if git clone "$target_repo" . 2>/dev/null; then
+                echo "✅ Successfully cloned repository"
+                break
+              else
+                retry_count=$((retry_count + 1))
+                echo "⏳ Clone attempt $retry_count failed, retrying in 3 seconds..."
+                sleep 3
+                
+                if [ $retry_count -eq $max_retries ]; then
+                  echo "❌ Failed to clone repository after $max_retries attempts"
+                  return 1
+                fi
+              fi
+            done
             
             # Copy library files from monorepo
             rsync -av --delete \
@@ -81,7 +156,7 @@ jobs:
               cat > README.md << EOF
           # ${lib_name}
           
-          This is a Go library extracted from the [dae-go monorepo](https://github.com/daedalus-mono/).
+          This is a Go library extracted from the [dae-go monorepo](https://github.com/dae-go/monorepo).
           
           ## Installation
           
@@ -97,25 +172,25 @@ jobs:
           
           ## Development
           
-          This library is automatically synced from the monorepo. Please make changes in the [main repository](https://github.com/icarus612/daedalus-monorepo/tree/main/libs/golang/${lib_name}).
+          This library is automatically synced from the monorepo. Please make changes in the [main repository](https://github.com/dae-go/monorepo/tree/main/libs/go/${lib_name}).
           EOF
             fi
             
             # Validate Go module
             if [ -f "${GITHUB_WORKSPACE}/${lib_path}/go.mod" ]; then
-              echo "Found go.mod for $lib_name"
+              echo "📄 Found go.mod for $lib_name"
               # Update module path in go.mod to point to new repo
               cd "${GITHUB_WORKSPACE}/${lib_path}"
               module_name=$(go mod edit -print | grep "^module " | cut -d' ' -f2)
               expected_module="github.com/${ORG_NAME}/${repo_name}"
               
               if [ "$module_name" != "$expected_module" ]; then
-                echo "Updating module path from $module_name to $expected_module"
+                echo "🔧 Updating module path from $module_name to $expected_module"
                 cd "$temp_dir"
                 go mod edit -module="$expected_module"
               fi
             else
-              echo "No go.mod found for $lib_name, creating one..."
+              echo "📝 No go.mod found for $lib_name, creating one..."
               cd "$temp_dir"
               go mod init "github.com/${ORG_NAME}/${repo_name}"
             fi
@@ -130,10 +205,28 @@ jobs:
               
               cd "$temp_dir"
               git commit -m "Sync from monorepo: $commit_msg" -m "Source commit: $commit_hash"
-              git push origin main
-              echo "Successfully synced $lib_name"
+              
+              # Push with retry logic
+              max_push_retries=3
+              push_retry_count=0
+              
+              while [ $push_retry_count -lt $max_push_retries ]; do
+                if git push origin main 2>/dev/null; then
+                  echo "✅ Successfully synced $lib_name"
+                  break
+                else
+                  push_retry_count=$((push_retry_count + 1))
+                  echo "⏳ Push attempt $push_retry_count failed, retrying in 2 seconds..."
+                  sleep 2
+                  
+                  if [ $push_retry_count -eq $max_push_retries ]; then
+                    echo "❌ Failed to push $lib_name after $max_push_retries attempts"
+                    return 1
+                  fi
+                fi
+              done
             else
-              echo "No changes detected for $lib_name"
+              echo "ℹ️  No changes detected for $lib_name"
             fi
             
             # Cleanup
@@ -144,18 +237,42 @@ jobs:
           # Find all Go libraries and sync them
           cd "${GITHUB_WORKSPACE}"
           if [ -d "libs/golang" ]; then
+            echo "🔍 Searching for Go libraries in libs/golang/..."
+            lib_count=0
+            success_count=0
+            
             for lib_dir in libs/golang/*/; do
               if [ -d "$lib_dir" ]; then
                 lib_name=$(basename "$lib_dir")
-                sync_library "$lib_name"
+                echo ""
+                echo "===================="
+                echo "Processing: $lib_name"
+                echo "===================="
+                
+                lib_count=$((lib_count + 1))
+                if sync_library "$lib_name"; then
+                  success_count=$((success_count + 1))
+                else
+                  echo "❌ Failed to sync $lib_name"
+                fi
               fi
             done
+            
+            echo ""
+            echo "📊 Sync Summary:"
+            echo "   Total libraries: $lib_count"
+            echo "   Successfully synced: $success_count"
+            echo "   Failed: $((lib_count - success_count))"
+            
+            if [ $success_count -lt $lib_count ]; then
+              exit 1
+            fi
           else
-            echo "No libs/golang directory found"
+            echo "❌ No libs/golang directory found"
             exit 1
           fi
 
       - name: Summary
         run: |
-          echo "✅ Go library sync completed"
+          echo "✅ Go library sync completed successfully!"
           echo "All libraries in libs/golang/* have been synced to separate repositories in the dae-go organization"
