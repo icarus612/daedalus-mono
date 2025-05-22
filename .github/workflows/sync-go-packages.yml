@@ -14,13 +14,11 @@ jobs:
   sync-go-libs:
     runs-on: ubuntu-latest
     # Only run on merged PRs or direct pushes to main
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     steps:
       - name: Checkout monorepo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Full history for proper git operations
-          token: ${{ secrets.SYNC_TOKEN }}
 
       - name: Setup Git
         run: |
@@ -34,7 +32,7 @@ jobs:
 
       - name: Validate Token
         env:
-          GITHUB_TOKEN: ${{ secrets.SYNC_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
         run: |
           if [ -z "$GITHUB_TOKEN" ]; then
             echo "❌ ERROR: SYNC_TOKEN secret is not set!"
@@ -63,7 +61,7 @@ jobs:
 
       - name: Sync Go Libraries
         env:
-          GITHUB_TOKEN: ${{ secrets.SYNC_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
           ORG_NAME: dae-go
         run: |
           # Function to sync a single library
