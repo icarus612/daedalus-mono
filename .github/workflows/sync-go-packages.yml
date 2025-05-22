@@ -143,7 +143,7 @@ jobs:
           # Find all Go libraries and sync them
           cd "${GITHUB_WORKSPACE}"
           if [ -d "libs/go" ]; then
-            for lib_dir in libs/go/*/; do
+            for lib_dir in libs/golang/*/; do
               if [ -d "$lib_dir" ]; then
                 lib_name=$(basename "$lib_dir")
                 sync_library "$lib_name"
@@ -157,4 +157,4 @@ jobs:
       - name: Summary
         run: |
           echo "✅ Go library sync completed"
-          echo "All libraries in libs/go/* have been synced to separate repositories in the dae-go organization"
+          echo "All libraries in libs/golang/* have been synced to separate repositories in the dae-go organization"
