@@ -77,7 +77,7 @@ jobs:
             # Create/update README if it doesn't exist
             if [ ! -f README.md ]; then
               touch README.md
-              echo ""
+              echo "
                 # ${lib_name}
 
                 This is a Go library extracted from [daedalus-mono](https://github.com/daedalus-mono/).
