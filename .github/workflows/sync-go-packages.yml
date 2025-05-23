@@ -108,6 +108,8 @@ jobs:
               go mod init "github.com/${ORG_NAME}/${repo_name}"
             fi
             
+            # Ensure we're in the temp directory before git operations
+            cd "$temp_dir"
             git add -A
             
             echo "Git status after adding files:"
