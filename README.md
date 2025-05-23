@@ -32,7 +32,10 @@ daedalus-mono
 │   │   └── <a href="/libs/bash/github-actions">github-actions</a>
 │   ├── golang
 │   │   ├── <a href="/libs/golang/crud-server">crud-server</a>
-│   │   └── <a href="/libs/golang/maze-runner">maze-runner</a>
+│   │   ├── <a href="/libs/golang/maze-runner">maze-runner</a>
+│   │   └── process-monitor
+│   │       ├── cmd
+│   │       └── lib
 │   ├── javascript
 │   │   ├── node
 │   │   │   ├── <a href="/libs/javascript/node/build-scripts">build-scripts</a>
