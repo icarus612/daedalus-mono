@@ -119,8 +119,15 @@ jobs:
               go mod init "github.com/${ORG_NAME}/${repo_name}"
             fi
             
-            # Check if there are changes to commit
-            if ! git diff --staged --quiet; then
+            # Add all files to git and check for changes
+            git add .
+            
+            # Debug output
+            echo "Git status after adding files:"
+            git status --porcelain
+            
+            # Check if there are changes to commit or if this is a new repo
+            if [ -n "$(git status --porcelain --staged)" ] || [ ! -f .git/refs/heads/main ]; then
               # Get the latest commit hash from the monorepo for this library
               cd "${GITHUB_WORKSPACE}"
               latest_commit=$(git log -1 --format="%H %s" -- "$lib_path")
@@ -128,7 +135,16 @@ jobs:
               commit_msg=$(echo "$latest_commit" | cut -d' ' -f2-)
               
               cd "$temp_dir"
-              git commit -m "Sync from monorepo: $commit_msg" -m "Source commit: $commit_hash"
+              
+              # Handle new vs existing repos
+              if [ ! -f .git/refs/heads/main ]; then
+                echo "Creating initial commit for new repository"
+                git commit -m "Initial sync from monorepo: $commit_msg" -m "Source commit: $commit_hash"
+                git branch -M main
+              else
+                git commit -m "Sync from monorepo: $commit_msg" -m "Source commit: $commit_hash"
+              fi
+              
               git push origin main
               echo "Successfully synced $lib_name"
             else
