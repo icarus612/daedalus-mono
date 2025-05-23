@@ -1,13 +1,15 @@
 package lib
 
-type path map[point]bool
+type Point [3]int
 
-func (p path) add(s point) {
+type Path map[Point]bool
+
+func (p Path) Add(s Point) {
 	p[s] = true
 }
 
-func (p path) toSlice() []point {
-	var s []point
+func (p Path) ToSlice() []Point {
+	var s []Point
 	for k, v := range p {
 		if v {
 			s = append(s, k)

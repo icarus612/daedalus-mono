@@ -4,26 +4,29 @@ import (
 	"math/rand"
 )
 
-type maze struct {
-	layout    layout
-	startChar rune
-	endChar   rune
-	floorChar rune
-	wallChar  rune
-	openChar  rune
+type Layout [][][]Node
+type Floor [][]Node
+
+type Maze struct {
+	Layout    Layout
+	StartChar rune
+	EndChar   rune
+	FloorChar rune
+	WallChar  rune
+	OpenChar  rune
 }
 
-func (m *maze) BuildNew(build [3]int, buildType rune) {
+func (m *Maze) BuildNew(build [3]int, buildType rune) {
 	var (
-		s               point
-		e               point
+		s               Point
+		e               Point
 		length               = build[0]
 		width                = build[1]
 		height               = build[2]
-		l                    = m.layout
-		openPoints      path = make(path)
-		localOpenPoints path = make(path)
-		floorPoints     path = make(path)
+		l                    = m.Layout
+		openPoints      Path = make(Path)
+		localOpenPoints Path = make(Path)
+		floorPoints     Path = make(Path)
 		rls                  = rand.Int()%(length-2) + 1
 		rws                  = rand.Int()%(width-2) + 1
 		rle                  = rand.Int()%(length-2) + 1
@@ -37,26 +40,26 @@ func (m *maze) BuildNew(build [3]int, buildType rune) {
 	for z := 0; z < height; z++ {
 		for y := 0; y < width; y++ {
 			for x := 0; x < length; x++ {
-				p := point{z, y, x}
-				n := node{
-					location: p,
+				p := Point{z, y, x}
+				n := Node{
+					Location: p,
 				}
 				if p[2] == 0 || p[1] == 0 || p[2] == length-1 || p[1] == width-1 {
-					n.value = m.wallChar
+					n.Value = m.WallChar
 				} else {
 					rng := rand.Int() % 3
 					if rng%2 == 1 {
-						n.value = m.wallChar
+						n.Value = m.WallChar
 					} else {
 						localOpenPoints[p] = true
-						n.value = m.openChar
+						n.Value = m.OpenChar
 					}
 				}
 				l[z][y][x] = n
 			}
 		}
 		for i := 0; i <= fa && z < height-1; i++ {
-			f := localOpenPoints.toSlice()[rand.Int()%len(localOpenPoints)]
+			f := localOpenPoints.ToSlice()[rand.Int()%len(localOpenPoints)]
 			floorPoints[f] = true
 			f[0]++
 			floorPoints[f] = true
@@ -65,62 +68,47 @@ func (m *maze) BuildNew(build [3]int, buildType rune) {
 		for k, v := range localOpenPoints {
 			openPoints[k] = v
 		}
-		localOpenPoints = make(path)
+		localOpenPoints = make(Path)
 	}
 
 	for k, v := range floorPoints {
 		if v {
-			l[k[0]][k[1]][k[2]].value = m.floorChar
+			l[k[0]][k[1]][k[2]].Value = m.FloorChar
 		}
 	}
 
-	//switch buildType {
-	//case 'b':
-
-	//default:
-	//	s = openPoints.toSlice()[rand.Int()%len(openPoints)]
-	//	delete(openPoints, s)
-	//	e = openPoints.toSlice()[rand.Int()%len(openPoints)]
-	//	delete(openPoints, e)
-	//}
-
-	s = point{0, rws, rls}
-	e = point{height - 1, rwe, rle}
+	s = Point{0, rws, rls}
+	e = Point{height - 1, rwe, rle}
 	delete(openPoints, s)
 	delete(openPoints, e)
 
-	l[s[0]][s[1]][s[2]].value = m.startChar
-	l[e[0]][e[1]][e[2]].value = m.endChar
+	l[s[0]][s[1]][s[2]].Value = m.StartChar
+	l[e[0]][e[1]][e[2]].Value = m.EndChar
 }
 
-func (m maze) ViewLayout() {
-	m.layout.print()
+func (m Maze) ViewLayout() {
+	m.Layout.Print()
 }
 
-func Maze(b [3]int, buildType rune) maze {
-	//if len(build) == 2 {
-	//	return maze[floor]
-	//} else {
-	//	return maze[dungon]
-	//}
+func NewMaze(b [3]int, buildType rune) Maze {
 	if b[2] == 0 {
 		b[2] = 1
 	}
 
-	l := make(layout, b[2])
+	l := make(Layout, b[2])
 	for i := range l {
-		l[i] = make(floor, b[1])
+		l[i] = make(Floor, b[1])
 		for j := range l[i] {
-			l[i][j] = make([]node, b[0])
+			l[i][j] = make([]Node, b[0])
 		}
 	}
-	m := maze{
-		startChar: 's',
-		endChar:   'e',
-		floorChar: 'f',
-		wallChar:  '#',
-		openChar:  ' ',
-		layout:    l,
+	m := Maze{
+		StartChar: 's',
+		EndChar:   'e',
+		FloorChar: 'f',
+		WallChar:  '#',
+		OpenChar:  ' ',
+		Layout:    l,
 	}
 	m.BuildNew(b, buildType)
 	return m

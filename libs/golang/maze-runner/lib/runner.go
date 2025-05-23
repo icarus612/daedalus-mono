@@ -5,61 +5,60 @@ import (
 	"slices"
 )
 
-type runner struct {
+type Runner struct {
 	Completed    bool
-	pathChar     rune
-	shortestPath path
-	visited      []point
-	toVisit      []rNode
-	start        rNode
-	end          rNode
-	maze         maze
-	mappedLayout layout
+	PathChar     rune
+	ShortestPath Path
+	Visited      []Point
+	ToVisit      []RunnerNode
+	Start        RunnerNode
+	End          RunnerNode
+	Maze         Maze
+	MappedLayout Layout
 }
 
-func (r *runner) findEndpoints() {
+func (r *Runner) FindEndpoints() {
 	var (
-		m  = r.maze
-		sc = m.startChar
-		ec = m.endChar
+		m  = r.Maze
+		sc = m.StartChar
+		ec = m.EndChar
 	)
-	m.layout.traverse(
-		func(n node) {
-			rn := runNode(n)
-			switch n.value {
+	m.Layout.Traverse(
+		func(n Node) {
+			rn := NewRunnerNode(n)
+			switch n.Value {
 			case sc:
-				r.start = rn
+				r.Start = rn
 			case ec:
-				r.end = rn
+				r.End = rn
 			}
 		},
 	)
 }
 
-func (r *runner) lookAround(n *rNode) {
+func (r *Runner) LookAround(n *RunnerNode) {
 	var (
-		m  = r.maze
-		fc = m.floorChar
-		oc = m.openChar
-		sc = m.startChar
+		m  = r.Maze
+		fc = m.FloorChar
+		oc = m.OpenChar
+		sc = m.StartChar
 	)
 
-	switch n.value {
+	switch n.Value {
 	case oc, sc, fc:
-		r.checkSpace(n)
+		r.CheckSpace(n)
 		fallthrough
 	case fc:
-		r.checkStairs(n)
+		r.CheckStairs(n)
 	}
-
 }
 
-func (r *runner) checkStairs(n *rNode) {
+func (r *Runner) CheckStairs(n *RunnerNode) {
 	var (
-		m   = r.maze
-		l   = m.layout
-		nl  = n.location
-		fc  = m.floorChar
+		m   = r.Maze
+		l   = m.Layout
+		nl  = n.Location
+		fc  = m.FloorChar
 		nl0 = nl[0]
 		nl1 = nl[1]
 		nl2 = nl[2]
@@ -67,72 +66,72 @@ func (r *runner) checkStairs(n *rNode) {
 
 	if nl0 > 0 {
 		pf := l[nl0-1][nl1][nl2]
-		if pf.value == fc {
-			n.addChild(runNode(pf))
+		if pf.Value == fc {
+			n.AddChild(NewRunnerNode(pf))
 		}
 	}
 	if nl0 < len(l)-1 {
 		pb := l[nl0+1][nl1][nl2]
-		if pb.value == fc {
-			n.addChild(runNode(pb))
+		if pb.Value == fc {
+			n.AddChild(NewRunnerNode(pb))
 		}
 	}
 }
 
-func (r *runner) checkSpace(n *rNode) {
+func (r *Runner) CheckSpace(n *RunnerNode) {
 	var (
-		m   = r.maze
-		oc  = m.openChar
-		fc  = m.floorChar
-		sc  = m.startChar
-		ec  = m.endChar
-		nl  = n.location
+		m   = r.Maze
+		oc  = m.OpenChar
+		fc  = m.FloorChar
+		sc  = m.StartChar
+		ec  = m.EndChar
+		nl  = n.Location
 		nl0 = nl[0]
 		nl1 = nl[1]
 		nl2 = nl[2]
-		cf  = m.layout[nl0]
+		cf  = m.Layout[nl0]
 		f1  = cf[nl1-1][nl2]
 		f2  = cf[nl1+1][nl2]
 		f3  = cf[nl1][nl2-1]
 		f4  = cf[nl1][nl2+1]
 	)
 
-	for _, x := range []node{f1, f2, f3, f4} {
-		switch x.value {
+	for _, x := range []Node{f1, f2, f3, f4} {
+		switch x.Value {
 		case oc, fc, sc, ec:
-			n.addChild(runNode(x))
+			n.AddChild(NewRunnerNode(x))
 		}
 	}
 }
 
-func (r *runner) makeNodePaths() {
+func (r *Runner) MakeNodePaths() {
 	var (
-		rtv = r.toVisit
-		vtd = r.visited
+		rtv = r.ToVisit
+		vtd = r.Visited
 	)
-	rtv = append(rtv, r.start)
+	rtv = append(rtv, r.Start)
 	for len(rtv) > 0 {
 		var (
 			current = rtv[0]
-			cp      = current.path
-			cl      = current.location
+			cp      = current.Path
+			cl      = current.Location
 		)
 		rtv = rtv[1:]
 		if !slices.Contains(vtd, cl) {
 
-			r.lookAround(&current)
-			newPath := make(path, len(cp))
+			r.LookAround(&current)
+			newPath := make(Path, len(cp))
 			for k, v := range cp {
 				newPath[k] = v
 			}
 
-			newPath.add(cl)
+			newPath.Add(cl)
 			vtd = append(vtd, cl)
-			for _, n := range current.children {
-				n.path = newPath
-				if n.value == r.end.value {
+			for _, n := range current.Children {
+				n.Path = newPath
+				if n.Value == r.End.Value {
 					r.Completed = true
-					r.setShortestPath(newPath)
+					r.SetShortestPath(newPath)
 				} else {
 					rtv = append(rtv, n)
 				}
@@ -142,16 +141,16 @@ func (r *runner) makeNodePaths() {
 	}
 }
 
-func (r *runner) buildPath() {
+func (r *Runner) BuildPath() {
 	var (
-		mpd = r.mappedLayout
-		m   = r.maze
-		p   = r.pathChar
-		s   = m.startChar
-		e   = m.endChar
-		w   = m.wallChar
-		o   = m.openChar
-		f   = m.floorChar
+		mpd = r.MappedLayout
+		m   = r.Maze
+		p   = r.PathChar
+		s   = m.StartChar
+		e   = m.EndChar
+		w   = m.WallChar
+		o   = m.OpenChar
+		f   = m.FloorChar
 	)
 	for slices.Contains([]rune{s, e, w, o}, p) {
 		fmt.Println("The current path character can not be the same as the maze characters.")
@@ -160,44 +159,44 @@ func (r *runner) buildPath() {
 		fmt.Scan(&p)
 	}
 
-	mpd.traverse(func(n node) {
+	mpd.Traverse(func(n Node) {
 		var (
-			l  = n.location
-			v  = n.value
+			l  = n.Location
+			v  = n.Value
 			l0 = l[0]
 			l1 = l[1]
 			l2 = l[2]
 		)
-		if !slices.Contains([]rune{s, e, f}, v) && slices.Contains(r.shortestPath.toSlice(), l) {
-			mpd[l0][l1][l2].value = p
+		if !slices.Contains([]rune{s, e, f}, v) && slices.Contains(r.ShortestPath.ToSlice(), l) {
+			mpd[l0][l1][l2].Value = p
 		}
 	})
 }
 
-func (r *runner) setShortestPath(p path) {
-	if len(p) < len(r.shortestPath) || len(r.shortestPath) == 0 {
-		r.shortestPath = p
+func (r *Runner) SetShortestPath(p Path) {
+	if len(p) < len(r.ShortestPath) || len(r.ShortestPath) == 0 {
+		r.ShortestPath = p
 	}
 }
 
-func (r *runner) ViewCompletedPath() {
-	fmt.Println(r.shortestPath.toSlice())
+func (r *Runner) ViewCompletedPath() {
+	fmt.Println(r.ShortestPath.ToSlice())
 }
 
-func (r runner) ViewCompleted() {
-	r.mappedLayout.print()
+func (r Runner) ViewCompleted() {
+	r.MappedLayout.Print()
 }
 
-func Runner(m maze, pathChar rune) runner {
-	r := runner{
+func NewRunner(m Maze, pathChar rune) Runner {
+	r := Runner{
 		Completed:    false,
-		maze:         m,
-		mappedLayout: m.layout.deepCopy(),
-		pathChar:     pathChar,
-		shortestPath: make(path),
+		Maze:         m,
+		MappedLayout: m.Layout.DeepCopy(),
+		PathChar:     pathChar,
+		ShortestPath: make(Path),
 	}
-	r.findEndpoints()
-	r.makeNodePaths()
-	r.buildPath()
+	r.FindEndpoints()
+	r.MakeNodePaths()
+	r.BuildPath()
 	return r
 }

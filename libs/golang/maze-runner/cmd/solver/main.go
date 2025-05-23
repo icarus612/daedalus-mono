@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	mazerunner "github.com/icarus612/mazeRunner-lib-GO/lib"
+	mazerunner "github.com/dae-go/maze-runner/lib"
 )
 
 func getSize(str string, val int, size int) int {
