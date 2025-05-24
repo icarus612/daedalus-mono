@@ -1,4 +1,4 @@
-package lib
+package pkg
 
 type Point [3]int
 

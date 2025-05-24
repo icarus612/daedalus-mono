@@ -1,3 +1,3 @@
-module github.com/icarus612/maze-runner
+module github.com/dae-go/maze-runner
 
 go 1.21

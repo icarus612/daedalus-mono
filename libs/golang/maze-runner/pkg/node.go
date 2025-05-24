@@ -1,4 +1,4 @@
-package lib
+package pkg
 
 type Node struct {
 	Value    rune

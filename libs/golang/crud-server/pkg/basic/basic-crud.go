@@ -1,13 +1,13 @@
-package crud
+package pkg
 
 import (
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
+	"maps"
 	"net/http"
 	"os"
-	"maps"
 )
 
 type Item struct {

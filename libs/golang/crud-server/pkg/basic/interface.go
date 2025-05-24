@@ -1,4 +1,4 @@
-package crud
+package pkg
 
 type CRUD interface {
 	Serve()
