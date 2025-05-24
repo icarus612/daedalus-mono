@@ -9,9 +9,9 @@ import (
 
 func main() {
 	var (
-		width    = flag.Int("width", 10, "Maze width (if generating)")
-		height   = flag.Int("height", 10, "Maze height (if generating)")
-		length   = flag.Int("length", 10, "Path length (if generating)")
+		length   = flag.Int("length", 20, "Path length (if generating)")
+		width    = flag.Int("width", 20, "Maze width (if generating)")
+		height   = flag.Int("height", 3, "Maze height (if generating)")
 		mazeType = flag.String("mazeType", "r", "Path to maze input file")
 		pathChar = flag.String("pathChar", "x", "Path character (if generating)")
 		// openChar = flag.String("openChar", " ", "Maze character (if generating)")
