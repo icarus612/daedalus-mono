@@ -24,7 +24,7 @@ func main() {
 		Runner   = mazerunner.NewRunner
 	)
 	fmt.Println("What is the L x W x H size you would like for the maze?")
-	fmt.Println("Default values are 40 x 20 x 3 (press enter)?")
+	fmt.Println("Default values are 40 x 20 x 3 (press enter).")
 
 	size[0] = getSize("L: ", size[0], 40)
 	size[1] = getSize("W: ", size[1], 20)
