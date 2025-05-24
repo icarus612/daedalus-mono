@@ -4,9 +4,6 @@ import (
 	"math/rand"
 )
 
-type Layout [][][]Node
-type Floor [][]Node
-
 type Maze struct {
 	Layout    Layout
 	StartChar rune

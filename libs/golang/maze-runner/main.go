@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	mazerunner "github.com/dae-go/maze-runner/lib"
+	mazerunner "github.com/dae-go/maze-runner/pkg"
 )
 
 func getSize(str string, val int, size int) int {
@@ -20,8 +20,8 @@ func main() {
 		size     [3]int
 		mazeType string
 		pathType string
-		Maze     = mazerunner.Maze
-		Runner   = mazerunner.Runner
+		Maze     = mazerunner.NewMaze
+		Runner   = mazerunner.NewRunner
 	)
 	fmt.Println("What is the L x W x H size you would like for the maze?")
 	fmt.Println("Default values are 40 x 20 x 3 (press enter)?")
