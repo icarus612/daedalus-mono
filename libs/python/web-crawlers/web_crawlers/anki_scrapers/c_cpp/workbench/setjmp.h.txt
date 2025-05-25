@@ -1,2 +1,0 @@
-<b>Setjmp Function:</b> void longjmp(jmp_buf <i>env</i>, int <i>value</i>); | <b>Setjmp function</b> used to restores a stack environment previously set in env by the setjmp function. 
-<b>Setjmp Function:</b> int setjmp(jmp_buf <i>env</i>); | <b>Setjmp function</b> used to saves a stack environment that can be subsequently restored by longjmp. 

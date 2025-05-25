@@ -1,1 +1,0 @@
-<b>Assert Function:</b> void assert(int <i>expression</i>); | <b>Assert function</b> used to prints a diagnostic message and ends the program if the expression is false. 
