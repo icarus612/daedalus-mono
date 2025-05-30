@@ -32,7 +32,7 @@ daedalus-mono
 │   │   └── <a href="/libs/bash/github-actions">github-actions</a>
 │   ├── golang
 │   │   ├── <a href="/libs/golang/crud-server">crud-server</a>
-│   │   ├── err
+│   │   ├── <a href="/libs/golang/err">err</a>
 │   │   ├── <a href="/libs/golang/maze-runner">maze-runner</a>
 │   │   ├── <a href="/libs/golang/process-monitor">process-monitor</a>
 │   │   └── pythonify
