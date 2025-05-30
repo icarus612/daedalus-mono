@@ -6,18 +6,8 @@ type Error struct {
 	err     error
 }
 
-func (e *Error) Check(err error) bool {
-	check := err != nil
-	if check {
-		e.err = err
-	}
-	return check
-}
-
+func (e *Error) Panic()               { Panic(e.err) }
+func (e *Error) Fatal()               { Fatal(e.err) }
 func (e *Error) Handle(f func(error)) { Handle(e.err, f) }
-
-func (e *ErrorHandler[E]) Chandle(err error) {
-	if e.Check(e.err) {
-		e.handlerFunc(e.err)
-	}
-}
+func (e *Error) Check(data any)       { Check(data, e.err) }
+func (e *Error) Must(data any)        { Must(data, e.err) }
