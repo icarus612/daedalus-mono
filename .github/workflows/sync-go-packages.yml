@@ -69,25 +69,25 @@ jobs:
             
             if [ ! -f README.md ]; then
               echo "
-                # ${lib_name}
+              # ${lib_name}
 
-                This is a Go library extracted from [daedalus-mono](https://github.com/daedalus-mono/).
+              This is a Go library extracted from [daedalus-mono](https://github.com/daedalus-mono/).
 
-                ## Installation
+              ## Installation
 
-                \`\`\`bash
-                go get github.com/${ORG_NAME}/${repo_name}
-                \`\`\`
+              \`\`\`bash
+              go get github.com/${ORG_NAME}/${repo_name}
+              \`\`\`
 
-                ## Usage
+              ## Usage
 
-                \`\`\`go
-                import \"github.com/${ORG_NAME}/${repo_name}\"
-                \`\`\`
+              \`\`\`go
+              import \"github.com/${ORG_NAME}/${repo_name}\"
+              \`\`\`
 
-                ## Development
+              ## Development
 
-                This library is automatically synced from the monorepo. Please make changes in the [main repository](https://github.com/icarus612/daedalus-monorepo/tree/main/libs/golang/${lib_name}).
+              This library is automatically synced from the monorepo. Please make changes in the [main repository](https://github.com/icarus612/daedalus-monorepo/tree/main/libs/golang/${lib_name}).
               " >> README.md
             fi
             
