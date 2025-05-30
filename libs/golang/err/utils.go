@@ -38,7 +38,7 @@ func HandleType[E error](err error, f func(error)) {
 }
 
 func PanicType[E error](err error) { HandleType[E](err, logP) }
-func LogType[E error](err error)   { HandleType[E](err, logF) }
+func FatalType[E error](err error) { HandleType[E](err, logF) }
 
 func CheckType[T any, E error](data T, err E) T {
 	HandleType[E](err, logP)

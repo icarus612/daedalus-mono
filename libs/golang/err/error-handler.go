@@ -6,5 +6,5 @@ type ErrorHandler[H func(error)] struct {
 }
 
 func (eh *ErrorHandler[H]) Handle() {
-	Handle(eh.err, eh.handlerFunc)
+	Handle(eh.Err, eh.handlerFunc)
 }
