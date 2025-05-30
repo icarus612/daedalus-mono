@@ -1,16 +1,14 @@
 package err
 
 import (
-	"fmt"
 	"log"
-	"os"
 )
 
+// Helper functions with type conversions (any... to error)
+func logP(e error) { log.Panicln(e) }
 func logF(e error) { log.Fatalln(e) }
-func printF(e error) {
-	fmt.Println(e)
-	os.Exit(1)
-}
+
+// Basic functions
 
 func Handle(err error, f func(error)) {
 	if err != nil {
@@ -18,14 +16,36 @@ func Handle(err error, f func(error)) {
 	}
 }
 
-func Print(err error) { Handle(err, printF) }
-func Log(err error)   { Handle(err, logF) }
+func Panic(err error) { Handle(err, logP) }
+func Fatal(err error) { Handle(err, logF) }
 
-func HandleType[T error](err error, f func(error)) {
-	if typedErr, ok := err.(T); ok {
+func Check[T any](data T, err error) T {
+	Handle(err, logP)
+	return data
+}
+
+func Must[T any](data T, err error) T {
+	Handle(err, logF)
+	return data
+}
+
+// With error type checking
+
+func HandleType[E error](err error, f func(error)) {
+	if typedErr, ok := err.(E); ok {
 		Handle(typedErr, f)
 	}
 }
 
-func PrintType[T error](err error) { HandleType[T](err, printF) }
-func LogType[T error](err error)   { HandleType[T](err, logF) }
+func PanicType[E error](err error) { HandleType[E](err, logP) }
+func LogType[E error](err error)   { HandleType[E](err, logF) }
+
+func CheckType[T any, E error](data T, err E) T {
+	HandleType[E](err, logP)
+	return data
+}
+
+func MustType[T any, E error](data T, err error) T {
+	HandleType[E](err, logF)
+	return data
+}
