@@ -190,4 +190,4 @@ func main() {
 
 ## License
 
-[Your License Here]
+MIT
