@@ -1,10 +1,19 @@
 package err
 
-type ErrorHandler[H func(error)] struct {
+type Handler[H func(error)] struct {
 	Error
-	handlerFunc H
+	handle H
 }
 
-func (eh *ErrorHandler[H]) Handle() {
-	Handle(eh.Err, eh.handlerFunc)
+type TypeHandler[H func(error), E error] struct {
+	Handler[H]
+	Type E
+}
+
+func (h *Handler[H]) Handle() {
+	Handle(h.Err, h.handle)
+}
+
+func (th *TypeHandler[H, E]) Handle() {
+	Handle(th.Err, th.handle)
 }

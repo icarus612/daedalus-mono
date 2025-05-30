@@ -40,12 +40,12 @@ func HandleType[E error](err error, f func(error)) {
 func PanicType[E error](err error) { HandleType[E](err, logP) }
 func FatalType[E error](err error) { HandleType[E](err, logF) }
 
-func CheckType[T any, E error](data T, err E) T {
+func CheckType[E error, T any](data T, err E) T {
 	HandleType[E](err, logP)
 	return data
 }
 
-func MustType[T any, E error](data T, err error) T {
+func MustType[E error, T any](data T, err E) T {
 	HandleType[E](err, logF)
 	return data
 }
