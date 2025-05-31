@@ -3,373 +3,350 @@ package err
 import (
 	"errors"
 	"fmt"
-	"net"
-	"os"
 	"testing"
 )
 
-// Mock fatal function for testing
-var mockFatalCalled bool
-var mockFatalError error
-
-func mockFatal(e error) {
-	mockFatalCalled = true
-	mockFatalError = e
-}
-
-// Reset mock state before each test
-func resetMock() {
-	mockFatalCalled = false
-	mockFatalError = nil
-}
-
-// Test functions - assuming the original fatal is replaced with mockFatal for testing
-var fatal = mockFatal
+// A note on testing Fatal and Must functions:
+// (Courtesy of your AI Overlords)
+// These functions call log.Fatalln which exits the program, making them
+// difficult to test in unit tests. In production code, you might want to:
+// 1. Use dependency injection to make the logger configurable
+// 2. Use these functions only in main() or initialization code
+// 3. Use Panic/Check variants in testable code
 
 // Custom error types for testing
 type CustomError struct {
-	Code    int
-	Message string
+	msg string
 }
 
-func (ce CustomError) Error() string {
-	return fmt.Sprintf("Error %d: %s", ce.Code, ce.Message)
+func (e CustomError) Error() string {
+	return e.msg
 }
 
 type AnotherError struct {
-	Reason string
+	code int
 }
 
-func (ae AnotherError) Error() string {
-	return fmt.Sprintf("Another error: %s", ae.Reason)
+func (e AnotherError) Error() string {
+	return fmt.Sprintf("error code: %d", e.code)
 }
 
-func TestHandleFunc(t *testing.T) {
-	tests := []struct {
-		name        string
-		err         error
-		expectCall  bool
-		expectedErr error
-	}{
-		{
-			name:        "nil error should not call function",
-			err:         nil,
-			expectCall:  false,
-			expectedErr: nil,
-		},
-		{
-			name:        "non-nil error should call function",
-			err:         errors.New("test error"),
-			expectCall:  true,
-			expectedErr: errors.New("test error"),
-		},
-		{
-			name:        "custom error should call function",
-			err:         CustomError{Code: 404, Message: "not found"},
-			expectCall:  true,
-			expectedErr: CustomError{Code: 404, Message: "not found"},
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			var called bool
-			var receivedErr error
-
-			HandleFunc(tt.err, func(e error) {
-				called = true
-				receivedErr = e
-			})
-
-			if called != tt.expectCall {
-				t.Errorf("Expected function call: %v, got: %v", tt.expectCall, called)
-			}
-
-			if tt.expectCall && receivedErr.Error() != tt.expectedErr.Error() {
-				t.Errorf("Expected error: %v, got: %v", tt.expectedErr, receivedErr)
-			}
-		})
-	}
-}
-
+// Test basic Handle function
 func TestHandle(t *testing.T) {
-	tests := []struct {
-		name          string
-		err           error
-		expectFatal   bool
-		expectedError error
-	}{
-		{
-			name:        "nil error should not call fatal",
-			err:         nil,
-			expectFatal: false,
-		},
-		{
-			name:          "non-nil error should call fatal",
-			err:           errors.New("test error"),
-			expectFatal:   true,
-			expectedError: errors.New("test error"),
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			resetMock()
-
-			Handle(tt.err)
-
-			if mockFatalCalled != tt.expectFatal {
-				t.Errorf("Expected fatal called: %v, got: %v", tt.expectFatal, mockFatalCalled)
-			}
-
-			if tt.expectFatal && mockFatalError.Error() != tt.expectedError.Error() {
-				t.Errorf("Expected fatal error: %v, got: %v", tt.expectedError, mockFatalError)
-			}
-		})
-	}
-}
-
-func TestHandleTypeFunc(t *testing.T) {
-	tests := []struct {
-		name        string
-		err         error
-		expectCall  bool
-		expectedErr error
-	}{
-		{
-			name:       "nil error should not call function",
-			err:        nil,
-			expectCall: false,
-		},
-		{
-			name:        "matching type should call function",
-			err:         &CustomError{Code: 500, Message: "server error"},
-			expectCall:  true,
-			expectedErr: &CustomError{Code: 500, Message: "server error"},
-		},
-		{
-			name:       "non-matching type should not call function",
-			err:        &AnotherError{Reason: "different"},
-			expectCall: false,
-		},
-		{
-			name:        "matching PathError should call function",
-			err:         &os.PathError{Op: "open", Path: "/test", Err: errors.New("failed")},
-			expectCall:  true,
-			expectedErr: &os.PathError{Op: "open", Path: "/test", Err: errors.New("failed")},
-		},
-		{
-			name:       "wrong PathError type should not call function",
-			err:        &net.OpError{Op: "dial", Net: "tcp", Err: errors.New("refused")},
-			expectCall: false,
-		},
-	}
-
-	t.Run("CustomError type", func(t *testing.T) {
-		for _, tt := range tests {
-			if tt.name == "matching type should call function" || tt.name == "non-matching type should not call function" || tt.name == "nil error should not call function" {
-				t.Run(tt.name, func(t *testing.T) {
-					var called bool
-					var receivedErr error
-
-					HandleTypeFunc[*CustomError](tt.err, func(e error) {
-						called = true
-						receivedErr = e
-					})
-
-					if called != tt.expectCall {
-						t.Errorf("Expected function call: %v, got: %v", tt.expectCall, called)
-					}
-
-					if tt.expectCall && receivedErr.Error() != tt.expectedErr.Error() {
-						t.Errorf("Expected error: %v, got: %v", tt.expectedErr, receivedErr)
-					}
-				})
-			}
-		}
-	})
-
-	t.Run("PathError type", func(t *testing.T) {
-		for _, tt := range tests {
-			if tt.name == "matching PathError should call function" || tt.name == "wrong PathError type should not call function" || tt.name == "nil error should not call function" {
-				t.Run(tt.name, func(t *testing.T) {
-					var called bool
-					var receivedErr error
-
-					HandleTypeFunc[*os.PathError](tt.err, func(e error) {
-						called = true
-						receivedErr = e
-					})
-
-					if called != tt.expectCall {
-						t.Errorf("Expected function call: %v, got: %v", tt.expectCall, called)
-					}
-
-					if tt.expectCall {
-						if pe, ok := receivedErr.(*os.PathError); ok {
-							expectedPe := tt.expectedErr.(*os.PathError)
-							if pe.Op != expectedPe.Op || pe.Path != expectedPe.Path {
-								t.Errorf("Expected PathError: %v, got: %v", expectedPe, pe)
-							}
-						} else {
-							t.Errorf("Expected PathError type, got: %T", receivedErr)
-						}
-					}
-				})
-			}
-		}
-	})
-}
-
-func TestHandleType(t *testing.T) {
-	tests := []struct {
-		name          string
-		err           error
-		expectFatal   bool
-		expectedError error
-	}{
-		{
-			name:        "nil error should not call fatal",
-			err:         nil,
-			expectFatal: false,
-		},
-		{
-			name:          "matching CustomError should call fatal",
-			err:           &CustomError{Code: 404, Message: "not found"},
-			expectFatal:   true,
-			expectedError: &CustomError{Code: 404, Message: "not found"},
-		},
-		{
-			name:        "non-matching error should not call fatal",
-			err:         &AnotherError{Reason: "test"},
-			expectFatal: false,
-		},
-		{
-			name:          "matching PathError should call fatal",
-			err:           &os.PathError{Op: "read", Path: "/file", Err: errors.New("permission denied")},
-			expectFatal:   true,
-			expectedError: &os.PathError{Op: "read", Path: "/file", Err: errors.New("permission denied")},
-		},
-	}
-
-	t.Run("CustomError type", func(t *testing.T) {
-		for _, tt := range tests {
-			if tt.name != "matching PathError should call fatal" {
-				t.Run(tt.name, func(t *testing.T) {
-					resetMock()
-
-					HandleType[*CustomError](tt.err)
-
-					if mockFatalCalled != tt.expectFatal {
-						t.Errorf("Expected fatal called: %v, got: %v", tt.expectFatal, mockFatalCalled)
-					}
-
-					if tt.expectFatal && mockFatalError.Error() != tt.expectedError.Error() {
-						t.Errorf("Expected fatal error: %v, got: %v", tt.expectedError, mockFatalError)
-					}
-				})
-			}
-		}
-	})
-
-	t.Run("PathError type", func(t *testing.T) {
-		for _, tt := range tests {
-			if tt.name == "matching PathError should call fatal" || tt.name == "nil error should not call fatal" {
-				t.Run(tt.name, func(t *testing.T) {
-					resetMock()
-
-					HandleType[*os.PathError](tt.err)
-
-					if mockFatalCalled != tt.expectFatal {
-						t.Errorf("Expected fatal called: %v, got: %v", tt.expectFatal, mockFatalCalled)
-					}
-
-					if tt.expectFatal {
-						if pe, ok := mockFatalError.(*os.PathError); ok {
-							expectedPe := tt.expectedError.(*os.PathError)
-							if pe.Op != expectedPe.Op || pe.Path != expectedPe.Path {
-								t.Errorf("Expected PathError: %v, got: %v", expectedPe, pe)
-							}
-						} else {
-							t.Errorf("Expected PathError type, got: %T", mockFatalError)
-						}
-					}
-				})
-			}
-		}
-	})
-}
-
-func TestTypedNilErrors(t *testing.T) {
-	t.Run("HandleTypeFunc with typed nil", func(t *testing.T) {
-		var typedNil *CustomError = nil
-		var err error = typedNil
-
-		var called bool
-		HandleTypeFunc[*CustomError](err, func(e error) {
+	t.Run("with nil error", func(t *testing.T) {
+		called := false
+		Handle(nil, func(error) {
 			called = true
-			if e != nil {
-				t.Errorf("Expected nil error, got: %v", e)
-			}
 		})
-
-		if !called {
-			t.Error("Expected function to be called with typed nil")
+		if called {
+			t.Error("handler should not be called for nil error")
 		}
 	})
 
-	t.Run("HandleType with typed nil", func(t *testing.T) {
-		resetMock()
-
-		var typedNil *CustomError = nil
-		var err error = typedNil
-
-		HandleType[*CustomError](err)
-
-		if !mockFatalCalled {
-			t.Error("Expected fatal to be called with typed nil")
-		}
-
-		if mockFatalError != nil {
-			t.Errorf("Expected nil error in fatal, got: %v", mockFatalError)
+	t.Run("with non-nil error", func(t *testing.T) {
+		called := false
+		err := errors.New("test error")
+		Handle(err, func(e error) {
+			called = true
+			if e != err {
+				t.Errorf("expected error %v, got %v", err, e)
+			}
+		})
+		if !called {
+			t.Error("handler should be called for non-nil error")
 		}
 	})
 }
 
-func TestInterfaceConversion(t *testing.T) {
-	t.Run("error interface conversion in HandleTypeFunc", func(t *testing.T) {
-		customErr := &CustomError{Code: 500, Message: "server error"}
+// Test Panic function
+func TestPanic(t *testing.T) {
+	t.Run("with nil error", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r != nil {
+				t.Error("should not panic for nil error")
+			}
+		}()
+		Panic(nil)
+	})
 
-		HandleTypeFunc[*CustomError](customErr, func(e error) {
-			// The error should be convertible back to CustomError
-			if ce, ok := e.(*CustomError); ok {
-				if ce.Code != 500 || ce.Message != "server error" {
-					t.Errorf("Expected CustomError{500, 'server error'}, got: %v", ce)
-				}
-			} else {
-				t.Errorf("Expected CustomError type, got: %T", e)
+	t.Run("with non-nil error", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Error("should panic for non-nil error")
+			}
+		}()
+		Panic(errors.New("test error"))
+	})
+}
+
+// Test Check function
+func TestCheck(t *testing.T) {
+	t.Run("with nil error", func(t *testing.T) {
+		result := Check("test data", nil)
+		if result != "test data" {
+			t.Errorf("expected 'test data', got %v", result)
+		}
+	})
+
+	t.Run("with non-nil error", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Error("should panic for non-nil error")
+			}
+		}()
+		Check("test data", errors.New("test error"))
+	})
+
+	t.Run("with different types", func(t *testing.T) {
+		// Test with int
+		intResult := Check(42, nil)
+		if intResult != 42 {
+			t.Errorf("expected 42, got %v", intResult)
+		}
+
+		// Test with struct
+		type TestStruct struct {
+			Value string
+		}
+		structResult := Check(TestStruct{Value: "test"}, nil)
+		if structResult.Value != "test" {
+			t.Errorf("expected 'test', got %v", structResult.Value)
+		}
+	})
+}
+
+// Test HandleType function
+func TestHandleType(t *testing.T) {
+	t.Run("with matching error type", func(t *testing.T) {
+		called := false
+		err := CustomError{msg: "custom error"}
+		HandleType[CustomError](err, func(e error) {
+			called = true
+			if _, ok := e.(CustomError); !ok {
+				t.Error("expected CustomError type")
 			}
 		})
+		if !called {
+			t.Error("handler should be called for matching error type")
+		}
+	})
+
+	t.Run("with non-matching error type", func(t *testing.T) {
+		called := false
+		err := errors.New("standard error")
+		HandleType[CustomError](err, func(e error) {
+			called = true
+		})
+		if called {
+			t.Error("handler should not be called for non-matching error type")
+		}
+	})
+
+	t.Run("with nil error", func(t *testing.T) {
+		called := false
+		HandleType[CustomError](nil, func(e error) {
+			called = true
+		})
+		if called {
+			t.Error("handler should not be called for nil error")
+		}
+	})
+}
+
+// Test PanicType function
+func TestPanicType(t *testing.T) {
+	t.Run("with matching error type", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Error("should panic for matching error type")
+			}
+		}()
+		PanicType[CustomError](CustomError{msg: "custom error"})
+	})
+
+	t.Run("with non-matching error type", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r != nil {
+				t.Error("should not panic for non-matching error type")
+			}
+		}()
+		PanicType[CustomError](errors.New("standard error"))
+	})
+
+	t.Run("with nil error", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r != nil {
+				t.Error("should not panic for nil error")
+			}
+		}()
+		PanicType[CustomError](nil)
+	})
+}
+
+// Test FatalType function (similar to PanicType but uses Fatal)
+func TestFatalType(t *testing.T) {
+	// Note: We can't easily test FatalType because it calls log.Fatalln
+	// which exits the program
+	t.Skip("FatalType calls log.Fatalln which exits the program")
+}
+
+// Test CheckType function
+func TestCheckType(t *testing.T) {
+	t.Run("with zero-valued error", func(t *testing.T) {
+		// Note: var err CustomError creates a zero-valued struct, not nil
+		// This will still trigger the handler because it's not nil
+		defer func() {
+			if r := recover(); r == nil {
+				t.Error("should panic for zero-valued error")
+			}
+		}()
+		var err CustomError
+		CheckType("test data", err)
+	})
+
+	t.Run("with non-zero error", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Error("should panic for non-nil error")
+			}
+		}()
+		err := CustomError{msg: "custom error"}
+		CheckType("test data", err)
+	})
+}
+
+// Test MustType function (similar to CheckType but uses Fatal)
+func TestMustType(t *testing.T) {
+	// Note: We can't easily test MustType because it calls log.Fatalln
+	// which exits the program. In a real application, you might want to
+	// use dependency injection to make this testable.
+	t.Skip("MustType calls log.Fatalln which exits the program")
+}
+
+// Test practical usage patterns
+func TestPracticalUsage(t *testing.T) {
+	// Test with functions that return (T, error)
+	t.Run("Check with function returning data and error", func(t *testing.T) {
+		getValue := func() (string, error) {
+			return "success", nil
+		}
+		result := Check(getValue())
+		if result != "success" {
+			t.Errorf("expected 'success', got %v", result)
+		}
+	})
+
+	t.Run("Check with function returning error", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Error("should panic when function returns error")
+			}
+		}()
+		getValue := func() (string, error) {
+			return "", errors.New("failed")
+		}
+		Check(getValue())
+	})
+
+	// Test error type checking in realistic scenarios
+	t.Run("HandleType with wrapped errors", func(t *testing.T) {
+		// This demonstrates that HandleType only handles exact type matches
+		customErr := CustomError{msg: "custom"}
+		wrappedErr := fmt.Errorf("wrapped: %w", customErr)
+
+		called := false
+		HandleType[CustomError](wrappedErr, func(e error) {
+			called = true
+		})
+		if called {
+			t.Error("HandleType should not handle wrapped errors")
+		}
+	})
+}
+
+// Test error type checking with interface types
+func TestErrorTypeWithInterfaces(t *testing.T) {
+	t.Run("multiple error types", func(t *testing.T) {
+		customErr := CustomError{msg: "custom"}
+		anotherErr := AnotherError{code: 404}
+
+		// Test HandleType with CustomError
+		customCalled := false
+		HandleType[CustomError](customErr, func(e error) {
+			customCalled = true
+		})
+		if !customCalled {
+			t.Error("HandleType should handle CustomError")
+		}
+
+		// Test HandleType with AnotherError
+		anotherCalled := false
+		HandleType[AnotherError](anotherErr, func(e error) {
+			anotherCalled = true
+		})
+		if !anotherCalled {
+			t.Error("HandleType should handle AnotherError")
+		}
+
+		// Test HandleType with wrong type
+		wrongCalled := false
+		HandleType[CustomError](anotherErr, func(e error) {
+			wrongCalled = true
+		})
+		if wrongCalled {
+			t.Error("HandleType should not handle wrong error type")
+		}
 	})
 }
 
 // Benchmark tests
-func BenchmarkHandleFunc(b *testing.B) {
+func BenchmarkHandle(b *testing.B) {
 	err := errors.New("test error")
-	f := func(e error) {}
-
-	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		HandleFunc(err, f)
+		Handle(err, func(e error) {})
 	}
 }
 
-func BenchmarkHandleTypeFunc(b *testing.B) {
-	err := &CustomError{Code: 404, Message: "not found"}
-	f := func(e error) {}
-
-	b.ResetTimer()
+func BenchmarkHandleNil(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		HandleTypeFunc[*CustomError](err, f)
+		Handle(nil, func(e error) {})
 	}
+}
+
+func BenchmarkCheck(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = Check("data", nil)
+	}
+}
+
+func BenchmarkHandleType(b *testing.B) {
+	err := CustomError{msg: "test"}
+	for i := 0; i < b.N; i++ {
+		HandleType[CustomError](err, func(e error) {})
+	}
+}
+
+// Example tests
+func ExampleHandle() {
+	err := errors.New("something went wrong")
+	Handle(err, func(e error) {
+		fmt.Println("Error handled:", e)
+	})
+	// Output: Error handled: something went wrong
+}
+
+func ExampleCheck() {
+	// This example shows how Check returns data when there's no error
+	data := Check("success", nil)
+	fmt.Println(data)
+	// Output: success
+}
+
+func ExampleHandleType() {
+	// This example shows type-specific error handling
+	err := CustomError{msg: "custom problem"}
+	HandleType[CustomError](err, func(e error) {
+		fmt.Println("Custom error:", e)
+	})
+	// Output: Custom error: custom problem
 }
