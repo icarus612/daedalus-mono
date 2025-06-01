@@ -1,7 +1,7 @@
 package err
 
 type Error struct {
-	// Code    int
+	Code     int
 	Message  string
 	Err      error
 	ErrInMsg bool
