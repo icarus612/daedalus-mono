@@ -63,7 +63,7 @@ package main
 import (
     "os"
     "strconv"
-    "your-module/err"
+    "github.com/da-go/err/pkg"
 )
 
 func main() {
@@ -86,7 +86,7 @@ package main
 import (
     "net"
     "os"
-    "your-module/err"
+    "github.com/da-go/err/pkg"
 )
 
 func main() {
@@ -108,7 +108,7 @@ func main() {
 ```go
 package main
 
-import "your-module/err"
+import "github.com/da-go/err/pkg"
 
 func processFile() {
     e := &err.Error{Message: "Failed to process file"}
@@ -135,7 +135,7 @@ package main
 
 import (
     "fmt"
-    "your-module/err"
+    "github.com/da-go/err/pkg"
 )
 
 func main() {
