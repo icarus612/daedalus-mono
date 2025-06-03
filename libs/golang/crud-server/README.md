@@ -1,194 +1,252 @@
 # Simple CRUD Server
 
-A lightweight CRUD server built with Go standard library only. Supports table management and data operations.
+A lightweight CRUD server built with Go's standard library that provides RESTful endpoints for managing tables and their data.
 
-## Running the Server
+## Features
 
-```bash
-go run main.go crud.go
+- Create, Read, Update, and Delete operations for tables and records
+- In-memory storage with thread-safe operations
+- JSON-based API
+- No external dependencies - uses only Go standard library
+
+## Project Structure
+
 ```
-
-The server will start on `http://localhost:8080`
+.
+├── cmd/
+│   ├── server/      # CRUD server
+│   ├── table/       # Table management CLI
+│   ├── row/         # Row/record management CLI
+│   ├── migrate/     # Database migration CLI
+│   └── seed/        # Database seeding CLI
+├── db/
+│   └── db.go        # Database package with storage logic
+├── internal/
+│   └── handlers.go  # HTTP handlers for API endpoints
+├── pkg/
+│   └── client/      # HTTP client for CLI tools
+└── README.md        # This file
+```
 
 ## API Endpoints
 
 ### Table Management
 
-#### List all tables
-```bash
-GET /tables
-```
+- **GET /table** - List all tables
+  ```bash
+  curl http://localhost:8080/table
+  ```
 
-#### Create a new table
-```bash
-POST /tables
-Content-Type: application/json
+- **POST /table** - Create a new table
+  ```bash
+  curl -X POST http://localhost:8080/table \
+    -H "Content-Type: application/json" \
+    -d '{"name": "users", "columns": [{"name": "name", "type": "string"}, {"name": "email", "type": "string"}]}'
+  ```
 
-{
-  "name": "users",
-  "columns": {
-    "name": "string",
-    "email": "string",
-    "age": "integer"
-  }
-}
-```
-
-#### Update table schema
-```bash
-PUT /tables
-Content-Type: application/json
-
-{
-  "name": "users",
-  "columns": {
-    "name": "string",
-    "email": "string",
-    "age": "integer",
-    "status": "string"
-  }
-}
-```
-
-#### Delete a table
-```bash
-DELETE /tables
-Content-Type: application/json
-
-{
-  "name": "users"
-}
-```
+- **DELETE /table** - Delete a table
+  ```bash
+  curl -X DELETE http://localhost:8080/table \
+    -H "Content-Type: application/json" \
+    -d '{"name": "users"}'
+  ```
 
 ### Data Management
 
-#### List all records in a table
+- **GET /tables/{tablename}** - Get all records from a table
+  ```bash
+  curl http://localhost:8080/tables/users
+  ```
+
+- **POST /tables/{tablename}** - Create a new record (id is auto-generated)
+  ```bash
+  curl -X POST http://localhost:8080/tables/users \
+    -H "Content-Type: application/json" \
+    -d '{"name": "John Doe", "email": "john@example.com"}'
+  ```
+
+- **PUT /tables/{tablename}** - Update a record (requires 'id' field)
+  ```bash
+  curl -X PUT http://localhost:8080/tables/users \
+    -H "Content-Type: application/json" \
+    -d '{"id": 1, "name": "John Updated", "email": "john.updated@example.com"}'
+  ```
+
+- **DELETE /tables/{tablename}** - Delete a record
+  ```bash
+  curl -X DELETE http://localhost:8080/tables/users \
+    -H "Content-Type: application/json" \
+    -d '{"id": 1}'
+  ```
+
+## Running the Server
+
 ```bash
-GET /tables/users/data
+go run cmd/server/main.go
 ```
 
-#### Get a specific record
+The server will start on port 8080 by default.
+
+## CLI Tools
+
+The project includes several CLI tools for managing the database:
+
+### Table Management
+
 ```bash
-GET /tables/users/data/1
+# List all tables
+go run cmd/table/main.go -list
+
+# Create a new table
+go run cmd/table/main.go -create products -columns "name:string,price:number,stock:number"
+
+# Delete a table
+go run cmd/table/main.go -delete products
 ```
 
-#### Create a new record
-```bash
-POST /tables/users/data
-Content-Type: application/json
+### Row Management
 
+```bash
+# List all records in a table
+go run cmd/row/main.go -table products -list
+
+# List records in JSON format
+go run cmd/row/main.go -table products -list -json
+
+# Create a new record
+go run cmd/row/main.go -table products -create "name:Laptop,price:999.99,stock:15"
+
+# Update a record (ID,field:value,field:value)
+go run cmd/row/main.go -table products -update "1,name:Gaming Laptop,price:1299.99"
+
+# Delete a record
+go run cmd/row/main.go -table products -delete 1
+```
+
+### Database Migration
+
+```bash
+# Apply a migration from file
+go run cmd/migrate/main.go -file schema.json
+
+# Export current schema (limited functionality)
+go run cmd/migrate/main.go -export current-schema.json
+```
+
+Example migration file (schema.json):
+```json
 {
-  "name": "John Doe",
-  "email": "john@example.com",
-  "age": 30
-}
-```
-
-#### Update a record
-```bash
-PUT /tables/users/data/1
-Content-Type: application/json
-
-{
-  "age": 31,
-  "status": "active"
-}
-```
-
-#### Delete a record
-```bash
-DELETE /tables/users/data/1
-```
-
-## Example Usage with curl
-
-### 1. Create a table
-```bash
-curl -X POST http://localhost:8080/tables \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "products",
-    "columns": {
-      "name": "string",
-      "price": "float",
-      "category": "string"
+  "tables": [
+    {
+      "name": "users",
+      "columns": [
+        {"name": "name", "type": "string"},
+        {"name": "email", "type": "string"},
+        {"name": "age", "type": "number"}
+      ]
+    },
+    {
+      "name": "products",
+      "columns": [
+        {"name": "name", "type": "string"},
+        {"name": "price", "type": "number"},
+        {"name": "stock", "type": "number"}
+      ]
     }
-  }'
+  ]
+}
 ```
 
-### 2. Add some data
+### Database Seeding
+
 ```bash
-curl -X POST http://localhost:8080/tables/products/data \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Laptop",
-    "price": 999.99,
-    "category": "Electronics"
-  }'
+# Seed database from file
+go run cmd/seed/main.go -file seed-data.json
 
-curl -X POST http://localhost:8080/tables/products/data \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Coffee Mug",
-    "price": 15.50,
-    "category": "Kitchen"
-  }'
+# Clear existing data before seeding
+go run cmd/seed/main.go -file seed-data.json -clear
 ```
 
-### 3. List all products
+Example seed file (seed-data.json):
+```json
+{
+  "seeds": [
+    {
+      "table": "users",
+      "records": [
+        {"name": "John Doe", "email": "john@example.com", "age": 30},
+        {"name": "Jane Smith", "email": "jane@example.com", "age": 25}
+      ]
+    },
+    {
+      "table": "products",
+      "records": [
+        {"name": "Laptop", "price": 999.99, "stock": 10},
+        {"name": "Mouse", "price": 29.99, "stock": 100}
+      ]
+    }
+  ]
+}
+```
+
+## Example Workflow
+
+1. Start the server:
 ```bash
-curl http://localhost:8080/tables/products/data
+go run cmd/server/main.go
 ```
 
-### 4. Update a product
+2. Create tables using migration:
 ```bash
-curl -X PUT http://localhost:8080/tables/products/data/1 \
-  -H "Content-Type: application/json" \
-  -d '{
-    "price": 899.99
-  }'
+go run cmd/migrate/main.go -file schema.json
 ```
 
-### 5. Get a specific product
+3. Seed initial data:
 ```bash
-curl http://localhost:8080/tables/products/data/1
+go run cmd/seed/main.go -file seed-data.json
 ```
 
-### 6. Delete a product
+4. Work with data:
 ```bash
-curl -X DELETE http://localhost:8080/tables/products/data/2
+# List all users
+go run cmd/row/main.go -table users -list
+
+# Add a new user
+go run cmd/row/main.go -table users -create "name:Bob Wilson,email:bob@example.com,age:35"
+
+# Update a user
+go run cmd/row/main.go -table users -update "3,email:bob.wilson@example.com"
+
+# Delete a user
+go run cmd/row/main.go -table users -delete 3
 ```
 
-### 7. List all tables
-```bash
-curl http://localhost:8080/tables
+## Data Model
+
+### Table
+```json
+{
+  "name": "table_name",
+  "columns": [
+    {"name": "column1", "type": "string"},
+    {"name": "column2", "type": "number"}
+  ]
+}
 ```
 
-## Features
+### Record
+Records are flexible JSON objects. The id field is auto-generated when creating new records (as an incrementing integer). For UPDATE and DELETE operations, the id field is required.
 
-- **Thread-safe**: Uses sync.RWMutex for concurrent access
-- **In-memory storage**: Data is stored in memory (not persistent)
-- **Auto-incrementing IDs**: Records get automatic integer IDs
-- **JSON API**: All communication uses JSON format
-- **Standard library only**: No external dependencies
-- **Modular design**: Separated into main and package files
+## Additional Endpoints
 
-## Project Structure
+- **GET /** - API information
+- **GET /health** - Health check endpoint
 
-- `main.go` - Server setup and routing
-- `crud.go` - Core CRUD functionality and HTTP handlers
-- `README.md` - Documentation and examples
+## Notes
 
-## Response Formats
-
-### Success Responses
-- **200 OK**: Successful GET/PUT operations
-- **201 Created**: Successful POST operations
-
-### Error Responses
-- **400 Bad Request**: Invalid JSON or missing required fields
-- **404 Not Found**: Table or record not found
-- **405 Method Not Allowed**: HTTP method not supported
-- **409 Conflict**: Table already exists
-
-All responses include appropriate JSON content with error messages for failures.
+- All data is stored in memory and will be lost when the server stops
+- Thread-safe operations using mutex locks
+- No schema validation beyond table column definitions
+- IDs are auto-generated as incrementing integers when creating records
+- The server includes request logging middleware
+- Graceful shutdown is supported (Ctrl+C)
