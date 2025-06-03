@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"github.com/dae-go/crud-server/db"
+
+	"github.com/dae-go/crud-server/pkg/db"
 )
 
 type Client struct {

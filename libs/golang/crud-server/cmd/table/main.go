@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/dae-go/crud-server/db"
 	"github.com/dae-go/crud-server/pkg/client"
+	"github.com/dae-go/crud-server/pkg/db"
 )
 
 func main() {

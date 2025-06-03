@@ -8,8 +8,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/dae-go/crud-server/db"
 	"github.com/dae-go/crud-server/pkg/client"
+	"github.com/dae-go/crud-server/pkg/db"
 )
 
 type Migration struct {

@@ -1,11 +1,12 @@
 package internal
 
 import (
-	"github.com/dae-go/crud-server/db"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
+
+	"github.com/dae-go/crud-server/pkg/db"
 )
 
 // Server represents our HTTP server
