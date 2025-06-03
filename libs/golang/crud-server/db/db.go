@@ -23,7 +23,7 @@ type Database struct {
 
 type tableData struct {
 	table   *Table
-	records []map[string]interface{}
+	records []map[string]any
 	nextID  int
 }
 
@@ -43,7 +43,7 @@ func (db *Database) CreateTable(table *Table) error {
 
 	db.tables[table.Name] = &tableData{
 		table:   table,
-		records: []map[string]interface{}{},
+		records: []map[string]any{},
 		nextID:  1,
 	}
 
@@ -73,7 +73,7 @@ func (db *Database) DeleteTable(name string) error {
 	return nil
 }
 
-func (db *Database) GetRecords(tableName string) ([]map[string]interface{}, error) {
+func (db *Database) GetRecords(tableName string) ([]map[string]any, error) {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
 
@@ -82,12 +82,12 @@ func (db *Database) GetRecords(tableName string) ([]map[string]interface{}, erro
 		return nil, fmt.Errorf("table %s not found", tableName)
 	}
 
-	result := make([]map[string]interface{}, len(tableData.records))
+	result := make([]map[string]any, len(tableData.records))
 	copy(result, tableData.records)
 	return result, nil
 }
 
-func (db *Database) InsertRecord(tableName string, record map[string]interface{}) error {
+func (db *Database) InsertRecord(tableName string, record map[string]any) error {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
@@ -96,11 +96,11 @@ func (db *Database) InsertRecord(tableName string, record map[string]interface{}
 		return fmt.Errorf("table %s not found", tableName)
 	}
 
-	newRecord := make(map[string]interface{})
+	newRecord := make(map[string]any)
 	for k, v := range record {
 		newRecord[k] = v
 	}
-	
+
 	newRecord["id"] = tableData.nextID
 	tableData.nextID++
 
@@ -108,7 +108,7 @@ func (db *Database) InsertRecord(tableName string, record map[string]interface{}
 	return nil
 }
 
-func (db *Database) UpdateRecord(tableName string, record map[string]interface{}) error {
+func (db *Database) UpdateRecord(tableName string, record map[string]any) error {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
@@ -134,7 +134,7 @@ func (db *Database) UpdateRecord(tableName string, record map[string]interface{}
 	return fmt.Errorf("record with id %v not found", id)
 }
 
-func (db *Database) DeleteRecord(tableName string, id interface{}) error {
+func (db *Database) DeleteRecord(tableName string, id any) error {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
