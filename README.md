@@ -35,9 +35,7 @@ daedalus-mono
 │   │   ├── <a href="/libs/golang/err">err</a>
 │   │   ├── <a href="/libs/golang/maze-runner">maze-runner</a>
 │   │   ├── <a href="/libs/golang/process-monitor">process-monitor</a>
-│   │   └── pythonify
-│   │       └── pkg
-│   │           ├── abf
+│   │   └── <a href="/libs/golang/pythonify">pythonify</a>
 │   ├── javascript
 │   │   ├── node
 │   │   │   ├── <a href="/libs/javascript/node/build-scripts">build-scripts</a>
