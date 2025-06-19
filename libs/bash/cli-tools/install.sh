@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 function install_all() {
 	local home_dir=$HOME
 	if [[ $USER == "root" ]]; then
@@ -11,11 +13,12 @@ function install_all() {
 	local files_to_check=(.bashrc .bash_profile .zshrc .zprofile)
 	local source_found=false
 	local installed_items=()
-	local bash_files=$(find $(dirname $0)/src -name "*.sh" 2>/dev/null)
+	local script_dir="$(cd "$(dirname "$0")" && pwd)"
+	local bash_files=$(find "$script_dir/src" -name "*.sh" 2>/dev/null)
 
 	if [[ ! -d "$dae_dir" ]]; then
 		echo "Creating Daedalus directory"
-		mkdir $dae_dir
+		mkdir -p "$dae_dir"
 	fi
 
 	echo "Installing Daedalus: This is a linux/unix only script"
@@ -28,14 +31,17 @@ function install_all() {
 			exit 1
 		fi
 		echo "Removing existing daedalus installation"
-		rm -rf $dae_dir
+		rm -rf "$dae_dir"
 	fi
 
-	mkdir $dae_sh
+	mkdir -p "$dae_sh"
 	touch $entry_file
 
-	cp -r $bash_files $dae_sh
-	chmod +x $dae_sh/*.sh
+	# Copy all .sh files to the destination
+	while IFS= read -r file; do
+		cp "$file" "$dae_sh/"
+	done <<< "$bash_files"
+	chmod +x "$dae_sh"/*.sh
 	echo "Added scripts to $dae_sh"
 
 	for file in "$dae_sh"/*.sh; do
@@ -50,13 +56,13 @@ function install_all() {
 			source_found=true
 			echo "Found $rc_file"
 			local src_cmd="source $entry_file"
-			if grep -q "$src_cmd" $usr_rc; then
+			if grep -q "$src_cmd" "$usr_rc"; then
 				echo "Daedalus already installed in $rc_file"
 			else
 				echo "Adding Daedalus to $rc_file"
-				printf "\n$src_cmd" >>$usr_rc
+				printf "\n$src_cmd\n" >>"$usr_rc"
 			fi
-			source $usr_rc
+			# Note: sourcing in the install script may not work as expected
 			break
 		fi
 	done
@@ -64,12 +70,14 @@ function install_all() {
 	if [[ "$source_found" == false ]]; then
 		echo "No source file found"
 		echo "Please add the following line to your source file"
-		echo "source $dae_sh"
+		echo "source $entry_file"
 	else
 		echo "Installation complete"
 		echo "Scripts installed:"
-		installed_items+=($(grep -Prho "(?<=^function).+?(?=[\({])" $bash_files))
-		installed_items+=($(grep -Prho "(?<=^alias).*(?=\=)" $bash_files))
+		while IFS= read -r file; do
+			installed_items+=($(grep -Eo '^function[[:space:]]+[[:alnum:]_]+' "$file" | awk '{print $2}'))
+			installed_items+=($(grep -Eo '^alias[[:space:]]+[[:alnum:]_]+=' "$file" | sed 's/^alias[[:space:]]*//; s/=//'))
+		done <<< "$bash_files"
 		for item in "${installed_items[@]}"; do
 			printf "* $item\n"
 		done
