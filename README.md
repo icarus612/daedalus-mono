@@ -50,7 +50,7 @@ daedalus-mono
 │   │       ├── <a href="/libs/javascript/react/maze-runner">maze-runner</a>
 │   │       ├── <a href="/libs/javascript/react/quest">quest</a>
 │   │       ├── <a href="/libs/javascript/react/quote-builder">quote-builder</a>
-│   │       └── <a href="/libs/javascript/react/web-resume">web-resume</a>
+│   │       └── <a href="/libs/javascript/react/resume-builder">resume-builder</a>
 │   └── python
 │       ├── <a href="/libs/python/anki-tools">anki-tools</a>
 │       ├── <a href="/libs/python/cli-tools">cli-tools</a>
