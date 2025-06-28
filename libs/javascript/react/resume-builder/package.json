@@ -1,0 +1,30 @@
+{
+  "name": "@dev-dae/resume-builder",
+  "version": "0.1.0",
+  "description": "Resume Builder",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "prepublishOnly": "npm run build",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "keywords": ["react", "component", "library"],
+  "author": "Dev Daedalus",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/icarus612/daedalus-mono/libs/js/react/resume-builder"
+  }
+}
