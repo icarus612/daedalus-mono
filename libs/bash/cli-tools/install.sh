@@ -24,7 +24,7 @@ function install_all() {
 	echo "Installing Daedalus: This is a linux/unix only script"
 	if [[ -d "$dae_sh" ]]; then
 		echo "Warning: This script will overwrite any existing daedalus bash installations"
-		read -p "Do you want to continue? (Y/n): " -n 1 -r should_continue < /dev/tty
+		read -p "Do you want to continue? (Y/n): " -n 1 -r should_continue </dev/tty
 
 		if [[ $should_continue =~ ^[Nn]$ ]]; then
 			echo "Aborting installation"
@@ -40,7 +40,7 @@ function install_all() {
 	# Copy all .sh files to the destination
 	while IFS= read -r file; do
 		cp "$file" "$dae_sh/"
-	done <<< "$bash_files"
+	done <<<"$bash_files"
 	chmod +x "$dae_sh"/*.sh
 	echo "Added scripts to $dae_sh"
 
@@ -74,10 +74,9 @@ function install_all() {
 	else
 		echo "Installation complete"
 		echo "Scripts installed:"
-		while IFS= read -r file; do
-			installed_items+=($(grep -Eo '^function[[:space:]]+[[:alnum:]_]+' "$file" | awk '{print $2}'))
-			installed_items+=($(grep -Eo '^alias[[:space:]]+[[:alnum:]_]+=' "$file" | sed 's/^alias[[:space:]]*//; s/=//'))
-		done <<< "$bash_files"
+		installed_items+=($(grep -Prho "(?<=^function).+?(?=[\({])" $bash_files))
+		installed_items+=($(grep -Prho "(?<=^alias).*(?=\=)" $bash_files))
+		
 		for item in "${installed_items[@]}"; do
 			printf "* $item\n"
 		done
