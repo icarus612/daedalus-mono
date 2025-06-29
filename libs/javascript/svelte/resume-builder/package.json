@@ -10,21 +10,31 @@
   ],
   "scripts": {
     "build": "rollup -c",
-    "storybook": "storybook dev -p 6006",
+    "dev": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "prepublishOnly": "npm run build",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "storybook": "storybook dev -p 6006"
   },
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0"
   },
-  "keywords": ["react", "component", "library"],
+  "keywords": [
+    "react",
+    "component",
+    "library"
+  ],
   "author": "Dev Daedalus",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/icarus612/daedalus-mono/libs/js/react/resume-builder"
+  },
+  "devDependencies": {
+    "@storybook/addon-docs": "^9.0.14",
+    "@storybook/react-vite": "^9.0.14",
+    "storybook": "^9.0.14"
   }
 }
