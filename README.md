@@ -43,14 +43,15 @@ daedalus-mono
 │   │   │   ├── <a href="/libs/javascript/node/dots-js">dots-js</a>
 │   │   │   ├── <a href="/libs/javascript/node/maze-runner">maze-runner</a>
 │   │   │   └── <a href="/libs/javascript/node/web-crawlers">web-crawlers</a>
-│   │   └── react
-│   │       ├── <a href="/libs/javascript/react/e-card">e-card</a>
-│   │       ├── <a href="/libs/javascript/react/labyrinth">labyrinth</a>
-│   │       ├── <a href="/libs/javascript/react/markdown-builder">markdown-builder</a>
-│   │       ├── <a href="/libs/javascript/react/maze-runner">maze-runner</a>
-│   │       ├── <a href="/libs/javascript/react/quest">quest</a>
-│   │       ├── <a href="/libs/javascript/react/quote-builder">quote-builder</a>
-│   │       └── <a href="/libs/javascript/react/resume-builder">resume-builder</a>
+│   │   ├── react
+│   │   │   ├── <a href="/libs/javascript/react/e-card">e-card</a>
+│   │   │   ├── <a href="/libs/javascript/react/labyrinth">labyrinth</a>
+│   │   │   ├── <a href="/libs/javascript/react/markdown-builder">markdown-builder</a>
+│   │   │   ├── <a href="/libs/javascript/react/maze-runner">maze-runner</a>
+│   │   │   ├── <a href="/libs/javascript/react/quest">quest</a>
+│   │   │   └── <a href="/libs/javascript/react/quote-builder">quote-builder</a>
+│   │   └── svelte
+│   │       └── <a href="/libs/javascript/svelte/resume-builder">resume-builder</a>
 │   └── python
 │       ├── <a href="/libs/python/anki-tools">anki-tools</a>
 │       ├── <a href="/libs/python/cli-tools">cli-tools</a>
