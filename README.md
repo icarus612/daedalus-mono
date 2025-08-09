@@ -52,6 +52,9 @@ daedalus-mono
 │   │   │   └── <a href="/libs/javascript/react/quote-builder">quote-builder</a>
 │   │   └── svelte
 │   │       └── <a href="/libs/javascript/svelte/resume-builder">resume-builder</a>
+│   ├── prompting
+│   │   ├── <a href="/libs/prompting/claude">claude</a>
+│   │   └── <a href="/libs/prompting/gemini">gemini</a>
 │   └── python
 │       ├── <a href="/libs/python/anki-tools">anki-tools</a>
 │       ├── <a href="/libs/python/cli-tools">cli-tools</a>
