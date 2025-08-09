@@ -1,134 +1,47 @@
-# Gemini Code Assist Hooks
+# Gemini Code Assist Prompting Library
 
-Automated code quality checks that run after Gemini Code Assist modifies files, enforcing project standards with zero tolerance for errors.
+A production-quality prompting framework for Gemini Code Assist that enforces strict development standards through automated hooks and structured commands.
 
-## Hooks
-
-### `smart-lint.sh`
-Intelligent project-aware linting that automatically detects language and runs appropriate checks:
-- **Go**: `gofmt`, `golangci-lint` (enforces forbidden patterns like `time.Sleep`, `panic()`, `interface{}`)
-- **Python**: `black`, `ruff` or `flake8`
-- **JavaScript/TypeScript**: `eslint`, `prettier`
-- **Rust**: `cargo fmt`, `cargo clippy`
-- **Nix**: `nixpkgs-fmt`/`alejandra`, `statix`
-
-Features:
-- Detects project type automatically
-- Respects project-specific Makefiles (`make lint`)
-- Smart file filtering (only checks modified files)
-- Fast mode available (`--fast` to skip slow checks)
-- Exit code 2 means issues found - ALL must be fixed
-
-#### Failure
+## Structure
 
 ```
-> Edit operation feedback:
-  - [~/claude-code/hooks/smart-lint.sh]:
-  🔍 Style Check - Validating code formatting...
-  ────────────────────────────────────────────
-  [INFO] Project type: go
-  [INFO] Running Go formatting and linting...
-  [INFO] Using Makefile targets
-
-  ═══ Summary ═══
-  ❌ Go linting failed (make lint)
-
-  Found 1 issue(s) that MUST be fixed!
-  ════════════════════════════════════════════
-  ❌ ALL ISSUES ARE BLOCKING ❌
-  ════════════════════════════════════════════
-  Fix EVERYTHING above until all checks are ✅ GREEN
-
-  🛑 FAILED - Fix all issues above! 🛑
-  📋 NEXT STEPS:
-    1. Fix the issues listed above
-    2. Verify the fix by running the lint command again
-    3. Continue with your original task
-```
+.
+├── GEMINI.md                         # Core development partnership guidelines
+├── commands/                         # Command templates for various workflows
+│   ├── check.md                     # Validation and checking workflows
+│   ├── next.md                      # Production implementation workflow
+│   └── prompt.md                    # Prompt synthesis from templates
+├── hooks/                            # Automated code quality enforcement
+│   ├── common-helpers.sh            # Shared utilities
+│   ├── example-gemini-hooks-config.sh # Example configuration
+│   ├── example-gemini-hooks-ignore  # Example ignore patterns
+│   ├── ntfy-notifier.sh             # Push notifications for task completion
+│   ├── README.md                    # Hook documentation
+│   ├── smart-lint.sh                # Multi-language linting and formatting
+│   └── smart-test.sh                # Intelligent testing workflows
+├── default.nix                      # Nix package definition
+└── settings.json                    # Gemini Code Assist configuration
 ```
 
-#### Success
+## Key Features
 
-```
-> Task operation feedback:
-  - [~/claude-code/hooks/smart-lint.sh]:
-  🔍 Style Check - Validating code formatting...
-  ────────────────────────────────────────────
-  [INFO] Project type: go
-  [INFO] Running Go formatting and linting...
-  [INFO] Using Makefile targets
-
-  👉 Style clean. Continue with your task.
-```
-```
-
-By `exit 2` on success and telling it to continue, we prevent Claude from stopping after it has corrected
-the style issues.
-
-### `ntfy-notifier.sh`
-Push notifications via ntfy service for Claude Code events:
-- Sends alerts when Claude finishes tasks
-- Includes terminal context (tmux/Terminal window name) for identification
-- Requires `~/.config/claude-code-ntfy/config.yaml` with topic configuration
-
-## Installation
-
-Automatically installed by Nix home-manager to `~/claude-code/hooks/`
-
-## Configuration
-
-### Global Settings
-Set environment variables or create project-specific `claude-code-hooks-config.sh`:
-
-```bash
-CLAUDE_HOOKS_ENABLED=false      # Disable all hooks
-CLAUDE_HOOKS_DEBUG=1            # Enable debug output
-```
-
-### Per-Project Settings
-Create `claude-code-hooks-config.sh` in your project root:
-
-```bash
-# Language-specific options
-CLAUDE_HOOKS_GO_ENABLED=false
-CLAUDE_HOOKS_GO_COMPLEXITY_THRESHOLD=30
-CLAUDE_HOOKS_PYTHON_ENABLED=false
-
-# See example-claude-hooks-config.sh for all options
-```
-
-### Excluding Files
-Create `claude-code-hooks-ignore` in your project root using gitignore syntax:
-
-```
-vendor/**
-node_modules/**
-*.pb.go
-*_generated.go
-```
-
-Add `// claude-hooks-disable` to the top of any file to skip hooks.
+- **Zero-tolerance quality standards** - All code must pass linting with no warnings
+- **Multi-language support** - Go, Python, JavaScript/TypeScript, Rust, Nix
+- **Automated validation** - Hooks run after every file modification
+- **Research-first workflow** - Enforces proper planning before implementation
+- **Agent orchestration** - Templates for spawning multiple specialized agents
 
 ## Usage
 
-```bash
-./smart-lint.sh           # Auto-runs after Claude edits
-./smart-lint.sh --debug   # Debug mode
-./smart-lint.sh --fast    # Skip slow checks
-```
+The framework is designed to be used with Gemini Code Assist's command system. Main entry points:
 
-### Exit Codes
-- `0`: All checks passed ✅
-- `1`: General error (missing dependencies)
-- `2`: Issues found - must fix ALL
+- `commands/next.md` - Complete implementation workflow
+- `commands/prompt.md` - Synthesize prompts with specific arguments
+- `hooks/smart-lint.sh` - Multi-language code quality validation
 
-## Dependencies
+## Configuration
 
-Hooks work best with these tools installed:
-- **Go**: `golangci-lint`
-- **Python**: `black`, `ruff`
-- **JavaScript**: `eslint`, `prettier` 
-- **Rust**: `cargo fmt`, `cargo clippy`
-- **Nix**: `nixpkgs-fmt`, `alejandra`, `statix`
-
-Hooks gracefully degrade if tools aren't installed.
+Project-specific settings can be configured via:
+- `gemini-code-hooks-config.sh` - Hook behavior customization
+- `gemini-code-hooks-ignore` - Files to exclude from validation
+- Environment variables for global defaults
