@@ -1,0 +1,13 @@
+{
+  "name": "anki-tools",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "poetry install"
+  },
+  "bin": {
+    "anki-build-deck": "anki_tools/build_deck.py",
+    "anki-get-deck-info": "anki_tools/get_deck_info.py",
+    "anki-mp3-filename-update": "anki_tools/mp3_filename_update.py"
+  }
+}

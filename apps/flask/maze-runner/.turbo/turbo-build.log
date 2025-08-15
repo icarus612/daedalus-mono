@@ -1,0 +1,18 @@
+
+> maze-runner-flask@1.0.0 build /app/apps/flask/maze-runner
+> pip install --no-input -r requirements.txt
+
+Collecting Flask==1.1.1 (from -r requirements.txt (line 1))
+  Using cached Flask-1.1.1-py2.py3-none-any.whl.metadata (4.4 kB)
+Collecting gunicorn==20.0.0 (from -r requirements.txt (line 2))
+  Using cached gunicorn-20.0.0-py2.py3-none-any.whl.metadata (3.5 kB)
+Collecting Jinja2==2.11.3 (from -r requirements.txt (line 3))
+  Using cached Jinja2-2.11.3-py2.py3-none-any.whl.metadata (3.5 kB)
+Collecting lxml==4.9.1 (from -r requirements.txt (line 4))
+  Using cached lxml-4.9.1.tar.gz (3.4 MB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'canceled'
+
+[notice] A new release of pip is available: 25.1.1 -> 25.2
+[notice] To update, run: pip install --upgrade pip
+ERROR: Operation cancelled by user

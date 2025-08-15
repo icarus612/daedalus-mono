@@ -1,0 +1,10 @@
+
+> py-web-crawlers@1.0.0 build /app/libs/python/web-crawlers
+> poetry install
+
+Updating dependencies
+Resolving dependencies...
+
+Writing lock file
+
+Installing the current project: web-crawlers (0.1.0)

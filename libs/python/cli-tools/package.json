@@ -1,0 +1,15 @@
+{
+  "name": "cli-tools-py",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "poetry install"
+  },
+  "bin": {
+    "py-cli-convert-file": "cli_tools/convert_file.py",
+    "py-cli-img-resizer": "cli_tools/img_resizer.py",
+    "py-cli-mass-img-resizer": "cli_tools/mass_img_resizer.py",
+    "py-cli-mass-re-rez": "cli_tools/mass_re_rez.py",
+    "py-cli-re-rez": "cli_tools/re_rez.py"
+  }
+}

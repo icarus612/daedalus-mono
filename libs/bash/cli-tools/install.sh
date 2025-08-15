@@ -23,13 +23,6 @@ function install_all() {
 
 	echo "Installing Daedalus: This is a linux/unix only script"
 	if [[ -d "$dae_sh" ]]; then
-		echo "Warning: This script will overwrite any existing daedalus bash installations"
-		read -p "Do you want to continue? (Y/n): " -n 1 -r should_continue </dev/tty
-
-		if [[ $should_continue =~ ^[Nn]$ ]]; then
-			echo "Aborting installation"
-			exit 1
-		fi
 		echo "Removing existing daedalus installation"
 		rm -rf "$dae_dir"
 	fi

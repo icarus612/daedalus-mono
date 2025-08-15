@@ -1,0 +1,27 @@
+
+> cli-tools-bash@1.0.0 build /app/libs/bash/cli-tools
+> ./install.sh
+
+Installing Daedalus: This is a linux/unix only script
+Removing existing daedalus installation
+Added scripts to /home/jules/.daedalus/bash
+Found .bashrc
+Daedalus already installed in .bashrc
+Installation complete
+Scripts installed:
+* penv
+* dae
+* gsinit
+* gclone
+* gsclone
+* gspull
+* gclone
+* gsf
+* gsfor
+* gup
+* lcount
+* bfor
+* prun
+* pclean
+* gsup
+* gsadd

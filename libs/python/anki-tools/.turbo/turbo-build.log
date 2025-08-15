@@ -1,0 +1,19 @@
+
+> anki-tools@1.0.0 build /app/libs/python/anki-tools
+> poetry install
+
+Creating virtualenv ankibuildtools-lib-py-qc7hOAbW-py3.12 in /home/jules/.cache/pypoetry/virtualenvs
+Updating dependencies
+Resolving dependencies...
+
+Writing lock file
+
+Installing the current project: ankibuildtools-lib-py (0.1.0)
+
+Error: The current project could not be installed: No file/folder found for package ankibuildtools-lib-py
+If you do not want to install the current project use --no-root.
+If you want to use Poetry only for dependency management but not for packaging, you can disable package mode by setting package-mode = false in your pyproject.toml file.
+If you did intend to install the current project, you may need to set `packages` in your pyproject.toml file.
+
+ ELIFECYCLE  Command failed with exit code 1.
+ WARN   Local package.json exists, but node_modules missing, did you mean to install?

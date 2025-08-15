@@ -1,0 +1,5 @@
+
+> pyto-widgets@1.0.0 build /app/libs/python/pyto-widgets
+> poetry install
+
+Installing dependencies from lock file

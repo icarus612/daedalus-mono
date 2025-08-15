@@ -1,0 +1,11 @@
+{
+  "name": "cli-tools-bash",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "./install.sh"
+  },
+  "bin": {
+    "cli-tools-install": "install.sh"
+  }
+}

@@ -5,7 +5,7 @@ description = ""
 authors = ["icarus64 <ellishogan95@gmail.com>"]
 readme = "README.md"
 packages = [
-	{include = "src/*.py"},
+	{include = "cli_tools"},
 ]
 
 [tool.poetry.dependencies]

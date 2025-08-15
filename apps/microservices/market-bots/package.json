@@ -1,0 +1,11 @@
+{
+  "name": "market-bots",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "python main.py"
+  },
+  "bin": {
+    "market-bots": "main.py"
+  }
+}

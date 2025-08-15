@@ -1,0 +1,8 @@
+{
+  "name": "ann-digit-recognition",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "poetry install"
+  }
+}

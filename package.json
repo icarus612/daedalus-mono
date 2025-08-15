@@ -1,0 +1,15 @@
+{
+  "name": "daedalus-monorepo",
+  "private": true,
+  "workspaces": [
+    "apps/*/*",
+    "apps/*",
+    "libs/*/*",
+    "libs/*"
+  ],
+  "scripts": {},
+  "devDependencies": {
+    "turbo": "latest"
+  },
+  "packageManager": "pnpm@9.1.0"
+}

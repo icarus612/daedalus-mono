@@ -1,0 +1,12 @@
+{
+  "name": "maze-runner-go",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "go build -o bin/cli-solver ./cmd/cli-solver && go build -o bin/quick-solver ./cmd/quick-solver"
+  },
+  "bin": {
+    "cli-solver": "bin/cli-solver",
+    "quick-solver": "bin/quick-solver"
+  }
+}

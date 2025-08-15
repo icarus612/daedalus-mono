@@ -1,0 +1,12 @@
+{
+  "name": "maze-runner-flask",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "python main.py",
+    "build": "pip install --no-input -r requirements.txt"
+  },
+  "bin": {
+    "maze-runner-flask": "main.py"
+  }
+}

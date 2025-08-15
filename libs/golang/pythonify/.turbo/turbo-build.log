@@ -1,0 +1,3 @@
+
+> pythonify@1.0.0 build /app/libs/golang/pythonify
+> go build ./...

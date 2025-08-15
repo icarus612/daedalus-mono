@@ -1,0 +1,11 @@
+{
+  "name": "maze-runner-py",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "poetry install"
+  },
+  "bin": {
+    "py-maze-runner": "bin/solver.py"
+  }
+}

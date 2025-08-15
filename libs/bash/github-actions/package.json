@@ -1,0 +1,9 @@
+{
+  "name": "github-actions-bash",
+  "version": "1.0.0",
+  "private": true,
+  "bin": {
+    "build-maze-runner": "build-maze-runner.sh",
+    "create-mono-file-tree": "create-mono-file-tree.sh"
+  }
+}
