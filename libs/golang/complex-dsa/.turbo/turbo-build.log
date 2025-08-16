@@ -1,3 +1,0 @@
-
-> complex-dsa@1.0.0 build /app/libs/golang/complex-dsa
-> go build ./...

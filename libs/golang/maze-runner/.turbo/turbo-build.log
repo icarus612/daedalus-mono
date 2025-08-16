@@ -1,3 +1,0 @@
-
-> maze-runner-go@1.0.0 build /app/libs/golang/maze-runner
-> go build -o bin/cli-solver ./cmd/cli-solver && go build -o bin/quick-solver ./cmd/quick-solver

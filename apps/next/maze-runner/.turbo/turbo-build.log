@@ -1,6 +1,0 @@
-
-> maze-runner-next@0.1.0 build /app/apps/next/maze-runner
-> next build && next export
-
-info  - Linting and checking validity of types...
-info  - Creating an optimized production build...
