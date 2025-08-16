@@ -1,13 +1,24 @@
 {
   "name": "daedalus-monorepo",
   "private": true,
+  "ui": "tui",
   "workspaces": [
     "apps/*/*",
     "apps/*",
-    "libs/*/*",
-    "libs/*"
+    "libs/bash/*",
+    "libs/golang/*",
+    "libs/javascript/*/*",
+    "libs/python/*",
+    "libs/python/tensorflow/*",
+    "libs/prompting/*"
   ],
-  "scripts": {},
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "clean": "turbo clean"
+  },
   "devDependencies": {
     "turbo": "latest"
   },
