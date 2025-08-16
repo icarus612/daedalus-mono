@@ -7,3 +7,6 @@ node_modules/
 .claude
 *storybook.log
 storybook-static
+
+# Turborepo
+.turbo
