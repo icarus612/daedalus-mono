@@ -1,5 +1,5 @@
 {
-  "name": "crud-server",
+  "name": "lib.golang.crud-server",
   "version": "1.0.0",
   "private": true,
   "scripts": {

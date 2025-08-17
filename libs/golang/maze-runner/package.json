@@ -1,5 +1,5 @@
 {
-  "name": "maze-runner-go",
+  "name": "lib.golang.maze-runner",
   "version": "1.0.0",
   "private": true,
   "scripts": {

@@ -1,5 +1,5 @@
 {
-  "name": "complex-dsa",
+  "name": "lib.golang.complex-dsa",
   "version": "1.0.0",
   "private": true,
   "scripts": {

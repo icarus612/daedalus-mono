@@ -1,5 +1,10 @@
 {
-  "name": "e-card",
+  "name": "lib.javascript.react.e-card",
   "version": "1.0.0",
-  "private": true
+  "private": true,
+  "scripts": {
+    "dev": "echo 'No dev configured'",
+    "build": "echo 'No build configured'",
+    "lint": "echo 'No lint configured'"
+  }
 }

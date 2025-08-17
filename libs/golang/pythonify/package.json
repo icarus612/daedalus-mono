@@ -1,5 +1,5 @@
 {
-  "name": "pythonify",
+  "name": "lib.golang.pythonify",
   "version": "1.0.0",
   "private": true,
   "scripts": {

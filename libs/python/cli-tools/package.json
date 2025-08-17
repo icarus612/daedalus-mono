@@ -1,9 +1,15 @@
 {
-  "name": "cli-tools-py",
+  "name": "lib.python.cli-tools",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "poetry install"
+    "install": "py-install",
+    "build": "py-build", 
+    "dev": "py-dev",
+    "lint": "py-lint"
+  },
+  "devDependencies": {
+    "lib.bash.build-tools": "workspace:*"
   },
   "bin": {
     "py-cli-convert-file": "cli_tools/convert_file.py",

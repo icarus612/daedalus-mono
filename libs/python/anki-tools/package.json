@@ -1,9 +1,15 @@
 {
-  "name": "anki-tools",
+  "name": "lib.python.anki-tools",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "poetry install"
+    "install": "py-install",
+    "build": "py-build", 
+    "dev": "py-dev",
+    "lint": "py-lint"
+  },
+  "devDependencies": {
+    "lib.bash.build-tools": "workspace:*"
   },
   "bin": {
     "anki-build-deck": "anki_tools/build_deck.py",

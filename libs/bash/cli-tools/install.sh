@@ -24,7 +24,7 @@ function install_all() {
 	echo "Installing Daedalus: This is a linux/unix only script"
 	if [[ -d "$dae_sh" ]]; then
 		echo "Removing existing daedalus installation"
-		rm -rf "$dae_dir"
+		rm -rf "$dae_dir" 2>/dev/null || true
 	fi
 
 	mkdir -p "$dae_sh"

@@ -1,11 +1,17 @@
 {
-  "name": "market-bots",
+  "name": "app.microservices.market-bots",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "python main.py"
+    "install": "py-install",
+    "build": "py-build",
+    "dev": "py-dev",
+    "lint": "py-lint"
   },
   "bin": {
     "market-bots": "main.py"
+  },
+  "devDependencies": {
+    "lib.bash.build-tools": "workspace:*"
   }
 }

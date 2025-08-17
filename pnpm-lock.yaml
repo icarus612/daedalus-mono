@@ -12,13 +12,29 @@ importers:
         specifier: latest
         version: 2.5.5
 
-  apps/flask/maze-runner: {}
+  apps/flask/maze-runner:
+    devDependencies:
+      lib.bash.build-tools:
+        specifier: workspace:*
+        version: link:../../../libs/bash/build-tools
 
-  apps/flask/pokedex: {}
+  apps/flask/pokedex:
+    devDependencies:
+      lib.bash.build-tools:
+        specifier: workspace:*
+        version: link:../../../libs/bash/build-tools
 
-  apps/flask/weather-fortcast: {}
+  apps/flask/weather-fortcast:
+    devDependencies:
+      lib.bash.build-tools:
+        specifier: workspace:*
+        version: link:../../../libs/bash/build-tools
 
-  apps/microservices/market-bots: {}
+  apps/microservices/market-bots:
+    devDependencies:
+      lib.bash.build-tools:
+        specifier: workspace:*
+        version: link:../../../libs/bash/build-tools
 
   apps/next/maze-runner:
     dependencies:
@@ -37,6 +53,8 @@ importers:
       sass:
         specifier: ^1.32.8
         version: 1.90.0
+
+  libs/bash/build-tools: {}
 
   libs/bash/cli-tools: {}
 
@@ -58,15 +76,35 @@ importers:
 
   libs/prompting/gemini: {}
 
-  libs/python/anki-tools: {}
+  libs/python/anki-tools:
+    devDependencies:
+      lib.bash.build-tools:
+        specifier: workspace:*
+        version: link:../../bash/build-tools
 
-  libs/python/cli-tools: {}
+  libs/python/cli-tools:
+    devDependencies:
+      lib.bash.build-tools:
+        specifier: workspace:*
+        version: link:../../bash/build-tools
 
-  libs/python/maze-runner: {}
+  libs/python/maze-runner:
+    devDependencies:
+      lib.bash.build-tools:
+        specifier: workspace:*
+        version: link:../../bash/build-tools
 
-  libs/python/pyto-widgets: {}
+  libs/python/pyto-widgets:
+    devDependencies:
+      lib.bash.build-tools:
+        specifier: workspace:*
+        version: link:../../bash/build-tools
 
-  libs/python/web-crawlers: {}
+  libs/python/web-crawlers:
+    devDependencies:
+      lib.bash.build-tools:
+        specifier: workspace:*
+        version: link:../../bash/build-tools
 
 packages:
 

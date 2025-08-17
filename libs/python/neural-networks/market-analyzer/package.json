@@ -1,8 +1,14 @@
 {
-  "name": "ann-market-analyzer",
+  "name": "lib.python.neural-networks.market-analyzer",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "poetry install"
+    "install": "py-install",
+    "build": "py-build", 
+    "dev": "py-dev",
+    "lint": "py-lint"
+  },
+  "devDependencies": {
+    "lib.bash.build-tools": "workspace:*"
   }
 }

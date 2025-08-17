@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Python install script for monorepo packages
+# Creates venv and installs dependencies
+
+set -e
+
+# Check if we're in a valid directory with Python package files
+if [ -f "pyproject.toml" ]; then
+    echo "Installing Python package with Poetry..."
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip install --upgrade pip
+    pip install poetry
+    poetry install
+elif [ -f "requirements.txt" ]; then
+    echo "Installing Python package with pip..."
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip install --upgrade pip
+    pip install -r requirements.txt
+else
+    echo "No Python package configuration found (pyproject.toml or requirements.txt)"
+    exit 1
+fi
+
+echo "✅ Python package installed successfully"

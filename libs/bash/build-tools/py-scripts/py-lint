@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Python lint script for monorepo packages
+# Runs linting tools in the virtual environment
+
+set -e
+
+# Check if venv exists
+if [ ! -d ".venv" ]; then
+    echo "Virtual environment not found. Running py-install first..."
+    pnpm run install
+fi
+
+# Activate venv
+source .venv/bin/activate
+
+# Install linting tools if not present
+pip install -q ruff 2>/dev/null || true
+
+# Run linting
+if command -v ruff &> /dev/null; then
+    echo "Running ruff check..."
+    ruff check .
+else
+    echo "No linter configured. Install ruff for Python linting."
+    exit 1
+fi

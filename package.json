@@ -1,10 +1,8 @@
 {
   "name": "daedalus-monorepo",
   "private": true,
-  "ui": "tui",
   "workspaces": [
     "apps/*/*",
-    "apps/*",
     "libs/bash/*",
     "libs/golang/*",
     "libs/javascript/*/*",

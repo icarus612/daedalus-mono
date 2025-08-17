@@ -1,9 +1,11 @@
 {
-  "name": "cli-tools-bash",
+  "name": "lib.bash.cli-tools",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "./install.sh"
+    "dev": "echo 'No dev configured'",
+    "system-install": "./install.sh",
+    "lint": "echo 'No lint configured'"
   },
   "bin": {
     "cli-tools-install": "install.sh"

@@ -1,0 +1,17 @@
+{
+  "name": "lib.bash.build-tools",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Build tools and scripts for monorepo packages",
+  "scripts": {
+    "dev": "echo 'No dev configured'",
+    "build": "chmod +x py-scripts/*",
+    "lint": "echo 'No lint configured'"
+  },
+  "bin": {
+    "py-install": "./py-scripts/py-install",
+    "py-build": "./py-scripts/py-build",
+    "py-dev": "./py-scripts/py-dev",
+    "py-lint": "./py-scripts/py-lint"
+  }
+}
