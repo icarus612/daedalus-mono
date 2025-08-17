@@ -28,6 +28,7 @@ daedalus-mono
 │       └── <a href="/apps/next/maze-runner">maze-runner</a>
 ├── libs
 │   ├── bash
+│   │   ├── <a href="/libs/bash/build-tools">build-tools</a>
 │   │   ├── <a href="/libs/bash/cli-tools">cli-tools</a>
 │   │   └── <a href="/libs/bash/github-actions">github-actions</a>
 │   ├── golang
@@ -68,8 +69,8 @@ daedalus-mono
 │       ├── tensorflow
 │       │   └── <a href="/libs/python/tensorflow/open-ai-gym">open-ai-gym</a>
 │       └── <a href="/libs/python/web-crawlers">web-crawlers</a>
-└── templates
-    └── <a href="/templates/next-js">next-js</a>
+├── templates
+│   └── <a href="/templates/next-js">next-js</a>
 
 </pre>
 
