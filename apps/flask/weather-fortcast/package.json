@@ -1,0 +1,17 @@
+{
+  "name": "app.flask.weather-fortcast",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install": "py-install",
+    "build": "py-build",
+    "dev": "py-dev",
+    "lint": "py-lint"
+  },
+  "devDependencies": {
+    "lib.bash.build-tools": "workspace:*"
+  },
+  "bin": {
+    "weather-fortcast": "main.py"
+  }
+}

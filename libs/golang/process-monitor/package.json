@@ -1,0 +1,11 @@
+{
+  "name": "lib.golang.process-monitor",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "go build -o bin/process-monitor ./cmd"
+  },
+  "bin": {
+    "process-monitor": "bin/process-monitor"
+  }
+}

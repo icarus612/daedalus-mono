@@ -1,9 +1,10 @@
 [tool.poetry]
-name = "ankibuildtools-lib-py"
+name = "anki-tools"
 version = "0.1.0"
 description = ""
 authors = ["icarus64 <ellishogan95@gmail.com>"]
 readme = "README.md"
+packages = [{include = "anki_tools"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"

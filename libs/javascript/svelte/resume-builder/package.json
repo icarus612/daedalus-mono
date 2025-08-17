@@ -1,5 +1,5 @@
 {
-  "name": "@dev-dae/resume-builder",
+  "name": "lib.javascript.svelte.resume-builder",
   "version": "0.1.0",
   "description": "Resume Builder",
   "type": "module",

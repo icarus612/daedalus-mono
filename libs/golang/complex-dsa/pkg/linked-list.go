@@ -1,8 +1,10 @@
-package dsa
+package complex_dsa
+
+import "github.com/dae-go/complex-dsa/pkg/nodes"
 
 type LinkedList struct {
-	head Snode
-	tail Snode
+	Head *nodes.SNode
+	Tail *nodes.SNode
 }
 
 type FullLinkedList struct {

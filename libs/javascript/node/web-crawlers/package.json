@@ -1,9 +1,12 @@
 {
-  "name": "javascript-web-crawlers",
+  "name": "lib.javascript.node.web-crawlers",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "echo 'No dev configured'",
+    "build": "echo 'No build configured'",
+    "lint": "echo 'No lint configured'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

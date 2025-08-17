@@ -1,7 +1,7 @@
 package nodes
 
-type Dnode struct {
+type DNode struct {
 	Value  any
-	Child  Dnode
-	Parent Dnode
+	Child  *DNode
+	Parent *DNode
 }

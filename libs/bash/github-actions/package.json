@@ -1,0 +1,14 @@
+{
+  "name": "lib.bash.github-actions",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'No dev configured'",
+    "build": "echo 'No build configured'",
+    "lint": "echo 'No lint configured'"
+  },
+  "bin": {
+    "build-maze-runner": "build-maze-runner.sh",
+    "create-mono-file-tree": "create-mono-file-tree.sh"
+  }
+}

@@ -27,5 +27,50 @@
         ]
       }
     ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(pnpm:*)",
+      "Bash(grep:*)",
+      "Bash(git:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "ReadFile:*",
+      "Bash(docker ps:*)",
+      "Bash(kubectl get:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:docs.*)",
+      "Bash(go test:*)",
+    ],
+    "deny": [
+      "Bash(rm:*)",
+      "Bash(sudo:*)",
+      "Bash(curl:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git clean -f:*)",
+      "Bash(git clean -fd:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push --force-with-lease:*)",
+      "Bash(git push -f:*)",
+      "Bash(git branch -D:*)",
+      "Bash(git branch --delete --force:*)",
+      "Bash(git config:*)",
+      "Bash(git remote:*)",
+      "Bash(git tag -d:*)",
+      "Bash(git tag --delete:*)",
+      "Bash(git rebase --abort:*)",
+      "Bash(git reflog expire:*)",
+      "Bash(git gc --prune:*)",
+      "Bash(git filter-branch:*)",
+      "Bash(git push origin --delete:*)",
+      "Bash(git reset --mixed HEAD~:*)",
+      "Bash(git reset --soft HEAD~:*)",
+      "Bash(git worktree remove:*)",
+      "Bash(git submodule deinit:*)",
+      "Bash(git rm --cached:*)",
+      "Bash(git update-ref -d:*)"
+    ]
   }
 }

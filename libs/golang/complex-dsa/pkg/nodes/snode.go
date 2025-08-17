@@ -1,6 +1,6 @@
 package nodes
 
-type Snode struct {
-	value any
-	child Snode
+type SNode struct {
+	Value any
+	Child *SNode
 }

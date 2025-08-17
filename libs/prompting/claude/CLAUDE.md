@@ -5,15 +5,12 @@ We're building production-quality code together. Your role is to create maintain
 When you seem stuck or overly complex, I'll redirect you - my guidance helps you stay on track.
 
 ## Package Manager
-This project uses **pnpm** as the package manager. Always use pnpm commands instead of npm or yarn.
+Node project uses **pnpm** as the package manager. Always use pnpm commands instead of npm or yarn.
 
-## Important Commands
+## Important Frontend Commands
 - Install dependencies: `pnpm install`
 - Build: `pnpm build`
 - Dev: `pnpm dev`
-
-## Project Locations
-- Main project: ../
 
 ## 🚨 AUTOMATED CHECKS ARE MANDATORY
 **ALL hook issues are BLOCKING - EVERYTHING must be ✅ GREEN!**  
@@ -133,7 +130,7 @@ Your code must be 100% clean. No exceptions.
 - Hot paths ? Add benchmarks
 - Skip tests for main() and simple CLI parsing
 
-### Project Structure
+### Golang Project Structure
 ```
 cmd/        # Application entrypoints
 internal/   # Private code (the majority goes here)
@@ -181,6 +178,17 @@ Would you like me to [specific improvement]?"
 
 - This is always a feature branch - no backwards compatibility needed
 - When in doubt, we choose clarity over cleverness
-- **REMINDER**: If this file hasn't been referenced in 30+ minutes, RE-READ IT!
+- **REMINDER**: If this file hasn't been referenced in 10+ minutes, RE-READ IT!
 
 Avoid complex abstractions or "clever" code. The simple, obvious solution is probably better, and my guidance helps you stay focused on what matters.
+
+## Reminders:
+ 
+- Always use PNPM for node/turborepo projects
+- When working with Svelte use Svelte v5
+- Componentize when possible 
+- Use existing classes/components when possible over creating new ones
+- Projects that use tailwind are using Tailwind v4 which handles settup differently than v3
+- If you debug using the console for node/js, use console.log.
+- I use console.info and my console.info statements should never be removed.
+- **If this file hasn't been referenced in 10+ minutes, RE-READ IT!**

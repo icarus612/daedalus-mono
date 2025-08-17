@@ -1,0 +1,17 @@
+{
+  "name": "app.flask.maze-runner",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install": "py-install",
+    "build": "py-build",
+    "dev": "py-dev",
+    "lint": "py-lint"
+  },
+  "devDependencies": {
+    "lib.bash.build-tools": "workspace:*"
+  },
+  "bin": {
+    "maze-runner-flask": "main.py"
+  }
+}
