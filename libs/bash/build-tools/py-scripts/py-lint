@@ -7,8 +7,8 @@ set -e
 
 # Check if venv exists
 if [ ! -d ".venv" ]; then
-    echo "Virtual environment not found. Running py-install first..."
-    pnpm run install
+    echo "Virtual environment not found. Creating venv..."
+    python3 -m venv .venv
 fi
 
 # Activate venv

@@ -1,5 +1,9 @@
 {
   "name": "lib.prompting.gemini",
   "version": "1.0.0",
-  "private": true
+  "private": true,
+  "scripts": {
+    "build": "echo 'No build configured for prompting library'",
+    "lint": "echo 'No lint configured for prompting library'"
+  }
 }

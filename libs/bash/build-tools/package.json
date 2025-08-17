@@ -4,8 +4,8 @@
   "private": true,
   "description": "Build tools and scripts for monorepo packages",
   "scripts": {
-    "dev": "echo 'No dev configured'",
     "build": "chmod +x py-scripts/*",
+    "dev": "echo 'No dev command for bash library'",
     "lint": "echo 'No lint configured'"
   },
   "bin": {

@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "go build -o bin/cli-solver ./cmd/cli-solver && go build -o bin/quick-solver ./cmd/quick-solver"
+    "build": "go build -o bin/cli-solver ./cmd/cli-solver && go build -o bin/quick-solver ./cmd/quick-solver",
+    "dev": "echo 'No dev command for Go library'",
+    "test": "go test ./...",
+    "lint": "go vet ./... && go fmt ./..."
   },
   "bin": {
     "cli-solver": "bin/cli-solver",

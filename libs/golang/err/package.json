@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "build": "go build ./...",
-    "test": "go test ./..."
+    "dev": "go test -v ./...",
+    "test": "go test ./...",
+    "lint": "go vet ./... && go fmt ./..."
   }
 }
