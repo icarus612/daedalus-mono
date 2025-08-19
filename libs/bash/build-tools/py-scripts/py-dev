@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Python dev script for monorepo packages
-# Activates venv and runs the appropriate dev command
+# Runs appropriate dev command without blocking
 
 set -e
 
 # Check if venv exists
 if [ ! -d ".venv" ]; then
-    echo "Virtual environment not found. Running py-install first..."
-    pnpm run install
+    echo "Virtual environment not found. Creating venv..."
+    python3 -m venv .venv
 fi
 
 # Activate venv
@@ -16,22 +16,35 @@ source .venv/bin/activate
 
 # Determine what to run based on available files
 if [ -f "main.py" ]; then
-    echo "Running main.py..."
-    python main.py
-elif [ -d "src" ] && [ -f "src/__init__.py" ]; then
-    echo "Running src module..."
-    python -m src
-elif [ -f "pyproject.toml" ]; then
-    # Try to extract module name from pyproject.toml
-    MODULE_NAME=$(grep -E '^\[tool\.poetry\]|^name\s*=' pyproject.toml | grep -A1 '\[tool\.poetry\]' | grep 'name' | cut -d'"' -f2 | tr '-' '_')
-    if [ -d "$MODULE_NAME" ]; then
-        echo "Running module: $MODULE_NAME..."
-        python -m "$MODULE_NAME"
+    # Check if it's a Flask app and assign different ports
+    if grep -q "from flask import\|import flask" main.py 2>/dev/null; then
+        # Determine port based on directory name
+        DIR_NAME=$(basename $(pwd))
+        case "$DIR_NAME" in
+            "maze-runner")
+                PORT=5001
+                ;;
+            "pokedex")
+                PORT=5002
+                ;;
+            "weather-fortcast")
+                PORT=5003
+                ;;
+            "market-bots")
+                PORT=5004
+                ;;
+            *)
+                PORT=5000
+                ;;
+        esac
+        echo "Starting Flask app on port $PORT..."
+        FLASK_APP=main.py FLASK_ENV=development python -m flask run --port=$PORT
     else
-        echo "Module directory not found. Starting Python REPL..."
-        python
+        echo "Running main.py..."
+        python main.py
     fi
 else
-    echo "No clear entry point found. Starting Python REPL..."
-    python
+    # For libraries, just exit successfully after checking imports
+    echo "Python library - no dev server needed"
+    exit 0
 fi

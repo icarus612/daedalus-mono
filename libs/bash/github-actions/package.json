@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "echo 'No dev configured'",
     "build": "echo 'No build configured'",
+    "dev": "echo 'No dev command for bash library'",
     "lint": "echo 'No lint configured'"
   },
   "bin": {

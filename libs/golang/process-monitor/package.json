@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "go build -o bin/process-monitor ./cmd"
+    "build": "go build -o bin/process-monitor ./cmd",
+    "dev": "echo 'No dev command for Go library'",
+    "test": "go test ./...",
+    "lint": "go vet ./... && go fmt ./..."
   },
   "bin": {
     "process-monitor": "bin/process-monitor"

@@ -2,5 +2,8 @@
   "name": "lib.javascript.node.build-scripts",
   "version": "1.0.0",
   "main": "src/index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "dev": "echo 'No dev command for library'"
+  }
 }
