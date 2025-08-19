@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "system-install": "./install.sh",
-    "dev": "echo 'No dev command for bash library'",
     "lint": "echo 'No lint configured'"
   },
   "bin": {

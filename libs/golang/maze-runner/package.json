@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "go build -o bin/cli-solver ./cmd/cli-solver && go build -o bin/quick-solver ./cmd/quick-solver",
-    "dev": "echo 'No dev command for Go library'",
+    "dev": "~/go/bin/gotestsum --watch ./...",
     "test": "go test ./...",
     "lint": "go vet ./... && go fmt ./..."
   },

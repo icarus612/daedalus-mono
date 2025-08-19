@@ -1,6 +1,9 @@
 from flask import Flask, render_template, url_for, request, redirect
 import requests
 import os
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../../libs/python'))
+from flask_utils.port_finder import find_available_port
 from flask_bootstrap import Bootstrap
 from flask_fontawesome import FontAwesome
 from flask_sslify import SSLify
@@ -42,6 +45,11 @@ def get_weather():
 	return redirect(url_for('weather', city=city, country=country, state=state, unit=unit))
 
 
-port = int(os.environ.get('PORT', 5000)) 
 if __name__ == '__main__':
-	app.run(threaded=True, debug=True, port=port)
+    try:
+        port = find_available_port(3000, 3100)
+        print(f"Starting Flask app on port {port}")
+        app.run(threaded=True, debug=True, port=port)
+    except RuntimeError as e:
+        print(f"Error: {e}")
+        sys.exit(1)
