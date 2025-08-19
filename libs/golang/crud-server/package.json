@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "go build -o bin/migrate ./cmd/migrate && go build -o bin/row ./cmd/row && go build -o bin/seed ./cmd/seed && go build -o bin/server ./cmd/server && go build -o bin/table ./cmd/table",
-    "dev": "echo 'No dev command for Go library'",
+    "dev": "~/go/bin/gotestsum --watch ./...",
     "test": "go test ./...",
     "lint": "go vet ./... && go fmt ./..."
   },

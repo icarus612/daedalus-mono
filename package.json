@@ -15,7 +15,8 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "test": "turbo test",
-    "clean": "turbo clean"
+    "clean": "turbo clean",
+    "postinstall": "go install gotest.tools/gotestsum@latest"
   },
   "devDependencies": {
     "turbo": "latest"

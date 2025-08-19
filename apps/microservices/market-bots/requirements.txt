@@ -2,3 +2,7 @@ python-dotenv
 requests
 pandas
 numpy
+alpha-vantage
+matplotlib
+robin-stocks
+pyotp
