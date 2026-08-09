@@ -11,6 +11,11 @@ storybook-static
 # Turborepo
 .turbo
 
+# Environment files (any directory)
+.env
+.env.*
+!.env.example
+
 # Python
 .venv/
 __pycache__/
@@ -28,3 +33,6 @@ venv.bak/
 *.egg-info/
 pip-log.txt
 pip-delete-this-directory.txt
+
+# dae-pipeline run dirs, inside each worktree
+.artifacts/
