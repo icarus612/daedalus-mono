@@ -10,7 +10,13 @@
     "postinstall": "go install gotest.tools/gotestsum@latest"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.1",
+    "prettier": "^3.9.6",
     "turbo": "2.5.5"
   },
-  "packageManager": "pnpm@9.1.0"
+  "packageManager": "pnpm@9.1.0",
+  "engines": {
+    "node": ">=24"
+  }
 }
