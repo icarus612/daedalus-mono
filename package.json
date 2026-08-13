@@ -1,15 +1,6 @@
 {
   "name": "daedalus-monorepo",
   "private": true,
-  "workspaces": [
-    "apps/*/*",
-    "libs/bash/*",
-    "libs/golang/*",
-    "libs/javascript/*/*",
-    "libs/python/*",
-    "libs/python/tensorflow/*",
-    "libs/prompting/*"
-  ],
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
@@ -19,7 +10,7 @@
     "postinstall": "go install gotest.tools/gotestsum@latest"
   },
   "devDependencies": {
-    "turbo": "latest"
+    "turbo": "2.5.5"
   },
   "packageManager": "pnpm@9.1.0"
 }
