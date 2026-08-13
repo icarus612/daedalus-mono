@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "build": "go build -o bin/migrate ./cmd/migrate && go build -o bin/row ./cmd/row && go build -o bin/seed ./cmd/seed && go build -o bin/server ./cmd/server && go build -o bin/table ./cmd/table",
-    "dev": "~/go/bin/gotestsum --watch ./...",
+    "dev": "gotestsum --watch ./...",
     "test": "go test ./...",
-    "lint": "go vet ./... && go fmt ./..."
+    "lint": "go vet ./... && test -z \"$(gofmt -l .)\""
   },
   "bin": {
     "crud-server-migrate": "bin/migrate",

@@ -1,0 +1,10 @@
+go 1.24.2
+
+use (
+	./libs/golang/complex-dsa
+	./libs/golang/crud-server
+	./libs/golang/err
+	./libs/golang/maze-runner
+	./libs/golang/process-monitor
+	./libs/golang/pythonify
+)
