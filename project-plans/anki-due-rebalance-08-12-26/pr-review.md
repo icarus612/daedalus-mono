@@ -110,3 +110,102 @@ report's prose.
 
 None — both findings above are non-blocking notes with verified explanations, not
 decision points that bar a verdict.
+
+## Round 2 — 08-13-26
+
+```
+verdict: tentative
+next: proceed
+blocking: 0
+non-blocking: 3
+```
+
+### Scope of this review
+
+Fresh full pass over `main...feature/anki-due-rebalance`, re-reading the plan at
+`project-plans/anki-due-rebalance-08-12-26/plan.md` at its current state (now 13
+subphases, all ticked `[x]`, Phase 5 added by user order after round 1 shipped).
+Since round 1: four new commits — `65fb4eb` (plan records: `plan.md`,
+`plan-review.md`, `code-review.md`), `26f4eae` (Phase 5 plan amendment),
+`66c72e4` (the fix itself), `b2ce132` (syllabus ticks for 5.1/5.2). The Anki
+feature files (`due_plan.py`, `rebalance_due.py`, tests, manifests, docs) are
+byte-for-byte unchanged since round 1 — this pass re-confirms them are still
+intact rather than re-reading them line by line.
+
+`git diff --stat main...feature/anki-due-rebalance` (15 files, +5357/-240) adds
+exactly one file to round 1's set: `libs/prompting/claude/hooks/smart-lint.sh`
+(+592/-152, matching the exit report's hunk count), plus the three plan-record
+files and this report itself growing. No other file changed since round 1.
+
+### Independently verified this round (commands re-run, not read from reports)
+
+- `.venv/bin/poetry run pytest -q` (from `libs/python/anki-tools/`): **111
+  passed** — unchanged from round 1, confirming Phase 5's disjoint file scope
+  claim.
+- `ruff check --output-format=concise .` diffed byte-for-byte against
+  `.artifacts/baselines/ruff-baseline.txt`: **identical**, zero new findings.
+- `diff libs/prompting/claude/hooks/smart-lint.sh ~/.claude/hooks/smart-lint.sh`:
+  **empty output** — the two copies are byte-identical, confirming the
+  out-of-repo install landed and matches the reviewed/committed source.
+- `bash -n libs/prompting/claude/hooks/smart-lint.sh`: parses clean.
+- Read the full hook-mode dispatch path end to end: `TARGET_FILE` resolution
+  (CLI bare-path arg or `jq`-parsed stdin JSON) → `should_skip_target` early
+  gate (missing file / outside repo / `.claude-hooks-ignore` / non-lintable
+  extension → one line + `exit 0`, *before* the header, before `load_config`,
+  before any project-type detection) → extension-keyed dispatch in `main()`
+  to exactly one of `lint_python_scoped` / `lint_go_scoped` / `lint_javascript`
+  (already per-file via its pre-existing `TARGET_FILE` branch) /
+  `lint_rust_scoped` / `lint_nix_scoped`. Matches the plan's 5.1 spec exactly,
+  including that Go/Rust scope to the nearest enclosing module/crate via the
+  new shared `find_nearest_manifest` helper rather than the whole repo.
+- Independently reproduced (not just trusted from the exit report): ran
+  `bash libs/prompting/claude/hooks/smart-lint.sh README.md` myself → `[INFO]
+  Skip (no lintable extension): README.md`, exit 0, and `git status --porcelain`
+  empty before and after — the motivating regression is real, live, on this
+  branch's committed copy, not only on the installed fork.
+- `find_pruned`'s prune-name list contains `.workflows` (confirmed by reading
+  the function directly, line 88 in the current file).
+- `verify-run-scope.sh <worktree> main .artifacts`: same single `UNCLAIMED:
+  libs/python/anki-tools/README.md` as round 1 — no new unclaimed product
+  changes from the Phase 5 commit. `smart-lint.sh` itself is correctly
+  attributed to lane `l1`'s exit report (Phase 5 section), so it does not
+  appear in the unclaimed list.
+- `gh pr view 12`: state `OPEN`, `mergeable: MERGEABLE`, not a draft — still
+  publishable as-is.
+- Working tree clean (`git status --porcelain` empty) at review time.
+
+### Findings
+
+- [non-blocking] Carried forward from round 1, unchanged: `render_histogram`'s
+  `min_per_day` parameter (`anki_tools/rebalance_due.py:95`) is still present
+  but unreferenced in the body. Re-confirmed present verbatim. Still harmless,
+  still worth a follow-up cleanup, still not something this Phase 5 addition
+  touched or could have touched (disjoint file scope).
+- [non-blocking] Carried forward from round 1, re-verified: `verify-run-scope.sh`
+  still reports `libs/python/anki-tools/README.md` as `UNCLAIMED:` — the same
+  adjudicated false positive (the `document-local` stage's commit, out of lane
+  `l1`'s scope per the plan, and the scope-check script has no report to read
+  for the docs stage). No change in status; re-flagging only because a fresh
+  scope-audit run was performed this round per the review-pr procedure.
+- [non-blocking] `libs/prompting/claude/hooks/smart-lint.sh`'s `lint_python()`
+  (CLI-mode, repo-wide path, line 476) gained `.workflows` in its `exclude_dirs`
+  string, in addition to `find_pruned`'s prune list gaining the same entry.
+  This is disclosed as a "deliberate deviation beyond the plan's literal text"
+  in both the contract and the exit report, and the reasoning holds up: `black`
+  and `flake8` do their own file discovery via `--exclude`/gitignore rather than
+  going through `find_pruned`, and `flake8` in particular has no gitignore
+  awareness, so without this addition a CLI-mode run would attempt to sweep the
+  ~68,741 `.py` files living under sibling worktrees in `.workflows/` — exactly
+  the cost this phase exists to eliminate, and likely enough to fail 5.2(d)'s
+  "no sibling worktree descended into" criterion for flake8 specifically. The
+  change is narrowly scoped (one CLI-mode exclusion string, Python only, still
+  gated by `.workflows` already being gitignored repo-wide) and only *removes*
+  scanning of already-ignored code — it does not weaken any check the plan
+  cared about. Flagging because it is a real, disclosed expansion past the
+  plan's literal instruction, not because it looks wrong on inspection.
+
+### Open questions
+
+None — all three findings above are non-blocking notes with verified
+explanations (two unchanged from round 1, one newly surfaced and independently
+confirmed reasonable), not decision points that bar a verdict.
