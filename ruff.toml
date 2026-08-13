@@ -1,0 +1,11 @@
+# Canonical Python formatter+linter for this repo (D3). ruff format replaces black;
+# ruff check replaces flake8 + isort. Migrating other repos to ruff is an explicit
+# out-of-scope follow-up (see plan "Out of scope").
+line-length = 88
+target-version = "py311"  # D2: unify on Python 3.11
+
+[lint]
+select = ["E", "W", "F", "I"]
+
+[format]
+# ruff format's black-compatible defaults are intentionally left as-is.

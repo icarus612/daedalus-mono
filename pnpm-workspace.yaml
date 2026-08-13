@@ -3,3 +3,8 @@ packages:
   - 'apps/*/*'
   - 'libs/*'
   - 'libs/*/*'
+  - 'libs/*/*/*'
+  # D7 (plan lint-import-audit-08-12-26): legacy CRA/React16 packages kept out of the
+  # workspace deliberately — not migrated. See phase 3.3 for the package-level marking.
+  - '!libs/javascript/react/markdown-builder'
+  - '!libs/javascript/react/quote-builder'
