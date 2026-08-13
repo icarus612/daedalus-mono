@@ -1,8 +1,11 @@
-# Pants workspace files
-/.pants.*
-/dist/
+dist/
 /.pids
 node_modules/
+libs/golang/*/bin/
+.DS_Store
+.firebase/
+# Stray tracked Go binary at a non-bin/ path (C10)
+libs/golang/process-monitor/main
 
 .claude
 *storybook.log
