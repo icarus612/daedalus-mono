@@ -20,8 +20,8 @@ Rebalance Anki review due dates across a deck and its subdecks so no scheduled d
   - [x] 4.1: End-to-end integration coverage against a synthetic temporary collection (after: 3.3)
   - [x] 4.2: No new lint findings, suite green, manual dry-run against the real collection (after: 4.1)
 - [ ] Phase 5: Scope smart-lint to the triggering file
-  - [ ] 5.1: Scope hook-mode linting to the triggering file
-  - [ ] 5.2: Verify hook-mode scoping and CLI-mode preservation (after: 5.1)
+  - [x] 5.1: Scope hook-mode linting to the triggering file
+  - [x] 5.2: Verify hook-mode scoping and CLI-mode preservation (after: 5.1)
 
 Single lane. **Reason:** the whole feature is two new source files plus one shared manifest touchpoint inside one package (`libs/python/anki-tools/`), and both source files are written against a single data contract defined in 2.1. Splitting the pure core from the adapter would create a shared-types touchpoint larger than either lane, so lanes are not manufactured here.
 
