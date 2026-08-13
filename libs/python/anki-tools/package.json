@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "install": "py-install",
-    "build": "py-build", 
+    "build": "py-build",
     "lint": "py-lint",
-    "dev": "py-dev"
+    "dev": "py-dev",
+    "test": "poetry run pytest"
   },
   "devDependencies": {
     "lib.bash.build-tools": "workspace:*"
@@ -14,6 +15,7 @@
   "bin": {
     "anki-build-deck": "anki_tools/build_deck.py",
     "anki-get-deck-info": "anki_tools/get_deck_info.py",
-    "anki-mp3-filename-update": "anki_tools/mp3_filename_update.py"
+    "anki-mp3-filename-update": "anki_tools/mp3_filename_update.py",
+    "anki-rebalance-due": "anki_tools/rebalance_due.py"
   }
 }

@@ -8,7 +8,13 @@ packages = [{include = "anki_tools"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
+anki = "24.06.3"
 
+[tool.poetry.group.dev.dependencies]
+pytest = "*"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [build-system]
 requires = ["poetry-core"]
