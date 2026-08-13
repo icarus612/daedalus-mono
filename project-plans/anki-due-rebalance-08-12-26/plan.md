@@ -19,6 +19,9 @@ Rebalance Anki review due dates across a deck and its subdecks so no scheduled d
 - [ ] Phase 4: Verification
   - [x] 4.1: End-to-end integration coverage against a synthetic temporary collection (after: 3.3)
   - [x] 4.2: No new lint findings, suite green, manual dry-run against the real collection (after: 4.1)
+- [ ] Phase 5: Scope smart-lint to the triggering file
+  - [ ] 5.1: Scope hook-mode linting to the triggering file
+  - [ ] 5.2: Verify hook-mode scoping and CLI-mode preservation (after: 5.1)
 
 Single lane. **Reason:** the whole feature is two new source files plus one shared manifest touchpoint inside one package (`libs/python/anki-tools/`), and both source files are written against a single data contract defined in 2.1. Splitting the pure core from the adapter would create a shared-types touchpoint larger than either lane, so lanes are not manufactured here.
 
@@ -56,6 +59,7 @@ The single, explicit escape hatch is the settled `--set-earlier` flag (default `
 - `libs/python/anki-tools/pyproject.toml`: declare the `anki` runtime dependency (today it is an undeclared import) and a pytest dev dependency.
 - `libs/python/anki-tools/package.json`: add the `bin` entry and a `test` script.
 - New `libs/python/anki-tools/tests/` — the first Python tests in this monorepo.
+- **`libs/prompting/claude/hooks/smart-lint.sh`** (Phase 5) — a user-ordered scope addition, unrelated to the Anki feature, riding this branch because PR #12 was already open. Its file scope is disjoint from everything above, so it cannot interfere. Phase 5 also performs an out-of-repo install to `~/.claude/hooks/smart-lint.sh`, which is an install action rather than a product change and never appears in the branch diff.
 
 ### Out of scope
 
@@ -686,6 +690,91 @@ col.update_card(card)
 **Test approach — oracle: `existing suite`** (the suite created in Phases 2–4 plus the lint gate).
 
 ---
+
+---
+
+### Phase 5: Scope smart-lint to the triggering file
+
+**Why this phase is in this plan.** It is unrelated to the Anki feature and was added by user order mid-run; it rides this branch and PR #12 because it is small and the branch was already open. Its file scope is disjoint from Phases 1-4, so it cannot interfere with them. **Nothing else about the hook system is in scope** — no other hook, and specifically no change to `smart-test.sh`.
+
+**The problem, measured.** `~/.claude/hooks/smart-lint.sh` runs on every `PostToolUse` Write/Edit and lints the **entire repo** regardless of what was written. Observed repeatedly during this run's planning: a single write — including writes to markdown, and including writes to paths **outside the repo entirely** — reformats ~73 files and emits ~2000 lines of output. It also descends into sibling worktrees under `.workflows/`, so one run's write dirties another run's checkout (this happened to `.workflows/lint-import-audit/`, which ended up with 77 modified files).
+
+**Verified drift — the installed copy is AHEAD of the repo copy.** Confirmed this session with `diff libs/prompting/claude/hooks/smart-lint.sh ~/.claude/hooks/smart-lint.sh` (520 diff lines; repo 591 lines, installed 766):
+
+| | repo copy | installed copy |
+|---|---|---|
+| `find_pruned()` helper | **absent** (0 references) | present (13 references); prune names at line 88: `node_modules .git vendor target .godot .venv venv env __pycache__ dist build out result .next .turbo`, plus `CLAUDE_HOOKS_PRUNE_EXTRA` |
+| config / ignore filenames | `claude-code-hooks-config.sh`, `claude-code-hooks-ignore` | `.claude-hooks-config.sh`, `.claude-hooks-ignore` |
+| exit on clean | exits 2 always | exits 0 clean / 2 on issues (lines 754-766) |
+| monorepo detection depth | capped | uncapped |
+| `TARGET_FILE` | absent | present — bottom block (lines 665-686) parses `.tool_input.file_path // empty` from stdin JSON via `jq`, and also accepts a bare CLI path argument |
+
+**`TARGET_FILE` is already computed but barely used.** It is consumed **only** by the prettier/JS section (lines 489-493 of the installed copy). `lint_python` (line 349) runs `black . --check --exclude …` → `black .` → `flake8 . --exclude=…` repo-wide; `lint_go_modules` (line 298) iterates **every** module running `go vet ./...` (line 335), including modules inside `.workflows/*` worktrees; `lint_rust` (532) and `lint_nix` (594) likewise. The fix is therefore mostly *wiring an existing variable through*, not new machinery.
+
+---
+
+#### 5.1: Scope hook-mode linting to the triggering file
+
+**File scope**
+- `libs/prompting/claude/hooks/smart-lint.sh` — **the only product file in this phase**; the sole entry that may appear in the PR diff for Phase 5.
+- `~/.claude/hooks/smart-lint.sh` — **an out-of-repo install step, NOT a product file.** It lives outside the repository, will never appear in `git status` or the branch diff, and must not be claimed as a changed file in the exit report. Name it in the report as an install action instead, so the PR gate's `verify-run-scope.sh` (which treats any product change unclaimed by an exit report as a blocking finding) is not confused by a file it cannot see.
+
+**Work, in this order — the order matters.**
+
+1. **Upstream the drift first, before fixing anything.** Replace the repo copy's contents wholesale with the installed copy's. The installed copy is the newer base, so this is an upstreaming of work that already exists, not a rewrite. Do this as its own step so the subsequent scoping change is reviewable as a small diff against a known base rather than being buried inside a 520-line reconciliation.
+2. **Apply the scoping fix to that base.**
+3. **Install the fixed version** to `~/.claude/hooks/smart-lint.sh`, so both copies end byte-identical.
+
+**The scoping fix — hook mode (`TARGET_FILE` non-empty).**
+
+- **Early clean exit.** If the file does not exist, is outside the repo root the hook is running in, matches `.claude-hooks-ignore`, or has no lintable extension (`.py .go .js .jsx .ts .tsx .rs .nix`) → print **one short line** and `exit 0` immediately. This is the clause that stops markdown writes, progress-log writes, and writes to paths outside the repo from triggering a full sweep — the single largest source of the observed cost.
+- **`.py`** → `black --check` then format **that file only**; `flake8` **that file** with the same computed args the repo-wide path builds; `ruff` on that file only, if the repo copy's `ruff check --fix .` step survives the upstreaming.
+- **`.go`** → `gofmt` that file; `go vet` **only the module containing it** (nearest enclosing `go.mod`), never all modules.
+- **`.js/.jsx/.ts/.tsx`** → keep the existing per-file prettier behaviour already implemented at lines 489-493.
+- **`.rs`** → fmt/clippy only the crate containing the file.
+- **Language sections whose type does not match `TARGET_FILE` are skipped entirely** — no project-type detection sweep at all in hook mode.
+
+**The scoping fix — CLI mode (`TARGET_FILE` empty; tty or manual invocation).**
+
+Repo-wide behaviour is **unchanged**, with exactly one addition: add **`.workflows`** to `find_pruned`'s prune list (line 88) so manual sweeps stop descending into sibling worktrees.
+
+**Preserve, do not redesign.** Exit semantics (0 clean / 2 issues), the summary output format, and config/ignore loading all keep the installed copy's behaviour. This subphase changes *what gets linted*, never *how results are reported*.
+
+**Acceptance criteria**
+- `diff libs/prompting/claude/hooks/smart-lint.sh ~/.claude/hooks/smart-lint.sh` produces **empty output** and exit 0 — the two copies are byte-identical once installed.
+- The repo copy contains `find_pruned`, `.claude-hooks-config.sh` / `.claude-hooks-ignore` naming, the `TARGET_FILE` bottom block, and clean-exit-0 semantics — i.e. the drift is genuinely upstreamed, not partially merged.
+- `.workflows` appears in `find_pruned`'s prune name list.
+- `bash -n` on both copies parses clean, and `shellcheck` (if available) reports no **new** findings versus the installed copy as a baseline — the same differential-baseline rule Phase 1 Step 0 establishes for ruff/flake8 applies here.
+- In hook mode, no linter is invoked at all for a non-lintable extension — assert on the *absence* of linter output, not merely on the exit code.
+- `git status` shows `libs/prompting/claude/hooks/smart-lint.sh` as the only repo file changed by this subphase.
+
+**No paired test file is required.** `smart-test.sh` only pairs `.py` files (its `require_tests` logic keys off the extension), and this is a bash script, so the hard block that governs 2.1/3.1 does not apply here. Verification is 5.2's invocation matrix.
+
+**Test approach — oracle: `equivalence check`.** CLI-mode behaviour must remain equivalent to the installed copy's pre-change behaviour except for the `.workflows` prune addition; the two file copies must be byte-identical. Capture the pre-change installed copy (e.g. `cp ~/.claude/hooks/smart-lint.sh` into the run dir) as the comparison baseline **before** step 1 overwrites anything.
+
+---
+
+#### 5.2: Verify hook-mode scoping and CLI-mode preservation
+
+**File scope** — no source edits; this subphase produces evidence.
+
+**Work.** Run the four invocations below by hand and paste the output into the exit report. Each targets one behaviour from 5.1; together they cover both modes and both directions (scoped where it should be, unscoped where it must stay).
+
+| # | Invocation | Expected |
+|---|---|---|
+| a | Bare path argument to a **known-dirty pre-existing `.py`** file (e.g. one of the 11 baseline ruff offenders in `libs/python/anki-tools/anki_tools/`) | Output confined to **that file only** — no other path named anywhere — and **exit 2** |
+| b | Bare path argument to a `.md` file | Immediate **exit 0**, one short line, and **no linter output whatsoever** |
+| c | Hook-style JSON piped on stdin with a `.py` `file_path` (`{"tool_input":{"file_path":"…"}}`) | Identical behaviour to (a) — proves the `jq` bottom block and the CLI path argument reach the same code path |
+| d | No arguments, in a tty | Repo-wide run that lists **no `.workflows/` paths at all** |
+
+**Acceptance criteria**
+- All four rows behave as tabulated, with output pasted into the exit report.
+- (a) and (c) produce equivalent output modulo the invocation line — the two entry points must not diverge.
+- (d) confirms CLI mode is still genuinely repo-wide: it must still report findings from the pre-existing offenders outside this run's file scope, proving the `.workflows` prune did not over-prune into a no-op.
+- **Regression check on the run itself:** after 5.1 is installed, a Write to a markdown file no longer reformats unrelated files. Verify by capturing `git status --porcelain` before and after such a write — they must match. This is the observable that motivated the phase, so it is the one that closes it.
+- No sibling worktree under `.workflows/` is modified by any of the four invocations.
+
+**Test approach — oracle: `equivalence check`.** Hook mode is compared against the specified per-extension matrix; CLI mode against the pre-change baseline captured in 5.1.
 
 ## Risks and settled decisions
 
