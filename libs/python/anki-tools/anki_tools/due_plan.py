@@ -149,12 +149,19 @@ def apply_reverse_max_pass(state: RunState, max_per_day: int) -> None:
         d += 1
 
 
+def _reached_exempt_tail(state: RunState, d: int) -> bool:
+    """True once every day beyond d is empty - the trailing tail where the
+    min pass (and the short_days report) stop enforcing --min (D6.1's "the
+    tail is exempt" rule). Shared by apply_min_pass and _short_days so the
+    two never drift out of sync."""
+    return all(
+        len(state.buckets.get(day, [])) == 0 for day in range(d + 1, state.end_day + 1)
+    )
+
+
 def apply_min_pass(state: RunState, min_per_day: int) -> None:
     for d in range(state.start_day, state.end_day + 1):
-        if all(
-            len(state.buckets.get(day, [])) == 0
-            for day in range(d + 1, state.end_day + 1)
-        ):
+        if _reached_exempt_tail(state, d):
             break
         deficit = min_per_day - len(state.buckets[d])
         if deficit <= 0:
@@ -196,10 +203,7 @@ def _short_days(state: RunState, min_per_day: int | None) -> list[int]:
         return []
     short: list[int] = []
     for d in range(state.start_day, state.end_day + 1):
-        if all(
-            len(state.buckets.get(day, [])) == 0
-            for day in range(d + 1, state.end_day + 1)
-        ):
+        if _reached_exempt_tail(state, d):
             break
         if len(state.buckets.get(d, [])) < min_per_day:
             short.append(d)

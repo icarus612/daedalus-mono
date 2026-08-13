@@ -38,6 +38,8 @@ def resolve_deck_ids(col, deck_name):
     if deck_id is None:
         raise ValueError(f"No such deck: {deck_name!r}")
     child_ids = col.decks.deck_and_child_ids(deck_id)
+    resolved_names = [col.decks.name(did) for did in child_ids]
+    print(f"Resolved deck(s): {', '.join(resolved_names)}")
     return list(child_ids)
 
 
@@ -46,6 +48,7 @@ def collect_cards(col, deck_ids, start_day):
     skip_new = 0
     skip_learning = 0
     skip_suspended = 0
+    skip_buried = 0
     skip_overdue = 0
 
     for did in deck_ids:
@@ -55,6 +58,9 @@ def collect_cards(col, deck_ids, start_day):
             if card.queue == -1:
                 skip_suspended += 1
                 continue
+            if card.queue in (-2, -3):
+                skip_buried += 1
+                continue
             if card.queue == 0 and card.type == 0:
                 skip_new += 1
                 continue
@@ -62,8 +68,6 @@ def collect_cards(col, deck_ids, start_day):
                 skip_learning += 1
                 continue
             if not (card.queue == 2 and card.type == 2):
-                # any other non-review state (e.g. buried) counts as skipped
-                # learning/other rather than silently vanishing.
                 skip_learning += 1
                 continue
             if card.odid != 0:
@@ -80,26 +84,29 @@ def collect_cards(col, deck_ids, start_day):
 
     print(
         f"Skipped {skip_new} new, {skip_learning} learning, "
-        f"{skip_suspended} suspended, {skip_overdue} already due or overdue; "
+        f"{skip_suspended} suspended, {skip_buried} buried, "
+        f"{skip_overdue} already due or overdue; "
         f"filtered-deck cards are not visible to this route."
     )
 
     return cards
 
 
-def render_histogram(before, after, min_per_day, max_per_day):
+def render_histogram(before, after, min_per_day, max_per_day, today, short_days):
     rule = "-" * 50
     lines = [rule, "Day offset | Before | After  | Note"]
     all_days = sorted(set(before) | set(after))
+    short_days_set = set(short_days)
     for day in all_days:
         before_count = before.get(day, 0)
         after_count = after.get(day, 0)
+        offset = day - today
         marker = ""
-        if min_per_day is not None and after_count < min_per_day:
+        if day in short_days_set:
             marker = "  <- below --min"
         if max_per_day is not None and after_count > max_per_day:
             marker = "  <- above --max"
-        lines.append(f"{day:>10} | {before_count:>6} | {after_count:>6}{marker}")
+        lines.append(f"{offset:>10} | {before_count:>6} | {after_count:>6}{marker}")
     lines.append(rule)
     return "\n".join(lines)
 
@@ -282,7 +289,12 @@ def main():
             raise SystemExit(1)
 
         histogram = render_histogram(
-            result.before, result.after, args.min_per_day, args.max_per_day
+            result.before,
+            result.after,
+            args.min_per_day,
+            args.max_per_day,
+            today,
+            result.short_days,
         )
         print(histogram)
 

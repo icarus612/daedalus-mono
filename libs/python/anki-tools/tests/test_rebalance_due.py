@@ -143,12 +143,40 @@ def test_resolve_deck_ids_nonexistent_deck_raises_naming_the_deck(collection):
     assert "totally::not::a::real::deck" in str(exc_info.value)
 
 
+def test_resolve_deck_ids_is_case_insensitive(collection):
+    # Permanent regression test for the plan's empirical probe: col.decks.
+    # id_for_name really is case-insensitive for this API, so an upper/mixed
+    # -case query resolves to exactly the same ids as the exact-case name.
+    col = collection
+    coding_id = col.decks.id("programming::coding")
+    python_id = col.decks.id("programming::coding::python")
+
+    exact_case_result = resolve_deck_ids(col, "programming::coding")
+    upper_case_result = resolve_deck_ids(col, "PROGRAMMING::CODING")
+
+    assert set(exact_case_result) == {coding_id, python_id}
+    assert set(upper_case_result) == {coding_id, python_id}
+
+
+def test_resolve_deck_ids_echoes_resolved_names_on_success(collection, capsys):
+    col = collection
+    col.decks.id("programming::coding")
+    col.decks.id("programming::coding::python")
+
+    resolve_deck_ids(col, "programming::coding")
+
+    captured = capsys.readouterr()
+    assert "programming::coding" in captured.out
+
+
 # ---------------------------------------------------------------------------
 # collect_cards
 # ---------------------------------------------------------------------------
 
 
-def test_collect_cards_filters_to_review_queue_due_on_or_after_start(collection):
+def test_collect_cards_filters_to_review_queue_due_on_or_after_start(
+    collection, capsys
+):
     col = collection
     coding_id = col.decks.id("programming::coding")
     python_id = col.decks.id("programming::coding::python")
@@ -167,22 +195,40 @@ def test_collect_cards_filters_to_review_queue_due_on_or_after_start(collection)
     suspended_card = _add_card(
         col, coding_id, due=start_day + 2, ivl=20, ctype=2, queue=-1
     )
+    user_buried_card = _add_card(
+        col, coding_id, due=start_day + 1, ivl=15, ctype=2, queue=-2
+    )
+    scheduler_buried_card = _add_card(
+        col, coding_id, due=start_day + 1, ivl=15, ctype=2, queue=-3
+    )
     _add_card(col, unrelated_id, due=start_day + 1, ivl=15)  # wrong deck entirely
 
     deck_ids = resolve_deck_ids(col, "programming::coding")
     result = collect_cards(col, deck_ids, start_day)
     result_ids = {c.card_id for c in result}
+    captured = capsys.readouterr()
 
     assert result_ids == {in_scope_boundary.id, in_scope_later.id}
+    assert user_buried_card.id not in result_ids
+    assert scheduler_buried_card.id not in result_ids
+    assert "buried" in captured.out
 
     # Every card placed in the two in-scope decks: boundary, later, overdue,
-    # new, learning, suspended = 6. Skip counters must sum with the returned
-    # count back to that total (per 3.1's acceptance criterion). collect_cards
-    # is pinned to return only list[CardDue], so this suite verifies the
-    # arithmetic identity by construction: cards created in-deck minus
-    # cards returned equals cards deliberately excluded.
-    total_in_target_decks = 6
-    excluded = {overdue.id, new_card.id, learning_card.id, suspended_card.id}
+    # new, learning, suspended, user-buried, scheduler-buried = 8. Skip
+    # counters must sum with the returned count back to that total (per
+    # 3.1's/finding-3's acceptance criterion). collect_cards is pinned to
+    # return only list[CardDue], so this suite verifies the arithmetic
+    # identity by construction: cards created in-deck minus cards returned
+    # equals cards deliberately excluded.
+    total_in_target_decks = 8
+    excluded = {
+        overdue.id,
+        new_card.id,
+        learning_card.id,
+        suspended_card.id,
+        user_buried_card.id,
+        scheduler_buried_card.id,
+    }
     assert len(excluded) == total_in_target_decks - len(result_ids)
 
 
@@ -305,7 +351,7 @@ def test_read_only_planning_does_not_mutate_card_state(tmp_path):
         start_day = today + 1
         cards = collect_cards(col2, deck_ids, start_day)
         before = {c.day: 1 for c in cards}
-        render_histogram(before, before, None, 16)
+        render_histogram(before, before, None, 16, today, [])
     finally:
         col2.close()
 
@@ -352,10 +398,12 @@ def test_backup_file_appears_before_card_modification(collection, tmp_path):
 
 
 def test_render_histogram_returns_string_mentioning_each_day():
+    # today=0 makes offset == day for every row, so the original literal-day
+    # assertions stay meaningful under the new "day - today" row value.
     before = {101: 3, 102: 5, 103: 2}
     after = {101: 4, 102: 3, 103: 3}
 
-    output = render_histogram(before, after, 2, 6)
+    output = render_histogram(before, after, 2, 6, 0, [])
 
     assert isinstance(output, str)
     for day in before:
@@ -367,7 +415,7 @@ def test_render_histogram_sums_match_before_and_after_totals():
     after = {201: 5, 202: 4, 203: 3}
     assert sum(before.values()) == sum(after.values()) == 12
 
-    output = render_histogram(before, after, 1, 10)
+    output = render_histogram(before, after, 1, 10, 0, [])
 
     # Every individual count value must be represented somewhere in the
     # rendered text - nothing dropped or fabricated.
@@ -379,27 +427,67 @@ def test_render_histogram_marks_out_of_bounds_day_differently():
     # Same before/after counts in both calls; only the bound that makes
     # day 301 a violation changes. If a marker is added for out-of-bounds
     # days, the two renders must differ even though every count is equal.
+    # The above-`--max` marker is unchanged by this fix (still a raw
+    # after_count > max_per_day comparison), so today/short_days are held
+    # constant across both calls.
     before = {301: 5}
     after = {301: 5}
 
-    within_bounds = render_histogram(before, after, 0, 10)
-    over_max = render_histogram(before, after, 0, 3)
+    within_bounds = render_histogram(before, after, 0, 10, 0, [])
+    over_max = render_histogram(before, after, 0, 3, 0, [])
 
     assert within_bounds != over_max
+    assert "<- above --max" in over_max
+    assert "<- above --max" not in within_bounds
 
 
 def test_render_histogram_marks_under_min_day_differently():
+    # Under the new contract the below-`--min` marker is keyed off list
+    # membership in `short_days`, not off a raw after_count/min_per_day
+    # comparison - so this holds before/after/min_per_day/max_per_day/today
+    # fixed and varies only short_days between the two calls.
     before = {401: 1}
     after = {401: 1}
 
-    within_bounds = render_histogram(before, after, 0, 10)
-    under_min = render_histogram(before, after, 5, 10)
+    not_short = render_histogram(before, after, 0, 10, 0, [])
+    marked_short = render_histogram(before, after, 0, 10, 0, [401])
 
-    assert within_bounds != under_min
+    assert not_short != marked_short
+    assert "<- below --min" in marked_short
+    assert "<- below --min" not in not_short
+
+
+def test_render_histogram_row_shows_small_offset_not_large_absolute_day():
+    # Plan 3.2: "one line per day: day offset from today". A day far from
+    # day 0 in absolute terms must still render its small offset from
+    # `today`, not the (meaningless to a user) absolute day number.
+    today = 1800
+    day = 1805
+    before = {day: 7}
+    after = {day: 7}
+
+    output = render_histogram(before, after, 0, 10, today, [])
+
+    assert str(day) not in output  # absolute day number never appears
+    assert str(day - today) in output  # the true offset (5) does
+
+
+def test_render_histogram_day_not_in_short_days_never_marked_below_min():
+    # The exempt-tail fix: a day can have a very low (even zero) after
+    # count and NOT be marked below-min, so long as it is not in
+    # short_days - e.g. the exempt trailing day. Under the old raw
+    # after_count < min_per_day comparison this would have been wrongly
+    # marked; under the new short_days-membership rule it must not be.
+    before = {50: 0}
+    after = {50: 0}
+
+    output = render_histogram(before, after, 10, None, 0, [])
+
+    assert "<- below --min" not in output
 
 
 def test_render_histogram_handles_empty_input():
-    output = render_histogram({}, {}, 1, 5)
+    output = render_histogram({}, {}, 1, 5, 0, [])
     assert isinstance(output, str)
 
 
@@ -1066,3 +1154,39 @@ def test_e2e_min_exceeds_max_exits_nonzero_with_message(monkeypatch, capsys):
     err = capsys.readouterr().err
     assert exit_code != 0
     assert "min" in err.lower() and "max" in err.lower()
+
+
+def test_e2e_nonexistent_deck_exits_nonzero_naming_the_deck_not_a_traceback(
+    tmp_path, monkeypatch, capsys
+):
+    # Closes code-review Round 1 finding 5: resolve_deck_ids's nonexistent-deck
+    # path is unit-tested directly (test_resolve_deck_ids_nonexistent_deck_raises_
+    # naming_the_deck), but 3.1's own acceptance criterion -- "a nonexistent deck
+    # name produces a non-zero exit with a message naming the deck, not a
+    # traceback" -- had no CLI-level coverage driving main() through the
+    # ValueError -> print -> SystemExit(1) wrapping. --min/--max are both
+    # supplied so the failure is unambiguously the deck-resolution path, not the
+    # bounds-validation path already covered by the two tests above. _run_cli
+    # only catches SystemExit, so any unhandled exception of another type would
+    # fail this test with an error rather than a clean assertion -- that absence
+    # of an error is itself part of what "not a traceback" proves here.
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    col.close()
+
+    exit_code = _run_cli(
+        [
+            "totally::not::a::real::deck",
+            "--min",
+            "8",
+            "--max",
+            "16",
+            "--collection",
+            col_path,
+        ],
+        monkeypatch,
+    )
+    out = capsys.readouterr().out
+
+    assert exit_code != 0
+    assert "totally::not::a::real::deck" in out
