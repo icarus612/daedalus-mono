@@ -7,5 +7,14 @@ if ! command -v uv &> /dev/null; then
 fi
 
 echo "Syncing Python package with uv..."
-uv sync
+# --inexact: ensure this package's deps are installed into the shared root .venv
+# WITHOUT pruning packages other workspace members need. A bare `uv sync` run from
+# inside a member directory (as this script always is) treats that member as "the
+# project" and removes everything outside its own dependency closure from the
+# shared venv -- fine for a single member in isolation, but turbo fans `build` out
+# across all 14 Python packages, so the venv's post-build state would be whichever
+# member's `uv sync` happened to run last (turbo build corrupting the shared root
+# .venv, found in lane 6's integration proof). `--inexact` keeps every other
+# member's already-installed packages intact.
+uv sync --inexact
 echo "✅ Python package built successfully"
