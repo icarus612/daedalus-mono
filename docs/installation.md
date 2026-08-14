@@ -16,11 +16,10 @@ the way it does.
   pnpm install --frozen-lockfile
   ```
   installs every `libs/javascript/**` / `apps/next/**` package's `node_modules` from the single root
-  `pnpm-lock.yaml`. **Verified caveat:** on this branch today, the same `pnpm install` also fires
-  every Python project's `install` lifecycle script (see the Python section) — so a top-level
-  `pnpm install --frozen-lockfile` run today can exit non-zero from a *Python* package's Poetry
-  resolution even when every JS package installs cleanly. That is Phase 2 pending work (out of this
-  lane's scope), not a JS-side problem.
+  `pnpm-lock.yaml`. No Python package declares an `install` lifecycle script any more, so this no
+  longer touches Python at all — it installs JS dependencies only. Python packages are installed
+  separately, via `uv sync` (see the Python section below), run as an explicit step after
+  `pnpm install`, not as a side effect of it.
 - **Run one package**, using its dotted turbo name (convention #2 — mirrors the path):
   ```
   $ pnpm exec turbo run build --filter='lib.javascript.svelte.resume-builder'
@@ -37,41 +36,34 @@ the way it does.
 
 ## Python
 
-- **Manager, today:** **per-package Poetry**, bootstrapped by
-  `libs/bash/build-tools/py-scripts/py-install` — every `libs/python/**` (and `apps/flask/**`,
-  `apps/microservices/**`) project's `package.json` declares `"install": "py-install"`, which creates
-  a `.venv` *inside that package's own directory*, `pip install poetry`, then `poetry install` from
-  that package's own `pyproject.toml`/`poetry.lock`. There is **no shared root virtualenv and no
-  root lockfile** — each package resolves independently. `.python-version` pins `3.11` at the root
-  (D2).
-- **Pending migration — say this explicitly, not silently:** Phase 2 subphase 2.5 (not yet landed on
-  this branch) replaces this with a single root **`uv` workspace** — one `.venv`, one `uv.lock`,
-  internal deps via `[tool.uv.sources]`, each package keeping its own `pyproject.toml` so `cp -R`
-  mirroring still works (see `package-management-strategy.md`). `uv` is **not installed** on this
-  machine today (`uv` on `$PATH` → not found) — installing and pinning it is part of 2.5. **This
-  section will need a follow-up edit once 2.5 lands** — it currently documents the real, current
-  mechanism, not the future one.
-- **Install one package (verified):**
+- **Manager:** a single root **`uv` workspace** — one `.venv`, one `uv.lock`, both committed at the
+  repo root; `[tool.uv.workspace]` in the root `pyproject.toml` lists all 14 Python packages
+  (every `apps/flask/*`, `apps/microservices/market-bots`, and `libs/python/*` project). Each package
+  still keeps its own `pyproject.toml`, so per-package distributions and the `cp -R` mirroring
+  (`build-maze-runner.yml`) still work — only dependency *resolution* is shared, not the manifests.
+  Dev tooling (`ruff`, `pytest`) is pinned once at the root via `[dependency-groups] dev = [...]`
+  rather than installed per package. `.python-version` still pins `3.11` at the root (D2). `uv 0.12.4`
+  is installed and on `$PATH` in this environment. (This used to be per-package Poetry with no shared
+  root virtualenv or lockfile; that mechanism has been fully replaced — see
+  [`package-management-strategy.md`](./package-management-strategy.md) for the migration record.)
+- **Install (verified):**
   ```
-  $ cd libs/python/cli-tools
-  $ pnpm exec py-install
-  ...
-  Installing dependencies from lock file
-  Installing the current project: clitools-lib-py (0.1.0)
-  ✅ Python package installed successfully
+  $ uv sync
+  Resolved 135 packages in 1ms
+  Checked 124 packages in 1ms
+  $ echo $?
+  0
+  $ .venv/bin/python -c "import cli_tools; print('ok')"
+  ok
   ```
-  exit code `0`. The same package via turbo, from the repo root:
-  ```
-  $ pnpm exec turbo run build --filter='lib.python.cli-tools'
-  lib.python.cli-tools:build: Installing the current project: clitools-lib-py (0.1.0)
-  lib.python.cli-tools:build: ✅ Python package built successfully
-
-   Tasks:    2 successful, 2 total
-  ```
-- **Lint:** `ruff` is the canonical linter for this repo (D3) — `ruff --version` → `0.16.2` in this
-  worktree, `ruff check .` / `ruff format --check .` replace flake8+isort / black. Today `py-lint`
-  still `pip install`s ruff at run time rather than resolving it as a pinned dependency (2.5/2.6 make
-  that durable); see [`development.md`](./development.md).
+  `uv sync` is a single root-level command that resolves and installs the whole workspace — there is
+  no more per-package `py-install`; `libs/bash/build-tools/py-scripts/` now contains only
+  `py-build`/`py-lint`/`py-dev`/`py-test`, all of which shell to `uv sync`/`uv run` rather than
+  `poetry`. `libs/python/cli-tools` is used above as the verified-working example.
+- **Lint:** `ruff` is the canonical linter for this repo (D3) — `py-lint` now runs
+  `uv run ruff format --check .` then `uv run ruff check .`, with `ruff` resolved from the root `uv`
+  workspace's `[dependency-groups] dev` list; no runtime `pip install` any more. See
+  [`development.md`](./development.md).
 
 ## Go
 
@@ -108,9 +100,8 @@ the way it does.
 - **Go:** all six `libs/golang/*` modules build/vet cleanly via the per-module command above
   (`lib.golang.err` shown; the same shim runs for the other five). No install step required —
   reused this worktree's own `init-workspace` state rather than re-cloning.
-- **Python:** `lib.python.cli-tools` installs and builds cleanly end-to-end (output above), proving
-  the current per-package Poetry mechanism genuinely works for at least one package even though a
-  repo-wide `pnpm install --frozen-lockfile` today can fail on an unrelated Python package pending
-  Phase 2 (see the JS section's caveat).
+- **Python:** `uv sync` resolves and installs the whole workspace cleanly (output above), and
+  `libs/python/cli-tools` imports successfully from the resulting root `.venv` — proving the `uv`
+  workspace mechanism genuinely works end-to-end for at least one package.
 - **JavaScript:** `lib.javascript.svelte.resume-builder` builds cleanly via `vite build` (output
   above), producing real `dist/` output.
