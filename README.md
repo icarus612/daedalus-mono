@@ -40,6 +40,7 @@ daedalus-mono
 │   │   ├── <a href="/libs/golang/process-monitor">process-monitor</a>
 │   │   └── <a href="/libs/golang/pythonify">pythonify</a>
 │   ├── javascript
+│   │   ├── __tests__
 │   │   ├── node
 │   │   │   ├── <a href="/libs/javascript/node/build-scripts">build-scripts</a>
 │   │   │   ├── <a href="/libs/javascript/node/maze-runner">maze-runner</a>
@@ -59,18 +60,17 @@ daedalus-mono
 │   └── python
 │       ├── <a href="/libs/python/anki-tools">anki-tools</a>
 │       ├── <a href="/libs/python/cli-tools">cli-tools</a>
-│       ├── flask-utils
 │       ├── flask_utils
+│       │   ├── flask_utils
 │       ├── <a href="/libs/python/maze-runner">maze-runner</a>
 │       ├── neural-networks
 │       │   ├── <a href="/libs/python/neural-networks/abstract-base-classes">abstract-base-classes</a>
 │       │   ├── <a href="/libs/python/neural-networks/digit-recognition">digit-recognition</a>
 │       │   ├── <a href="/libs/python/neural-networks/market-analyzer">market-analyzer</a>
 │       │   └── <a href="/libs/python/neural-networks/open-ai-gym">open-ai-gym</a>
-│       ├── <a href="/libs/python/pyto-widgets">pyto-widgets</a>
-│       ├── tensorflow
-│       │   └── <a href="/libs/python/tensorflow/open-ai-gym">open-ai-gym</a>
 │       └── <a href="/libs/python/web-crawlers">web-crawlers</a>
+├── project-plans
+│   └── lint-import-audit-08-12-26
 ├── templates
 │   └── <a href="/templates/next-js">next-js</a>
 
