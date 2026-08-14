@@ -32,7 +32,7 @@ package-management strategies for the multi-language monorepo. **This report is 
   - [x] 2.5: Adopt the uv workspace — one root `.venv`, one `uv.lock`          (lane 2, after: 2.1, 2.3)
   - [x] 2.6: Python mechanical lint sweep with `ruff`                          (lane 2, after: 2.4, 2.7)
   - [x] 2.7: Real Python defects — F821 undefined names, E999 syntax errors    (lane 2, after: 2.4)
-  - [ ] 2.8: Remove `libs/python/pyto-widgets` — C14 resolved: dead            (lane 2, after: 2.5)
+  - [x] 2.8: Remove `libs/python/pyto-widgets` — C14 resolved: dead            (lane 2, after: 2.5)
 - [ ] Phase 3: JavaScript package management
   - [x] 3.1: Admit `libs/javascript/**` to the workspace and declare its deps  (lane 3, after: 1.1)
   - [x] 3.2: Repair unresolvable specifiers and mixed module systems           (lane 3, after: 3.1)
@@ -42,13 +42,13 @@ package-management strategies for the multi-language monorepo. **This report is 
   - [x] 4.1: Raise `pythonify`'s `go` directive to what its code compiles at   (lane 4)
   - [x] 4.2: `go.work` for local resolution; prune orphan require + stray sum  (lane 4, after: 4.1)
   - [x] 4.3: Fix the Go task shims                                             (lane 4, after: 4.1)
-  - [ ] 4.4: Fix the `pkg/abf` zip type-identity test failures                 (lane 4, after: 4.1)
+  - [x] 4.4: Fix the `pkg/abf` zip type-identity test failures                 (lane 4, after: 4.1)
 - [ ] Phase 5: Verification in CI, and documentation
   - [x] 5.1: Add a real lint/build/test workflow per language                  (lane 5, after: 1.1)
   - [x] 5.2: Align the Go CI toolchain and the two sync workflows              (lane 5, after: 1.1)
-  - [ ] 5.3: Docs mirror + symlinks per `doc-format`; deref the mirror copies  (lane 5, after: 1.1)
+  - [x] 5.3: Docs mirror + symlinks per `doc-format`; deref the mirror copies  (lane 5, after: 1.1)
 - [ ] Phase 6: Integration proof
-  - [ ] 6.1: Fresh-clone install → build → lint → import-check every package   (after: 2.5, 2.8, 3.1, 4.2, 4.4, 5.1, 5.3)
+  - [x] 6.1: Fresh-clone install → build → lint → import-check every package   (after: 2.5, 2.8, 3.1, 4.2, 4.4, 5.1, 5.3)
 
 Lanes have disjoint file scopes. **All edits to the three shared root files
 (`package.json`, `pnpm-workspace.yaml`, `turbo.json`) belong to lane 1 only** — including the
