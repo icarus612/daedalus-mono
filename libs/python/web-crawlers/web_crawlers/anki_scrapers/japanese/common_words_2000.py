@@ -15,5 +15,5 @@ def build_cards(val, grp):
       audio_dict[file_name] = card['audio_src']
 
 cards = common_words('2000')
-build_cards(f'{idx + 1}00', cards)
+build_cards('2000', cards)
 download_audio(audio_dict)

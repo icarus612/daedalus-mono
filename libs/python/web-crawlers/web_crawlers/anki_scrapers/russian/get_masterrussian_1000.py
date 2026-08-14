@@ -36,9 +36,6 @@ def get_audio_src(u):
 	print(f'Attempting to get audio src for {url}')
 	return soup(requests.get(url).content, 'html.parser').find('audio', {'id': 'audioplayer'})['src']
 
-	
-	return r
-
 def get_page_words(page=''):
 		url = f'http://masterrussian.com/vocabulary/most_common_words{page}.htm'
 		content = soup(requests.get(url).content, 'html.parser')

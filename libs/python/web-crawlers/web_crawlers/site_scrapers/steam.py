@@ -10,7 +10,7 @@ obj = []
 for i, x in enumerate(containers):
 	id_to_find = x['data-ds-appid']
 	title = page.find("div", {"id": f"hover_app_{id_to_find}"}).find("h4").text if page.find("div", {"id": f"hover_app_{id_to_find}"}) != None else id_to_find
-    price_bd = x.find("div", {"class": "discount_origional_price"}) else ""
+	price_bd = x.find("div", {"class": "discount_origional_price"}).text.strip() if x.find("div", {"class": "discount_origional_price"}) else ""
 	if x.find("div", {"class": "discount_pct"}):
 		price_ad = x.find("div", {"class": "discount_final_price"}).text.strip() if x.find("div", {"class": "discount_final_price"}) else ""
 		deal_pct = x.find("div", {"class": "discount_pct"}).text.strip() if x.find("div", {"class": "discount_pct"}) else ""
