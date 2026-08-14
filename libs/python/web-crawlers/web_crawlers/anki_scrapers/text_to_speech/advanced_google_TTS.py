@@ -46,15 +46,15 @@ if __name__ == '__main__':
 
 	elif args.file:
 		if args.file.endswith('.json'):
-			cards = load_json_file(args.file_name).items()
+			cards = load_json_file(args.file).items()
 		else:
-			cards = load_file(args.file_name)
+			cards = load_file(args.file)
 			if args.split_char:
 				cards = [i.split(args.split_char) for i in cards]
 	
 		for card in cards:
 			if len(card) == 1:
-				build_and_save(word, args.language, dir_name=args.output_dir) 
+				build_and_save(card[0], args.language, dir_name=args.output_dir) 
 			else:
-				build_and_save(word, args.language, file_name=file, dir_name=args.output_dir) 
+				build_and_save(card[0], args.language, file_name=card[1], dir_name=args.output_dir) 
 		
