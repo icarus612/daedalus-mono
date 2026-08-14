@@ -12,7 +12,6 @@ members = [
   "libs/python/neural-networks/digit-recognition",
   "libs/python/neural-networks/market-analyzer",
   "libs/python/neural-networks/open-ai-gym",
-  "libs/python/pyto-widgets",
   "libs/python/web-crawlers",
 ]
 

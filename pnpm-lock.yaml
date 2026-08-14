@@ -239,12 +239,6 @@ importers:
         specifier: workspace:*
         version: link:../../../bash/build-tools
 
-  libs/python/pyto-widgets:
-    devDependencies:
-      lib.bash.build-tools:
-        specifier: workspace:*
-        version: link:../../bash/build-tools
-
   libs/python/web-crawlers:
     devDependencies:
       lib.bash.build-tools:
