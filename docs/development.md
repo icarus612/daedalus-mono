@@ -26,11 +26,11 @@ pnpm turbo lint --filter='lib.golang.*'
 
 | Script | Go | Python | JS / Next |
 |---|---|---|---|
-| `dev` | `gotestsum --watch ./...` (e.g. `lib.golang.err`) | `py-dev` — runs `main.py` (Flask apps get a per-project fixed port, e.g. `maze-runner` → `5001`); libraries just exit 0 | `next dev` for Next apps; framework-specific dev servers elsewhere (`vite`/`storybook` for the one Svelte package) — several `libs/javascript/**` packages still have no real `dev` script (Phase 3 pending) |
-| `build` | `go build ./...` (run from inside the module directory — see [`installation.md`](./installation.md)'s Go caveat) | `py-build` — ensures the package's own `.venv` exists, `poetry install`s it | `next build` for Next apps, `vite build` for the Svelte package; several packages still stub this as `echo 'No build configured'` (Phase 3 pending, subphases 3.1/3.4) |
-| `lint` | `go vet ./... && test -z "$(gofmt -l .)"` | `py-lint` — **today**: `pip install -q ruff` at run time, then `ruff check .` (not yet a pinned dependency); **once Phase 2 subphases 2.5/2.6 land**: ruff resolved from the shared `uv` workspace, no runtime install | whatever each package's own `lint` script defines — several are still `echo 'No lint configured'` stubs pending 3.4 |
-| `test` | `go test ./...` | not standardized per-package today (varies by project) | not standardized per-package today (varies by project; several packages' `test` script is `exit 1` as a deliberate "not implemented" marker) |
-| `install` *(lifecycle hook, not a turbo task)* | n/a — no install step | `py-install` — fires automatically on every `pnpm install` because `install` is an npm/pnpm lifecycle hook name | handled by pnpm itself from `pnpm-lock.yaml` |
+| `dev` | `gotestsum --watch ./...` (e.g. `lib.golang.err`) | `py-dev` — `uv run python main.py`, or for Flask apps `FLASK_APP=main.py uv run python -m flask run --port=<fixed port>` (`maze-runner`→5001, `pokedex`→5002, `weather-fortcast`→5003, `market-bots`→5004); libraries with no `main.py` just exit 0 | `next dev` for Next apps; framework-specific dev servers elsewhere (`vite`/`storybook` for the one Svelte package) — several `libs/javascript/**` packages still have no real `dev` script (Phase 3 pending) |
+| `build` | `go build ./...` (run from inside the module directory — see [`installation.md`](./installation.md)'s Go caveat) | `py-build` — `uv sync` (syncs the shared root `.venv` from the root `uv.lock`) | `next build` for Next apps, `vite build` for the Svelte package; two packages (`lib.bash.cli-tools`, `lib.javascript.node.build-scripts`) declare no `build` script at all — `turbo build` treats this as a no-op, not a failure (a minor, standing convention gap, not Phase-3-pending work) |
+| `lint` | `go vet ./... && test -z "$(gofmt -l .)"` | `py-lint` — `uv run ruff format --check .` then `uv run ruff check .`; `ruff` resolved from the root `uv` workspace's `[dependency-groups] dev` list, no runtime install | whatever each package's own `lint` script defines (mostly `eslint .`); every package has a real lint script except the two deliberately-excluded legacy CRA packages (`markdown-builder`, `quote-builder`, D7) — `turbo lint` is 34/34 green repo-wide |
+| `test` | `go test ./...` | `py-test` — `uv run pytest` if the package has a `tests/` directory, else a no-op (exit 0) | not standardized per-package today (varies by project; several packages' `test` script is `exit 1` as a deliberate "not implemented" marker) |
+| `install` *(lifecycle hook, not a turbo task)* | n/a — no install step | n/a — no per-package install hook any more; the whole workspace installs via `uv sync`, a separate explicit step, not a pnpm lifecycle hook | handled by pnpm itself from `pnpm-lock.yaml` |
 
 ## Notes
 
@@ -40,7 +40,8 @@ pnpm turbo lint --filter='lib.golang.*'
   `console.info` calls to satisfy a stricter config.
 - Go's `lint` script is what `.github/workflows/lint-go.yml`'s `gofmt`/`go vet` steps mirror at CI
   scope — see that workflow for how it's invoked repo-wide.
-- Python's `lint`/`build`/`dev`/`install` scripts all live in
-  `libs/bash/build-tools/py-scripts/py-*` and are consumed by every Python package via a
-  `"lib.bash.build-tools": "workspace:*"` devDependency — one place to change the incantation for
-  every Python project at once, matching the `package.json`-shim pattern triple-m also uses.
+- Python's `build`/`lint`/`dev`/`test` scripts all live in `libs/bash/build-tools/py-scripts/py-*`
+  (`py-build`, `py-lint`, `py-dev`, `py-test` — there is no `py-install` any more) and are consumed
+  by every Python package via a `"lib.bash.build-tools": "workspace:*"` devDependency — one place to
+  change the incantation for every Python project at once, matching the `package.json`-shim pattern
+  triple-m also uses.

@@ -18,7 +18,7 @@ archived per this repo's plan lifecycle, that file moves to
 | Go | bump `pythonify` only | (no story) | `go.work`, `dae-go` paths untouched | `rules_go` |
 | Keeps `dae-go` sync working | yes | **no** | yes | yes |
 | Keeps mirrored packages standalone | yes | **no** | yes | yes |
-| New tool to install | none | none | `uv` (not installed) | Bazel or Pants |
+| New tool to install | none | none | `uv` (now installed and pinned) | Bazel or Pants |
 
 **Why S1 (repair in place) wasn't enough on its own.** Cheapest and lowest risk — and in fact a
 *prerequisite* of S3 regardless — but left nine per-package virtualenvs each re-installing Poetry,
@@ -57,9 +57,8 @@ everything can be that nice': one *pattern*, three *mechanisms*."
   one resolvable interpreter, and the packages disagreed (`^3.8` to an exact `3.11`) before this
   decision.
 - **D6 — every JS package is private.** `"private": true` on every `libs/javascript/**` /
-  `apps/next/**` package (phase 3.1) — nothing in this repo is published to a registry. Not yet
-  landed on this branch as of this writing (several packages still lack the field); tracked under
-  Phase 3.
+  `apps/next/**` package (phase 3.1) — nothing in this repo is published to a registry. Landed on
+  this branch — verified every such `package.json` carries the field.
 - **D7 — the two legacy CRA/React 16 packages.** `markdown-builder` and `quote-builder`
   (`react-scripts@2.1.1`, from 2018) are **not** migrated to the repo's React 18 toolchain — they are
   deliberately excluded from the pnpm workspace via negated globs in `pnpm-workspace.yaml` (already
@@ -69,7 +68,8 @@ everything can be that nice': one *pattern*, three *mechanisms*."
 
 ## Cost accepted
 
-`uv` is a new dependency, not currently installed on this machine — installing and pinning it is
-part of Phase 2 subphase 2.5, which has **not landed yet** on this branch. Until it does, Python
-package management is per-package Poetry (documented as the current, real mechanism in
-[`installation.md`](./installation.md)), not the `uv` workspace described above as the target state.
+`uv` was the one net-new tool this strategy required, and it is now a real, landed dependency of the
+dev workflow: `uv 0.12.4` is installed and on `$PATH`, pinned via the committed root `uv.lock`, and
+Phase 2 subphase 2.5 has shipped. Python package management is the single root `uv` workspace
+described above (see [`installation.md`](./installation.md) for the current, verified mechanism) —
+not per-package Poetry, which this migration fully replaced.
