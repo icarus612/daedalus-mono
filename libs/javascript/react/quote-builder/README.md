@@ -1,5 +1,7 @@
 # Quote Builder
 
+**Legacy.** This package is a Create React App project on `react-scripts@2.1.1` and React 16 (2018-era). It is deliberately excluded from the pnpm workspace and kept as-is rather than migrated to the repo's current React 18 / Next 12 toolchain. It is not linted, built, or tested by `turbo`.
+
 Hello there! 👋 I'm dev.icarus, a full-stack developer with a passion for building scalable and efficient applications. This repository serves as a gateway to my diverse range of projects. Here's how you can explore them:
 
 ## My Other Projects
