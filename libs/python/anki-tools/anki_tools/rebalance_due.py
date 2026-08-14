@@ -3,6 +3,11 @@
 
 Spreads out clumpy review queues so no single day has too many or too few
 cards due, without touching each card's memory state (`ivl`).
+
+Phase 6 adds a feasibility precheck run before any backup is taken, moves
+the backup ahead of planning on every surface (including `--dry-run`), and
+adds `--range` (an explicit day-offset window) and `--sliding`/
+`--strict-sliding` (a per-day target line instead of a flat band).
 """
 import argparse
 import os
@@ -13,6 +18,7 @@ from anki.errors import AnkiException, DBError
 from anki_tools.due_plan import (
     CardDue,
     InfeasibleRebalance,
+    check_feasibility,
     plan_rebalance,
     validate_bounds,
 )
@@ -43,13 +49,41 @@ def resolve_deck_ids(col, deck_name):
     return list(child_ids)
 
 
-def collect_cards(col, deck_ids, start_day):
+def parse_range(raw: str) -> tuple[int, int]:
+    """Parse a `--range` argument: `LO-HI` or a bare `N` meaning `N-N`.
+
+    Both `LO` and `HI` are day offsets from today. Raises `ValueError` with
+    a message naming the specific problem (malformed, `LO < 1`, `HI < LO`)
+    -- callers turn that into `parser.error(...)`. Shared by `due_stats.py`
+    so `--range` is parsed identically on both surfaces.
+    """
+    text = raw.strip()
+    if "-" in text:
+        lo_str, hi_str = text.split("-", 1)
+    else:
+        lo_str = hi_str = text
+    try:
+        lo = int(lo_str)
+        hi = int(hi_str)
+    except ValueError:
+        raise ValueError(
+            f"--range must be LO-HI or a bare N (e.g. 8-30 or 12), got {raw!r}"
+        )
+    if lo < 1:
+        raise ValueError(f"--range LO must be >= 1 (today or the past), got {lo}")
+    if hi < lo:
+        raise ValueError(f"--range HI must be >= LO, got HI={hi} < LO={lo}")
+    return lo, hi
+
+
+def collect_cards(col, deck_ids, start_day, end_day=None):
     cards = []
     skip_new = 0
     skip_learning = 0
     skip_suspended = 0
     skip_buried = 0
     skip_overdue = 0
+    skip_outside_range = 0
 
     for did in deck_ids:
         for cid in col.decks.cids(did, children=False):
@@ -79,20 +113,26 @@ def collect_cards(col, deck_ids, start_day):
             if card.due < start_day:
                 skip_overdue += 1
                 continue
+            if end_day is not None and card.due > end_day:
+                skip_outside_range += 1
+                continue
 
             cards.append(CardDue(card_id=card.id, day=card.due, ivl=card.ivl))
 
-    print(
+    skip_msg = (
         f"Skipped {skip_new} new, {skip_learning} learning, "
         f"{skip_suspended} suspended, {skip_buried} buried, "
-        f"{skip_overdue} already due or overdue; "
-        f"filtered-deck cards are not visible to this route."
+        f"{skip_overdue} already due or overdue"
     )
+    if end_day is not None:
+        skip_msg += f", {skip_outside_range} outside --range"
+    skip_msg += "; filtered-deck cards are not visible to this route."
+    print(skip_msg)
 
     return cards
 
 
-def render_histogram(before, after, min_per_day, max_per_day, today, short_days):
+def render_histogram(before, after, max_per_day, today, short_days):
     rule = "-" * 50
     lines = [rule, "Day offset | Before | After  | Note"]
     all_days = sorted(set(before) | set(after))
@@ -176,6 +216,30 @@ def build_parser():
         ),
     )
     parser.add_argument(
+        "--sliding",
+        dest="sliding",
+        action="store_true",
+        default=False,
+        help=(
+            "Replace the flat --min/--max band with a per-day target that "
+            "slides from --max at the start of the window down to --min at "
+            "the horizon, instead of a constant cap. Requires both --min "
+            "and --max. --max-shift may prevent the shape from being "
+            "fully reached; see anki-due-stats for the profile."
+        ),
+    )
+    parser.add_argument(
+        "--strict-sliding",
+        dest="strict_sliding",
+        action="store_true",
+        default=False,
+        help=(
+            "With --sliding, fail instead of best-effort when the sliding "
+            "target cannot be fully reached under --max-shift. Has no "
+            "effect without --sliding."
+        ),
+    )
+    parser.add_argument(
         "--dry-run",
         dest="dry_run",
         action="store_true",
@@ -190,14 +254,27 @@ def build_parser():
         default=False,
         help="Skip the interactive confirmation prompt.",
     )
-    parser.add_argument(
+    window_group = parser.add_mutually_exclusive_group()
+    window_group.add_argument(
         "--start-offset",
         dest="start_offset",
         type=int,
         default=1,
         help=(
             "Days after today where the rebalance window begins. Default: "
-            "1 (tomorrow) -- cards due today or overdue are never touched."
+            "1 (tomorrow) -- cards due today or overdue are never touched. "
+            "Mutually exclusive with --range."
+        ),
+    )
+    window_group.add_argument(
+        "--range",
+        dest="range_raw",
+        type=str,
+        default=None,
+        help=(
+            "Day-offset window LO-HI (e.g. 8-30), or a bare N meaning "
+            "N-N. Cards outside the window are left untouched. Mutually "
+            "exclusive with --start-offset."
         ),
     )
     parser.add_argument(
@@ -219,7 +296,7 @@ def build_parser():
         dest="no_backup",
         action="store_true",
         default=False,
-        help="Skip taking a backup before writing.",
+        help="Skip taking a backup before planning.",
     )
     return parser
 
@@ -228,6 +305,32 @@ def _parse_max_shift(raw):
     if raw.strip().lower() == "none":
         return None
     return int(raw)
+
+
+def _print_infeasibility(report, today):
+    print(
+        f"Infeasible: {report.total} card(s) over a {report.horizon_days}-day "
+        f"window, average {report.avg_per_day:.2f}/day."
+    )
+    for violation in report.violations:
+        print(f"  - {violation}")
+    if report.binding_prefix is not None:
+        day, due_by_then, capacity_by_then = report.binding_prefix
+        print(
+            f"Binding: by day offset {day - today}, {due_by_then} card(s) "
+            f"due against {capacity_by_then} slot(s)."
+        )
+    if report.suggested_min is not None:
+        if report.suggested_min == 0:
+            print(
+                "The deck is too sparse for any positive --min over this "
+                "window; omit --min entirely, or narrow the window with "
+                "--range to a denser slice."
+            )
+        else:
+            print(f"Suggested --min: {report.suggested_min}")
+    if report.suggested_max is not None:
+        print(f"Suggested --max: {report.suggested_max}")
 
 
 def main():
@@ -245,6 +348,16 @@ def main():
         parser.error(
             f"--max-shift must be an integer or 'none', got {args.max_shift!r}"
         )
+
+    if args.sliding and (args.min_per_day is None or args.max_per_day is None):
+        parser.error("--sliding requires both --min and --max")
+
+    range_bounds = None
+    if args.range_raw is not None:
+        try:
+            range_bounds = parse_range(args.range_raw)
+        except ValueError as exc:
+            parser.error(str(exc))
 
     collection_path = args.collection_path or get_anki_collection_path()
 
@@ -266,9 +379,42 @@ def main():
             raise SystemExit(1)
 
         today = col.sched.today
-        start_day = today + args.start_offset
+        if range_bounds is not None:
+            lo, hi = range_bounds
+            start_day = today + lo
+            end_day = today + hi
+        else:
+            start_day = today + args.start_offset
+            end_day = None
 
-        cards = collect_cards(col, deck_ids, start_day)
+        cards = collect_cards(col, deck_ids, start_day, end_day)
+
+        report = check_feasibility(
+            cards,
+            start_day,
+            end_day,
+            args.min_per_day,
+            args.max_per_day,
+            max_shift,
+            sliding=args.sliding,
+            set_earlier=args.set_earlier,
+        )
+        if not report.feasible:
+            _print_infeasibility(report, today)
+            raise SystemExit(1)
+
+        if not args.no_backup:
+            backup_dir = args.backup_dir or os.path.join(
+                os.path.dirname(collection_path), "backups"
+            )
+            os.makedirs(backup_dir, exist_ok=True)
+            created = col.create_backup(
+                backup_folder=backup_dir, force=True, wait_for_completion=True
+            )
+            if not created:
+                print("Backup skipped: collection unchanged since last backup.")
+
+        pre_reverse_end_day = max((card.day for card in cards), default=start_day - 1)
 
         try:
             result = plan_rebalance(
@@ -278,30 +424,46 @@ def main():
                 args.max_per_day,
                 max_shift=max_shift,
                 set_earlier=args.set_earlier,
+                sliding=args.sliding,
+                strict_sliding=args.strict_sliding,
+                end_day=end_day,
             )
         except InfeasibleRebalance as exc:
-            print("Could not satisfy --max without --set-earlier.")
+            print(f"Could not satisfy the constraints ({exc.reason}).")
             print(str(exc))
-            print(
-                "Try re-running with --set-earlier, or a larger --max-shift "
-                "(or --max-shift none)."
-            )
+            if exc.reason in ("sink overflow", "shift cap"):
+                print(
+                    "Try re-running with --set-earlier, or a larger "
+                    "--max-shift (or --max-shift none)."
+                )
+            else:
+                print(
+                    "This came from --strict-sliding refusing an "
+                    "over-target day; drop --strict-sliding for "
+                    "best-effort shaping instead."
+                )
             raise SystemExit(1)
 
         histogram = render_histogram(
             result.before,
             result.after,
-            args.min_per_day,
             args.max_per_day,
             today,
             result.short_days,
         )
         print(histogram)
 
-        if result.reverse_pass_used:
+        # In --range mode `result.end_day` is pinned to the declared range
+        # ceiling regardless of whether anything actually moved there (the
+        # window cannot grow past --range's HI at all -- Packet D's
+        # containment ceiling forces InfeasibleRebalance instead), so the
+        # "extended" comparison only means anything when the horizon is
+        # actually free to grow, i.e. no explicit --range was given.
+        if end_day is None and result.end_day > pre_reverse_end_day:
             print(
                 f"Some cards were moved to LATER dates to satisfy --max; "
-                f"the horizon was extended to day offset {result.end_day}."
+                f"the horizon was extended to day offset "
+                f"{result.end_day - today}."
             )
 
         if result.short_days:
@@ -309,6 +471,17 @@ def main():
                 "Days still below --min after the shift cap: "
                 + ", ".join(str(d) for d in result.short_days)
             )
+
+        if result.over_target_days:
+            print(
+                "Days still above the sliding target after shaping: "
+                + ", ".join(str(d - today) for d in result.over_target_days)
+            )
+            if report.min_feasible_max_shift is not None:
+                print(
+                    f"A --max-shift of at least {report.min_feasible_max_shift} "
+                    "would reach the full sliding shape."
+                )
 
         move_count = len(result.moves)
         print(f"{move_count} card(s) would move.")
@@ -326,17 +499,6 @@ def main():
             if answer.strip().lower() != "y":
                 print("Aborted: nothing written.")
                 raise SystemExit(1)
-
-        if not args.no_backup:
-            backup_dir = args.backup_dir or os.path.join(
-                os.path.dirname(collection_path), "backups"
-            )
-            os.makedirs(backup_dir, exist_ok=True)
-            created = col.create_backup(
-                backup_folder=backup_dir, force=True, wait_for_completion=True
-            )
-            if not created:
-                print("Backup skipped: collection unchanged since last backup.")
 
         moved_days = apply_moves(col, result.moves, today)
         print(f"Applied {move_count} move(s) across {moved_days} day(s).")

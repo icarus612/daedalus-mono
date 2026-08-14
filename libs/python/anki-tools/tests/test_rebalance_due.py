@@ -13,12 +13,14 @@ should be removed or altered to accommodate that later pass.
 
 import json
 import os
+import re
 import sys
 import time
 
 import pytest
 from anki.collection import Collection
 
+from anki_tools.due_plan import CardDue, plan_rebalance
 from anki_tools.rebalance_due import (
     apply_moves,
     build_parser,
@@ -351,7 +353,7 @@ def test_read_only_planning_does_not_mutate_card_state(tmp_path):
         start_day = today + 1
         cards = collect_cards(col2, deck_ids, start_day)
         before = {c.day: 1 for c in cards}
-        render_histogram(before, before, None, 16, today, [])
+        render_histogram(before, before, 16, today, [])
     finally:
         col2.close()
 
@@ -403,7 +405,7 @@ def test_render_histogram_returns_string_mentioning_each_day():
     before = {101: 3, 102: 5, 103: 2}
     after = {101: 4, 102: 3, 103: 3}
 
-    output = render_histogram(before, after, 2, 6, 0, [])
+    output = render_histogram(before, after, 6, 0, [])
 
     assert isinstance(output, str)
     for day in before:
@@ -415,7 +417,7 @@ def test_render_histogram_sums_match_before_and_after_totals():
     after = {201: 5, 202: 4, 203: 3}
     assert sum(before.values()) == sum(after.values()) == 12
 
-    output = render_histogram(before, after, 1, 10, 0, [])
+    output = render_histogram(before, after, 10, 0, [])
 
     # Every individual count value must be represented somewhere in the
     # rendered text - nothing dropped or fabricated.
@@ -433,8 +435,8 @@ def test_render_histogram_marks_out_of_bounds_day_differently():
     before = {301: 5}
     after = {301: 5}
 
-    within_bounds = render_histogram(before, after, 0, 10, 0, [])
-    over_max = render_histogram(before, after, 0, 3, 0, [])
+    within_bounds = render_histogram(before, after, 10, 0, [])
+    over_max = render_histogram(before, after, 3, 0, [])
 
     assert within_bounds != over_max
     assert "<- above --max" in over_max
@@ -449,8 +451,8 @@ def test_render_histogram_marks_under_min_day_differently():
     before = {401: 1}
     after = {401: 1}
 
-    not_short = render_histogram(before, after, 0, 10, 0, [])
-    marked_short = render_histogram(before, after, 0, 10, 0, [401])
+    not_short = render_histogram(before, after, 10, 0, [])
+    marked_short = render_histogram(before, after, 10, 0, [401])
 
     assert not_short != marked_short
     assert "<- below --min" in marked_short
@@ -466,7 +468,7 @@ def test_render_histogram_row_shows_small_offset_not_large_absolute_day():
     before = {day: 7}
     after = {day: 7}
 
-    output = render_histogram(before, after, 0, 10, today, [])
+    output = render_histogram(before, after, 10, today, [])
 
     assert str(day) not in output  # absolute day number never appears
     assert str(day - today) in output  # the true offset (5) does
@@ -481,14 +483,35 @@ def test_render_histogram_day_not_in_short_days_never_marked_below_min():
     before = {50: 0}
     after = {50: 0}
 
-    output = render_histogram(before, after, 10, None, 0, [])
+    output = render_histogram(before, after, None, 0, [])
 
     assert "<- below --min" not in output
 
 
 def test_render_histogram_handles_empty_input():
-    output = render_histogram({}, {}, 1, 5, 0, [])
+    output = render_histogram({}, {}, 5, 0, [])
     assert isinstance(output, str)
+
+
+def test_render_histogram_no_longer_accepts_min_per_day():
+    # Phase 6 / 6.1d work item 2: render_histogram carried a dead min_per_day
+    # parameter (the below-min marker was already driven by short_days, not
+    # by a min_per_day comparison). The contract pins the resulting 5-arg
+    # form as (before, after, max_per_day, today, short_days) with NO
+    # default values on any parameter, so a stale 6-arg call site anywhere
+    # (including the old (before, after, min_per_day, max_per_day, today,
+    # short_days) shape) must fail loudly at the call boundary, not be
+    # silently accepted.
+    import inspect
+
+    signature = inspect.signature(render_histogram)
+    params = list(signature.parameters)
+    assert "min_per_day" not in params
+    assert params == ["before", "after", "max_per_day", "today", "short_days"]
+
+    # The old 6-positional-argument call shape must now raise TypeError.
+    with pytest.raises(TypeError):
+        render_histogram({1: 1}, {1: 1}, 2, 6, 0, [])  # old 6-arg shape
 
 
 # ---------------------------------------------------------------------------
@@ -746,12 +769,16 @@ def test_e2e_subdecks_included_unrelated_deck_untouched_and_skips_reported(
 
     # Generous bounds: this test is about wiring (subdeck scope, exclusion,
     # skip reporting), not about exercising rebalance feasibility, so a huge
-    # --max guarantees the max pass never triggers.
+    # --max guarantees the max pass never triggers. --min is intentionally
+    # omitted (Phase 6): with only 2 in-scope cards over a 3-day window,
+    # DP-B's hard, no-escape-flag lower-bound precheck (total >= D * min)
+    # would reject --min 1 (2 < 3) before this test's wiring assertions
+    # ever run -- omitting --min runs no lower-bound check at all, per D-P-B's
+    # own documented escape route, and keeps this test's original intent
+    # (wiring, not feasibility) unaffected by the new precheck.
     exit_code = _run_cli(
         [
             "programming::coding",
-            "--min",
-            "1",
             "--max",
             "1000",
             "--dry-run",
@@ -1190,3 +1217,703 @@ def test_e2e_nonexistent_deck_exits_nonzero_naming_the_deck_not_a_traceback(
 
     assert exit_code != 0
     assert "totally::not::a::real::deck" in out
+
+
+# ---------------------------------------------------------------------------
+# Phase 6 / Packet E -- backup ordering across the two failure modes (6.1b)
+# ---------------------------------------------------------------------------
+#
+# New order: open -> collect -> PRECHECK -> (pass) BACKUP -> plan -> confirm
+# -> apply, on every surface including --dry-run. A failed precheck exits
+# non-zero BEFORE the backup (none created); an InfeasibleRebalance raised
+# later by plan_rebalance exits non-zero AFTER the backup already exists.
+# Both leave the collection untouched -- the backup directory contents are
+# the only observable that distinguishes the two (contract lines 961-964,
+# plan.md lines 841-848).
+# ---------------------------------------------------------------------------
+
+
+def test_e2e_precheck_failure_creates_no_backup_and_collection_untouched(
+    tmp_path, monkeypatch
+):
+    # DP-B hard lower-bound failure: 3 cards spread across 3 days, --min 8
+    # requires 24 -- far short. This is a HARD failure with no escape flag,
+    # unaffected by --set-earlier (settled DP-B), so it must be caught by
+    # the precheck before any backup is taken.
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    today = col.sched.today
+    start_day = today + 1
+
+    ids = []
+    for i in range(3):
+        card = _add_card(col, coding_id, due=start_day + i, ivl=10)
+        ids.append(card.id)
+    col.close()
+
+    before = _snapshot_due_ivl(col_path, ids)
+    backup_dir = os.path.join(str(tmp_path), "backups")
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--min",
+            "8",
+            "--yes",
+            "--collection",
+            col_path,
+            "--backup-dir",
+            backup_dir,
+        ],
+        monkeypatch,
+    )
+
+    assert exit_code != 0
+    # No backup content at all -- a precheck failure must not create one.
+    assert not os.path.isdir(backup_dir) or os.listdir(backup_dir) == []
+
+    after = _snapshot_due_ivl(col_path, ids)
+    assert before == after
+
+
+def test_e2e_infeasible_rebalance_after_precheck_creates_backup_untouched_collection(
+    tmp_path, monkeypatch
+):
+    # A distribution that PASSES the precheck (the window/global violations
+    # are downgraded to warnings under --set-earlier) but where
+    # plan_rebalance still raises InfeasibleRebalance, because --range caps
+    # the horizon and the reverse pass's may_move_later_to gate refuses to
+    # cross it (Packet D's "no new exception type" path -- the existing
+    # over_max check fires through the range ceiling). This is the packet's
+    # own worked example of the precheck being necessary-but-not-sufficient
+    # once a containment ceiling is in play. Verified directly against
+    # due_plan's already-verified plan_rebalance/check_feasibility before
+    # writing this fixture: 10 cards all on offset 1 of a --range 1-3 window
+    # (3 days, max=2, capacity 6) makes check_feasibility(...).feasible True
+    # (global/window violations downgraded to warnings because
+    # set_earlier=True) while plan_rebalance(..., end_day=today+3,
+    # set_earlier=True) still raises InfeasibleRebalance, since the reverse
+    # pass cannot push cards past offset 3.
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    today = col.sched.today
+    start_day = today + 1
+
+    ids = []
+    for i in range(10):
+        card = _add_card(col, coding_id, due=start_day, ivl=10 + i)
+        ids.append(card.id)
+    col.close()
+
+    before = _snapshot_due_ivl(col_path, ids)
+    backup_dir = os.path.join(str(tmp_path), "backups")
+    os.makedirs(backup_dir, exist_ok=True)
+    assert os.listdir(backup_dir) == []
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--range",
+            "1-3",
+            "--max",
+            "2",
+            "--set-earlier",
+            "--yes",
+            "--collection",
+            col_path,
+            "--backup-dir",
+            backup_dir,
+        ],
+        monkeypatch,
+    )
+
+    assert exit_code != 0
+    # This time a backup WAS taken (precheck passed, planning was reached)
+    # even though nothing was ultimately written.
+    assert len(os.listdir(backup_dir)) >= 1
+
+    after = _snapshot_due_ivl(col_path, ids)
+    assert before == after
+
+
+def test_e2e_dry_run_now_takes_a_backup(tmp_path, monkeypatch):
+    # Phase 6 changes --dry-run's own backup behaviour: it now takes a
+    # backup too (previously only the apply path did). A fresh .colpkg must
+    # appear, and the collection itself stays untouched (contract/plan.md
+    # line 960).
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    today = col.sched.today
+    start_day = today + 1
+    card = _add_card(col, coding_id, due=start_day + 3, ivl=10)
+    col.close()
+
+    before = _snapshot_due_ivl(col_path, [card.id])
+    backup_dir = os.path.join(str(tmp_path), "backups")
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--max",
+            "16",
+            "--dry-run",
+            "--collection",
+            col_path,
+            "--backup-dir",
+            backup_dir,
+        ],
+        monkeypatch,
+    )
+
+    assert exit_code == 0
+    assert os.path.isdir(backup_dir)
+    assert len(os.listdir(backup_dir)) >= 1
+
+    after = _snapshot_due_ivl(col_path, [card.id])
+    assert before == after
+
+
+# ---------------------------------------------------------------------------
+# Phase 6 / Packet E -- summary-line cosmetic fixes (6.1d work item 1)
+# ---------------------------------------------------------------------------
+
+
+def test_e2e_extended_horizon_message_absent_when_end_day_equals_preexisting_max(
+    tmp_path, monkeypatch, capsys
+):
+    # Pinned acceptance criterion (contract line 971 / plan.md line 971): "a
+    # run whose end_day equals the pre-existing maximum does NOT claim the
+    # horizon was extended." Fixture: the reverse pass fires (sink_overflow
+    # forces it) but resolves entirely WITHIN the already-existing horizon,
+    # because slack already exists on later days that were already part of
+    # the window -- so result.end_day == max(card.day for card in cards)
+    # exactly, and reverse_pass_used is True without any actual extension.
+    # Verified directly against due_plan before writing this fixture: 20
+    # cards on start_day, 5 on start_day+1, 5 on start_day+2, max=16,
+    # set_earlier=True resolves to day1=16, day2=9, day3=5 -- end_day never
+    # moves past the original max (start_day+2).
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    today = col.sched.today
+    start_day = today + 1
+
+    for _ in range(20):
+        _add_card(col, coding_id, due=start_day, ivl=10)
+    for _ in range(5):
+        _add_card(col, coding_id, due=start_day + 1, ivl=10)
+    for _ in range(5):
+        _add_card(col, coding_id, due=start_day + 2, ivl=10)
+    col.close()
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--max",
+            "16",
+            "--set-earlier",
+            "--yes",
+            "--collection",
+            col_path,
+        ],
+        monkeypatch,
+    )
+    out = capsys.readouterr().out
+
+    assert exit_code == 0
+    assert "extended" not in out.lower()
+
+
+def test_e2e_extended_horizon_message_fires_and_uses_offset_not_absolute_day(
+    tmp_path, monkeypatch, capsys
+):
+    # Contrast case: the reverse pass genuinely extends the horizon past the
+    # pre-existing maximum, so the message must fire -- and it must print a
+    # small day OFFSET (contract line 971 / plan.md lines 956, 971), never
+    # the large absolute day number. `col.sched.today` is monkeypatched at
+    # the class level (Scheduler.today is a read-only pyo3 property, so this
+    # is the only way to control it) so the absolute day numbers involved
+    # are in the thousands while the true offset stays single-digit -- the
+    # only way to distinguish "prints the offset" from "prints the absolute
+    # day" when a freshly created test collection's real `today` is 0
+    # (making the two numerically identical otherwise). --dry-run is used
+    # deliberately: planning happens identically to a real apply, but no
+    # scheduler write occurs, so this mocked `today` never has to agree with
+    # the real (unmocked) day the Rust scheduler would compute internally
+    # for set_due_date's own relative-day parsing.
+    import anki.scheduler.v3 as scheduler_v3
+
+    mocked_today = 1800
+    monkeypatch.setattr(
+        scheduler_v3.Scheduler, "today", property(lambda self: mocked_today)
+    )
+
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    start_day = mocked_today + 1
+    for _ in range(20):
+        _add_card(col, coding_id, due=start_day, ivl=10)
+    col.close()
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--max",
+            "16",
+            "--set-earlier",
+            "--dry-run",
+            "--collection",
+            col_path,
+        ],
+        monkeypatch,
+    )
+    out = capsys.readouterr().out
+
+    assert exit_code == 0
+    assert "extended" in out.lower()
+    # The absolute day the excess landed on (start_day + 1 == 1802) and
+    # today's own absolute value (1800) must never appear -- only the small
+    # offset (2) should represent the extension.
+    assert str(start_day + 1) not in out
+    assert str(mocked_today) not in out
+
+
+# ---------------------------------------------------------------------------
+# Phase 6 / Packet E -- --range LO-HI / bare N (6.5)
+# ---------------------------------------------------------------------------
+
+
+def test_range_lo_hi_and_bare_n_are_accepted_by_the_parser():
+    parser = build_parser()
+    args_lohi = parser.parse_args(["programming::coding", "--range", "8-30"])
+    args_bare = parser.parse_args(["programming::coding", "--range", "12"])
+    value_lohi = _first_present(args_lohi, "range", "range_raw")
+    value_bare = _first_present(args_bare, "range", "range_raw")
+    assert "8" in str(value_lohi) and "30" in str(value_lohi)
+    assert "12" in str(value_bare)
+
+
+def test_range_and_start_offset_are_mutually_exclusive_at_the_parser_level():
+    parser = build_parser()
+    with pytest.raises(SystemExit) as exc_info:
+        parser.parse_args(
+            ["programming::coding", "--range", "8-30", "--start-offset", "3"]
+        )
+    assert exc_info.value.code != 0
+
+
+def test_help_documents_range_and_start_offset_as_mutually_exclusive(capsys):
+    parser = build_parser()
+    with pytest.raises(SystemExit):
+        parser.parse_args(["--help"])
+    captured = capsys.readouterr()
+    # argparse's own add_mutually_exclusive_group rendering joins the two
+    # flags with "|" inside one bracketed usage group, in either order.
+    usage_text = captured.out
+    joined_forward = re.search(r"--range[^\n]*\|[^\n]*--start-offset", usage_text)
+    joined_backward = re.search(r"--start-offset[^\n]*\|[^\n]*--range", usage_text)
+    assert joined_forward or joined_backward
+
+
+def test_e2e_range_invalid_forms_each_get_a_distinct_message(monkeypatch, capsys):
+    # Three distinct invalid forms, each pinned to its own parser.error(...)
+    # message (contract line 1540 / plan.md line 1277): LO < 1, HI < LO, and
+    # a malformed (non-integer) form.
+    exit_lo = _run_cli(
+        ["programming::coding", "--range", "0-30", "--max", "16"], monkeypatch
+    )
+    msg_lo = capsys.readouterr().err
+
+    exit_hi = _run_cli(
+        ["programming::coding", "--range", "30-8", "--max", "16"], monkeypatch
+    )
+    msg_hi = capsys.readouterr().err
+
+    exit_malformed = _run_cli(
+        ["programming::coding", "--range", "abc", "--max", "16"], monkeypatch
+    )
+    msg_malformed = capsys.readouterr().err
+
+    assert exit_lo != 0 and exit_hi != 0 and exit_malformed != 0
+    assert msg_lo and msg_hi and msg_malformed  # each produced SOME message
+    # Each of the three failure modes gets its own distinct message text --
+    # not one generic "--range is invalid" for all three.
+    assert len({msg_lo, msg_hi, msg_malformed}) == 3
+
+
+def test_e2e_cards_outside_range_untouched_excluded_from_histogram_own_skip_reason(
+    tmp_path, monkeypatch, capsys
+):
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    today = col.sched.today
+
+    # In range [8, 30] (offsets).
+    in_range = _add_card(col, coding_id, due=today + 10, ivl=20)
+    # Below the range's LO (offset 8) but still >= start_day, so this is NOT
+    # the "already due or overdue" bucket -- it is "outside --range" on its
+    # own, distinctly.
+    below_range = _add_card(col, coding_id, due=today + 3, ivl=15)
+    below_range_due_before = below_range.due
+    # Above the range's HI (offset 30).
+    above_range = _add_card(col, coding_id, due=today + 40, ivl=25)
+    above_range_due_before = above_range.due
+    col.close()
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--range",
+            "8-30",
+            "--max",
+            "1000",
+            "--dry-run",
+            "--collection",
+            col_path,
+        ],
+        monkeypatch,
+    )
+    out = capsys.readouterr().out
+    assert exit_code == 0
+    assert "outside --range" in out
+
+    col2 = Collection(col_path)
+    try:
+        reloaded_below = col2.get_card(below_range.id)
+        reloaded_above = col2.get_card(above_range.id)
+        assert reloaded_below.due == below_range_due_before
+        assert reloaded_above.due == above_range_due_before
+        assert col2.get_card(in_range.id) is not None
+    finally:
+        col2.close()
+
+    # The excluded cards' own OFFSETS (below_range=3, above_range=40) never
+    # surface as histogram row labels (proxy for "absent from the
+    # histogram" -- they are filtered before histogram rendering). Matched
+    # on digit boundaries, not naive substring: 3 is a substring of the
+    # legitimate in-range offset 13, so a bare `in` check would false-fail.
+    below_offset = 3
+    above_offset = 40
+    assert re.search(rf"(?<!\d){below_offset}(?!\d)\s*\|", out) is None
+    assert re.search(rf"(?<!\d){above_offset}(?!\d)\s*\|", out) is None
+
+
+def test_e2e_omitting_range_matches_the_pure_core_oracle_exactly(tmp_path, monkeypatch):
+    # Packet E's own regression anchor (contract line 1479 / plan.md lines
+    # 1256, 1281): "No range given -> end_day=None and the pre-range
+    # behaviour is reproduced exactly." Cross-checked directly against
+    # due_plan.plan_rebalance -- the already-verified pure core -- rather
+    # than against a captured byte-for-byte baseline this packet does not
+    # have access to (that comparison is 6.6's own builder-owned job, using
+    # the actual pre-phase6 JSON files). This proves the weaker but still
+    # load-bearing claim: the CLI's move set, when --range is omitted, is
+    # IDENTICAL to calling plan_rebalance directly with end_day=None on the
+    # same cards.
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    today = col.sched.today
+    start_day = today + 1
+
+    origin_by_id = {}
+    ivl_by_id = {}
+    for offset, count in [(1, 2), (2, 5), (3, 9)]:
+        for i in range(count):
+            card = _add_card(col, coding_id, due=start_day + offset - 1, ivl=10 + i)
+            origin_by_id[card.id] = card.due
+            ivl_by_id[card.id] = card.ivl
+    col.close()
+
+    oracle_cards = [
+        CardDue(card_id=cid, day=day, ivl=ivl_by_id[cid])
+        for cid, day in origin_by_id.items()
+    ]
+    oracle = plan_rebalance(
+        oracle_cards, start_day, min_per_day=1, max_per_day=8, max_shift=14
+    )
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--min",
+            "1",
+            "--max",
+            "8",
+            "--yes",
+            "--collection",
+            col_path,
+        ],
+        monkeypatch,
+    )
+    assert exit_code == 0
+
+    col2 = Collection(col_path)
+    try:
+        for cid, origin in origin_by_id.items():
+            expected_day = oracle.moves.get(cid, origin)
+            actual_day = col2.get_card(cid).due
+            assert actual_day == expected_day, (
+                f"card {cid}: CLI produced {actual_day}, oracle plan_rebalance "
+                f"produced {expected_day}"
+            )
+    finally:
+        col2.close()
+
+
+def test_e2e_range_containment_no_move_lands_outside_window_either_direction(
+    tmp_path, monkeypatch
+):
+    # 6.6's own pinned range-containment criterion (plan.md line 1310),
+    # exercised here at the packet level too: with a range in effect, every
+    # in-range card's final due lands inside [start_day, end_day] and never
+    # outside it in either direction.
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    today = col.sched.today
+
+    ids = []
+    for offset in range(8, 31):  # every offset in the range, one card each
+        card = _add_card(col, coding_id, due=today + offset, ivl=10)
+        ids.append(card.id)
+    # A few more piled onto a MIDDLE in-range day (not the window's own
+    # start_day, which has nowhere earlier to shed to within the window and
+    # would make this fixture infeasible by construction -- verified
+    # directly against due_plan.check_feasibility before writing this test)
+    # to force real cascading movement within the window.
+    for _ in range(10):
+        card = _add_card(col, coding_id, due=today + 15, ivl=10)
+        ids.append(card.id)
+    col.close()
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--range",
+            "8-30",
+            "--max",
+            "3",
+            "--yes",
+            "--collection",
+            col_path,
+        ],
+        monkeypatch,
+    )
+    assert exit_code == 0
+
+    col2 = Collection(col_path)
+    try:
+        for cid in ids:
+            due = col2.get_card(cid).due
+            assert today + 8 <= due <= today + 30
+    finally:
+        col2.close()
+
+
+# ---------------------------------------------------------------------------
+# Phase 6 / Packet E -- --sliding / --strict-sliding (6.5)
+# ---------------------------------------------------------------------------
+
+
+def test_e2e_sliding_without_min_exits_nonzero_naming_both_flags(monkeypatch, capsys):
+    exit_code = _run_cli(
+        ["programming::coding", "--sliding", "--max", "16"], monkeypatch
+    )
+    err = capsys.readouterr().err
+    assert exit_code != 0
+    assert "min" in err.lower() and "max" in err.lower()
+
+
+def test_e2e_sliding_without_max_exits_nonzero_naming_both_flags(monkeypatch, capsys):
+    exit_code = _run_cli(
+        ["programming::coding", "--sliding", "--min", "8"], monkeypatch
+    )
+    err = capsys.readouterr().err
+    assert exit_code != 0
+    assert "min" in err.lower() and "max" in err.lower()
+
+
+def test_e2e_sliding_without_either_min_or_max_exits_nonzero_naming_both_flags(
+    monkeypatch, capsys
+):
+    exit_code = _run_cli(["programming::coding", "--sliding"], monkeypatch)
+    err = capsys.readouterr().err
+    assert exit_code != 0
+    assert "min" in err.lower() and "max" in err.lower()
+
+
+def test_e2e_cap_unreachable_sliding_completes_and_reports_over_target_days(
+    tmp_path, monkeypatch, capsys
+):
+    # Block-shaped fixture verified directly against due_plan before writing
+    # this test: 10 days at 6 cards/day, min=2 max=6 max_shift=2 --sliding
+    # reports feasible=True, shape_reachable=False, over_target_days
+    # non-empty (days 3-10), and plan_rebalance does NOT raise -- DP-F's
+    # best-effort default (contract lines 1598-1600 / plan.md line 1284).
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    today = col.sched.today
+    start_day = today + 1
+
+    origin_by_id = {}
+    ivl_by_id = {}
+    for offset in range(10):
+        for i in range(6):
+            card = _add_card(col, coding_id, due=start_day + offset, ivl=10 + i)
+            origin_by_id[card.id] = card.due
+            ivl_by_id[card.id] = card.ivl
+    col.close()
+
+    oracle_cards = [
+        CardDue(card_id=cid, day=day, ivl=ivl_by_id[cid])
+        for cid, day in origin_by_id.items()
+    ]
+    oracle = plan_rebalance(
+        oracle_cards,
+        start_day,
+        min_per_day=2,
+        max_per_day=6,
+        max_shift=2,
+        sliding=True,
+        strict_sliding=False,
+    )
+    assert oracle.over_target_days  # sanity: the fixture really is cap-unreachable
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--min",
+            "2",
+            "--max",
+            "6",
+            "--max-shift",
+            "2",
+            "--sliding",
+            "--yes",
+            "--collection",
+            col_path,
+        ],
+        monkeypatch,
+    )
+    assert exit_code == 0  # completes, does not raise, per DP-F
+
+    col2 = Collection(col_path)
+    try:
+        for cid, origin in origin_by_id.items():
+            expected_day = oracle.moves.get(cid, origin)
+            actual_day = col2.get_card(cid).due
+            assert actual_day == expected_day
+        # over_target_days is soft/reported, never a hard violation -- the
+        # one hard post-condition sliding mode keeps is the plain max cap.
+        counts_by_day = {}
+        for cid in origin_by_id:
+            due = col2.get_card(cid).due
+            counts_by_day[due] = counts_by_day.get(due, 0) + 1
+        assert all(count <= 6 for count in counts_by_day.values())
+    finally:
+        col2.close()
+
+
+def test_e2e_cap_unreachable_sliding_with_strict_flag_exits_nonzero_and_writes_nothing(
+    tmp_path, monkeypatch
+):
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    today = col.sched.today
+    start_day = today + 1
+
+    ids = []
+    for offset in range(10):
+        for i in range(6):
+            card = _add_card(col, coding_id, due=start_day + offset, ivl=10 + i)
+            ids.append(card.id)
+    col.close()
+
+    before = _snapshot_due_ivl(col_path, ids)
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--min",
+            "2",
+            "--max",
+            "6",
+            "--max-shift",
+            "2",
+            "--sliding",
+            "--strict-sliding",
+            "--yes",
+            "--collection",
+            col_path,
+        ],
+        monkeypatch,
+    )
+
+    assert exit_code != 0
+
+    after = _snapshot_due_ivl(col_path, ids)
+    assert before == after
+
+
+def test_e2e_sliding_dry_run_produces_descending_shape_and_writes_nothing(
+    tmp_path, monkeypatch, capsys
+):
+    # Plan.md line 1283: "--sliding --min 8 --max 16 --dry-run prints a
+    # histogram whose per-day targets descend from 16 to 8, and writes
+    # nothing." Cross-checked directly against due_plan.plan_rebalance
+    # before writing this fixture (the same cards/params run through the
+    # pure core): the resulting per-day `after` counts are
+    # {1: 16, 2: 14, 3: 13, 4: 11, 5: 6, 6: 0} -- non-increasing and
+    # starting exactly at max_per_day, but NOT hitting build_target_line's
+    # literal tail value (8) on the last day, because the tail is exempt
+    # from --min enforcement (D6.1/_reached_exempt_tail) and there are no
+    # later-day cards left to pull into days 5-6. So this asserts the
+    # structural "descends from max, never increases" shape rather than
+    # literal target-line numerals appearing in the text, which would be a
+    # false assumption about this specific fixture (verified against the
+    # oracle, not guessed).
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    today = col.sched.today
+    start_day = today + 1
+
+    ids = []
+    for offset in range(6):
+        for i in range(10):
+            card = _add_card(col, coding_id, due=start_day + offset, ivl=10 + i)
+            ids.append(card.id)
+    col.close()
+
+    before = _snapshot_due_ivl(col_path, ids)
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--min",
+            "8",
+            "--max",
+            "16",
+            "--sliding",
+            "--dry-run",
+            "--collection",
+            col_path,
+        ],
+        monkeypatch,
+    )
+    out = capsys.readouterr().out
+    assert exit_code == 0
+
+    after = _snapshot_due_ivl(col_path, ids)
+    assert before == after  # dry-run writes nothing, sliding included
+
+    # The histogram's first row (offset 1, the window start) shows the full
+    # max_per_day (16) -- the shape's own descending ramp starts there.
+    assert re.search(r"(?<!\d)1(?!\d)\s*\|\s*\d+\s*\|\s*16", out)

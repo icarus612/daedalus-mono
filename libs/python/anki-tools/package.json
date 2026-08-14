@@ -15,6 +15,7 @@
   "bin": {
     "anki-build-deck": "anki_tools/build_deck.py",
     "anki-get-deck-info": "anki_tools/get_deck_info.py",
+    "anki-due-stats": "anki_tools/due_stats.py",
     "anki-mp3-filename-update": "anki_tools/mp3_filename_update.py",
     "anki-rebalance-due": "anki_tools/rebalance_due.py"
   }
