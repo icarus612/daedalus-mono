@@ -217,3 +217,175 @@ non-blocking: 1
 ### Open questions
 
 None — the one finding above is a cosmetic follow-up, not a decision point.
+
+## Round 3 — 08-14-26
+
+```
+verdict: ready
+next: proceed
+blocking: 0
+non-blocking: 2
+```
+
+Scope: Phase 6 only (commit `98a90ae`, 7 files, +2900/-102 — `due_plan.py`,
+`due_stats.py` new, `rebalance_due.py`, `package.json`, `test_due_plan.py`,
+`test_due_stats.py`, `test_rebalance_due.py`). Phases 1-5 already gated
+twice and are not re-litigated here. Fresh isolated context; verified
+against the plan's subphases 6.1-6.6 and the settled table (D1-D9,
+DP-A..DP-F) by reading the real code and re-running every check, not from
+the exit report's claims alone.
+
+### Verified independently (not just from the exit report)
+
+- `.venv/bin/poetry run pytest -q`: **189/189 pass** (97 `test_due_plan.py`
+  + 74 `test_rebalance_due.py` + 18 `test_due_stats.py`), matching the exit
+  report.
+- `ruff check --output-format=concise .` and
+  `python3 -m flake8 --max-line-length=88 .`, both diffed byte-for-byte
+  against `.artifacts/baselines/{ruff,flake8}-baseline.txt` from the
+  package root: **identical to baseline** — zero new findings in any of the
+  three Phase 6 files.
+- **Default-mode regression, re-derived independently rather than trusted.**
+  Wrote a standalone script reproducing `gen_pre_phase6_baselines.py`'s
+  exact three fixtures (F1 feasible-flat, F2 reverse-pass, F3 cap-blocked)
+  against the **current, post-Phase-6** `due_plan.plan_rebalance`, and
+  diffed the resulting `{card_id: new_day}` maps against
+  `.artifacts/pre-phase6/moves-{F1,F2,F3}.json` byte-for-byte in Python
+  (dict equality, not just JSON text): **F1/F2/F3 all MATCH.**
+- **DP-B / hard-vs-shape split is real in code, not just by convention.**
+  Read `check_hard_feasibility`, `analyze_shape`, and the shared
+  `window_violations` kernel in `due_plan.py:554-808` line by line:
+  `check_hard_feasibility` never receives or constructs a `DayTargets` line
+  at all — its only capacity source, in all three checks (global upper,
+  global lower, window/Hall), is `constant_targets(..., max_per_day)` or
+  the raw scalar `max_per_day`/`min_per_day`. `analyze_shape` is the only
+  caller that passes the `target` (`T(d)`) line into `window_violations`,
+  and its result (`ShapeAnalysis`) has no `feasible` field at all —
+  `check_feasibility` composes `feasible=hard.feasible` only, never mixing
+  in `shape.shape_reachable`. The split is structural (no code path can
+  accidentally feed `T(d)` into the hard gate), not merely tested-around.
+  Corroborated by `test_dp_b_dp_f_boundary_cap_unreachable_but_max_feasible_passes_the_hard_gate`
+  and `test_check_hard_feasibility_uncapped_matches_the_6_1_prefix_condition`
+  (both pass), which reproduce the plan's own real-block numbers (1360
+  cards / 980 capacity / gap 380 at shift 14; minimum feasible shift 48)
+  exactly.
+- **DP-B hard-fails both sides, `--set-earlier` downgrades only upper/window
+  to warnings, lower bound is unconditional.** Confirmed in
+  `check_hard_feasibility` (`due_plan.py:644-673`): the lower-bound branch
+  never checks `set_earlier`; the upper-bound and window branches do,
+  appending a "downgraded to warning" message and leaving `feasible=True`
+  when `set_earlier` is set. Matches 6.1 point 4 exactly.
+- **DP-F best-effort default confirmed in `plan_rebalance`'s sliding block**
+  (`due_plan.py:432-455`): `apply_shape_pass` + `apply_min_pass(state,
+  target)` run unconditionally, `over_target_days` is always computed and
+  returned, and `InfeasibleRebalance` is raised **only** when
+  `strict_sliding and over_target_days` — never on shape alone by default.
+  `test_sliding_cap_blocked_reports_over_target_days_without_raising` and
+  `test_strict_sliding_raises_on_the_same_cap_blocked_case` (both pass)
+  exercise exactly this branch.
+- **Two-stage sliding sequence provably cannot breach `max_per_day`, traced
+  by hand.** `plan_rebalance` runs the hard max pass (and reverse pass if
+  needed) to completion — raising if still over cap — *before* the sliding
+  block ever executes. `apply_shape_pass` only moves a card into `d-1` when
+  `len(buckets[d-1]) < hard_ceiling[d-1]` (`due_plan.py:242-243`), so the
+  receiver can never be pushed over `max_per_day`, including at `start_day`.
+  `apply_min_pass(state, target)` only fills a day up to `target[d]`, and
+  `target[d] <= max_per_day` everywhere by `build_target_line`'s
+  construction (descends from `max_per_day` to `min_per_day`), so it can
+  never push a day above the hard cap either. Confirmed by
+  `test_apply_shape_pass_never_breaches_the_hard_ceiling` (parametrized) and
+  `test_two_stage_necessity_flat_cap_prevents_sink_overflow_shape_alone_would_cause`,
+  which also asserts the naive single-stage substitution the plan forbids
+  *does* break the sink — proving the two-stage order is load-bearing, not
+  stylistic. Both pass.
+- **`--range` containment, both directions, traced by hand.** Downward:
+  `may_move_to` refuses any `target_day < state.start_day` unconditionally
+  (unchanged from Phase 2), and `state.start_day == LO` in range mode — so
+  the shift-cap budget can never reach below `LO`
+  (`test_plan_rebalance_range_mode_shift_cap_clamped_by_start_day_floor`
+  passes). Upward: `may_move_later_to` gates every placement in
+  `apply_reverse_max_pass` (`due_plan.py:190`) and refuses once
+  `target_day > state.max_end_day`; on refusal the pass leaves the excess in
+  place and does **not** create a bucket past the ceiling, so
+  `state.end_day` never exceeds `max_end_day` in range mode — the existing
+  `over_max`/`InfeasibleRebalance` path (no new exception type) then catches
+  it, exactly as 6.2 specifies
+  (`test_plan_rebalance_range_mode_upward_containment_raises_infeasible_not_new_type`
+  passes). Confirmed no horizon extension in range mode: `move_card` still
+  updates `state.end_day = max(state.end_day, to_day)`, but nothing ever
+  calls it with a `to_day` past `max_end_day` because `may_move_later_to`
+  gates the call site first.
+- **Backup ordering, read directly in `rebalance_due.py:main()`
+  (lines 390-430).** Exact sequence: `collect_cards` -> `check_feasibility`
+  -> (fail: `_print_infeasibility` + `SystemExit(1)`, no backup, no
+  `plan_rebalance` call) -> (pass) backup block -> `plan_rebalance` -> (in
+  `finally`, after confirmation) `apply_moves`. A failed precheck exits
+  before the backup block is ever reached. Corroborated by
+  `test_e2e_precheck_failure_creates_no_backup_and_collection_untouched` and
+  `test_e2e_infeasible_rebalance_after_precheck_creates_backup_untouched_collection`
+  (both pass, both assert on backup-directory contents, not just exit code).
+- **The two self-reported redispatch defects are both present and correct
+  in the shipped code.** (1) `apply_reverse_max_pass`'s `ceiling.get(d,
+  ceiling[state.start_day])` fallback (`due_plan.py:189`) — reproduced the
+  original `KeyError` scenario by hand against a from-scratch script
+  (50 cards on day 1, `max_per_day=16`, `set_earlier=True`, no `--range`)
+  against a copy of the pre-fix logic; confirmed the shipped fallback
+  handles it. (2) `_print_infeasibility`'s `suggested_min == 0` branch
+  (`rebalance_due.py:323-329`) — independently re-derived the plan's own
+  worked example (30 cards spread across a 365-day horizon, one card
+  pinned to day 365 so the horizon actually resolves to 365) via
+  `check_feasibility` directly: `feasible=False`, `suggested_min=0`
+  exactly as the plan requires, and traced the print path to confirm it
+  emits the "omit --min entirely, or narrow the window with --range"
+  guidance rather than the literal `Suggested --min: 0` the plan
+  specifically forbids.
+- **The "pre-existing, left unfixed" cosmetic bug is genuinely
+  pre-existing.** `grep` confirms `.artifacts/pre-phase6/rebalance_due.py`
+  (the verbatim pre-Phase-6 copy) already prints `result.short_days` as raw
+  absolute day numbers at the same call site — this predates the round and
+  is correctly out of the plan's 6.1(d) scope (which names exactly two
+  cosmetic fixes: the "was extended" mislabel and `render_histogram`'s dead
+  parameter). Not a regression.
+- `due_stats.py`: mode 755, shebang-first, registered in `package.json`
+  `bin` as `anki-due-stats`, no `except Exception`/`# noqa` anywhere across
+  the three Phase 6 source files (`grep` confirms). Never calls
+  `create_backup` or `set_due_date`; `test_mtime_unchanged_after_run`
+  passes.
+- `git show --stat 98a90ae` and `git diff --stat main...HEAD -- libs/python/anki-tools/`
+  agree: this round's commit touches exactly the 7 files its own file
+  scopes name (5 edited + 2 new); no `pyproject.toml`/`poetry.lock` churn,
+  consistent with no new runtime dependency being needed for Phase 6.
+
+### Findings
+
+- [non-blocking] `anki_tools/due_plan.py:285-288` (`_infeasible_reason`) —
+  self-reported by the exit report and independently confirmed: a
+  range-mode reverse-pass refusal caused by `may_move_later_to` (the
+  containment ceiling) and a genuine `--max-shift` refusal both surface as
+  the same `"shift cap"` reason string on `InfeasibleRebalance`, because
+  `_infeasible_reason` only distinguishes `start_day` (sink overflow) from
+  everything else. The plan's 6.2 acceptance criteria only require the
+  *existing* exception type and the offending days (both satisfied), not a
+  distinct label, so this is not a spec violation — but a user hitting a
+  `--range`-clamped reverse pass sees "shift cap" in the error text with no
+  mention of `--range`, which could send them toward raising `--max-shift`
+  (which cannot help) instead of widening `--range` (which would). Worth a
+  follow-up to add a third reason value once there's a call site that can
+  distinguish the two causes.
+- [non-blocking] Test coverage gap on the `suggested_min == 0` wording fix
+  (defect 2 above): no pytest exercises `_print_infeasibility`'s
+  `suggested_min == 0` branch specifically — the closest e2e precheck-failure
+  test (`test_e2e_precheck_failure_creates_no_backup_and_collection_untouched`,
+  3 cards / 3 days / `--min 8`) lands on `suggested_min == 1`, not `0`, so it
+  never reaches the special-cased wording. The fix is correct (verified
+  independently above) and was checked manually against a real collection
+  per the exit report, but there is no regression test pinning the exact
+  "omit --min entirely, or narrow the window" string for the zero case, so
+  a future refactor of `_print_infeasibility` could silently reintroduce
+  the bare `Suggested --min: 0` wording the plan forbids without any test
+  failing.
+
+### Open questions
+
+None — both findings above are non-blocking notes, not decision points
+that block a verdict.
