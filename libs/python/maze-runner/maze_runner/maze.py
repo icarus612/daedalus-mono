@@ -66,5 +66,9 @@ class Maze:
         )
 
     def view_layout(self):
+        x = ""
         for i in self.layout:
-            print(i)
+            x += "".join(i)
+            x += "\n"
+        print(x)
+        return x
