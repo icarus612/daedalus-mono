@@ -23,12 +23,12 @@ Rebalance Anki review due dates across a deck and its subdecks so no scheduled d
   - [x] 5.1: Scope hook-mode linting to the triggering file
   - [x] 5.2: Verify hook-mode scoping and CLI-mode preservation (after: 5.1)
 - [ ] Phase 6: Early backup, feasibility precheck, range windowing, and sliding mode
-  - [ ] 6.1: Shared core — early backup, feasibility precheck, cosmetic fixes
-  - [ ] 6.2: Range windowing and containment in the core (after: 6.1)
-  - [ ] 6.3: Sliding target line in the shared core (after: 6.2)
-  - [ ] 6.4: Cap-aware feasibility — the reachability check (after: 6.3)
-  - [ ] 6.5: CLI surfaces — `--range`, `--sliding`, and the `anki-due-stats` command (after: 6.4)
-  - [ ] 6.6: Verification, including the default-mode regression guarantee (after: 6.5)
+  - [x] 6.1: Shared core — early backup, feasibility precheck, cosmetic fixes
+  - [x] 6.2: Range windowing and containment in the core (after: 6.1)
+  - [x] 6.3: Sliding target line in the shared core (after: 6.2)
+  - [x] 6.4: Cap-aware feasibility — the reachability check (after: 6.3)
+  - [x] 6.5: CLI surfaces — `--range`, `--sliding`, and the `anki-due-stats` command (after: 6.4)
+  - [x] 6.6: Verification, including the default-mode regression guarantee (after: 6.5)
 
 Single lane. **Reason:** the whole feature is two new source files plus one shared manifest touchpoint inside one package (`libs/python/anki-tools/`), and both source files are written against a single data contract defined in 2.1. Splitting the pure core from the adapter would create a shared-types touchpoint larger than either lane, so lanes are not manufactured here.
 
