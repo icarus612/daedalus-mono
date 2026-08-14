@@ -131,3 +131,114 @@ their findings.
 - Was the C14 (`pyto-widgets`) keep decision ever actually put to the human, outside of what the
   exit report and progress log capture? If yes, this finding can be closed as satisfied; if no, the
   human should be asked now before this ships.
+
+## Round 2 — 08-14-26
+
+```
+verdict: ready
+next: proceed
+blocking: 0
+non-blocking: 3
+```
+
+Reviewed independently (fresh, no conversation history) against the same plan
+(`project-plans/lint-import-audit-08-12-26/plan.md`, now including the round-2 "Decisions settled
+at the code gate" section) and the real diff `main...HEAD` on `bug/lint-import-audit`, worktree
+`/home/icarus64/repos/daedalus-mono/.workflows/lint-import-audit` (HEAD `967ed09`). This round
+verifies specifically: (1) round 1's blocking finding (5.3 doc-format), (2) round 1's two open
+questions (C14 human decision; the 5.3 rework-vs-deviation call), and (3) the two new subphases
+(2.8, 4.4) added at the round-2 gate — all re-checked with live commands, not by re-trusting exit
+reports or the progress log.
+
+### Findings
+
+- [non-blocking] **Round-1 finding "Lane 1, 1.2's literal `BUILD` grep" still applies unchanged.**
+  `git grep -l BUILD` under `libs/` still returns the same pre-existing corrupted `.gitignore`
+  files (e.g. `libs/golang/crud-server/.gitignore` = `.logBUILD`, no separating newline), byte-
+  identical to `main`. Correctly out of round 2's scope; carried forward for the record, not
+  reflagged as new.
+- [non-blocking] **Round-1 finding "3.2's test oracle unenforced" and "node/maze-runner's stale
+  `main` field" both still stand, unchanged from round 1.** Neither was in scope for round 2 and
+  neither regressed; re-verified present and still low-impact (no build failure, nothing in-repo
+  consumes the stale field).
+- [non-blocking] **The run's progress log (`​.artifacts/progress-log.md`) is stale relative to the
+  actual shipped state.** Its "Gate rounds" section ends mid-round-2 (last entry: "l6 ROUND 4
+  DISPATCHED … Then code-gate round 2"), with no entry recording l6 round 4's outcome, its merge,
+  or this round-2 code-gate dispatch itself, even though `git log` shows the branch is fully
+  merged and green (no `l6` branch remains; HEAD is `967ed09`, a pure 4-line syllabus-tick commit
+  on top of the 5.3 rework). Not a code defect — verified independently below with live commands
+  rather than trusting the log — but the log is a run artifact that's supposed to be the
+  reconstructable source of truth for a resumed session, and it isn't currently accurate. Worth a
+  closing update before this run's artifacts are archived.
+
+### What verified clean (no blocking issues) — round-2-specific + full re-verification
+
+- **Round-1 blocking finding (5.3 doc-format) — FIXED, verified independently of the exit
+  report.** `find . -name README.md` (excluding `docs/`, `node_modules/`, `.git/`) shows every one
+  of the 36 project READMEs is now a real symlink (`test -L` true for all); `docs/apps/**` and
+  `docs/libs/**` mirror the source tree with 37 real README files underneath. Spot-checked
+  `apps/flask/maze-runner/README.md` → `../../../docs/apps/flask/maze-runner/README.md`, a valid
+  relative symlink resolving to a real 5.7 KB file. No dangling symlinks anywhere in the tree
+  (`find -xtype l` returns only two pre-existing, unrelated `.next/standalone` node_modules links).
+  No README content contains relative links/images that would break by living at a new physical
+  path (`grep` for `](../`, `](./`, relative `<img src>` in `docs/apps`/`docs/libs` → zero hits).
+- **The mirror-dereferencing half of D11 — proven by an actual simulated copy, not just read.**
+  `build-maze-runner.yml` now uses `cp -RL` (was `cp -R`) on all 6 lines; `sync-go-packages.yml`
+  uses `rsync -avL --delete` (was `-av`). I ran `cp -RL apps/flask/maze-runner
+  /tmp/.../maze-runner-copy` myself: the copied `README.md` is a real 83-line file, not a dangling
+  symlink — the exact regression the fix claims to prevent, reproduced and confirmed absent.
+  `create-mono-file-tree.sh` needs no change per the plan's claim; I ran it directly and its
+  `[ -f "$dir/README.md" ]` project-detection correctly followed the new symlinks (every mirrored
+  project still appears with its README link in the generated tree), and the run left the tree
+  clean (no incidental writes).
+- **C14 / D9 (`pyto-widgets` removal) — confirmed at the git level, not just by directory
+  listing.** `git ls-files libs/python/pyto-widgets` returns nothing (fully untracked/removed);
+  `git status --porcelain -uall` is empty repo-wide, meaning the `node_modules`/`.venv`/`.turbo`
+  directories still physically present under that path are pre-existing gitignored build cache
+  from before the deletion, not tracked or resurrected content — a fresh clone would not have this
+  directory at all. No reference to `pyto-widgets`/`pyto_widgets`/`pytowidgets` remains in
+  `pyproject.toml`, `uv.lock`, `pnpm-workspace.yaml`, or `package.json`. Both open questions from
+  round 1 about C14 are closed: the plan's new "Decisions settled at the code gate" section
+  (D9) records the human was actually asked and answered "dead, not content-pending," and the
+  deletion in 5ef6114 executes that answer.
+- **4.4 (`pkg/abf` zip type-identity fix) — technically verified correct, not just re-run.** Read
+  `Zip[T any, S ~[]T](iters ...S) []S` in `pkg/abf/utils.go:55` and the test-local
+  `type zipper [][]any` in `pkg/abf/utils_test.go:8`: since `S = []any` is inferred from the
+  `zipper`-typed test inputs, `Zip` genuinely returns the unnamed literal type `[][]any`, never the
+  named `zipper` type, even though they share an identical underlying type —
+  `reflect.DeepEqual` legitimately treats those as unequal. The fix (wrap the call site,
+  `zipper(Zip(...))`, at the three call sites in `utils_test.go`) is test-only, changes no
+  production code, and is the technically correct fix versus the alternative of relaxing the
+  comparison or renaming `Zip`'s return type. `go test ./...` in `pythonify` now passes clean
+  (`ok github.com/dae-go/pythonify/pkg/abf`), and `go vet ./...` is clean in all six Go modules.
+  Re-ran the standalone-mirror convention check by moving `go.work` aside and rebuilding
+  `pythonify` alone — still builds and vets clean without it, so 4.4 didn't reintroduce a
+  cross-module dependency.
+- **Full integration re-proof, run live in this pass (equivalent to 6.1), independent of any
+  builder's claim:**
+  - `pnpm install --frozen-lockfile` — succeeds, no Go toolchain triggered, lockfile already
+    up to date (34 workspace projects incl. root).
+  - `turbo run build` — 31/31 successful.
+  - `turbo run lint` — 33/33 successful (0 errors; 4 pre-existing unrelated Next.js
+    `no-unused-vars` warnings only); tree stays clean (`git status --porcelain -uall` empty)
+    before and after both runs.
+  - `uv sync --inexact` — resolves the 14-member workspace; site-packages count 272 before and
+    272 after (the F5 venv-pruning regression from round-1's l6 report stays fixed).
+  - `bash libs/bash/build-tools/import-check` — 13/13 importable workspace members OK (2 correctly
+    skipped as non-package, no-main-entry directories).
+  - `ruff check .` and `ruff format --check .` — both clean (214 files already formatted, 0
+    findings).
+  - `.venv/bin/python -c "import flask"` — succeeds (`flask 2.3.3`), the plan's original
+    reproduction confirmed still fixed.
+  - `go vet ./...` clean in all six `libs/golang/*` modules.
+- **Syllabus and scope hygiene.** All 22 original subphases plus the two round-2 additions (2.8,
+  4.4) show `[x]` in the current `plan.md`; all C1–C14 candidates remain `[x]`. The only round-2
+  plan-file commit (`967ed09`) touches exactly `plan.md`, 4 lines. `pnpm-lock.yaml`'s only
+  round-2-era write is 2.8's documented one-off exception (`5ef6114`); no other lane touched it in
+  this round.
+
+### Open questions
+
+None outstanding. Both round-1 open questions are closed: C14 was put to the human and answered
+(remove — D9), and the 5.3 rework-vs-deviation call was answered (rework — D11), and both are
+verified actually implemented above, not just recorded as decided.
