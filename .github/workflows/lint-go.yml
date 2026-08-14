@@ -31,14 +31,16 @@ jobs:
         with:
           go-version-file: 'go.work'
 
-      - name: Build
-        run: go build ./...
-
-      - name: Vet
-        run: go vet ./...
-
-      - name: Check formatting (gofmt)
-        run: test -z "$(gofmt -l .)"
-
-      - name: Test
-        run: go test ./...
+      - name: Build, vet, format-check, and test each Go module
+        run: |
+          set -e
+          for module_dir in libs/golang/*/; do
+            echo "== $module_dir =="
+            (
+              cd "$module_dir"
+              go build ./...
+              go vet ./...
+              test -z "$(gofmt -l .)"
+              go test ./...
+            )
+          done
