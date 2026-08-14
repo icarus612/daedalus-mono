@@ -1,6 +1,6 @@
+import pandas as pd
 import requests
 import robin_stocks.robinhood as robinhood
-import pandas as pd
 
 
 class Robinhood:

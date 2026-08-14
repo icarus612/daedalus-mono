@@ -1,13 +1,12 @@
-from flask import Flask, render_template, url_for, request, redirect, make_response
-import requests
 import os
 import sys
 
-from flask_utils.port_finder import find_available_port
-from maze_runner import Maze, Runner
+from flask import Flask, make_response, redirect, render_template, request, url_for
 from flask_bootstrap import Bootstrap
 from flask_fontawesome import FontAwesome
 from flask_sslify import SSLify
+from flask_utils.port_finder import find_available_port
+from maze_runner import Maze, Runner
 
 app = Flask(__name__)
 if "DYNO" in os.environ:  # only trigger SSLify if the app is running on Heroku

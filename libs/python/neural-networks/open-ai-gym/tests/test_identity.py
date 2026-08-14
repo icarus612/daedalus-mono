@@ -63,6 +63,6 @@ def test_lunar_lander_v2_has_no_old_broken_import_line():
     source = LUNAR_LANDER_V2.read_text()
     lines = source.splitlines()
     matching_lines = [line for line in lines if OLD_BROKEN_IMPORT in line]
-    assert (
-        matching_lines == []
-    ), f"Found old broken implicit import in {LUNAR_LANDER_V2}: {matching_lines}"
+    assert matching_lines == [], (
+        f"Found old broken implicit import in {LUNAR_LANDER_V2}: {matching_lines}"
+    )

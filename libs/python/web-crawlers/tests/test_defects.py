@@ -142,7 +142,27 @@ def test_common_words_2000_has_no_idx_reference():
 
 def test_common_words_2000_calls_build_cards_with_literal_2000():
     source = COMMON_WORDS_2000.read_text()
-    assert "build_cards('2000', cards)" in source
+    tree = ast.parse(source)
+
+    module_level_calls = [
+        node.value
+        for node in tree.body
+        if isinstance(node, ast.Expr)
+        and isinstance(node.value, ast.Call)
+        and isinstance(node.value.func, ast.Name)
+        and node.value.func.id == "build_cards"
+    ]
+    assert module_level_calls, (
+        "expected a module-level call to build_cards() in common_words_2000.py"
+    )
+
+    call = module_level_calls[0]
+    assert call.args, "build_cards() call must have a positional argument"
+    first_arg = call.args[0]
+    assert isinstance(first_arg, ast.Constant) and first_arg.value == "2000", (
+        "build_cards()'s first positional argument must be the literal string "
+        "'2000', regardless of source quote style"
+    )
 
 
 # --- get_masterrussian_1000.py: F821 (`r` undefined, dead `return r`) ---
@@ -169,8 +189,7 @@ def _assert_tts_file_fixed(path: Path):
     source = path.read_text()
 
     assert "args.file_name" not in source, (
-        f"{path} should no longer reference the nonexistent "
-        "'args.file_name' attribute"
+        f"{path} should no longer reference the nonexistent 'args.file_name' attribute"
     )
 
     # No undefined bare `word` / `file` reference passed directly into
@@ -194,9 +213,9 @@ def _assert_tts_file_fixed(path: Path):
             f"build_and_save(...) call: {line!r}"
         )
 
-    assert (
-        "card[0]" in source
-    ), f"{path} should use card[0] in build_and_save(...) calls"
+    assert "card[0]" in source, (
+        f"{path} should use card[0] in build_and_save(...) calls"
+    )
     assert "card[1]" in source, f"{path} should use card[1] for the file_name kwarg"
 
     ast.parse(source)
@@ -220,11 +239,11 @@ def test_advanced_and_basic_tts_remain_identical():
 
 def test_sys_module_scraper_renamed():
     assert SYS_MODULE_SCRAPER.is_file(), (
-        "expected anki_scrapers/python/sys.py to be renamed to " "sys_module_scraper.py"
+        "expected anki_scrapers/python/sys.py to be renamed to sys_module_scraper.py"
     )
-    assert (
-        not OLD_SYS_PY.exists()
-    ), "anki_scrapers/python/sys.py should no longer exist after the rename"
+    assert not OLD_SYS_PY.exists(), (
+        "anki_scrapers/python/sys.py should no longer exist after the rename"
+    )
 
 
 def test_matplotlib_api_scraper_renamed():
@@ -233,5 +252,5 @@ def test_matplotlib_api_scraper_renamed():
         "matplotlib_api_scraper.py"
     )
     assert not OLD_MATPLOTLIB_PY.exists(), (
-        "anki_scrapers/python/matplotlib.py should no longer exist after " "the rename"
+        "anki_scrapers/python/matplotlib.py should no longer exist after the rename"
     )
