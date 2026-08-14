@@ -203,6 +203,12 @@ importers:
         specifier: workspace:*
         version: link:../../bash/build-tools
 
+  libs/python/flask_utils:
+    devDependencies:
+      lib.bash.build-tools:
+        specifier: workspace:*
+        version: link:../../bash/build-tools
+
   libs/python/maze-runner:
     devDependencies:
       lib.bash.build-tools:
@@ -238,12 +244,6 @@ importers:
       lib.bash.build-tools:
         specifier: workspace:*
         version: link:../../bash/build-tools
-
-  libs/python/tensorflow/open-ai-gym:
-    devDependencies:
-      lib.bash.build-tools:
-        specifier: workspace:*
-        version: link:../../../bash/build-tools
 
   libs/python/web-crawlers:
     devDependencies:
