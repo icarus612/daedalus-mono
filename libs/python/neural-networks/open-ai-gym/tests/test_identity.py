@@ -26,7 +26,7 @@ import pathlib
 def _find_repo_root(start: pathlib.Path) -> pathlib.Path:
     """Walk upward from `start` until a `.git` directory is found."""
     for candidate in [start, *start.parents]:
-        if (candidate / ".git").is_dir():
+        if (candidate / ".git").exists():
             return candidate
     raise RuntimeError(f"Could not locate repo root (.git) above {start}")
 
