@@ -1,0 +1,1 @@
+../../docs/templates/next-js/README.md
