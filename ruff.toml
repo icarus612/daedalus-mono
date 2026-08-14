@@ -7,5 +7,12 @@ target-version = "py311"  # D2: unify on Python 3.11
 [lint]
 select = ["E", "W", "F", "I"]
 
+[lint.isort]
+# Tests import the package they live beside (e.g. `from anki_tools.due_plan import ...`).
+# Without this, ruff run from the repo root treats those as third-party while ruff run
+# from the package dir treats them as first-party — the two disagree on I001 in
+# mutually exclusive ways, so no import order can satisfy both. CI runs from the root.
+known-first-party = ["anki_tools"]
+
 [format]
 # ruff format's black-compatible defaults are intentionally left as-is.
