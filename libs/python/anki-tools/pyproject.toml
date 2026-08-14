@@ -1,16 +1,23 @@
-[tool.poetry]
+[project]
 name = "anki-tools"
 version = "0.1.0"
 description = ""
-authors = ["icarus64 <ellishogan95@gmail.com>"]
 readme = "README.md"
-packages = [{include = "anki_tools"}]
+requires-python = ">=3.11"
+authors = [
+  { name = "icarus64", email = "ellishogan95@gmail.com" },
+]
+dependencies = [
+  "requests>=2.28.0",
+  "anki",
+]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-requests = "^2.28.0"
-anki = "*"
+[tool.uv]
+package = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["anki_tools"]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"

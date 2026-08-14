@@ -1,17 +1,22 @@
-[tool.poetry]
+[project]
 name = "cli-tools"
 version = "0.1.0"
 description = ""
-authors = ["icarus64 <ellishogan95@gmail.com>"]
 readme = "README.md"
-packages = [
-	{include = "cli_tools"},
+requires-python = ">=3.11"
+authors = [
+  { name = "icarus64", email = "ellishogan95@gmail.com" },
+]
+dependencies = [
+  "Pillow>=10.0.0",
 ]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-Pillow = "^10.0.0"
+[tool.uv]
+package = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["cli_tools"]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
