@@ -3,10 +3,8 @@ import requests
 import os
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../../libs/python"))
 from flask_utils.port_finder import find_available_port
-from modules.maze import Maze
-from modules.runner import Runner
+from maze_runner import Maze, Runner
 from flask_bootstrap import Bootstrap
 from flask_fontawesome import FontAwesome
 from flask_sslify import SSLify
@@ -77,7 +75,7 @@ def make_maze():
     height = int(request.form["height"])
     width = int(request.form["width"])
     maze_type = request.form["type"]
-    maze = Maze(build=[(width, height), maze_type])
+    maze = Maze(build=(height, width), build_type=maze_type)
     runner = run_maze(maze)
     make_cookie(maze, runner)
     return make_cookie(maze, runner)
