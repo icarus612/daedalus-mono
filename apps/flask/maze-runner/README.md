@@ -1,83 +1,30 @@
-# Maze Runner
+# Maze Runner (Flask)
 
-Hello there! 👋 I'm dev.icarus, a full-stack developer with a passion for building scalable and efficient applications. This repository serves as a gateway to my diverse range of projects. Here's how you can explore them:
+A Flask web app that builds and solves mazes. Users can either upload a text-based maze file (`/upload_maze`) or generate one from a width/height/type form (`/make_maze`); either way the app runs it through the local `modules.maze.Maze` / `modules.runner.Runner` classes, prints whether the maze is solvable, and (if so) computes and renders the solution path back into `templates/index.html`, using signed cookies to pass the maze layout and solved path across the redirect.
 
-## My Other Projects
+**Path:** `apps/flask/maze-runner`
+**Workspace name:** `app.flask.maze-runner`
 
-Each of my projects has its own dedicated repository. You can browse them by visiting my [GitHub profile](https://github.com/icarus612), but here is the basic structure of active projects:
+## Stack
+- Python, Flask `2.3.3` (per `requirements.txt`, shared across all `apps/flask/*` apps), pinned alongside `gunicorn==20.1.0`, `Jinja2==3.1.2`, `Werkzeug==2.3.7`, `itsdangerous==2.1.2`, `flask-bootstrap4==4.0.2`, `flask_sslify==0.1.5`, `flask-fontawesome==0.1.5`, `MarkupSafe==2.1.3`, `requests==2.28.0`
+- `runtime.txt` pins `python-3.8.0` for the Heroku-style deploy
+- A `pyproject.toml`/`poetry.lock`/`setup.py` also exist in this directory declaring a near-empty Poetry package (`maze-runner`, no dependencies listed) — this predates or duplicates the `requirements.txt` approach; since `libs/bash/build-tools`'s `py-install`/`py-build` scripts check for `pyproject.toml` *before* `requirements.txt`, running `pnpm install`/`pnpm build` here would install via Poetry (effectively installing nothing) rather than `pip install -r requirements.txt`. Not reconciled during this pass — flag before relying on `pnpm install` to actually provision Flask.
 
+## Structure / entry points
+- `main.py` — Flask app and routes (`/`, `/upload_maze`, `/make_maze`)
+- `modules/maze.py`, `modules/node.py`, `modules/runner.py` — maze data structure and solver
+- `templates/index.html`, `static/` — view and static assets
+- `Procfile` — `web: gunicorn main:app -b "0.0.0.0:$PORT" -w 3`
+- `requirements.txt`, `runtime.txt` — pip/Heroku-style dependency and runtime pins
+- `pyproject.toml`, `poetry.lock`, `setup.py` — parallel/legacy Poetry packaging (see Stack note above)
 
-<pre>
-<a href="https://github.com/icarus612/daedalus-mono">Daedalus Mono</a>
-├── Apps
-│   ├── CLI
-│   │   └── <a href="https://github.com/icarus612/toolsInstaller-app-cli">Tools Installer</a>
-│   ├── Flask
-│   │   ├── <a href="https://github.com/icarus612/mazeRunner-app-flask">Maze Runner</a>
-│   │   ├── <a href="https://github.com/icarus612/pokedex-app-flask">Pokedex</a>
-│   │   └── <a href="https://github.com/icarus612/weatherFortcast-app-flask">Weather Forecast</a>
-│   ├── Microservices
-│   │   └── <a href="https://github.com/icarus612/marketBots-app-microservice">Market Bots</a>
-│   └── Next
-│       └── <a href="https://github.com/icarus612/devIcarus-app-next">Dev Icarus</a>
-└── Libraries
-    ├── Bash
-    │   └── <a href="https://github.com/icarus612/cliTools-lib-SH">CLI Tools</a>
-    ├── Golang
-    │   ├── <a href="https://github.com/icarus612/crudServer-lib-GO">CRUD Server</a>
-    │   └── <a href="https://github.com/icarus612/mazeRunner-lib-GO">Maze Runner</a>
-    ├── JavaScript
-    │   ├── Node
-    │   │   ├── <a href="https://github.com/icarus612/buildScripts-node-JS">Build Scripts</a>
-    │   │   ├── <a href="https://github.com/icarus612/dotsAnime-node-JS">Dots Anime</a>
-    │   │   ├── <a href="https://github.com/icarus612/mazeRunner-node-JS">Maze Runner</a>
-    │   │   └── <a href="https://github.com/icarus612/webCrawlers-node-JS">Web Crawlers</a>
-    │   └── React
-    │       ├── <a href="https://github.com/icarus612/eCard-react-JS">e-Card</a>
-    │       ├── <a href="https://github.com/icarus612/labyrinth-react-JS">Labyrinth</a>
-    │       ├── <a href="https://github.com/icarus612/markdownBuilder-react-JS">Markdown Builder</a>
-    │       ├── <a href="https://github.com/icarus612/mazeRunner-react-JS">Maze Runner</a>
-    │       ├── <a href="https://github.com/icarus612/quest-react-JS">Quest</a>
-    │       └── <a href="https://github.com/icarus612/quotebuilder-react-JS">Quote Builder</a>
-    └── Python
-        ├── <a href="https://github.com/icarus612/ankiBuilTools-lib-PY">Anki Build Tools</a>
-        ├── <a href="https://github.com/icarus612/cliTools-lib-PY">CLI Tools</a>
-        ├── <a href="https://github.com/icarus612/mazeRunner-lib-PY">Maze Runner</a>
-        ├── Neural Networks
-        │   ├── <a href="https://github.com/icarus612/abc-ANN-PY">Abstract Base Classes</a>
-        │   ├── <a href="https://github.com/icarus612/digitRecognition-ANN-PY">Digit Recognition</a>
-        │   ├── <a href="https://github.com/icarus612/marketAnalyzer-ANN-PY">Market Analyzer</a>
-        │   └── <a href="https://github.com/icarus612/openAIGym-ANN-PY">Open AI Gym</a>
-        ├── <a href="https://github.com/icarus612/pytoWidgets-lib-PY">Pyto Widgets</a>
-        └── <a href="https://github.com/icarus612/webCrawlers-lib-PY">Web Crawlers</a>
-</pre>
+## Usage
+- `pnpm install` (→ `py-install`), `pnpm build` (→ `py-build`), `pnpm dev` (→ `py-dev`), `pnpm lint` (→ `py-lint`) — thin wrappers from `libs/bash/build-tools`
+- Production: `gunicorn main:app -b "0.0.0.0:$PORT" -w 3` per `Procfile`
+- Direct: `python main.py`, which self-selects a free port in `3000`–`3100` via `find_available_port` — see Notes below
 
-- **Project Overviews**: In each repository, you'll find a detailed README explaining the project's purpose, technology stack, and how to get it up and running.
-
-- **Code Insights**: Dive into the code to see my coding style and the technologies I work with. Feel free to explore the commit history for a deeper understanding of the development process.
-
-## Collaboration
-
-While this repository is just a personal project and not really set up for collaboration, I'm definitely open to it if you're interested. However, if you're looking to contribute to my active open source projects, I'd recommend visiting [The Icarus Project](https://github.com/the-icarus-project). That's where you'll find projects specifically designed for collaboration, complete with all the details and guidelines you need to get started. If you are still undeterred and wish to contribute please make a PR detailing the bug or feature, and I'll get to it as soon as I can.
-
-## Licensing
-
-All my public projects are open-source and licensed under the MIT License. This means you are free to use, modify, and distribute them as you wish, as long as you include the original copyright notice and disclaimer. Check the LICENSE file in each project for more details.
-
-## My Website
-
-For a more curated experience and in-depth insights about my work and interests, check out my personal website at [devicarus.com](https://devicarus.com).
-
-- **Portfolio**: Discover my professional work, personal projects, and contributions to the developer community.
-- **Blog**: Read my thoughts on the latest in tech, development tips, and more.
-- **Contact Information**: Reach out to me for project collaborations, freelance opportunities, or just to say hi!
-
-## Stay Connected
-
-I love to connect with fellow developers and tech enthusiasts. Follow me on GitHub to stay updated with my latest projects. For real-time updates and professional networking, connect with me on [LinkedIn](https://www.linkedin.com/in/ellis-hogan-99a646161) or [GitHub](https://github.com/icarus612).
-
-Thank you for visiting, and happy coding!
-
----
-
-© 2024 dev.icarus - All Rights Reserved.
+## Notes
+- `main.py` does `sys.path.insert(0, "../../../libs/python")` and then imports `flask_utils.port_finder.find_available_port` and a local `modules.maze` — a filesystem-based cross-package dependency that is invisible to the pnpm/turbo workspace graph. See [../../../docs/architecture.md#dependency-graph](../../../docs/architecture.md#dependency-graph).
+- There are two conflicting port-selection mechanisms in play for this app: `py-dev` (in `libs/bash/build-tools`) hardcodes port `5001` for this directory and launches via `flask run --port=5001`, while `main.py` itself, when run directly (`python main.py`), self-selects a free port in `3000`–`3100` via `find_available_port`. Since `pnpm dev` invokes `py-dev`, the `find_available_port` code path only actually runs when `main.py` is executed directly rather than via the workspace `dev` script. See [../../../docs/architecture.md#known-inconsistency-two-port-selection-mechanisms](../../../docs/architecture.md#known-inconsistency-two-port-selection-mechanisms).
+- The original in-repo README was the CI-generated directory tree combined with generic profile boilerplate, not package-specific documentation; this page supersedes it.
+- **Symlink direction exception**: this file is the real source of truth (not a symlink) because `.github/workflows/build-maze-runner.yml` copies this directory verbatim into the external `maze-runner-mono` repo via `cp -R`; a symlinked README would arrive dangling there. The `docs/apps/flask/maze-runner/README.md` page is instead the symlink, pointing back at this file. See [../../../docs/known-issues.md#symlink-direction-exception-for-ci-synced-packages](../../../docs/known-issues.md#symlink-direction-exception-for-ci-synced-packages).

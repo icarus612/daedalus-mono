@@ -36,3 +36,6 @@ pip-delete-this-directory.txt
 
 # dae-pipeline run dirs, inside each worktree
 .artifacts/
+
+# dae-pipeline worktrees (workflow-setup.sh)
+.workflows/

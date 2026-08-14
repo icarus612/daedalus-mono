@@ -2,6 +2,7 @@ from PIL import Image
 import os
 import sys
 
+
 def mass_resize(input_dir, output_dir, size):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -12,5 +13,6 @@ def mass_resize(input_dir, output_dir, size):
             img = img.resize(size, Image.ANTIALIAS)
             img.save(os.path.join(output_dir, filename))
 
-if __name__ == '__main__':
-		mass_resize(sys.argv[1], sys.argv[2], (800, 600))
+
+if __name__ == "__main__":
+    mass_resize(sys.argv[1], sys.argv[2], (800, 600))

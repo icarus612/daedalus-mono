@@ -7,7 +7,7 @@ A lightweight CRUD server built with Go's standard library that provides RESTful
 - Create, Read, Update, and Delete operations for tables and records
 - In-memory storage with thread-safe operations
 - JSON-based API
-- No external dependencies - uses only Go standard library
+- The code itself uses only the Go standard library (`go.mod` declares `github.com/mattn/go-sqlite3` v1.14.28, but no source file imports it — storage is entirely in-memory)
 
 ## Project Structure
 
@@ -19,12 +19,12 @@ A lightweight CRUD server built with Go's standard library that provides RESTful
 │   ├── row/         # Row/record management CLI
 │   ├── migrate/     # Database migration CLI
 │   └── seed/        # Database seeding CLI
-├── db/
-│   └── db.go        # Database package with storage logic
 ├── internal/
 │   └── handlers.go  # HTTP handlers for API endpoints
 ├── pkg/
-│   └── client/      # HTTP client for CLI tools
+│   ├── client/      # HTTP client for CLI tools
+│   └── db/          # Database package with in-memory storage logic
+├── bin/             # Prebuilt binaries (migrate, row, seed, server, table)
 └── README.md        # This file
 ```
 
@@ -89,7 +89,7 @@ The server will start on port 8080 by default.
 
 ## CLI Tools
 
-The project includes several CLI tools for managing the database:
+The project includes several CLI tools for managing the database. All of them talk to the server over HTTP (via `pkg/client`) and accept a `-server` flag to target a non-default server URL (default `http://localhost:8080`):
 
 ### Table Management
 
@@ -244,6 +244,7 @@ Records are flexible JSON objects. The id field is auto-generated when creating 
 
 ## Notes
 
+- Requires Go 1.21 (per `go.mod`)
 - All data is stored in memory and will be lost when the server stops
 - Thread-safe operations using mutex locks
 - No schema validation beyond table column definitions

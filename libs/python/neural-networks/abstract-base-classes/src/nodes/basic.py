@@ -1,5 +1,3 @@
-
-
 class Basic:
-	def __init__(): 
-		pass
+    def __init__():
+        pass

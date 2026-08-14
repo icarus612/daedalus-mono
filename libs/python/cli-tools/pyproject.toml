@@ -15,3 +15,6 @@ python = "^3.11"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+force-exclude = '/(\.venv|venv|\.env|env|node_modules|\.git|__pycache__|build|dist|\.eggs)/'

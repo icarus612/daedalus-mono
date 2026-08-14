@@ -1,7 +1,8 @@
 import argparse
-import re
 
 from . import Maze, Runner
+
+RETRY_HINT = "(press enter to try again ctrl + c to end)"
 
 
 def open_and_build(file):
@@ -29,7 +30,7 @@ def upload():
     upload_file = input("Choose a file to upload: ").strip()
     try:
         return open_and_build(upload_file)
-    except:
+    except Exception:
         input("File Not found. (press enter to try again ctrl + c to end)")
         return upload()
 
@@ -37,15 +38,16 @@ def upload():
 def find_type():
     while True:
         maze_type = input(
-            "Would you like to upload a maze or build a new one? \n  1) Build New \n  2) Upload \n"
+            "Would you like to upload a maze or build a new one? \n"
+            "  1) Build New \n  2) Upload \n"
         ).strip()
         try:
             m_type = int(maze_type)
             if m_type not in [1, 2]:
-                input("Choose 1 or 2. (press enter to try again ctrl + c to end)")
+                input(f"Choose 1 or 2. {RETRY_HINT}")
                 continue
-        except:
-            input("Type must be a number. (press enter to try again ctrl + c to end)")
+        except ValueError:
+            input(f"Type must be a number. {RETRY_HINT}")
             continue
         break
 
@@ -58,7 +60,9 @@ def find_type():
 def place_points(m):
     while True:
         point_placement = input(
-            "Where would you like your start and end points to be placed in the maze? \n  1) Top and bottom \n  2) Left and Right \n  3) Random Placement \n"
+            "Where would you like your start and end points to be placed "
+            "in the maze? \n  1) Top and bottom \n  2) Left and Right \n"
+            "  3) Random Placement \n"
         ).strip()
         try:
             if int(point_placement) == 1:
@@ -72,11 +76,13 @@ def place_points(m):
                 break
             else:
                 input(
-                    "Try again using 1, 2, or 3 (press enter to try again ctrl + c to end)"
+                    "Try again using 1, 2, or 3 "
+                    "(press enter to try again ctrl + c to end)"
                 )
-        except:
+        except ValueError:
             input(
-                "Must be the number 1, 2 or 3 (press enter to try again ctrl + c to end)"
+                "Must be the number 1, 2 or 3 "
+                "(press enter to try again ctrl + c to end)"
             )
     maze = Maze()
     maze.build_new(m[0], m[1], maze_type)
@@ -87,9 +93,10 @@ def build_new():
     maze_info = input("Enter maze height and width: ").strip()
     try:
         m = [int(i) for i in maze_info.split(" ")]
-    except:
+    except ValueError:
         input(
-            "Try again (Both hieght and with must be numbers: height width) (press enter to try again ctrl + c to end)"
+            "Try again (Both hieght and with must be numbers: height width) "
+            "(press enter to try again ctrl + c to end)"
         )
         return build_new()
     return place_points(m)
@@ -154,7 +161,8 @@ if __name__ == "__main__":
         maze = open_and_build(args.openfile, m_type)
     elif args.dimensions:
         maze = Maze(
-            build=(int(args.dimensions[0]), int(args.dimensions[1])), build_type=m_type
+            build=(int(args.dimensions[0]), int(args.dimensions[1])),
+            build_type=m_type,
         )
     else:
         maze = find_type()

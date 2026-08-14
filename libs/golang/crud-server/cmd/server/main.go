@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"github.com/dae-go/crud-server/internal"
 	"fmt"
+	"github.com/dae-go/crud-server/internal"
 	"log"
 	"net/http"
 	"os"

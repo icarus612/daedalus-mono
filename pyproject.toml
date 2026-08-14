@@ -1,0 +1,3 @@
+# Repo-level formatter config: keep black out of virtualenvs and vendored dirs.
+[tool.black]
+force-exclude = '/(\.venv|venv|\.env|env|node_modules|\.git|__pycache__|build|dist|\.eggs)/'

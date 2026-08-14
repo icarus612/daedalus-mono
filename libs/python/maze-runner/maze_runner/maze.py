@@ -31,7 +31,9 @@ class Maze:
         for x in range(len(self.layout)):
             for y in range(len(self.layout[x])):
                 p = self.layout[x][y]
-                if p[0] == 0 or p[1] == 0 or p[0] == height - 1 or p[1] == width - 1:
+                on_edge_row = p[0] in (0, height - 1)
+                on_edge_col = p[1] in (0, width - 1)
+                if on_edge_row or on_edge_col:
                     self.layout[x][y] = self.wall_char
                 else:
                     open_points.append((x, y))
@@ -62,7 +64,11 @@ class Maze:
 
     def type_info(self):
         print(
-            f"	start point: {self.start_char}\n	end point: {self.end_char}\n	open spaces: {self.open_char}	wall type: {self.wall_char}\n	size: {self.height} x {self.width}"
+            f"	start point: {self.start_char}\n"
+            f"	end point: {self.end_char}\n"
+            f"	open spaces: {self.open_char}"
+            f"	wall type: {self.wall_char}\n"
+            f"	size: {self.height} x {self.width}"
         )
 
     def view_layout(self):

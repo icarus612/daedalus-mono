@@ -1,83 +1,33 @@
-# Maze Runner
+# Maze Runner (Python)
 
-Hello there! 👋 I'm dev.icarus, a full-stack developer with a passion for building scalable and efficient applications. This repository serves as a gateway to my diverse range of projects. Here's how you can explore them:
+A maze generation and solving library plus an interactive CLI solver. `Maze` either wraps an existing text layout or generates a new one; `Runner` builds a graph of the maze's open cells and finds the shortest start-to-end path via breadth-first path propagation; `bin/solver.py` is the interactive front end (build a new maze or upload one from a text file, solve it, and save the original + solved output to a file).
 
-## My Other Projects
+**Path:** `libs/python/maze-runner`
+**Workspace name:** `lib.python.maze-runner`
 
-Each of my projects has its own dedicated repository. You can browse them by visiting my [GitHub profile](https://github.com/icarus612), but here is the basic structure of active projects:
+## Stack
 
+- Python `^3.8` via Poetry (`pyproject.toml`, `packages = [{ include = "maze_runner" }]`) — the only Poetry package in `libs/python` that targets `^3.8` rather than `^3.11`.
+- No third-party dependencies (standard library only: `random`, `argparse`, `re`).
 
-<pre>
-<a href="https://github.com/icarus612/daedalus-mono">Daedalus Mono</a>
-├── Apps
-│   ├── CLI
-│   │   └── <a href="https://github.com/icarus612/toolsInstaller-app-cli">Tools Installer</a>
-│   ├── Flask
-│   │   ├── <a href="https://github.com/icarus612/mazeRunner-app-flask">Maze Runner</a>
-│   │   ├── <a href="https://github.com/icarus612/pokedex-app-flask">Pokedex</a>
-│   │   └── <a href="https://github.com/icarus612/weatherFortcast-app-flask">Weather Forecast</a>
-│   ├── Microservices
-│   │   └── <a href="https://github.com/icarus612/marketBots-app-microservice">Market Bots</a>
-│   └── Next
-│       └── <a href="https://github.com/icarus612/devIcarus-app-next">Dev Icarus</a>
-└── Libraries
-    ├── Bash
-    │   └── <a href="https://github.com/icarus612/cliTools-lib-SH">CLI Tools</a>
-    ├── Golang
-    │   ├── <a href="https://github.com/icarus612/crudServer-lib-GO">CRUD Server</a>
-    │   └── <a href="https://github.com/icarus612/mazeRunner-lib-GO">Maze Runner</a>
-    ├── JavaScript
-    │   ├── Node
-    │   │   ├── <a href="https://github.com/icarus612/buildScripts-node-JS">Build Scripts</a>
-    │   │   ├── <a href="https://github.com/icarus612/dotsAnime-node-JS">Dots Anime</a>
-    │   │   ├── <a href="https://github.com/icarus612/mazeRunner-node-JS">Maze Runner</a>
-    │   │   └── <a href="https://github.com/icarus612/webCrawlers-node-JS">Web Crawlers</a>
-    │   └── React
-    │       ├── <a href="https://github.com/icarus612/eCard-react-JS">e-Card</a>
-    │       ├── <a href="https://github.com/icarus612/labyrinth-react-JS">Labyrinth</a>
-    │       ├── <a href="https://github.com/icarus612/markdownBuilder-react-JS">Markdown Builder</a>
-    │       ├── <a href="https://github.com/icarus612/mazeRunner-react-JS">Maze Runner</a>
-    │       ├── <a href="https://github.com/icarus612/quest-react-JS">Quest</a>
-    │       └── <a href="https://github.com/icarus612/quotebuilder-react-JS">Quote Builder</a>
-    └── Python
-        ├── <a href="https://github.com/icarus612/ankiBuilTools-lib-PY">Anki Build Tools</a>
-        ├── <a href="https://github.com/icarus612/cliTools-lib-PY">CLI Tools</a>
-        ├── <a href="https://github.com/icarus612/mazeRunner-lib-PY">Maze Runner</a>
-        ├── Neural Networks
-        │   ├── <a href="https://github.com/icarus612/abc-ANN-PY">Abstract Base Classes</a>
-        │   ├── <a href="https://github.com/icarus612/digitRecognition-ANN-PY">Digit Recognition</a>
-        │   ├── <a href="https://github.com/icarus612/marketAnalyzer-ANN-PY">Market Analyzer</a>
-        │   └── <a href="https://github.com/icarus612/openAIGym-ANN-PY">Open AI Gym</a>
-        ├── <a href="https://github.com/icarus612/pytoWidgets-lib-PY">Pyto Widgets</a>
-        └── <a href="https://github.com/icarus612/webCrawlers-lib-PY">Web Crawlers</a>
-</pre>
+## Structure / entry points
 
-- **Project Overviews**: In each repository, you'll find a detailed README explaining the project's purpose, technology stack, and how to get it up and running.
+- `maze_runner/maze.py` — `Maze`: holds a character-grid layout (`wall_char`/`open_char`/`start_char`/`end_char`, defaults `#`, space, `s`, `e`); `build_new(height, width, maze_type)` generates a random maze with start/end placed top-and-bottom (`"h"`), left-and-right (`"v"`), or randomly (`"r"`).
+- `maze_runner/node.py` — `Node`: graph node with `children` and a shortest-`path` set.
+- `maze_runner/runner.py` — `Runner`: collects open cells as nodes, locates start/end, `make_node_paths()` does the breadth-first search, `build_path()`/`view_completed()` render the solved maze with a path character.
+- `bin/solver.py` — interactive CLI (`argparse` flags `-of/--openfile`, `-sf/--savefile`, plus prompts); exposed as the `py-maze-runner` bin entry in `package.json`.
+- `examples/m1.txt` … `m5.txt` — sample maze text files (`#` walls, `s` start, `e` end).
+- `dist/` — previously built `maze_runner-0.1.0` wheel/sdist artifacts, committed.
 
-- **Code Insights**: Dive into the code to see my coding style and the technologies I work with. Feel free to explore the commit history for a deeper understanding of the development process.
+## Install / build / run
 
-## Collaboration
+- In the pnpm workspace: `package.json` scripts (`install`, `build`, `lint`, `dev`) shell out to `libs/bash/build-tools`' `py-install`/`py-build`/`py-lint`/`py-dev` wrappers (`pnpm --filter lib.python.maze-runner run build` creates `.venv` and runs `poetry install`).
+- Standalone: `python3 -m venv .venv && . .venv/bin/activate && pip install poetry && poetry install`.
+- No tests are present.
 
-While this repository is just a personal project and not really set up for collaboration, I'm definitely open to it if you're interested. However, if you're looking to contribute to my active open source projects, I'd recommend visiting [The Icarus Project](https://github.com/the-icarus-project). That's where you'll find projects specifically designed for collaboration, complete with all the details and guidelines you need to get started. If you are still undeterred and wish to contribute please make a PR detailing the bug or feature, and I'll get to it as soon as I can.
+## Caveats
 
-## Licensing
-
-All my public projects are open-source and licensed under the MIT License. This means you are free to use, modify, and distribute them as you wish, as long as you include the original copyright notice and disclaimer. Check the LICENSE file in each project for more details.
-
-## My Website
-
-For a more curated experience and in-depth insights about my work and interests, check out my personal website at [devicarus.com](https://devicarus.com).
-
-- **Portfolio**: Discover my professional work, personal projects, and contributions to the developer community.
-- **Blog**: Read my thoughts on the latest in tech, development tips, and more.
-- **Contact Information**: Reach out to me for project collaborations, freelance opportunities, or just to say hi!
-
-## Stay Connected
-
-I love to connect with fellow developers and tech enthusiasts. Follow me on GitHub to stay updated with my latest projects. For real-time updates and professional networking, connect with me on [LinkedIn](https://www.linkedin.com/in/ellis-hogan-99a646161) or [GitHub](https://github.com/icarus612).
-
-Thank you for visiting, and happy coding!
-
----
-
-© 2024 dev.icarus - All Rights Reserved.
+- `maze_runner/` has no `__init__.py`, even though `pyproject.toml` packages it; `runner.py` uses the relative import `from .node import Node`.
+- The stray top-level `__init__.py` next to this README contains `from src import *`, but no `src/` directory exists here — vestigial and broken.
+- `bin/solver.py` opens with `from . import Maze, Runner` — a relative import that fails when the file is run directly as a script (`python bin/solver.py`), so the `py-maze-runner` bin entry does not work as-is.
+- This directory is copied verbatim (`cp -R`) into the `maze-runner-mono` satellite repo by `.github/workflows/build-maze-runner.yml`, which is why this README is a real file kept in-tree (the monorepo's `docs/libs/python/maze-runner/README.md` is a symlink pointing here, the reverse of the usual docs direction).

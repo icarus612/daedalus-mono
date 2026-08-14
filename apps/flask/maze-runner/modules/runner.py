@@ -87,7 +87,8 @@ class Runner:
             or path == maze.open_char
         ):
             print(
-                "Path character is already being used as a maze character trying something else..."
+                "Path character is already being used as a maze character "
+                "trying something else..."
             )
             for i in other_options:
                 if (

@@ -23,11 +23,11 @@ class Maze:
             self.build_new(build[0][0], build[0][1], build[1])
 
     def build_new(self, width=None, height=None, maze_type="h"):
-        if height == None:
+        if height is None:
             height = self.height
         else:
             self.height = height
-        if width == None:
+        if width is None:
             width = self.width
         else:
             self.width = width
@@ -67,7 +67,11 @@ class Maze:
 
     def type_info(self):
         print(
-            f"	start point: {self.start_char}\n	end point: {self.end_char}\n	open spaces: {self.open_char}	wall type: {self.wall_char}\n	size: {maze.height} x {maze.width}"
+            f"	start point: {self.start_char}\n"
+            f"	end point: {self.end_char}\n"
+            f"	open spaces: {self.open_char}"
+            f"	wall type: {self.wall_char}\n"
+            f"	size: {self.height} x {self.width}"
         )
 
     def view_layout(self):

@@ -2,7 +2,7 @@
 
 A Go library that brings Python-like data structures and built-in functions to Go, with full generic type support.
 
-This is a Go library extracted from [daedalus-mono](https://github.com/daedalus-mono/).
+This is a Go library extracted from [daedalus-mono](https://github.com/icarus612/daedalus-mono).
 
 ## Installation
 
@@ -31,7 +31,10 @@ fmt.Println(list.Index(3))    // Find index
 list.Remove(2)                // Remove first occurrence
 item := list.Pop(0)           // Remove and return item
 list.Reverse()                // Reverse in place
-list.Sort()                   // Sort (for ordered types)
+
+// For ordered element types, Olist adds Sort()
+olist := py.NewOlist[int](3, 1, 2)
+olist.Sort()
 ```
 
 #### Set
@@ -98,12 +101,13 @@ fmt.Println(py.Bin(42))          // "0b101010"
 fmt.Println(py.Hex(255))         // "0xff"
 fmt.Println(py.Oct(64))          // "0o100"
 
-// Type conversions
-py.Int("42", 10)                 // String to int with base
-py.Float("3.14")                 // String to float
-py.Bool(value)                   // Any value to bool (Python truthiness)
+// Character conversions
 py.Chr(65)                       // Unicode code point to string
 py.Ord("A")                      // String to Unicode code point
+
+// Other conversions
+py.Complex(1.0, 2.0)             // complex128 from real/imag parts
+py.Bytes("héllo", "ascii", "replace")  // Encode with error handling
 ```
 
 #### Sequence Operations
@@ -128,29 +132,13 @@ total := py.Sum(numbers)
 // Object inspection
 fmt.Println(py.Type(obj))         // Get type
 attrs := py.Dir(obj)              // List attributes
-hasAttr := py.HasAttr(obj, "field") // Check attribute
-value := py.GetAttr(obj, "field", defaultVal) // Get attribute
+callable := py.Callable(obj)      // Check if callable
+isInst := py.IsInstance(obj, other) // Type comparison
 vars := py.Vars(obj)              // Get struct fields as dict
 
 // Object representation
 fmt.Println(py.Repr(obj))         // Representation string
 fmt.Println(py.Ascii(obj))        // ASCII representation
-```
-
-#### Iterators
-Uses Go's `iter` package for proper iterator support:
-```go
-// Create iterators from various types
-iterator := py.Iter(slice, nil)
-iterator2 := py.Iter(channel, nil)
-iterator3 := py.Iter(stringVal, nil)
-
-// Use iterator
-for {
-    value := py.Next(iterator, nil) // Will panic on StopIteration
-    // or with default:
-    value := py.Next(iterator, "default")
-}
 ```
 
 ### Low-level Functions (abf package)
@@ -167,21 +155,22 @@ zipped := abf.Zip(slice1, slice2, slice3)
 
 ## Package Structure
 
-- `pkg/` - Main package with generic types and Python-like functions
+- `pkg/` - Main package (`py`) with generic types and Python-like functions
 - `pkg/abf/` - Low-level functions operating directly on slices
-- `pkg/list.go` - List, Alist, Olist implementations
-- `pkg/set.go` - Set and FrozenSet implementations  
+- `pkg/alist.go`, `pkg/list.go`, `pkg/olist.go` - Alist, List, and Olist implementations
+- `pkg/set.go`, `pkg/frozenset.go` - Set and FrozenSet implementations
 - `pkg/dict.go` - Generic Dict implementation
 - `pkg/tuple.go` - Immutable Tuple implementation
 - `pkg/file.go` - File operations with Python-like interface
+- `pkg/interfaces.go` - Shared interfaces (Number, Sliceable, BasicList, ...)
 - `pkg/utils.go` - High-level Python built-in function equivalents
 
 ## Type Hierarchy
 
 ```
-Alist[T any]           - Base list for any type
-├─ List[T comparable]  - List for comparable types (adds Index, Remove, Count)
-└─ Olist[T ordered]    - List for ordered types (adds Sort)
+Alist[T any]               - Base list for any type
+└─ List[T comparable]      - List for comparable types (adds Index, Remove, Count)
+   └─ Olist[T cmp.Ordered] - List for ordered types (adds Sort)
 
 Dict[K comparable, V any] - Generic dictionary
 
@@ -209,17 +198,13 @@ result := py.Filter(isValid,
         py.Sorted(data, false)))
 ```
 
-### Python-like Iteration
-```go
-// Iterate like Python
-for item := range py.Iter(collection, nil) {
-    // process item
-}
-```
+## Requirements
+
+`go.mod` declares `go 1.22`, but some functions use Go 1.23 standard-library APIs (`slices.Collect`, iterator-returning `maps.Keys`/`maps.Values` in `pkg/dict.go`), so building requires a Go 1.23+ toolchain.
 
 ## Development
 
-This library is automatically synced from the monorepo. Please make changes in the [main repository](https://github.com/icarus612/daedalus-monorepo/tree/main/libs/golang/pythonify).
+This library is automatically synced from the monorepo. Please make changes in the [main repository](https://github.com/icarus612/daedalus-mono/tree/main/libs/golang/pythonify).
 
 ## License
 

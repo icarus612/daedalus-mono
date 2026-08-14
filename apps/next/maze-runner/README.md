@@ -1,34 +1,27 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Maze Runner (Next.js)
 
-## Getting Started
+A client-side maze builder/solver as a Next.js **Pages Router** app. `pages/index.js` links to `/randomizer` (randomized maze build-and-solve), `/build` (manual builder), and `/info`; the maze data structure and solver live in `components/` (`maze.js`, `node.js`, `runner.js`, plus `header.js`). `pages/api/hello.js` is the untouched create-next-app sample API route.
 
-First, run the development server:
+**Path:** `apps/next/maze-runner`
+**Workspace name:** `app.next.maze-runner`
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## Stack
+Per `package.json`: `next ^12.1.5`, `react ^18.0.0`, `react-dom ^18.0.0`, `sass ^1.32.8` (SCSS modules in `styles/`), `classnames ^2.3.2`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Usage
+This package is inside the pnpm workspace and runs via root `turbo` (plain Next scripts, no `py-*` wrappers):
+- `pnpm install` — dependencies (from the workspace root)
+- `pnpm dev` → `next dev` (Next's default port `3000`; this app does not use the Flask apps' port mechanisms)
+- `pnpm build` → `next build && next export` (static export into `out/`)
+- `pnpm start` → `next start -p $PORT`
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## Deploy targets
+The directory carries configuration for two different deploy paths:
+- **Firebase Hosting** — `firebase.json` serves the static `out/` directory produced by `next export`; `.github/workflows/firebase-hosting-{merge,pull-request}.yml` inside this directory only take effect in the satellite `maze-runner-mono` repo (GitHub only reads workflows from a repo root), not in the monorepo.
+- **GCP Cloud Run** — `dockerfile` (node:18-alpine multi-stage, `npm ci`, standalone output, `node server.js` on `PORT` default 8080) plus `cloudbuild.yaml` (service `maze-runner-next`, region `us-central1`) and a `cb.yaml` variant (service `maze-runner-next-js-icarus64`, region `non-regional`). These match the shared [`templates/next-js`](../../../docs/templates/next-js/README.md) deploy template. `next.config.mjs` sets `output: "standalone"` to feed this path, even though the workspace `build` script does a static `next export` instead — two intents coexisting in one package.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Notes
+- A package-local `pnpm-lock.yaml` sits alongside the workspace root lockfile; inside the monorepo, pnpm resolves from the root lockfile, so the local one matters only when the directory is used standalone (e.g. in the satellite repo).
+- The `cloudbuild.yaml` docker step points at `apps/next/dockerfile` / build context `apps/next` (one level above this package) — verify those paths before wiring a Cloud Build trigger.
+- The original README here was the untouched create-next-app boilerplate; this file supersedes it.
+- **Symlink direction exception**: this file is the real source of truth (not a symlink) because `.github/workflows/build-maze-runner.yml` copies this directory verbatim into the external `maze-runner-mono` repo via `cp -R`; a symlinked README would arrive dangling there. The `docs/apps/next/maze-runner/README.md` page is instead the symlink, pointing back at this file. See [../../../docs/known-issues.md#symlink-direction-exception-for-ci-synced-packages](../../../docs/known-issues.md#symlink-direction-exception-for-ci-synced-packages).

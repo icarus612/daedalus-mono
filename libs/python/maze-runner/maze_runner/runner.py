@@ -41,14 +41,15 @@ class Runner:
                     self.end = check((x, y))
 
     def look_around(self, node):
+        row, col = node.value
         for i in self.open_nodes:
-            if i.value[0] - 1 == node.value[0] and i.value[1] == node.value[1]:
+            if i.value[0] - 1 == row and i.value[1] == col:
                 node.add_child(i)
-            elif i.value[0] + 1 == node.value[0] and i.value[1] == node.value[1]:
+            elif i.value[0] + 1 == row and i.value[1] == col:
                 node.add_child(i)
-            elif i.value[1] - 1 == node.value[1] and i.value[0] == node.value[0]:
+            elif i.value[1] - 1 == col and i.value[0] == row:
                 node.add_child(i)
-            elif i.value[1] + 1 == node.value[1] and i.value[0] == node.value[0]:
+            elif i.value[1] + 1 == col and i.value[0] == row:
                 node.add_child(i)
 
     def make_node_paths(self):
@@ -82,7 +83,8 @@ class Runner:
             or path == maze.open_char
         ):
             print(
-                "Path character is already being used as a maze character trying something else..."
+                "Path character is already being used as a maze character "
+                "trying something else..."
             )
             for i in other_options:
                 if (

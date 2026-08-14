@@ -173,7 +173,7 @@ func main() {
 
 ## Requirements
 
-- Go 1.16 or higher
+- Go 1.24.2 (per `go.mod`)
 - Linux operating system (for current implementation)
 - Root/sudo privileges for full process information
 
@@ -247,7 +247,7 @@ Some processes may not be visible without root privileges. Always run with `sudo
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
 ## Acknowledgments
 

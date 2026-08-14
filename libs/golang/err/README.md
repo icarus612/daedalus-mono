@@ -5,7 +5,7 @@ A Go package that simplifies error handling with panic-on-error semantics and ty
 ## Installation
 
 ```bash
-go get your-module/err
+go get github.com/dae-go/err
 ```
 
 ## Quick Start
@@ -63,7 +63,7 @@ package main
 import (
     "os"
     "strconv"
-    "github.com/da-go/err/pkg"
+    "github.com/dae-go/err/pkg"
 )
 
 func main() {
@@ -86,7 +86,7 @@ package main
 import (
     "net"
     "os"
-    "github.com/da-go/err/pkg"
+    "github.com/dae-go/err/pkg"
 )
 
 func main() {
@@ -108,13 +108,14 @@ func main() {
 ```go
 package main
 
-import "github.com/da-go/err/pkg"
+import "github.com/dae-go/err/pkg"
 
 func processFile() {
     e := &err.Error{Message: "Failed to process file"}
     
     // Set error and check if it occurred
-    if e.Set(os.ReadFile("missing.txt")) {
+    _, readErr := os.ReadFile("missing.txt")
+    if e.Set(readErr) {
         e.Panic() // Will panic with the file error
     }
     
@@ -130,30 +131,27 @@ func processFile() {
 
 ### Custom Error Handlers
 
+The package also defines `Handler[H func(error)]` and `TypeHandler[H func(error), E error]` structs whose `Handle()` method calls the stored function if an error is set. Note that their `handle` field is unexported and no constructor is provided, so they cannot currently be populated from outside this package; for custom handling from your own code, use the `Handle`/`HandleType` functions instead:
+
 ```go
 package main
 
 import (
     "fmt"
-    "github.com/da-go/err/pkg"
+    "github.com/dae-go/err/pkg"
 )
 
 func main() {
-    // Create custom handler
-    handler := &err.Handler[func(error)]{
-        Error: err.Error{Err: someError},
-        handle: func(e error) {
-            fmt.Printf("Custom handling: %v\n", e)
-        },
-    }
-    
-    handler.Handle() // Calls custom handler if error exists
+    err.Handle(someError, func(e error) {
+        fmt.Printf("Custom handling: %v\n", e)
+    })
 }
 ```
 
 ## Error Struct Fields
 
 ### Error
+- **`Code int`** - Numeric error code
 - **`Message string`** - Custom error message
 - **`Err error`** - The actual error
 - **`ErrInMsg bool`** - Whether to include error in message
@@ -186,7 +184,7 @@ func main() {
 
 ## Requirements
 
-- Go 1.18+ (uses generics)
+- Go 1.24.2 (per `go.mod`); the API relies on generics (Go 1.18+)
 
 ## License
 
