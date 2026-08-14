@@ -2,7 +2,7 @@ import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
-from env_builder import EnvBuilder
+from open_ai_gym.classes.env_builder import EnvBuilder
 
 class LunarLanderV2(EnvBuilder):
 	def __init__(self):
