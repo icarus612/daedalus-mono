@@ -16,7 +16,7 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "lint": "eslint ."
+    "lint": "node ../../../../node_modules/eslint/bin/eslint.js ."
   },
   "keywords": [
     "svelte",
