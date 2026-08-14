@@ -7,7 +7,7 @@
     "lint": "turbo lint",
     "test": "turbo test",
     "clean": "turbo clean",
-    "postinstall": "go install gotest.tools/gotestsum@v1.13.0"
+    "setup:go-tools": "go install gotest.tools/gotestsum@v1.13.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
