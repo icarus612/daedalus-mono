@@ -1,8 +1,6 @@
 from flask import Flask, render_template, url_for, request, redirect
 import requests
 import os
-import sys
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../../libs/python'))
 from flask_utils.port_finder import find_available_port
 from flask_bootstrap import Bootstrap
 from flask_fontawesome import FontAwesome
