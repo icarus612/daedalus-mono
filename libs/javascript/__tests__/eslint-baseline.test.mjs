@@ -78,7 +78,7 @@ function main() {
   }
   if (!eslintBin) {
     console.error(
-      `FAIL: could not locate an eslint binary under ${repoRoot}/node_modules/.bin`,
+      `FAIL: could not locate an eslint binary under ${repoRoot}/node_modules/.bin`
     );
     process.exit(1);
   }
@@ -106,15 +106,16 @@ function main() {
     check(
       "console.info is not flagged (eslint exits 0 on a console.info-only fixture)",
       cleanResult.status === 0,
-      `exit status=${cleanResult.status}, stdout=${JSON.stringify(cleanResult.stdout)}, stderr=${JSON.stringify(cleanResult.stderr)}`,
+      `exit status=${cleanResult.status}, stdout=${JSON.stringify(cleanResult.stdout)}, stderr=${JSON.stringify(cleanResult.stderr)}`
     );
 
     // Fixture 2: a genuine undefined-variable reference. eslint:recommended
     // enables no-undef at error level, so this must fail the lint run and
     // the output must name the rule.
-    const violationFixtureSource = ["export default definitelyNotDeclaredAnywhere;", ""].join(
-      "\n",
-    );
+    const violationFixtureSource = [
+      "export default definitelyNotDeclaredAnywhere;",
+      "",
+    ].join("\n");
     fs.writeFileSync(violationFixture, violationFixtureSource, "utf8");
 
     const violationResult = runEslint(violationFixture);
@@ -122,12 +123,12 @@ function main() {
     check(
       "no-undef violation causes eslint to exit non-zero",
       violationResult.status !== 0,
-      `exit status=${violationResult.status}`,
+      `exit status=${violationResult.status}`
     );
     check(
       "no-undef violation output mentions the no-undef rule",
       violationOutput.includes("no-undef"),
-      `output=${JSON.stringify(violationOutput)}`,
+      `output=${JSON.stringify(violationOutput)}`
     );
   } finally {
     // Clean up fixtures regardless of assertion outcome.
