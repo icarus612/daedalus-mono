@@ -70,7 +70,7 @@ daedalus-mono
 │       │   └── <a href="/libs/python/neural-networks/open-ai-gym">open-ai-gym</a>
 │       └── <a href="/libs/python/web-crawlers">web-crawlers</a>
 ├── project-plans
-│   └── lint-import-audit-08-12-26
+│   └── completed
 ├── templates
 │   └── <a href="/templates/next-js">next-js</a>
 
