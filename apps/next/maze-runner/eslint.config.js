@@ -3,4 +3,5 @@ const base = require("../../../eslint.config.js");
 module.exports = [
   ...base,
   { languageOptions: { parserOptions: { ecmaFeatures: { jsx: true } } } },
+  { ignores: ["out/**"] },
 ];
