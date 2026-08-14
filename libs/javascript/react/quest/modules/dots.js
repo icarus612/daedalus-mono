@@ -16,7 +16,6 @@ const translateY = (mv, t, crv) => {
           },
         ]
       )
-      break;
     case "cubicY":
       return (
         [
@@ -27,7 +26,6 @@ const translateY = (mv, t, crv) => {
           },
         ]
       )
-      break;
     case "cubicX":
       return (
         [
@@ -38,7 +36,6 @@ const translateY = (mv, t, crv) => {
           },
         ]
       )
-      break;
     case "linear":
       return (
         [
@@ -50,7 +47,6 @@ const translateY = (mv, t, crv) => {
           },
         ]
       )
-      break;
     case "linearX":
       return (
         [
@@ -67,7 +63,6 @@ const translateY = (mv, t, crv) => {
           },
         ]
       )
-      break;
     case "linearY":
       return (
         [
@@ -79,7 +74,6 @@ const translateY = (mv, t, crv) => {
           },
         ]
       )
-      break;
 
     default:
       return (
@@ -97,7 +91,6 @@ const translateY = (mv, t, crv) => {
           },
         ]
       )
-      break;
   }
 }
 
@@ -113,7 +106,6 @@ const translateX = (mv, t, crv) => {
           },
         ]
       )
-      break;
     case "cubicX":
       return (
         [
@@ -124,7 +116,6 @@ const translateX = (mv, t, crv) => {
           },
         ]
       )
-      break;
     case "cubicY":
       return (
         [
@@ -135,7 +126,6 @@ const translateX = (mv, t, crv) => {
           },
         ]
       )
-      break;
     case "linear":
       return (
         [
@@ -147,7 +137,6 @@ const translateX = (mv, t, crv) => {
           },
         ]
       )
-      break;
     case "linearX":
       return (
         [
@@ -159,7 +148,6 @@ const translateX = (mv, t, crv) => {
           },
         ]
       )
-      break;
     case "linearY":
       return (
         [
@@ -176,7 +164,6 @@ const translateX = (mv, t, crv) => {
           },
         ]
       )
-      break;
     default:
       return (
         [
@@ -188,7 +175,6 @@ const translateX = (mv, t, crv) => {
           },
         ]
       )
-      break;
   }
 }
 

@@ -1,0 +1,19 @@
+[tool.uv.workspace]
+members = [
+  "apps/flask/maze-runner",
+  "apps/flask/pokedex",
+  "apps/flask/weather-fortcast",
+  "apps/microservices/market-bots",
+  "libs/python/anki-tools",
+  "libs/python/cli-tools",
+  "libs/python/flask_utils",
+  "libs/python/maze-runner",
+  "libs/python/neural-networks/abstract-base-classes",
+  "libs/python/neural-networks/digit-recognition",
+  "libs/python/neural-networks/market-analyzer",
+  "libs/python/neural-networks/open-ai-gym",
+  "libs/python/web-crawlers",
+]
+
+[dependency-groups]
+dev = ["ruff>=0.8", "pytest"]

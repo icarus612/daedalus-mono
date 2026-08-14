@@ -83,7 +83,14 @@ func TestZip(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := Zip(tt.input...)
+			// Zip is generic over the element type and always returns the
+			// literal type []S it was instantiated with (here [][]any) —
+			// never the test-local named type zipper, even though the two
+			// share an identical underlying type. reflect.DeepEqual treats
+			// a named type and its unnamed underlying type as distinct, so
+			// the result is converted to zipper at the comparison boundary
+			// rather than relaxing the check or renaming Zip's return type.
+			result := zipper(Zip(tt.input...))
 			if !reflect.DeepEqual(result, tt.expected) {
 				t.Errorf("Zip(%v) = %v, want %v", tt.input, result, tt.expected)
 			}
@@ -92,7 +99,7 @@ func TestZip(t *testing.T) {
 }
 
 func TestZipNoArgs(t *testing.T) {
-	result := Zip[any, []any]()
+	result := zipper(Zip[any, []any]())
 	expected := zipper{}
 
 	if !reflect.DeepEqual(result, expected) {
@@ -113,7 +120,7 @@ func TestZipLargeSlices(t *testing.T) {
 		expected[i] = []any{i, i * 2}
 	}
 
-	result := Zip(input1, input2)
+	result := zipper(Zip(input1, input2))
 
 	if !reflect.DeepEqual(result, expected) {
 		t.Errorf("Zip large slices failed")

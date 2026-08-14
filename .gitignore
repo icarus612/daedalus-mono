@@ -1,8 +1,11 @@
-# Pants workspace files
-/.pants.*
-/dist/
+dist/
 /.pids
 node_modules/
+libs/golang/*/bin/
+.DS_Store
+.firebase/
+# Stray tracked Go binary at a non-bin/ path (C10)
+libs/golang/process-monitor/main
 
 .claude
 *storybook.log
@@ -10,6 +13,11 @@ storybook-static
 
 # Turborepo
 .turbo
+
+# Environment files (any directory)
+.env
+.env.*
+!.env.example
 
 # Python
 .venv/
@@ -28,3 +36,6 @@ venv.bak/
 *.egg-info/
 pip-log.txt
 pip-delete-this-directory.txt
+
+# dae-pipeline run dirs, inside each worktree
+.artifacts/

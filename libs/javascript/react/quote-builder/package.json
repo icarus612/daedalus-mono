@@ -1,7 +1,7 @@
 {
   "name": "lib.javascript.react.quote-builder",
   "version": "0.1.0",
-  "private": false,
+  "private": true,
   "main": "src/index.js",
   "dependencies": {
     "history": "^4.9.0",

@@ -9,9 +9,9 @@
     "lint": "echo 'No lint configured'"
   },
   "bin": {
-    "py-install": "./py-scripts/py-install",
     "py-build": "./py-scripts/py-build",
     "py-dev": "./py-scripts/py-dev",
-    "py-lint": "./py-scripts/py-lint"
+    "py-lint": "./py-scripts/py-lint",
+    "py-test": "./py-scripts/py-test"
   }
 }

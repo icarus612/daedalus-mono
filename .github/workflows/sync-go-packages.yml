@@ -24,9 +24,9 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
-          go-version: '1.21'
+          go-version-file: 'go.work'
 
       - name: Sync Go Libraries
         env:
@@ -62,7 +62,7 @@ jobs:
               git remote add origin "$target_repo"
             fi
             
-            rsync -av --delete \
+            rsync -avL --delete \
               --exclude='.git' \
               "${GITHUB_WORKSPACE}/${lib_path}/" \
               ./

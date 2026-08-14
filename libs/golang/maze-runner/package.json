@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "build": "go build -o bin/cli-solver ./cmd/cli-solver && go build -o bin/quick-solver ./cmd/quick-solver",
-    "dev": "~/go/bin/gotestsum --watch ./...",
+    "dev": "gotestsum --watch ./...",
     "test": "go test ./...",
-    "lint": "go vet ./... && go fmt ./..."
+    "lint": "go vet ./... && test -z \"$(gofmt -l .)\""
   },
   "bin": {
     "cli-solver": "bin/cli-solver",

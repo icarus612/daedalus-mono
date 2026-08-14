@@ -1,0 +1,14 @@
+{
+  "name": "lib.python.flask-utils",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "py-build",
+    "lint": "py-lint",
+    "dev": "py-dev",
+    "test": "py-test"
+  },
+  "devDependencies": {
+    "lib.bash.build-tools": "workspace:*"
+  }
+}

@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "build": "go build ./...",
-    "dev": "~/go/bin/gotestsum --watch ./...",
+    "dev": "gotestsum --watch ./...",
     "test": "go test ./...",
-    "lint": "go vet ./... && go fmt ./..."
+    "lint": "go vet ./... && test -z \"$(gofmt -l .)\""
   }
 }

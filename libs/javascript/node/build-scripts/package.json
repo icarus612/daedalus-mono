@@ -1,9 +1,12 @@
 {
   "name": "lib.javascript.node.build-scripts",
   "version": "1.0.0",
+  "private": true,
+  "type": "module",
   "main": "src/index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "echo 'No dev command for library'"
+    "dev": "echo 'No dev command for library'",
+    "lint": "eslint ."
   }
 }

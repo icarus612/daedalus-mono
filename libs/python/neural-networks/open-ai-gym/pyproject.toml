@@ -1,17 +1,24 @@
-[build-system]
-requires = ["poetry_core"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry]
-name = "open_ai_gym"
+[project]
+name = "open-ai-gym"
 version = "0.1.0"
 description = ""
-authors = ["icarus64 <ellishogan95@gmail.com>"]
-readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "abstract-base-classes",
+  "tensorflow>=2.6.0",
+  "numpy>=1.26.3",
+  "gymnasium[box2d,atari,mujoco]>=0.29.1",
+]
 
-[tool.poetry.dependencies]
-abstract_base_classes = {path = "../abstract-base-classes"}
-python = "^3.11"
-tensorflow = "^2.6.0"
-numpy = "^1.26.3"
-gymnasium = {version = "^0.29.1", extras = ["box2d", "atari", "mujoco"]}
+[tool.uv]
+package = true
+
+[tool.uv.sources]
+abstract-base-classes = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["open_ai_gym"]

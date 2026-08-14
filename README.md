@@ -26,6 +26,7 @@ daedalus-mono
 │   │   └── <a href="/apps/microservices/market-bots">market-bots</a>
 │   └── next
 │       └── <a href="/apps/next/maze-runner">maze-runner</a>
+├── <a href="/docs">docs</a>
 ├── libs
 │   ├── bash
 │   │   ├── <a href="/libs/bash/build-tools">build-tools</a>
@@ -41,7 +42,6 @@ daedalus-mono
 │   ├── javascript
 │   │   ├── node
 │   │   │   ├── <a href="/libs/javascript/node/build-scripts">build-scripts</a>
-│   │   │   ├── <a href="/libs/javascript/node/dots-js">dots-js</a>
 │   │   │   ├── <a href="/libs/javascript/node/maze-runner">maze-runner</a>
 │   │   │   └── <a href="/libs/javascript/node/web-crawlers">web-crawlers</a>
 │   │   ├── react
@@ -75,6 +75,11 @@ daedalus-mono
 │   └── <a href="/templates/next-js">next-js</a>
 
 </pre>
+
+## Documentation
+
+Install paths, the package-management strategy, and per-language dev commands are documented
+in [`/docs`](./docs/README.md) — start at [`docs/README.md`](./docs/README.md).
 
 ## Collaboration
 

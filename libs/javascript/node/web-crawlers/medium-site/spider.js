@@ -1,6 +1,6 @@
-const request = require('request');
-const cheerio = require('cheerio');
-const fs = require('fs');
+import request from 'request';
+import cheerio from 'cheerio';
+import fs from 'fs';
 
 let basicInfo = class {
     constructor(title, about, href){
@@ -30,7 +30,7 @@ request('http://medium.com/topic/members', (err, res, html) =>{
                 let title = $(el).find('h3').text();
                 let about = $(el).find('p').text();
                 let href = $(el).find('a').attr('href');
-                newSection = new basicInfo(title, about, href)
+                let newSection = new basicInfo(title, about, href)
                 section.push(newSection)
             }
       

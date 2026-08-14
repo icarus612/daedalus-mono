@@ -1,0 +1,57 @@
+name: Lint JavaScript
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'libs/javascript/**'
+      - 'apps/next/**'
+      - 'package.json'
+      - 'pnpm-workspace.yaml'
+      - 'pnpm-lock.yaml'
+      - 'turbo.json'
+      - '.github/workflows/lint-javascript.yml'
+      - '.github/scripts/verify-workspace-membership.sh'
+  push:
+    branches: [main]
+    paths:
+      - 'libs/javascript/**'
+      - 'apps/next/**'
+      - 'package.json'
+      - 'pnpm-workspace.yaml'
+      - 'pnpm-lock.yaml'
+      - 'turbo.json'
+      - '.github/workflows/lint-javascript.yml'
+      - '.github/scripts/verify-workspace-membership.sh'
+  workflow_dispatch:
+
+jobs:
+  lint-javascript:
+    name: Lint JavaScript (turbo)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify workspace membership
+        run: |
+          chmod +x .github/scripts/verify-workspace-membership.sh
+          .github/scripts/verify-workspace-membership.sh libs/javascript apps/next
+
+      - name: Build JavaScript packages
+        run: pnpm exec turbo run build --filter='lib.javascript.*' --filter='app.next.*'
+
+      - name: Lint JavaScript packages
+        run: pnpm exec turbo run lint --filter='lib.javascript.*' --filter='app.next.*'
