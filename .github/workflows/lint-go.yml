@@ -1,0 +1,46 @@
+name: Lint Go
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'libs/golang/**'
+      - 'go.work'
+      - 'go.work.sum'
+      - '.github/workflows/lint-go.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'libs/golang/**'
+      - 'go.work'
+      - 'go.work.sum'
+      - '.github/workflows/lint-go.yml'
+  workflow_dispatch:
+
+jobs:
+  lint-go:
+    name: Lint Go (go vet + gofmt)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.work'
+
+      - name: Build, vet, format-check, and test each Go module
+        run: |
+          set -e
+          for module_dir in libs/golang/*/; do
+            echo "== $module_dir =="
+            (
+              cd "$module_dir"
+              go build ./...
+              go vet ./...
+              test -z "$(gofmt -l .)"
+              go test ./...
+            )
+          done

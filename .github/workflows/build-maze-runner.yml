@@ -34,7 +34,9 @@ jobs:
 
         cp -R  daedalus-mono/libs/python/maze-runner maze-runner-mono/libs/python
         cp -R  daedalus-mono/libs/javascript/node/maze-runner maze-runner-mono/libs/javascript
-        cp -R  daedalus-mono/libs/javascript/react/maze-runner maze-runner-mono/libs/react-js 
+        cp -R  daedalus-mono/libs/javascript/react/maze-runner maze-runner-mono/libs/react-js
+        # libs/golang/maze-runner is part of the same maze-runner language-port family as the lines above
+        cp -R  daedalus-mono/libs/golang/maze-runner maze-runner-mono/libs/golang
 
     - name: Update README.md
       run: |

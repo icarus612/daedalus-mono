@@ -48,6 +48,11 @@ jobs:
         echo "
         </pre>
 
+        ## Documentation
+
+        Install paths, the package-management strategy, and per-language dev commands are documented
+        in [\`/docs\`](./docs/README.md) — start at [\`docs/README.md\`](./docs/README.md).
+
         ## Collaboration
 
         While this repository is not open for collaboration, I'm definitely open to it on other projects if you're interested. If you're looking to contribute to my active open source projects, I'd recommend visiting [The Icarus Project](https://github.com/the-icarus-project). That's where you'll find projects specifically designed for collaboration, complete with all the details and guidelines you need to get started.
