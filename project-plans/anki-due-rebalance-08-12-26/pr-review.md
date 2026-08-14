@@ -209,3 +209,149 @@ files and this report itself growing. No other file changed since round 1.
 None — all three findings above are non-blocking notes with verified
 explanations (two unchanged from round 1, one newly surfaced and independently
 confirmed reasonable), not decision points that bar a verdict.
+
+## Round 3 — 08-14-26
+
+```
+verdict: ready
+next: proceed
+blocking: 0
+non-blocking: 4
+```
+
+### Scope of this review
+
+Fresh full pass over the local `feature/anki-due-rebalance` branch (5 commits
+ahead of `origin/feature/anki-due-rebalance` / PR #12 as published — this
+review covers what is about to be pushed, per the branch-mode diff
+`main...HEAD`) against `project-plans/anki-due-rebalance-08-12-26/plan.md`
+re-read at its current state: all 6 phases / 20 subphases ticked `[x]`,
+Phase 6's decision table (DP-A through DP-F) all settled, no open decisions.
+
+Since round 2: five new commits landing Phase 6 (user-ordered: early backup,
+strict two-sided feasibility precheck, `--range` windowing, `--sliding`
+soft-target ramp, cap-aware reachability, `anki-due-stats`) — `e4ff097`
+(plan amendment), `98a90ae` (the build: `due_plan.py`/`rebalance_due.py`
++ new `due_stats.py`, 7 files +2900/-102), `faba915` (syllabus ticks),
+`223654d` (docs), `5d4d061` (code-review round 3 record, ready/proceed).
+`git diff --stat main...HEAD`: 17 files, +9180/-240 — exactly Phases 1-6's
+source/tests/manifests, `smart-lint.sh` (Phase 5, disjoint scope), both
+README locations, and the four committed plan records. No stray files.
+
+### Independently verified this round (commands re-run, not read from reports)
+
+- `.venv/bin/poetry run pytest -q`: **189 passed** (97 `test_due_plan.py` +
+  74 `test_rebalance_due.py` + 18 `test_due_stats.py`).
+- `ruff check --output-format=concise .` and `python3 -m flake8
+  --max-line-length=88 .`, both diffed byte-for-byte against
+  `.artifacts/baselines/{ruff,flake8}-baseline.txt`: **identical to
+  baseline** — zero new findings anywhere, including the three Phase 6
+  files.
+- **Default-mode regression, re-derived independently a second time** (the
+  code-review gate already did this once): wrote a standalone script
+  reproducing `.artifacts/pre-phase6/gen_pre_phase6_baselines.py`'s exact
+  three fixtures (F1 feasible-flat, F2 reverse-pass, F3 cap-blocked) against
+  the shipped `anki_tools.due_plan.plan_rebalance`, diffed the resulting
+  `{card_id: new_day}` maps against `.artifacts/pre-phase6/moves-{F1,F2,F3}.json`
+  by Python dict equality: **F1 (7 moves) / F2 (33 moves) / F3 (24 moves)
+  all MATCH.**
+- **Safety ordering, read directly in `rebalance_due.py:main()`
+  (lines 336-507).** Exact sequence: `resolve_deck_ids` -> `collect_cards`
+  (range-aware) -> `check_feasibility` -> (fail: `_print_infeasibility` +
+  `SystemExit(1)`, no backup, no `plan_rebalance` call) -> (pass) backup
+  block -> `plan_rebalance` -> (`InfeasibleRebalance`: print + exit, still
+  no write) -> histogram -> `y/N` confirm (skippable) -> `apply_moves`, all
+  inside a `try/finally` that closes the collection. Matches 6.1(b)'s pinned
+  order exactly.
+- **DP-B/DP-F hard-vs-shape split, read structurally in `due_plan.py`.**
+  `check_hard_feasibility` (due_plan.py:599-698) builds its window capacity
+  only from `constant_targets(..., max_per_day)` in all three checks (global
+  upper, global lower, window/Hall) — never a `DayTargets` line derived from
+  `T(d)`. `analyze_shape` (due_plan.py:716-744) is the only caller that
+  passes the sliding target line into the shared `window_violations` kernel,
+  and its result has no `feasible` field — `check_feasibility` composes
+  `feasible=hard.feasible` only. No code path can blend the two.
+- **CLI surface read directly against 6.5's spec.** `parse_range` (shared by
+  both `rebalance_due.py` and `due_stats.py`) enforces `LO >= 1` and
+  `HI >= LO` with per-case messages, accepts a bare `N` as `N-N`; `--range`
+  and `--start-offset` sit in an `argparse` mutually-exclusive group on both
+  commands; `--sliding` without both `--min`/`--max` hits `parser.error(...)`
+  on both commands; `due_stats.py` never imports or calls `create_backup`/
+  `set_due_date`/`plan_rebalance`, exits via `SystemExit(0)` on every path
+  including "no in-scope cards" and an infeasible pair.
+- `due_stats.py`: mode `775`, `#!/usr/bin/env python3` first line,
+  registered in `package.json` `"bin"` as `anki-due-stats`; `due_plan.py`
+  correctly left non-executable (not a `bin` entry). `grep` for
+  `except Exception`, `# noqa`, `TODO`, `skip.precheck` across all three
+  Phase 6 source files: no matches — conventions and the settled
+  "no `--skip-precheck` escape flag" (DP-B) hold.
+- `bash ~/.claude/hooks/verify-run-scope.sh <worktree> main <run-dir>`:
+  same single `UNCLAIMED: libs/python/anki-tools/README.md` as rounds 1-2 —
+  no new unclaimed product change from Phase 6. Same adjudicated false
+  positive: the `document-local` stage's own commit, out of lane `l1`'s
+  scope, no exit report exists for the doc stage under the `run-artifacts`
+  convention.
+- `gh pr view 12`: `OPEN`, `MERGEABLE`, not draft. Note: the local branch is
+  5 commits ahead of the pushed PR branch at review time (Phase 6 has not
+  been pushed yet) — this review's diff is `main...HEAD` on the local
+  branch, i.e. what `push-pr` is about to publish, not the PR as currently
+  visible on GitHub.
+- Read `docs/libs/python/anki-tools/README.md` (Phase 6 update, commit
+  `223654d`) against the actual argparse wiring and flag behavior: the flag
+  table, safety-ordering description, sliding/range semantics, and
+  `anki-due-stats` output description all match the shipped code. No
+  inaccuracies found.
+- Working tree clean (`git status --porcelain` empty) before and after this
+  review's own verification commands — no collateral drift.
+- **Correction to this round's carried-forward-findings expectation:** the
+  `render_histogram` dead `min_per_day` parameter, open since code-review
+  round 2 and pr-review rounds 1-2, is **no longer present** —
+  `def render_histogram(before, after, max_per_day, today, short_days)` is
+  now 5-arg, matching 6.1(d)'s explicit "remove it... make the removal
+  consistent with [6.3's] direction" instruction. All call sites (1 product,
+  9 test) use the new signature; `test_rebalance_due.py:514` pins a
+  regression guard asserting the old 6-arg call now fails. This finding is
+  resolved, not carried forward.
+
+### Findings
+
+- [non-blocking] Carried forward from round 1/2, re-verified unchanged:
+  `verify-run-scope.sh` still reports `libs/python/anki-tools/README.md` as
+  `UNCLAIMED:` — the same adjudicated false positive (documentation stage's
+  commit, outside lane `l1`'s scope, no exit report exists for the doc
+  stage). No action needed; re-flagging per the review-pr procedure's
+  fresh-scope-audit requirement.
+- [non-blocking] `anki_tools/rebalance_due.py` — `result.short_days` is
+  still printed as raw absolute day numbers ("Days still below --min after
+  the shift cap: <absolute days>"), unlike `over_target_days` a few lines
+  below it, which correctly prints `day - today` offsets. Confirmed
+  pre-existing (identical in `.artifacts/pre-phase6/rebalance_due.py`,
+  predating Phase 6) and correctly out of 6.1(d)'s scope, which names
+  exactly two cosmetic fixes (neither is this one). Not a regression; worth
+  a follow-up for consistency with the offset convention Phase 6 established
+  elsewhere in the same file.
+- [non-blocking] `anki_tools/due_plan.py:285-288` (`_infeasible_reason`) —
+  carried forward from code-review round 3: a `--range`-mode reverse-pass
+  refusal caused by the containment ceiling (`may_move_later_to`) and a
+  genuine `--max-shift` refusal both surface as the same `"shift cap"`
+  reason string on `InfeasibleRebalance` (the function only distinguishes
+  `start_day` — sink overflow — from everything else). Plan-compliant (6.2's
+  acceptance criteria only require the existing exception type and the
+  offending days, both satisfied), but a user hitting a `--range`-clamped
+  reverse pass sees "shift cap" with no mention of `--range`, which could
+  point them at raising `--max-shift` (would not help) instead of widening
+  `--range` (would). Worth a third reason value once a call site can
+  distinguish the two causes.
+- [non-blocking] Test coverage gap, carried forward from code-review round
+  3: no test pins `_print_infeasibility`'s `suggested_min == 0` wording
+  ("omit --min entirely, or narrow the window with --range") specifically —
+  the closest e2e precheck-failure test lands on `suggested_min == 1`. The
+  fix itself is correct (independently re-derived by the code-review gate
+  against the plan's own worked 30-cards/365-days example), but nothing
+  would fail if a future refactor reintroduced the literal
+  `Suggested --min: 0` wording the plan forbids.
+
+### Open questions
+
+None — all four findings above are non-blocking notes with verified
+explanations, not decision points that bar a verdict.
