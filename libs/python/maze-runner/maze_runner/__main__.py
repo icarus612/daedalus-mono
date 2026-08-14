@@ -1,7 +1,7 @@
 import argparse
 import re
 
-from . import Maze, Runner
+from maze_runner import Maze, Runner
 
 
 def open_and_build(file):
@@ -120,7 +120,7 @@ def build_and_save(runner, file_name):
         save_file(file_name, runner)
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-of", "--openfile", help="Open File Name", dest="openfile", type=str
@@ -162,3 +162,7 @@ if __name__ == "__main__":
     maze.view_layout()
     runner = Runner(maze)
     build_and_save(runner, "completed.txt")
+
+
+if __name__ == "__main__":
+    main()
