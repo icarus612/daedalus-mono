@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "clitools-lib-py"
+name = "cli-tools"
 version = "0.1.0"
 description = ""
 authors = ["icarus64 <ellishogan95@gmail.com>"]
@@ -10,7 +10,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.11"
-
+Pillow = "^10.0.0"
 
 [build-system]
 requires = ["poetry-core"]

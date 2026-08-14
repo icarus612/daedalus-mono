@@ -1,4 +1,4 @@
-from img_resizer import resize
+from cli_tools.img_resizer import resize
 
 def mass_resize(images_data):
 	for data in images_data:
