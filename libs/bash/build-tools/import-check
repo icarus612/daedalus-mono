@@ -1,0 +1,99 @@
+#!/bin/bash
+# Repo-wide Python import-check (integration proof, 6.1).
+#
+# Run from anywhere inside the repo. Two checks against the root uv workspace's `.venv`:
+#   1. every uv workspace member with `[tool.uv] package = true` is importable by its
+#      distribution name (hyphens -> underscores);
+#   2. every workspace member's top-level Python entry point (`main.py`, when present)
+#      has its top-level `import`/`from ... import ...` statements resolvable, without
+#      executing the module (so a Flask app's `app.run()` never fires).
+#
+# Exit 0 only if every check passes. A failure prints the member and the missing module.
+set -e
+
+if ! command -v uv &> /dev/null; then
+  echo "uv not found on PATH. Install: https://docs.astral.sh/uv/getting-started/installation/" >&2
+  exit 1
+fi
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+uv run python - <<'PYEOF'
+import ast
+import importlib.util
+import pathlib
+import sys
+import tomllib
+
+repo_root = pathlib.Path.cwd()
+root_pyproject = tomllib.loads((repo_root / "pyproject.toml").read_text())
+members = root_pyproject["tool"]["uv"]["workspace"]["members"]
+
+failures = []
+
+for member in members:
+    member_dir = repo_root / member
+    member_toml_path = member_dir / "pyproject.toml"
+    if not member_toml_path.exists():
+        failures.append((member, "no pyproject.toml"))
+        continue
+    member_toml = tomllib.loads(member_toml_path.read_text())
+    dist_name = member_toml["project"]["name"]
+    is_package = member_toml.get("tool", {}).get("uv", {}).get("package", True)
+
+    if is_package:
+        import_name = dist_name.replace("-", "_")
+        spec = importlib.util.find_spec(import_name)
+        if spec is None:
+            failures.append((member, f"import {import_name!r} unresolvable"))
+        else:
+            print(f"OK   {member} -> import {import_name}")
+        continue
+
+    main_py = member_dir / "main.py"
+    if not main_py.exists():
+        print(f"SKIP {member} (package=false, no main.py)")
+        continue
+
+    tree = ast.parse(main_py.read_text(), filename=str(main_py))
+    top_level_modules = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                top_level_modules.add(alias.name)
+        elif isinstance(node, ast.ImportFrom):
+            if node.level == 0 and node.module:
+                top_level_modules.add(node.module)
+
+    # `python main.py` auto-adds the script's own directory to sys.path[0]; mirror that
+    # so same-directory imports (e.g. `import controllers.alphavantage`) resolve the same
+    # way a real run of the app would, without actually executing the module.
+    sys.path.insert(0, str(member_dir))
+    member_failed = False
+    try:
+        for mod in sorted(top_level_modules):
+            try:
+                spec = importlib.util.find_spec(mod)
+            except ModuleNotFoundError as exc:
+                # a dotted import whose parent package itself doesn't resolve
+                spec = None
+                failures.append((member, f"{mod} -> {exc}"))
+                member_failed = True
+                continue
+            if spec is None:
+                failures.append((member, f"{mod} unresolvable"))
+                member_failed = True
+    finally:
+        sys.path.pop(0)
+    if not member_failed:
+        print(f"OK   {member} -> main.py imports resolve ({len(top_level_modules)} checked)")
+
+if failures:
+    print("\nFAILURES:", file=sys.stderr)
+    for member, reason in failures:
+        print(f"  {member}: {reason}", file=sys.stderr)
+    sys.exit(1)
+
+print(f"\nAll {len(members)} Python workspace members OK.")
+PYEOF
