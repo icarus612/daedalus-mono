@@ -1,6 +1,6 @@
+import matplotlib.pyplot as plt
 import requests
 from alpha_vantage.timeseries import TimeSeries
-import matplotlib.pyplot as plt
 
 
 class Alphavantage:

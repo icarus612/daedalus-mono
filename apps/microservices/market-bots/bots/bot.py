@@ -1,4 +1,5 @@
 import time
+
 import robin_stocks as rh
 
 # Set your Robinhood credentials

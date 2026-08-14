@@ -1,0 +1,20 @@
+[project]
+name = "market-bots"
+version = "0.1.0"
+description = ""
+requires-python = ">=3.11"
+dependencies = [
+  "python-dotenv",
+  "requests",
+  "pandas",
+  "alpha-vantage",
+  "matplotlib",
+  "robin-stocks",
+  "pyotp",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+pythonpath = ["."]

@@ -1,15 +1,9 @@
-[tool.poetry]
-name = "pytowidgets-lib-py"
+[project]
+name = "pyto-widgets"
 version = "0.1.0"
 description = ""
-authors = ["icarus64 <ellishogan95@gmail.com>"]
-readme = "README.md"
-package-mode = false
+requires-python = ">=3.11"
+dependencies = []
 
-[tool.poetry.dependencies]
-python = "^3.11"
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.uv]
+package = false

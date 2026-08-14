@@ -1,31 +1,11 @@
 #!/bin/bash
-
-# Python build script for monorepo packages
-# Ensures venv exists and dependencies are installed
-
 set -e
 
-# Check if venv exists, create if not
-if [ ! -d ".venv" ]; then
-    echo "Creating Python virtual environment..."
-    python3 -m venv .venv
+if ! command -v uv &> /dev/null; then
+  echo "uv not found on PATH. Install: https://docs.astral.sh/uv/getting-started/installation/" >&2
+  exit 1
 fi
 
-# Activate venv and install/update dependencies
-source .venv/bin/activate
-
-if [ -f "pyproject.toml" ]; then
-    echo "Building Python package with Poetry..."
-    pip install --upgrade pip
-    pip install poetry
-    poetry install
-elif [ -f "requirements.txt" ]; then
-    echo "Building Python package with pip..."
-    pip install --upgrade pip
-    pip install -r requirements.txt
-else
-    echo "No Python package configuration found (pyproject.toml or requirements.txt)"
-    exit 1
-fi
-
+echo "Syncing Python package with uv..."
+uv sync
 echo "✅ Python package built successfully"

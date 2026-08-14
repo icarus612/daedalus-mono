@@ -1,6 +1,7 @@
+from os import environ as env
+
 from controllers.alphavantage import Alphavantage
 from controllers.robinhood import Robinhood
-from os import environ as env
 from dotenv import load_dotenv
 
 load_dotenv()
