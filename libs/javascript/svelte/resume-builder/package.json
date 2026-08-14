@@ -1,6 +1,7 @@
 {
   "name": "lib.javascript.svelte.resume-builder",
   "version": "0.1.0",
+  "private": true,
   "description": "Resume Builder",
   "type": "module",
   "main": "dist/index.js",
@@ -15,7 +16,7 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "prepublishOnly": "npm run build"
+    "lint": "eslint ."
   },
   "keywords": [
     "svelte",

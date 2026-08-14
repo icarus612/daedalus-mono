@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 
 const generateBuildIndex = () => {
+  const componentsDir = 'src/lib/components'
   const indexFile = path.join(componentsDir, 'index.js')
 
   let exportStatements = ''

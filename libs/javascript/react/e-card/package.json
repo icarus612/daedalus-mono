@@ -4,6 +4,6 @@
   "private": true,
   "scripts": {
     "build": "echo 'No build configured'",
-    "lint": "echo 'No lint configured'"
+    "lint": "eslint . --no-error-on-unmatched-pattern"
   }
 }

@@ -1,6 +1,6 @@
-const request = require('request');
-const cheerio = require('cheerio');
-const fs = require('fs');
+import request from 'request';
+import cheerio from 'cheerio';
+import fs from 'fs';
 
 let basicInfo = class {
     constructor(title, author, authorURL, postURL){
@@ -35,7 +35,7 @@ request('https://www.freecodecamp.org/news/', (err, res, html) =>{
                 let postURL = $(el).find('.post-card-image-link').attr('href');
             
 
-                newSection = new basicInfo(title, author, authorURL, postURL)
+                let newSection = new basicInfo(title, author, authorURL, postURL)
                 section.push(newSection)
             }
       
