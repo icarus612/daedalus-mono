@@ -62,7 +62,7 @@ jobs:
               git remote add origin "$target_repo"
             fi
             
-            rsync -av --delete \
+            rsync -avL --delete \
               --exclude='.git' \
               "${GITHUB_WORKSPACE}/${lib_path}/" \
               ./
