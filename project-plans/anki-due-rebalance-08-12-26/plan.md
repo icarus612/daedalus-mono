@@ -22,6 +22,13 @@ Rebalance Anki review due dates across a deck and its subdecks so no scheduled d
 - [ ] Phase 5: Scope smart-lint to the triggering file
   - [x] 5.1: Scope hook-mode linting to the triggering file
   - [x] 5.2: Verify hook-mode scoping and CLI-mode preservation (after: 5.1)
+- [ ] Phase 6: Early backup, feasibility precheck, range windowing, and sliding mode
+  - [ ] 6.1: Shared core — early backup, feasibility precheck, cosmetic fixes
+  - [ ] 6.2: Range windowing and containment in the core (after: 6.1)
+  - [ ] 6.3: Sliding target line in the shared core (after: 6.2)
+  - [ ] 6.4: Cap-aware feasibility — the reachability check (after: 6.3)
+  - [ ] 6.5: CLI surfaces — `--range`, `--sliding`, and the `anki-due-stats` command (after: 6.4)
+  - [ ] 6.6: Verification, including the default-mode regression guarantee (after: 6.5)
 
 Single lane. **Reason:** the whole feature is two new source files plus one shared manifest touchpoint inside one package (`libs/python/anki-tools/`), and both source files are written against a single data contract defined in 2.1. Splitting the pure core from the adapter would create a shared-types touchpoint larger than either lane, so lanes are not manufactured here.
 
@@ -59,6 +66,7 @@ The single, explicit escape hatch is the settled `--set-earlier` flag (default `
 - `libs/python/anki-tools/pyproject.toml`: declare the `anki` runtime dependency (today it is an undeclared import) and a pytest dev dependency.
 - `libs/python/anki-tools/package.json`: add the `bin` entry and a `test` script.
 - New `libs/python/anki-tools/tests/` — the first Python tests in this monorepo.
+- **Phase 6 additions to the existing package** — `anki_tools/due_stats.py` (new read-only stats command) plus in-place changes to `due_plan.py` and `rebalance_due.py`. Phase 6 adds a cap-aware feasibility precheck, moves the backup ahead of planning, and introduces an optional `--range LO-HI` day-offset window and an optional `--sliding` target line. **`due_plan.py` is not forked**: sliding is a parameter on the existing passes, not a second implementation.
 - **`libs/prompting/claude/hooks/smart-lint.sh`** (Phase 5) — a user-ordered scope addition, unrelated to the Anki feature, riding this branch because PR #12 was already open. Its file scope is disjoint from everything above, so it cannot interfere. Phase 5 also performs an out-of-repo install to `~/.claude/hooks/smart-lint.sh`, which is an install action rather than a product change and never appears in the branch diff.
 
 ### Out of scope
@@ -214,7 +222,9 @@ class RunState:
     max_shift: int | None           # cap on EARLIER displacement from origin; None = uncapped
 ```
 
-Every signature, stated once and binding on 2.2–2.5 and both test files:
+Every signature, stated once and binding on 2.2–2.5 and both test files.
+
+> **[SUPERSEDED by 6.3]** — the three `apply_*_pass` signatures below take **scalar** `max_per_day` / `min_per_day`. Phase 6 replaces every scalar bound with a per-day `DayTargets` mapping and adds a fourth pass (`apply_shape_pass`). Flat-mode *behaviour* is unchanged (a constant mapping reproduces the scalar exactly); only the parameter shape moves. `RunState`, `CardDue`, `may_move_to`, `move_card` and both selection orders are **unaffected**. See 6.3 for the superseding forms, and 6.2 for the `max_end_day` field `RunState` gains.
 
 ```python
 def build_buckets(cards: Sequence[CardDue], start_day: int) -> dict[int, list[int]]: ...
@@ -463,7 +473,9 @@ This case is reachable, not theoretical. The max pass deposits far-out cards ont
 
 **Work.** `plan_rebalance(cards, start_day, min_per_day, max_per_day, max_shift=14, set_earlier=False) -> RebalanceResult`.
 
-Sequence, in exactly this order:
+Sequence, in exactly this order.
+
+> **[SUPERSEDED by 6.3]** — this sequence is the **flat-mode** form and remains correct for it. Phase 6 adds: a hard feasibility precheck ahead of everything (6.1), an explicit `end_day` window with containment (6.2), and, in sliding mode, `apply_shape_pass` between the over-max resolution and the min pass, with the min pass fed `T(d)` instead of a scalar floor (6.3 pins the full five-step sliding sequence). The `RebalanceResult` also gains `over_target_days`. **Step ordering for flat mode does not change.**
 
 1. `validate_bounds(min_per_day, max_per_day)`.
 2. If `cards` is empty, return immediately — no passes, no exception — with **every field explicitly defined** (a blind test author must not have to guess any of them): `moves={}`, `before={}`, `after={}`, `sink_overflow=0`, `short_days=[]`, `reverse_pass_used=False`, and **`end_day = start_day - 1`**. That last value is deliberate rather than arbitrary: `end_day` is normally the maximum `day` among the input cards, which is undefined for an empty input, and `start_day - 1` makes `range(start_day, end_day + 1)` the empty range — so every post-condition loop and every histogram walk traverses nothing without needing an empty-input special case.
@@ -571,7 +583,7 @@ Sequence, in exactly this order:
   `col.create_backup(backup_folder=<dir>, force=True, wait_for_completion=True)`
   with `<dir>` defaulting to `<collection dir>/backups` (verified as the profile's real backup location, currently holding `.colpkg` files). Note the documented catch: it returns `False` when `force=True` if the collection is unchanged — treat `False` as informational, not as failure.
 - Dry-run path writes nothing, takes no backup, and prints the histogram plus a per-day move summary.
-- **Order of operations is a safety property, not a detail.** `plan_rebalance` runs to completion *before* the backup is taken and before any `set_due_date` call. An `InfeasibleRebalance` (2.5) therefore aborts with the collection untouched and no backup churn — the settled D3 guarantee of "exits non-zero with nothing written" depends on this ordering.
+- **Order of operations is a safety property, not a detail.** ~~`plan_rebalance` runs to completion *before* the backup is taken~~ **[SUPERSEDED by 6.1]** — the backup now runs **before** planning, and the feasibility precheck before that: `open -> collect -> precheck -> backup -> plan -> confirm -> apply`. `plan_rebalance` still completes before any `set_due_date` call. An `InfeasibleRebalance` (2.5) therefore aborts with the collection untouched and no backup churn — the settled D3 guarantee of "exits non-zero with nothing written" depends on this ordering.
 - When `result.reverse_pass_used` is true, the summary must say **explicitly** that some cards were moved to LATER dates and show the extended horizon. That is the one behaviour a user opting into `--set-earlier` most needs confirmed before answering the `y/N` prompt.
 - The histogram covers `start_day .. result.end_day`, reading the **post-pass** horizon, and flags any day in `result.short_days` as under-min-by-cap rather than silently showing a low count.
 
@@ -776,6 +788,538 @@ Repo-wide behaviour is **unchanged**, with exactly one addition: add **`.workflo
 
 **Test approach — oracle: `equivalence check`.** Hook mode is compared against the specified per-extension matrix; CLI mode against the pre-change baseline captured in 5.1.
 
+---
+
+### Phase 6: Early backup, feasibility precheck, range windowing, and sliding mode
+
+**Origin.** User feedback after the first real apply, which succeeded (1943 moves, idempotent, in-band). Three requirements plus two cosmetic defects already logged in the code and PR reviews. Rides PR #12 on the same branch.
+
+**Structural rule for the whole phase — one core, several surfaces.** The user asked to *"keep the current version as the 'simple' version and make either a complex version or other tools/sh commands that do some of these asks"*. That is honoured by **adding surfaces, never by forking the algorithm**:
+
+- `due_plan.py` remains the **single shared core**. There is no "complex copy" of it, and no sliding-specific duplicate of any pass. Every new capability is a parameter on the existing machinery.
+- The existing command keeps its current behaviour by default (see the regression rule below).
+- New capability reaches the user through a flag on the existing command and one new read-only sibling command.
+
+**What "unchanged default behaviour" means — scoped precisely, because two requirements collide.** The requirement is *scheduling semantics*: **for identical inputs, the set of `(card_id → new_day)` moves and the resulting collection state must be byte-for-byte identical pre- and post-phase.** It is deliberately **not** literal stdout equality, because two of this phase's own required fixes intentionally change printed text (the mislabeled day-offset line, and the histogram signature losing its dead parameter), and the early backup adds one reporting line. 6.5's regression check therefore asserts on **moves and final card state**, not on captured stdout. Stating this here rather than discovering it at verification time.
+
+---
+
+#### 6.1: Shared core — early backup, feasibility precheck, cosmetic fixes
+
+**File scope**
+- `libs/python/anki-tools/anki_tools/due_plan.py` (the precheck — pure, no `anki` import)
+- `libs/python/anki-tools/anki_tools/rebalance_due.py` (backup ordering, cosmetics)
+- `libs/python/anki-tools/tests/test_due_plan.py`
+- `libs/python/anki-tools/tests/test_rebalance_due.py`
+
+**Work — (a) FIRST ACTION OF THE PHASE: capture the pre-phase behavioural baseline.** Before editing `due_plan.py` or `rebalance_due.py` at all — the pre-phase behaviour is unrecoverable once they change, except from git.
+
+1. Copy the current `anki_tools/due_plan.py` and `anki_tools/rebalance_due.py` to `<parent-worktree>/.artifacts/pre-phase6/`. (Gitignored scratch, per the run-artifacts rule — never a committed plan record.) `git show HEAD:<path>` is an acceptable equivalent source.
+2. Run the **three pinned fixtures** through that pre-phase copy and write each `{card_id: new_day}` mapping as JSON, keys sorted so the files diff cleanly, to `<parent-worktree>/.artifacts/pre-phase6/moves-<fixture>.json`:
+   - **F1 — feasible flat:** needs only the max and min passes; no reverse pass, no cap blocking.
+   - **F2 — reverse pass:** back-loaded, requires `--set-earlier`, exercises horizon extension.
+   - **F3 — cap-blocked:** `--max-shift 14` blocks fills, producing a non-empty `short_days`.
+
+   All three in **default mode** — no `--range`, no `--sliding` — since that is the behaviour the regression guarantee covers.
+3. 6.6 compares the post-phase run of the same three fixtures against these files.
+
+This is step (a) because it must precede every other edit in the phase, including the backup reordering below.
+
+**Work — (b) back up before planning, after the precheck. The exact order is pinned here because two settled requirements meet at this point.**
+
+```
+open collection -> collect in-scope cards -> PRECHECK -> (pass) BACKUP -> plan -> confirm -> apply
+                                                \-> (fail) exit non-zero: nothing written, nothing backed up
+```
+
+The user's requirement was *"backup before anything"* (meaning before planning and applying, in **every mode including `--dry-run`** — it currently runs only on the apply path, and at ~9 MB it is cheap insurance). The settled DP-B ruling then places the feasibility precheck **before** the backup. These do not conflict, and the reason is worth stating so nobody "fixes" it later:
+
+**A failed precheck is read-only arithmetic.** It reads card due-dates already in memory, writes nothing, and modifies nothing. There is no state to recover, so a backup would be pure cost — ~9 MB and the wall time — for a run that provably did not touch the collection. The backup's actual value is as a **pre-apply snapshot to roll back to**, which requires only that it precede the first write. It does.
+
+**This supersedes 3.2's ordering statement.** Subphase 3.2 (already built) says *"`plan_rebalance` runs to completion before the backup is taken"*. That is now wrong: the backup moves **ahead** of planning. 3.2's underlying guarantee — that an `InfeasibleRebalance` aborts with the collection untouched — still holds, and is unaffected by where the backup sits. Update 3.2's wording as part of this subphase so the plan does not contradict itself.
+
+**Two distinct failure modes, which differ only in whether a backup exists:**
+
+| failure | when | backup taken? | collection |
+|---|---|---|---|
+| **Precheck failure** (DP-B bounds, prefix/Hall) | before backup | **no** | untouched |
+| **`InfeasibleRebalance`** from `plan_rebalance` | after backup, during planning | **yes** | untouched |
+
+Both exit non-zero and write nothing. Tests must assert the *backup* difference, not just the exit code — it is the only observable that distinguishes them.
+
+This changes no scheduling semantics, so it does not violate the default-behaviour rule above — the simple version gets the safety fix too, which is the point.
+
+**Work — (c) the feasibility precheck.** A **pure function in the core**, called by every surface before planning:
+
+```python
+@dataclass(frozen=True)
+class FeasibilityReport:
+    total: int                                    # in-scope scheduled cards
+    first_day: int                                # == start_day
+    last_day: int                                 # == end_day (max origin among in-scope cards)
+    horizon_days: int                             # D = last_day - first_day + 1
+    avg_per_day: float                            # total / D
+    mode: str                                     # "flat" | "sliding"
+    capacity: int                                 # sum of per-day targets across the window
+    # ---- HARD gate (DP-B). Constant max/min ONLY; never T(d). ----
+    feasible: bool                                # False => exit non-zero before backup and planning
+    violations: list[str]                         # human-readable, each printing its arithmetic
+    binding_prefix: tuple[int, int, int] | None   # (day, cards_due_by_then, capacity_by_then)
+    suggested_min: int | None
+    suggested_max: int | None
+
+    # ---- INFORMATIONAL shape analysis (sliding only). NEVER gates. ----
+    shape_reachable: bool | None                  # None in flat mode
+    predicted_over_target_days: list[int]         # days expected to sit above T(d)
+    shape_gap: int                                # total cards above T(d) that cannot migrate
+    min_feasible_max_shift: int | None            # from the 6.4 bisection; what WOULD reach the shape
+
+# ---- ONE shared window kernel. The `capacity` argument is what distinguishes the two legs. ----
+def window_violations(
+    counts: Mapping[int, int],
+    start_day: int,
+    end_day: int,
+    capacity: DayTargets,          # HARD leg passes constant_targets(max); SHAPE leg passes T
+    max_shift: int | None,
+) -> list[tuple[int, int, int, int]]:      # (a, b, confined, capacity_in_window)
+    ...
+
+# ---- HARD gate (DP-B). Capacity is ALWAYS constant max_per_day. Never T(d). ----
+def check_hard_feasibility(
+    cards: Sequence[CardDue],
+    start_day: int,
+    end_day: int | None,           # None = derive from cards; set in --range mode
+    min_per_day: int | None,
+    max_per_day: int | None,
+    max_shift: int | None,
+    *,
+    set_earlier: bool = False,
+) -> HardFeasibility: ...
+
+# ---- INFORMATIONAL shape analysis. Sliding only. Capacity is T(d). NEVER gates. ----
+def analyze_shape(
+    cards: Sequence[CardDue],
+    start_day: int,
+    end_day: int,
+    target: DayTargets,            # the T(d) line from 6.3
+    max_shift: int | None,
+) -> ShapeAnalysis: ...
+
+# ---- Composition. Returns both blocks; only the hard block can stop a run. ----
+def check_feasibility(
+    cards: Sequence[CardDue],
+    start_day: int,
+    end_day: int | None,
+    min_per_day: int | None,
+    max_per_day: int | None,
+    max_shift: int | None,
+    *,
+    sliding: bool = False,
+    set_earlier: bool = False,
+) -> FeasibilityReport: ...
+```
+
+**`max_shift` is a required parameter, not an optional extra.** Both legs need it: the hard leg because a cap-blocked day genuinely stays over `max_per_day` and so genuinely raises, and the shape leg because `min_feasible_max_shift` is a bisection over it. A `FeasibilityReport` cannot be computed without it, and there is no call path that omits it.
+
+`check_feasibility` calls `check_hard_feasibility` always, and `analyze_shape` only when `sliding` is true (otherwise the informational fields are `None`/empty). **`analyze_shape`'s result never influences `feasible`.**
+
+The checks, in order:
+
+1. **Global upper bound.** `total <= D × max_per_day`, in **BOTH** modes. In flat mode this is exactly the user's `avg <= max`.
+
+   **The hard gate NEVER uses `T(d)`, in any mode.** This is the one rule that keeps DP-B and DP-F from contradicting each other, and it is easy to get wrong. `sum(T(d))` is always `<= D × max_per_day` (the line descends from `max`), so using it as the DP-B threshold would hard-fail precisely the decks DP-F option 1 — the recommended default — exists to serve. Concretely, on the real block: 1360 cards against an area under `T` of 826 would hard-fail, when the settled answer is that such a run **proceeds best-effort and reports `over_target_days`**. The user's own deck is plausibly in this category, so this is not a corner case.
+
+   `T(d)`-based analysis is **informational only** — it predicts `over_target_days`, sizes the shape gap, and drives the minimum-feasible-`--max-shift` figure. It is reported by `anki-due-stats` and in the run summary. **It never gates a run.**
+2. **Global lower bound** (only when `min_per_day` is given). `total >= D × min_per_day` in flat mode — the user's `avg >= min`. **Settled (DP-B): this is a HARD failure, with no escape flag** — see the settled table. It can reject runs that succeed today, and that is the intended strict behaviour.
+3. **Window (Hall) condition — the one that actually binds.** `window_violations(counts, start_day, end_day, capacity=constant_targets(start_day, end_day, max_per_day), max_shift)` must return empty.
+
+   **Capacity here is `max_per_day`, exactly as in checks 1 and 2 — never `T(d)`.** "The hard gate never uses `T(d)`" holds for **all three checks**, not just the global one. This leg is where it is easiest to lose, because 6.4 states the same window algorithm in terms of a generic `target`, and it is tempting to feed it the sliding line.
+
+   **Counterexample, verified.** Window `1..10`, `min=8 max=16 --sliding`, with **46 cards** of origin `<= 3`. Hard capacity for that prefix is `3 × 16 = 48`, so the run is feasible and the planner will not raise; `sum(T(1..3)) = 16 + 15 + 14 = 45`, so a `T`-fed hard leg would reject it. Anything in **46-48 cards** reproduces the DP-B/DP-F contradiction that B25's first half already removed from the global leg.
+
+   **This is structural, not a corner case.** Exhaustive check over every window length `D` in `[2, 60)` and every `(min, max)` pair with `0 <= min < max <= 24`: **`sum(T(d))` over a prefix NEVER exceeds `max_per_day × len`** — the `T`-based condition is always at least as strict as the hard one, for every parameter combination. So feeding `T` to the hard leg can only ever manufacture false failures; it can never catch a real one the hard leg misses.
+
+   **Why this is not optional.** Cards move **earlier only**, so a card with origin `o` can land anywhere in `[start_day, o]` — which makes *prefixes* the only sets that can be over-subscribed. Verified against this plan's own known-infeasible distribution `[0, 40, 2, 0, 25, 1]` with `max=16` (2.5's flagship criterion, which raises `InfeasibleRebalance`): the **global average check passes** (`avg = 11.33 <= 16`) while the prefix check catches it at day 2 — **40 cards due by then against 32 slots**. An average-only precheck would clear a distribution the planner then refuses, which is precisely the failure this phase exists to prevent.
+
+   This condition is **necessary and sufficient** for earlier-only placement with no shift cap. With a finite `--max-shift` each card also gains a lower bound (`origin - max_shift`), the intervals stop being nested, and the condition remains **necessary but no longer sufficient** — so the precheck is a fast, honest screen and `plan_rebalance` remains the authority. Say so in the code comment; do not oversell it.
+
+4. **`--set-earlier` interaction.** When `set_earlier` is true, horizon extension can cure any *upper-bound* or *prefix* violation, because the window is no longer fixed. Such violations are **downgraded to warnings whose text says exactly that** — never silently passed. The lower-bound violation is unaffected by `set_earlier`.
+
+**Only `feasible` can stop a run.** `shape_reachable is False` is printed, never fatal — unless `--strict-sliding` is passed (6.3).
+
+**Failure behaviour.** On `feasible is False`, the calling surface exits non-zero **before any move planning**, printing the arithmetic (total, horizon days, avg/day, the violated bound and its numbers, and the binding prefix day when that is what failed) **and a suggested `--min`/`--max` that would be feasible**:
+- `suggested_max` (flat) = `max(ceil(total / D), max over k of ceil(count(origin <= k) / (k - start_day + 1)))` — the exact smallest flat `max` satisfying both the global and every prefix bound. For `[0,40,2,0,25,1]` this is **20**, verified.
+- `suggested_min` (flat) = `floor(total / D)`.
+- Sliding suggestions: hold one endpoint and scan the other upward from its current value to the first value satisfying every condition. `D` is small, so a linear scan is exact and adequate; do not derive a closed form that ignores the prefix bounds. (The closed-form global-only answer for `[0,40,2,0,25,1]` holding `min=8` is `max=15`, which the prefix condition then rejects — a worked example of why the scan is required.)
+
+**Work — (d) the two cosmetic defects**, both already logged in review:
+- The summary line labels an **absolute day number** as a "day offset" (prints e.g. `2172` where the reader expects `363`). Fix by printing the offset from today (`absolute_day - today`), keeping the "offset" wording. While there, check whether the *"was extended"* message fires when the final `end_day` merely **equals** the pre-existing maximum; it must fire only on a strict increase.
+- `render_histogram` carries a dead `min_per_day` parameter. Remove it. 6.3 changes this signature again (the histogram needs the target line, not scalar bounds), so make the removal consistent with that direction rather than churning it twice.
+
+**Acceptance criteria**
+- A `--dry-run` against a synthetic collection leaves a **fresh `.colpkg`** in the backup directory, and the collection itself is unmodified.
+- **Ordering asserted, both failure modes:**
+  - a **precheck failure** exits non-zero with **no backup created** and no card's `due` changed;
+  - an **`InfeasibleRebalance` raised by `plan_rebalance`** exits non-zero with a **backup present** and no card's `due` changed.
+  Assert the backup-directory contents in both cases — the exit code alone does not distinguish them.
+- The `--min`-omitted case runs **no lower-bound check at all** (a max-only run cannot fail on `avg < min`).
+- `check_feasibility` is pure: importable and fully exercised with no `anki` import and no collection.
+- On `[0,40,2,0,25,1]`, `start_day=1`, flat `max=16`: `feasible is False`, `binding_prefix == (2, 40, 32)`, `avg_per_day == pytest.approx(11.33, abs=0.01)`, and `suggested_max == 20`. **Also assert the global average check alone would have passed** — this is the test that pins why the prefix condition is present.
+- The same input with `set_earlier=True` reports `feasible is True` with a warning naming horizon extension as the cure.
+- **Cap-unreachable but max-feasible deck PASSES the precheck (the DP-B/DP-F boundary).** The real-block distribution — days 244-328 at 16/day, `min=8 max=16 max_shift=14 --sliding` — has `total <= D × max_per_day` and so returns **`feasible is True`**, while reporting `shape_reachable is False`, a non-empty `predicted_over_target_days`, and `min_feasible_max_shift == 48`. **Assert that the run is NOT blocked.** A `feasible is False` here would mean the hard gate has been wired to `sum(T(d))` — the exact defect this criterion exists to catch.
+- A feasible flat distribution returns `feasible is True` with an empty `violations` list.
+- The summary prints an offset (e.g. `363`), never a raw absolute day (e.g. `2172`); a run whose `end_day` equals the pre-existing maximum does **not** claim the horizon was extended.
+- `render_histogram` no longer accepts `min_per_day`.
+
+**Test approach — oracle: `new contract tests`** for `check_feasibility` (pure, table-driven); **`equivalence check`** for the backup reordering, which must not alter any computed move.
+
+---
+
+#### 6.2: Range windowing and containment in the core
+
+**File scope**
+- `libs/python/anki-tools/anki_tools/due_plan.py`
+- `libs/python/anki-tools/tests/test_due_plan.py`
+
+*(The adapter-side card filter and `--range` parsing live in 6.5; this subphase pins the core contract they depend on.)*
+
+**The user's request, verbatim.** *"It should also take in a date range even if its just number like 8-30 so it would be from 8 days away to 30 days away (like how anki sets due dates) that way if i only wanted to fix a certain part of the deck and not the full thing."*
+
+**The slice is the whole universe for the run.** With a range in effect, `[LO, HI]` is not a filter layered over a full-deck plan — it *is* the plan's entire world. Cards outside the range are untouched, and they are also excluded from every count, every source and every sink. A card due on day 40 is not a candidate to fill day 25 under `--range 8-30`; it does not exist for that run. This is the single idea the rest of the subphase implements.
+
+**Day offsets, not absolute days — the conversion happens at the CLI boundary.** `LO` and `HI` are **offsets from today**, matching Anki's own set-due-date syntax. The core continues to work in absolute day numbers throughout: 6.5 converts `start_day = today + LO` and `end_day = today + HI` before calling in. This split is stated explicitly because conflating the two is exactly the defect 6.1 fixes in the summary line; do not repeat it here.
+
+**`D2` holds structurally, not by convention.** `LO >= 1` is enforced at parse time, so `start_day >= today + 1` and no card can ever be placed on today or earlier — in either direction, in any mode. The range cannot be used to reach into the past.
+
+**Core contract changes.**
+
+```python
+def plan_rebalance(
+    cards, start_day, min_per_day, max_per_day,
+    max_shift=14, set_earlier=False, sliding=False,
+    end_day=None,            # NEW: explicit window ceiling (absolute day). None = derive from cards.
+) -> RebalanceResult
+```
+
+`RunState` gains one field:
+
+```python
+max_end_day: int | None      # containment ceiling; None = unbounded (horizon may extend)
+```
+
+- **`end_day is None`** (no range) → derived as the maximum `day` among the input cards, exactly as today, and `max_end_day = None`. **This is the default path and its behaviour is unchanged.**
+- **`end_day` given** (range mode) → `state.end_day = end_day` and `state.max_end_day = end_day`.
+
+**Containment, both directions.**
+
+- **Downward** is already structural: `may_move_to` refuses any `target_day < state.start_day`, and `start_day == LO`. Point 8 of the requirement falls out of this — a card whose `--max-shift` budget would allow an earlier landing than `LO` is **still clamped to `LO`**, because the window floor is checked independently of and takes precedence over the shift cap. No new code; assert it.
+- **Upward** needs a new gate, kept separate from `may_move_to` so the N21 resolution stands (that `may_move_to` is the *earlier-direction* gate and the reverse pass does not consult it):
+
+```python
+def may_move_later_to(target_day: int, state: RunState) -> bool:
+    """Later-direction gate. False when the containment ceiling would be crossed."""
+    return state.max_end_day is None or target_day <= state.max_end_day
+```
+
+**The reverse pass consults `may_move_later_to` before every placement** (and still never consults `may_move_to`). When the gate refuses, the pass **leaves the excess where it is and stops advancing** — it does not raise. The day then remains above the hard cap, and 2.5's existing `over_max` check produces `InfeasibleRebalance` with the offending days. **No new raise path is introduced**; range overflow reuses the one that already exists, which is what keeps the infeasibility story single.
+
+**No horizon extension in range mode.** `move_card` may still create a new day and raise `state.end_day`, but only when `max_end_day is None`. Under a range the ceiling is fixed, so `state.end_day` never moves and every downstream consumer — the sliding target line, the histogram, the post-conditions — sees a stable window.
+
+**`build_buckets` bounds check.** It already raises `ValueError` for `day < start_day`; it must now also raise for `day > end_day` when the window is explicitly bounded. Callers are responsible for having sliced first (6.5 does), so this fires only on a caller bug — which is precisely why it should be loud.
+
+**Interactions, stated so none is inferred.**
+- **`--sliding`** ramps `T(d)` from `max` at `LO` to `min` at `HI`, since `build_target_line` already takes `start_day`/`end_day`. The slide is over the *slice*, not the deck.
+- **Feasibility (6.1) and the cap-aware Hall check (6.4)** are computed **on the slice**: the card set, the horizon `D = HI - LO + 1`, the averages, the prefix windows and the capacity all come from the range alone.
+- **`--max-shift`** is unchanged — still measured per-card from `origin_by_id`, additionally clamped by the `LO` floor as described above.
+- **`--set-earlier`** still runs the reverse pass, but its spill is capped at `HI` rather than extending indefinitely.
+
+**Post-conditions in range mode** (additions to 2.5's list):
+- No card lands below `LO` — the existing floor post-condition, with `start_day == LO`.
+- **No card lands above `HI`.**
+- `state.end_day == HI` on exit; the horizon never moved.
+- Cards outside `[LO, HI]` are absent from `moves` entirely, having never entered the run.
+
+**Acceptance criteria**
+- `end_day=None` reproduces the pre-range behaviour exactly on every existing 2.x fixture — same move sets, same derived `end_day`. **This is the no-regression anchor for the whole requirement.**
+- With `end_day` set, `state.max_end_day == end_day` and `state.end_day == end_day` on exit, even when `set_earlier=True` and the reverse pass runs.
+- **Upward containment:** a range-mode distribution whose excess cannot be absorbed by `HI` raises `InfeasibleRebalance` naming the offending days — and **not** some new exception type.
+- **Downward containment under a generous cap:** with `max_shift=None` and a range starting at `LO`, no card lands below `LO`.
+- **Shift cap clamped by `LO`:** a card with origin `LO + 3` and `max_shift=14` lands no earlier than `LO`, never `LO - 11`.
+- `build_buckets` raises `ValueError` for a card above a bounded `end_day`, as it already does below `start_day`.
+- A single-day range (`LO == HI`) is legal and degenerate: the window is one day, and 6.3's degenerate target line (`{start_day: max_per_day}`) applies.
+- With a range in effect, cards outside it never appear in `moves`, `before`, `after`, `short_days` or `over_target_days`.
+
+**Test approach — oracle: `new contract tests`.**
+
+---
+
+#### 6.3: Sliding target line in the shared core
+
+**File scope**
+- `libs/python/anki-tools/anki_tools/due_plan.py`
+- `libs/python/anki-tools/tests/test_due_plan.py`
+
+**The user's request, and why a linear line answers it.** The ask, verbatim: *"i know lowering max would fix this some, but i was really wondering if there is a way to clean this up so that it kept days like 300-365 as being 10 max and then 200-300 as 12 max etc. maybe give it a --sliding true var?"* — and earlier, *"smaller card counts the farther away from today, closer to today the closer to max, like a slide."*
+
+The user's mental model is **banded per-region caps**: 300-365 → 10, 200-300 → 12, and so on. The linear per-day target is the **smooth generalization of exactly that**, and their own example bands sit almost on the line: a 16→8 ramp across days 1-365 gives `T(250) = 11` and `T(330) = 9`, against their sketched 12 and 10. **No separate band syntax ships in this phase** — the line covers the ask with one parameter pair instead of a band-list grammar. If explicit bands are ever wanted, they become a different target-line builder feeding the same machinery.
+
+**The flag is `--sliding`** (a `store_true` boolean — `--sliding`, not `--sliding true`), using the user's own term.
+
+**The target line — pinned exactly, because a blind test author must reproduce it.**
+
+```python
+def build_target_line(start_day: int, end_day: int, min_per_day: int, max_per_day: int) -> dict[int, int]
+```
+
+```
+T(d) = floor( max - (max - min) * (d - start_day) / (end_day - start_day) + 0.5 )
+```
+
+- **Rounding is `floor(x + 0.5)`, NOT Python's `round()`** (banker's rounding would make `T` depend on parity). Pinned, not incidental.
+- Endpoints exact by construction: `T(start_day) == max_per_day`, `T(end_day) == min_per_day`.
+- **Degenerate window:** `end_day == start_day` → `{start_day: max_per_day}` (no division).
+- Verified: `start_day=1, end_day=6, min=8, max=16` → `{1:16, 2:14, 3:13, 4:11, 5:10, 6:8}`, sum **72**, matching the closed form `D × (max+min)/2 = 72`. Use the **summed rounded values** as authoritative capacity, since rounding can shift it by a few cards.
+
+**Two bounds, not one — this is the central design decision of the phase.** Sliding mode does **not** replace `max_per_day`; it adds a target beneath it:
+
+| bound | value | enforcement |
+|---|---|---|
+| **Hard cap** | `max_per_day` (constant, as today) | A day above it after the passes → `InfeasibleRebalance`. Unchanged from flat mode. This is the user's actual safety bound. |
+| **Soft target** | `T(d)` | The passes aim here. Days left **above** `T(d)` are collected into **`over_target_days`**; days left **below** (non-tail) into `short_days`. Reported, never raised. |
+
+**Why the soft target is not merely a weaker choice.** A day sitting at 16 when `T(d) = 9` is **not harmful** — it is still under the user's absolute maximum; it simply is not the requested shape. Treating `T(d)` as hard would manufacture failures on schedules that are perfectly safe, which is precisely the trap the cap-reachability finding below exposes. Conflating the safety bound with the shape preference is the bug; separating them is the fix.
+
+`--strict-sliding` upgrades `T(d)` to a hard bound for anyone who wants failure instead of a report (see DP-F).
+
+**Flat mode is the same code path with a constant line.** Both modes drive the passes from per-day numbers; **no pass acquires a `sliding` branch**, and `due_plan.py` is never forked. When `--set-earlier` extends the horizon, the target line is **recomputed over the new window** — the one place the line is not fixed at the start.
+
+##### Pass signatures — these SUPERSEDE 2.1's scalar forms
+
+Every pass now takes a **per-day mapping** instead of a scalar bound. Behaviour in flat mode is unchanged (a constant mapping reproduces the scalar exactly); only the parameter shape moves.
+
+```python
+DayTargets = Mapping[int, int]          # day -> per-day number, defined for every day in the window
+
+def constant_targets(start_day: int, end_day: int, value: int) -> dict[int, int]: ...
+
+def apply_max_pass(state: RunState, ceiling: DayTargets) -> None: ...
+def apply_reverse_max_pass(state: RunState, ceiling: DayTargets) -> None: ...
+def apply_min_pass(state: RunState, floor: DayTargets) -> None: ...
+
+# Sliding only. Shapes DOWNWARD toward `target` without ever breaching `hard_ceiling`.
+def apply_shape_pass(state: RunState, target: DayTargets, hard_ceiling: DayTargets) -> None: ...
+```
+
+Inside the passes, every former `max_per_day` / `min_per_day` comparison becomes `ceiling[d]` / `floor[d]`. Nothing else in 2.2, 2.3 or 2.4 changes.
+
+##### Why sliding needs TWO stages, not a substitution
+
+The tempting shortcut — call `apply_max_pass(state, T)` and be done — **breaks the hard-cap guarantee.** `T(d) <= max_per_day` everywhere, so shedding toward `T` moves strictly *more* cards earlier than shedding toward `max`. Those extra cards cascade down and pile onto `start_day`, which the max pass never sheds from (its loop stops at `start_day + 1`). The sink can therefore end **above `max_per_day`**, raising `InfeasibleRebalance` on a deck that is perfectly feasible under the flat cap. Being greedy about the soft target destroys the hard guarantee.
+
+So the hard result is established **first**, by the unchanged flat-cap pass, and shaping is a strictly-optional refinement layered on top that **may never undo it**:
+
+```
+sliding mode, inside plan_rebalance:
+  1. apply_max_pass(state, constant_targets(..., max_per_day))     # HARD guarantee, identical to flat
+  2. over_max check -> raise InfeasibleRebalance, or reverse pass  # HARD guarantee settled here
+  3. apply_shape_pass(state, T, constant_targets(..., max_per_day))# SOFT shaping downward
+  4. apply_min_pass(state, T)                                      # SOFT shaping upward
+  5. over_target_days = [d for d in window if len(buckets[d]) > T[d]]
+     if strict_sliding and over_target_days: raise InfeasibleRebalance
+```
+
+Flat mode is steps 1, 2, then `apply_min_pass(state, constant_targets(..., min_per_day))` — step 3 does not run and step 5 yields `None`. **This supersedes 2.5's orchestration sequence**, which knows only the flat form; update its step 4/5 wording accordingly.
+
+##### `apply_shape_pass` — pseudocode
+
+```
+for d from state.end_day down to state.start_day + 1:
+    while len(state.buckets[d]) > target[d]:
+        if len(state.buckets[d - 1]) >= hard_ceiling[d - 1]:
+            break          # receiver is AT the hard cap -> refuse this move
+        mover = first cid in max_move_order(state.buckets[d], state)
+                that satisfies may_move_to(cid, d - 1, state)
+        if mover is None:
+            break          # shift cap blocks every remaining candidate on this day
+        move_card(mover, d, d - 1, state)
+```
+
+- **The `break` on a full receiver is a REFUSAL, not a skip.** It stops shaping day `d` and moves the sweep on; it does **not** look at `d - 2`. D6.2 forbids *searching past* an in-range day for capacity, and this does not do that — the target is always exactly `d - 1`.
+- **The hard cap cannot be breached**, because every move is gated on `len(buckets[d - 1]) < hard_ceiling[d - 1]`. That gate is also what protects the sink at `start_day`.
+- Selection is `max_move_order` (untouched-first, then D5a's largest-`ivl`), and `may_move_to` enforces `--max-shift` and the `start_day` floor — all unchanged.
+- Descending sweep, one day at a time, so a card shifted to `d - 1` is reconsidered when the sweep reaches `d - 1`. Every move strictly decreases a card's day, bounded below by `start_day`, so the pass terminates.
+- Days still above `target[d]` on exit are exactly `over_target_days`. **The pass never raises.**
+
+All existing machinery is preserved verbatim: one-day cascade, untouched-first selection, D5a/D5b tiebreakers, `--max-shift` via `may_move_to`, and the reverse pass. **Recorded correction:** the reverse pass as built matches the user's intent exactly (forward cascade from day 1, dying when absorbed — verified live at the day 27 = 15 / day 28 = 9 dying edge). **Its semantics are unchanged here**; sliding mode only retargets it at `T(d)`.
+
+**Post-conditions in sliding mode** (replacing 2.5's constant bounds; everything else unchanged):
+- **Hard:** every day in `[start_day, end_day]` holds at most `max_per_day`. Violation raises, as today.
+- **Soft:** `over_target_days` lists days above `T(d)`; `short_days` lists non-tail days below `T(d)`. Neither is asserted.
+- **"Infeasible" in sliding mode** therefore means the same as in flat mode — a day still above the **hard cap** — not a missed target.
+
+**Acceptance criteria**
+- `build_target_line(1, 6, 8, 16)` returns exactly `{1:16, 2:14, 3:13, 4:11, 5:10, 6:8}`.
+- Endpoints exact and the line monotonically non-increasing across several `(min, max, D)` combinations.
+- `end_day == start_day` → `{start_day: max_per_day}`.
+- A `.5` case landing on an even integer resolves the `floor(x + 0.5)` way, not `round()`'s.
+- A sliding run over a cap-reachable distribution leaves every day at or under `T(d)`, with `over_target_days` empty.
+- **A cap-blocked sliding run does NOT raise**: days stay above `T(d)`, appear in `over_target_days`, and remain at or under `max_per_day`.
+- **Two-stage necessity, directly tested.** Construct a distribution that is feasible under the flat cap but whose sink would overflow if shedding aimed at `T(d)` from the start. Assert the specified two-stage order leaves every day at or under `max_per_day` and raises nothing — and, as a guard, that a single-stage `apply_max_pass(state, T)` on the same input would drive `start_day` above `max_per_day`. This is the criterion that pins *why* the sequence is what it is.
+- **`apply_shape_pass` never breaches the hard ceiling:** after it runs, no day exceeds `hard_ceiling[d]`, including `start_day`, for every fixture in the suite.
+- **Refusal, not skip:** when day `d - 1` sits at the hard cap, day `d` is left above `T(d)` and **no card lands on `d - 2`** from that attempt.
+- `constant_targets` fed to the three original passes reproduces the pre-phase scalar behaviour move-for-move.
+- **Flat mode is bit-identical through the shared path:** driving the passes with a constant line reproduces the pre-phase flat move set exactly.
+- `--strict-sliding` turns the same cap-blocked case into an `InfeasibleRebalance` naming the offending days and their targets.
+
+**Test approach — oracle: `new contract tests`.**
+
+---
+
+#### 6.4: Cap-aware feasibility — the reachability check
+
+**File scope**
+- `libs/python/anki-tools/anki_tools/due_plan.py`
+- `libs/python/anki-tools/tests/test_due_plan.py`
+
+**The finding this exists for.** Verified live on the real deck: after the flat apply, **days 244-328 sit at exactly 16/day** — a dense back-loaded block of original deck mass plus normal max-pass spill (not reverse-pass parking; that cascade died around day 28). Those cards are scheduled 8-11 months out. A sliding target of ~9-11/day across that region requires draining it toward today, but **`--max-shift 14` cannot move a day-300 card to day 50.** An area-under-the-line check would call this feasible; the leash makes it unreachable.
+
+**The exact condition — Hall over contiguous windows.** With a shift cap, a card with origin `o` may land in `[max(start_day, o - max_shift), o]`: a sliding window, not a prefix. The sets that can be over-subscribed are therefore all **contiguous day-ranges**, and the condition is exact, not an approximation:
+
+For every window `[a, b]` with `start_day <= a <= b <= end_day`:
+
+```
+confined(a, b)  <=  capacity(a, b)
+
+confined(a, b) = |{ cards whose entire legal landing range lies inside [a,b] }|
+               = cards with origin o in [a + max_shift, b]      when a >  start_day
+               = cards with origin o <= b                        when a == start_day
+               = (empty for a > start_day)                       when max_shift is None
+capacity(a, b) = sum(target[d] for d in [a, b])
+```
+
+**This kernel is `window_violations` (signature pinned in 6.1). It has exactly TWO callers, and they pass DIFFERENT `capacity` arguments:**
+
+| caller | `capacity` passed | gates a run? |
+|---|---|---|
+| `check_hard_feasibility` (DP-B hard gate) | **`constant_targets(start_day, end_day, max_per_day)`** | **YES** |
+| `analyze_shape` (informational, sliding only) | **the `T(d)` line from 6.3** | **NO — reporting only** |
+
+**`target` in the formula above is that parameter, not `T(d)`.** The algorithm is generic over capacity; the *meaning* comes from the caller. Wiring `T(d)` into the hard caller is the B25 defect and is specifically forbidden — see 6.1 check 3 for the verified counterexample and the proof that it can only manufacture false failures.
+
+- **The uncapped prefix condition of 6.1 is the `a == start_day` slice of this**, and the `max_shift is None` case collapses to exactly that. One condition, not two.
+- Implement with prefix sums over both `counts` and `target`: there are exactly **`D(D+1)/2`** windows, at O(1) each. For `D = 365` that is **66,795** — trivial, so there is no reason to approximate. (An earlier draft said "~133k, O(D²)", which double-counted by treating ordered pairs as windows.)
+- **Minimum feasible `--max-shift`:** feasibility is monotone in the cap (a larger `max_shift` shrinks every `confined` set), so **bisect** `s` over `[0, D]`, running the `D(D+1)/2` check per probe — about 20 probes for `D = 365`. Report the result.
+
+**Verified against the real block** (days 244-328 at 16/day, `min=8 max=16 horizon=365`, block considered alone):
+
+| `--max-shift` | result |
+|---|---|
+| 14 (default) | **infeasible** — worst window `[230, 328]`: **1360 cards vs 980 slots, gap 380** |
+| 30 | infeasible — worst window `[214, 328]`: 1360 vs 1156, gap 204 |
+| 60 | feasible |
+| **minimum feasible** | **48 days** |
+
+That 48 is a **lower bound**: it considers the block in isolation, and the rest of the deck can only raise it. The area under `T` across the block is 826 against 1360 cards actually there — the shortfall is structural, not marginal.
+
+**Acceptance criteria**
+- Reproduces the table above exactly for the block distribution: infeasible at 14 with worst window `[230, 328]` / `(1360, 980)`, infeasible at 30, feasible at 60, minimum feasible **48**.
+- With `max_shift=None`, the check reduces to the 6.1 prefix condition — assert identical results on the `[0,40,2,0,25,1]` case, including `binding_prefix == (2, 40, 32)`.
+- Monotonicity: feasibility never flips from true back to false as `max_shift` increases (the property bisection depends on).
+- `D(D+1)/2` window evaluations with prefix sums (66,795 at `D = 365`), not a cubic scan: a 365-day window completes well within a normal test run.
+- The report names the **worst** window (largest gap), not merely the first violated one.
+- **The two callers are distinguishable by test.** On the 6.1 counterexample (window `1..10`, `min=8 max=16 --sliding`, 46 cards of origin `<= 3`): the hard caller returns **no violations** (46 <= 48) while the shape caller returns one (46 > 45). A single shared result for both is the B25 regression.
+
+**Test approach — oracle: `new contract tests`.**
+
+---
+
+#### 6.5: CLI surfaces — `--range`, `--sliding`, and the `anki-due-stats` command
+
+**File scope**
+- `libs/python/anki-tools/anki_tools/rebalance_due.py` (the `--range`, `--sliding` / `--strict-sliding` flags; the adapter-side slice in `collect_cards`)
+- `libs/python/anki-tools/anki_tools/due_stats.py` (**new**)
+- `libs/python/anki-tools/tests/test_due_stats.py` (**new — must be created in THIS subphase**)
+- `libs/python/anki-tools/tests/test_rebalance_due.py`
+- `libs/python/anki-tools/package.json` (one new `bin` entry)
+
+**`smart-test.sh` pairing applies again.** `due_stats.py` is a new non-test `.py`, so `tests/test_due_stats.py` must land in the same packet or the first write hard-blocks (the rule from 3.1). `package.json` is the 1.1 manifest touchpoint, edited here only to add one `bin` entry.
+
+**Structural decision — sliding is a FLAG, stats is a COMMAND** (DP-A). `--sliding` is a different *target shape* for the same operation: same deck argument, same `--dry-run`/`--yes`/`--max-shift`/`--set-earlier`/`--backup-dir` semantics, same output format. A sibling command would duplicate ten flags and need every future safety flag added twice. Default off, so the simple version is untouched. `anki-due-stats` **is** its own command because it is a genuinely different operation — read-only, no planning, no writes, no prompt — and is exactly the *"other tools/sh commands"* the user asked for.
+
+**`--range LO-HI` — the day-offset window.** Parsed like Anki's set-due-date syntax, on the user's own `8-30` string form:
+
+- **Accepted forms:** `LO-HI` (e.g. `8-30`) and a bare `N` (e.g. `12`), which means `N-N` — a legal, degenerate single-day window.
+- **Validation**, each with its own `parser.error(...)` message: both parts integers; `LO >= 1` (so D2 holds structurally — the range can never reach today or the past); `HI >= LO`.
+- **Conversion at this boundary:** `start_day = today + LO`, `end_day = today + HI`, passed to `plan_rebalance(..., end_day=…)`. The core works in absolute days; `LO`/`HI` stay offsets everywhere the user sees them (6.2).
+- **Mutually exclusive with `--start-offset`**, which sets the window start by itself — supplying both is a usage error, not a silent precedence rule. Use argparse's mutually-exclusive group so `--help` shows it.
+- **Adapter-side slice:** `collect_cards` gains the upper bound, admitting a card only when `start_day <= card.due <= end_day`. Out-of-range cards are counted in the skip report under their own reason (`outside --range`) — **not** silently dropped, and not lumped in with the existing "already due or overdue" bucket.
+- **No range given** → `end_day=None` and the pre-range behaviour is reproduced exactly.
+
+**`anki-due-stats` accepts `--range` with identical parsing and semantics**, and reports on the slice: the totals, horizon, averages, feasible ranges, the required-vs-cap-achievable profile and the minimum feasible `--max-shift` are all computed over `[LO, HI]` alone. This is what lets the user inspect one region of the deck before deciding whether to touch it.
+
+**Histogram** renders the slice only, printing the offsets as-is — they are already day offsets, so no conversion and no relabelling (this is the same offset-vs-absolute distinction 6.1 fixes in the summary line).
+
+**`--sliding` requires both `--min` and `--max`** (the line needs both endpoints); `parser.error(...)` otherwise. Help text states that it replaces the flat band with a per-day target sliding from `max` at the window start to `min` at the horizon, and that `--max-shift` may prevent the shape from being reached.
+
+**`anki-due-stats DECK [--start-offset N] [--collection PATH] [--min N] [--max N] [--sliding]`** prints, from the same core functions:
+- total in-scope scheduled cards, horizon in days, first/last day of the window, average cards/day
+- the feasible flat `min`/`max` range, and the feasible sliding range
+- **the required vs cap-achievable profile** — per day-range, `T(d)` against what `--max-shift` actually permits, with the worst window and its gap
+- **the `--max-shift` value that WOULD make the sliding shape reachable**, from the bisection in 6.4, so the user can consciously weigh interval distortion against shape
+- when `--min`/`--max` are supplied, whether that pair is feasible in each mode, with the binding constraint and its arithmetic when not
+
+It opens read-only, writes nothing, takes no backup, and **exits 0 even when the deck is infeasible** — it is a report, not a gate. Register as `"anki-due-stats": "anki_tools/due_stats.py"`, mode 755, shebang-first, with the typed-except convention from 3.1.
+
+**Both rebalancer paths run the precheck before planning** and, on a hard failure, exit non-zero after the 6.1 backup is already taken. A sliding run that is merely cap-unreachable **proceeds** and reports `over_target_days` (DP-F).
+
+**Acceptance criteria**
+- `--range 8-30` parses to offsets `(8, 30)`; a bare `--range 12` parses to `(12, 12)`.
+- `--range 0-30`, `--range 30-8`, and `--range abc` each exit non-zero with a message naming the specific problem (`LO >= 1`, `HI >= LO`, malformed).
+- `--range 8-30 --start-offset 3` exits non-zero as a mutually-exclusive usage error, and `--help` shows the two as exclusive.
+- With `--range 8-30`, cards due outside that window are untouched, absent from the histogram, and reported in the skip summary under `outside --range`; the histogram covers exactly offsets 8..30.
+- `anki-due-stats <deck> --range 8-30` reports totals, horizon `D = 23`, and feasible ranges computed on the slice alone — verifiably different from the same command without `--range` on a deck with mass outside the window.
+- Omitting `--range` reproduces the pre-range output exactly.
+- `--sliding` without both `--min` and `--max` exits non-zero naming both.
+- `--sliding --min 8 --max 16 --dry-run` prints a histogram whose per-day targets descend from 16 to 8, and writes nothing.
+- A cap-unreachable `--sliding` run completes, reports `over_target_days` and the minimum feasible `--max-shift`, and does **not** raise; the same run with `--strict-sliding` exits non-zero.
+- Absent `--sliding`, the flat path is selected and behaves as before (regression check in 6.6).
+- `anki-due-stats <deck>` prints all five items, exits 0 on feasible and infeasible decks alike, writes nothing, creates no backup — assert the collection's mtime is unchanged.
+- On a block-shaped fixture, `anki-due-stats --sliding` names the worst window and a minimum feasible `--max-shift` in the tens of days, not single digits.
+- `due_stats.py` is mode 755, shebang-first, in `package.json` `bin`, with no `except Exception` and no `# noqa`.
+
+**Test approach — oracle: `new contract tests`.**
+
+---
+
+#### 6.6: Verification, including the default-mode regression guarantee
+
+**File scope** — no source edits; this subphase produces evidence.
+
+**The central check.** On a synthetic collection, the **default invocation's scheduling semantics must be identical pre- and post-phase**. Per the scoping at the head of this phase, this asserts on **moves and final card state, not captured stdout**.
+
+**The baseline is captured by 6.1 Work step (a)**, which copies the pre-phase sources to `<parent-worktree>/.artifacts/pre-phase6/` and writes `moves-F1.json`, `moves-F2.json`, `moves-F3.json` for the three pinned fixtures (F1 feasible flat, F2 reverse pass, F3 cap-blocked — all default mode). This subphase only *consumes* those files; if they are absent, 6.1 step (a) was skipped and the regression cannot be verified.
+
+**Acceptance criteria**
+- **Default-mode regression:** for each of F1, F2 and F3, the post-phase `{card_id: new_day}` mapping is **byte-identical** to the corresponding `moves-<fixture>.json` captured in step 1. Any difference is a blocking failure, not a discrepancy to explain away.
+- The three baseline JSON files exist in `<parent-worktree>/.artifacts/pre-phase6/` and are referenced by path in the exit report.
+- **Backup-first, end to end:** a fresh `.colpkg` exists in all three of `--dry-run`, a successful apply, and an `InfeasibleRebalance` exit; the collection is unchanged in the first and third.
+- **Precheck ordering:** an infeasible deck exits non-zero having planned no moves, with printed arithmetic matching the core's report.
+- **Sparse-deck hard fail (settled DP-B), end to end:** **30 cards spread across 365 days with `--min 8`** exits **non-zero**, writes nothing, creates **no backup**, and the message names the feasible `--min` (here `floor(30/365) == 0`, so the guidance must be to omit `--min` or narrow the window rather than to pass `--min 0`). This is the case that previously succeeded by compacting the queue; asserting the failure is the whole point of the ruling.
+- **The three documented escape routes work** on that same fixture: lowering `--min` to a feasible value, **omitting `--min` entirely** (max-only, no lower check), and `--range`-slicing to a window whose density clears the bound — each completes without a precheck failure.
+- **Sliding end to end:** every day at or under the **hard** `max`; days above `T(d)` reported in `over_target_days`; `--max-shift` respected; no card on today or earlier.
+- **Range containment end to end:** with `--range 8-30` on a fixture holding cards on both sides of the window, every card outside is byte-for-byte unchanged, no move lands outside offsets 8..30 in either direction, and the reported horizon is 23 days.
+- **Range + `--set-earlier`:** excess that cannot be absorbed by offset 30 exits non-zero as `InfeasibleRebalance` naming the offending days — the horizon does **not** extend past 30.
+- **Range + `--sliding`:** `T(d)` ramps from `max` at offset 8 to `min` at offset 30, and the cap-aware check is computed on the slice.
+- **Range + `--max-shift`:** a card due at offset 10 with a 14-day budget lands no earlier than offset 8, never offset 1.
+- **Cap-reachability end to end:** a block-shaped fixture reproduces the 6.4 finding — infeasible-to-shape at `--max-shift 14`, reachable at the reported minimum.
+- **`anki-due-stats` end to end:** read-only, output matches the core for the same inputs, exit 0 either way.
+- **No new lint findings** versus the Phase 1 Step 0 baselines; full pytest suite green with the count reported.
+- Manual `anki-due-stats programming::coding` and `--sliding --dry-run` against the **real** collection with Anki closed, both pasted into the exit report. **Dry-run and read-only only — no writes to the user's real collection as part of the build.**
+
+**Test approach — oracle: `equivalence check`** for the default-mode regression; `existing suite` for the lint and pytest gates.
+
+---
+
 ## Risks and settled decisions
 
 ### Risks
@@ -793,7 +1337,7 @@ Repo-wide behaviour is **unchanged**, with exactly one addition: add **`.workflo
 
 ### Settled decisions (all closed — do not re-open)
 
-Every decision point this plan raised has been answered by the user. They are recorded here as constraints, and the subphases above already encode them. The identifiers are kept so the review history stays traceable.
+Every decision point this plan raised has been answered by the user — the original D1-D9 at the first plan gate, and DP-A through DP-F across the Phase 6 gate rounds. **There are no open decisions.** They are recorded here as constraints, and the subphases above already encode them. The identifiers are kept so the review history stays traceable.
 
 | # | Decision | Settled as | Encoded in |
 |---|---|---|---|
@@ -809,6 +1353,12 @@ Every decision point this plan raised has been answered by the user. They are re
 | **D7** | Write safety | **Backup (`.colpkg`) + plan summary + `y/N` confirm** before writing; `--yes` skips the prompt. | 3.2, 3.3 |
 | **D8** | Test infrastructure | **Contained pytest in the package** — dev dependency plus `[tool.pytest.ini_options]` in `pyproject.toml` and a local `test` script. No shared `py-test` script. | 1.1 |
 | **D9** | `anki` pin | **Exact `anki = "24.06.3"`** (the lock normalizes it to `24.6.3`; that is correct, not a bug). | 1.1 |
+| **DP-B** | Feasibility precheck severity | **Hard-fail BOTH sides, no escape flag.** `avg > max` and `avg < min` — and their prefix/Hall refinements — each hard-fail **before backup and planning**, printing the arithmetic and a suggested feasible `--min`/`--max`. **There is no `--skip-precheck`.** *User's rationale, recorded:* the strict mental model is preferred — if the numbers do not fit, do not run. Sparse-deck consolidation is reached by lowering `--min`, by **omitting `--min`** (a max-only run has no lower check at all), or by slicing with `--range`. | 6.1, 6.6 |
+| **DP-F** | Cap-unreachable sliding shape | **Option 1 — best-effort + report, as the DEFAULT.** Apply the sliding shape as far as `--max-shift` allows, leave the unreachable region above `T(d)`, and report `over_target_days` plus the minimum feasible `--max-shift`. **Never fails on shape alone.** The other two routes stay explicitly reachable and are what the stats command's reporting exists to make *informed choices rather than discoveries*: a larger `--max-shift` (~48+ for the real block, or `none`) achieves the shape at the cost of real interval distortion on mature cards; `--set-earlier` flattens the block by spilling it later, at the cost of moving cards further away. `--strict-sliding` remains the shape-or-fail escape for anyone who wants the opposite default. | 6.3, 6.4, 6.5 |
+| **DP-A** | Sliding surface | **Flag (`--sliding`) on the existing command**, not a sibling command — a sibling would duplicate ten flags and need every future safety flag added twice. `anki-due-stats` *is* its own command, being a genuinely different (read-only) operation. `due_plan.py` is not forked either way. | 6.5 |
+| **DP-C** | Window (Hall) condition in the precheck | **Included.** On the plan's own flagship infeasible distribution the global average check passes while the window check catches it; omitting it would ship a precheck that clears inputs the planner then refuses. Hard leg uses `max_per_day` capacity; the `T(d)`-fed variant is informational only (B25). | 6.1, 6.4 |
+| **DP-D** | Rounding for `T(d)` | **`floor(x + 0.5)`**, explicitly not Python's banker's `round()`, which would make the line depend on parity. | 6.3 |
+| **DP-E** | Scope of the "unchanged default behaviour" guarantee | **Scheduling semantics, not stdout** — identical `(card_id → new_day)` move sets and final collection state. Not literal output equality, because this phase's own cosmetic fixes intentionally change printed text. | 6.1 (a), 6.6 |
 
 Also settled earlier in the gate, and equally closed:
 
