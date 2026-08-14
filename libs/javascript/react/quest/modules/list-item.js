@@ -1,4 +1,4 @@
-import anime from '../anime/lib/anime.es.js';
+import anime from 'animejs';
 
 export let animateLI = () =>{
   let top = document.querySelector(".top-throbber").getBoundingClientRect(),
