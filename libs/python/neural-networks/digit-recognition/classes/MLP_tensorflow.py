@@ -8,7 +8,7 @@ from abstract_base_classes.ann_shell import ANN_Shell
 
 class Digit_Recognition_MLP(ANN_Shell):
 	def __init__(self):
-		self.model = load_model(l) if os.path.isfile(l) else self.build() 
+		self.model = load_model(self.model_location) if os.path.isfile(self.model_location) else self.build()
 
 	def build(self, imageSize=[28, 28], layers=2):
 		model = Sequential([
