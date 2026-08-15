@@ -40,6 +40,7 @@ from anki_tools.due_plan import (
     check_feasibility,
     check_hard_feasibility,
     constant_targets,
+    fit_target_line,
     max_move_order,
     may_move_later_to,
     may_move_to,
@@ -1161,10 +1162,15 @@ def test_sliding_reachable_distribution_ends_with_empty_over_target_days():
         max_shift=None,
         sliding=True,
     )
+    # 80 cards over 5 days cannot fit under the RAW 16..8 ramp (capacity 60),
+    # so plan_rebalance sizes the ramp to the supply first (fit_target_line).
+    # Assert against the fitted line — asserting against the raw one would
+    # demand the planner discard 20 cards.
+    raw = build_target_line(1, result.end_day, 8, 16)
+    fitted = fit_target_line(raw, len(cards), 16)
     for day in range(1, result.end_day + 1):
         assert result.after.get(day, 0) <= 16
-        target = build_target_line(1, result.end_day, 8, 16)
-        assert result.after.get(day, 0) <= target[day] or day in (
+        assert result.after.get(day, 0) <= fitted[day] or day in (
             result.over_target_days
         )
 

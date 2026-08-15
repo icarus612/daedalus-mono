@@ -56,8 +56,7 @@ def test_range_ceiling_refusal_is_not_reported_as_shift_cap():
             end_day=3,
         )
     assert exc.value.reason == "range ceiling", (
-        "a run bounded by --range must not blame --max-shift; "
-        f"got {exc.value.reason!r}"
+        f"a run bounded by --range must not blame --max-shift; got {exc.value.reason!r}"
     )
 
 
@@ -116,3 +115,38 @@ def test_sliding_short_day_marker_does_not_claim_below_min():
     assert "below --min" in flat
     assert "below --min" not in ramp
     assert "under ramp target" in ramp
+
+
+def test_ramp_is_sized_to_the_deck_so_surplus_never_piles_at_the_tail():
+    """A deck larger than the raw ramp must not dump its surplus on one edge.
+
+    Cards only ever move earlier, so when every day already sits exactly on
+    the ramp there is nowhere legal to put the excess and it stays where it
+    originated — in practice the far tail, where year-interval cards live.
+    That produced a wall of max-height days at the end of the year. The ramp
+    is now sized to the deck first, spreading the shortfall a card at a time
+    across evenly-spaced days.
+    """
+    from anki_tools.due_plan import build_target_line, fit_target_line
+
+    raw = build_target_line(1, 364, 8, 16)
+    total = 4391  # more than the raw ramp's 4368 slots
+    fitted = fit_target_line(raw, total, 16)
+
+    assert sum(raw.values()) < total, "fixture must actually overflow the ramp"
+    assert sum(fitted.values()) >= total
+    assert max(fitted.values()) <= 16, "the hard --max is never exceeded"
+    assert fitted[1] == raw[1] and fitted[364] == raw[364], "endpoints preserved"
+    # Every day stays within one card of the ramp — "roughly on the line".
+    assert all(fitted[d] - raw[d] <= 1 for d in raw)
+    # The additions are spread out, not clustered at either edge.
+    bumped = [d for d in raw if fitted[d] > raw[d]]
+    assert len(bumped) == total - sum(raw.values())
+    assert max(bumped) - min(bumped) > 300, "spread across the window"
+
+
+def test_fit_target_line_is_a_noop_when_the_ramp_already_fits():
+    from anki_tools.due_plan import build_target_line, fit_target_line
+
+    raw = build_target_line(1, 364, 8, 16)
+    assert fit_target_line(raw, 1000, 16) == raw

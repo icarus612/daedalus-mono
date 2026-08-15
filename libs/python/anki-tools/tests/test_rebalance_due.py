@@ -1761,11 +1761,18 @@ def test_e2e_sliding_without_either_min_or_max_exits_nonzero_naming_both_flags(
 def test_e2e_cap_unreachable_sliding_completes_and_reports_over_target_days(
     tmp_path, monkeypatch, capsys
 ):
-    # Block-shaped fixture verified directly against due_plan before writing
-    # this test: 10 days at 6 cards/day, min=2 max=6 max_shift=2 --sliding
-    # reports feasible=True, shape_reachable=False, over_target_days
-    # non-empty (days 3-10), and plan_rebalance does NOT raise -- DP-F's
-    # best-effort default (contract lines 1598-1600 / plan.md line 1284).
+    # Cap-unreachable fixture: 6 cards/day on the LAST 10 days of a 20-day
+    # window, min=2 max=6 max_shift=2 --sliding. The ramp has ample capacity
+    # (~80 slots for 60 cards) so fit_target_line leaves it alone; what
+    # blocks the shape is the 2-day leash, which cannot carry the back-half
+    # excess into the empty front half. That is the case DP-F's best-effort
+    # default exists for: plan_rebalance completes and reports
+    # over_target_days rather than raising.
+    #
+    # The original fixture packed 60 cards into 10 days against a ramp
+    # holding only 40; once the planner started sizing the ramp to the deck,
+    # that became capacity-blocked (fitted flat at max, nothing over target)
+    # rather than cap-blocked, so it no longer exercised this path.
     col_path = os.path.join(str(tmp_path), "test.anki2")
     col = Collection(col_path)
     coding_id = col.decks.id("programming::coding")
@@ -1774,7 +1781,7 @@ def test_e2e_cap_unreachable_sliding_completes_and_reports_over_target_days(
 
     origin_by_id = {}
     ivl_by_id = {}
-    for offset in range(10):
+    for offset in range(10, 20):
         for i in range(6):
             card = _add_card(col, coding_id, due=start_day + offset, ivl=10 + i)
             origin_by_id[card.id] = card.due
@@ -1841,7 +1848,10 @@ def test_e2e_cap_unreachable_sliding_with_strict_flag_exits_nonzero_and_writes_n
     start_day = today + 1
 
     ids = []
-    for offset in range(10):
+    # Same cap-blocked shape as the non-strict test above: cards on the
+    # back half of a 20-day window, unreachable under a 2-day leash. The
+    # ramp itself has room, so the block is the cap, not capacity.
+    for offset in range(10, 20):
         for i in range(6):
             card = _add_card(col, coding_id, due=start_day + offset, ivl=10 + i)
             ids.append(card.id)

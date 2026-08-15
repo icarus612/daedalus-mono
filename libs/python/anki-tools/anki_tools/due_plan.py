@@ -99,8 +99,7 @@ def build_buckets(
     for card in cards:
         if card.day < start_day:
             raise ValueError(
-                f"card {card.card_id} has day {card.day}, "
-                f"before start_day {start_day}"
+                f"card {card.card_id} has day {card.day}, before start_day {start_day}"
             )
         if end_day is not None and card.day > end_day:
             raise ValueError(
@@ -276,6 +275,49 @@ def build_target_line(
     return line
 
 
+def fit_target_line(
+    line: dict[int, int], total_cards: int, max_per_day: int
+) -> dict[int, int]:
+    """Raise a ramp until it can actually hold `total_cards`.
+
+    A ramp from max down to min holds roughly span * (max + min) / 2 cards.
+    When the deck holds MORE than that, the shape pass has nowhere legal to
+    put the surplus: every day is already at its target, so the excess stays
+    wherever it originated. In practice that means it lands on the far tail
+    (year-interval cards originate there and can only move earlier), which
+    reads as a wall of max-height days at the end of the year - the exact
+    thing the ramp exists to prevent.
+
+    Spreading the shortfall EVENLY is what keeps the result "as close to the
+    ramp as possible": distribute the deficit one card at a time across
+    evenly-spaced days, never exceeding the hard `max_per_day`, so the slope
+    is preserved and the surplus is invisible rather than piled in one place.
+
+    Returns the line unchanged when it already has the capacity.
+    """
+    days = sorted(line)
+    capacity = sum(line[d] for d in days)
+    deficit = total_cards - capacity
+    if deficit <= 0:
+        return line
+
+    fitted = dict(line)
+    # Rounds of evenly-spaced +1s. Each round walks every day that still has
+    # headroom under the hard cap, so growth stays proportional to the shape
+    # rather than front- or back-loading the surplus.
+    while deficit > 0:
+        headroom = [d for d in days if fitted[d] < max_per_day]
+        if not headroom:
+            break  # genuinely cannot fit under --max; caller reports it
+        step = max(1, len(headroom) // deficit) if deficit < len(headroom) else 1
+        for i in range(0, len(headroom), step):
+            if deficit <= 0:
+                break
+            fitted[headroom[i]] += 1
+            deficit -= 1
+    return fitted
+
+
 def _days_over_max(state: RunState, max_per_day: int) -> list[int]:
     return [
         d
@@ -373,8 +415,7 @@ def _check_post_conditions(
 
     if state.max_end_day is not None and state.end_day != state.max_end_day:
         raise AssertionError(
-            f"end_day {state.end_day} != max_end_day {state.max_end_day} "
-            "in range mode"
+            f"end_day {state.end_day} != max_end_day {state.max_end_day} in range mode"
         )
 
 
@@ -454,6 +495,10 @@ def plan_rebalance(
         target = build_target_line(
             state.start_day, state.end_day, min_per_day, max_per_day
         )
+        # Size the ramp to the deck before shaping. Without this the surplus
+        # has nowhere legal to go and accumulates at the tail.
+        in_scope = sum(len(state.buckets[d]) for d in state.buckets)
+        target = fit_target_line(target, in_scope, max_per_day)
         hard_ceiling = constant_targets(state.start_day, state.end_day, max_per_day)
         apply_shape_pass(state, target, hard_ceiling)
         apply_min_pass(state, target)
