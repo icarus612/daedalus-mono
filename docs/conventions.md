@@ -34,5 +34,5 @@ Note: the Tailwind v4 rule is aspirational as far as *this* repo goes — no Tai
 
 - One `README.md` per directory as the entry point; other files are lowercase kebab-case topic pages.
 - The docs tree mirrors the source tree: `apps/<x>` → `docs/apps/<x>`, `libs/<x>` → `docs/libs/<x>`.
-- Every in-project `README.md` that has a `/docs` counterpart is a **symlink** into it (`ln -sfr docs/... path/README.md`), except `libs/javascript/node/dots-js` — a git submodule whose own README is not owned by this repo and is deliberately left untouched.
+- Every in-project `README.md` that has a `/docs` counterpart is a **symlink** into it (`ln -sfr docs/... path/README.md`).
 - Directories with zero files (`apps/solid`, `apps/svelte`, `libs/golang/auth-go`) are documented as placeholders in `/docs` but have no file added to the empty directory itself, so they remain genuinely empty in the source tree.

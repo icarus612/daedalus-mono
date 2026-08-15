@@ -37,7 +37,6 @@ Because `turbo.json`'s `build` task has `dependsOn: ["^build"]`, `lib.bash.build
 
 - **Workspace-internal (declared)**: all Python apps/libs → `lib.bash.build-tools` (workspace devDependency).
 - **Cross-package via filesystem, not via workspace deps (fragile)**: `apps/flask/maze-runner/main.py` does `sys.path.insert(0, "../../../libs/python")` then imports `flask_utils.port_finder` and a local `modules.maze` — a raw relative-path import bypassing the package manager entirely. This dependency is invisible to pnpm/turbo's graph; renaming or moving `libs/python/flask_utils` would silently break the Flask apps without any workspace tooling noticing.
-- **External submodule**: `libs/javascript/node/dots-js` is a real git submodule (`.gitmodules` → `git@github.com:icarus612/dots-js.git`) of an independently published, versioned npm package (`v2.0.7` at time of writing) — not workspace-managed, and its own `README.md`/docs are not owned by this repo.
 - **Standalone leaves**: no package under `libs/javascript/*` or `libs/python/neural-networks/*` / `libs/python/tensorflow/*` depends on, or is depended on by, anything else in-repo.
 - **Go modules** are fully independent (`github.com/dae-go/<name>`); no intra-repo Go module dependencies exist between them.
 
