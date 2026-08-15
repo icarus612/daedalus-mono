@@ -132,18 +132,27 @@ def collect_cards(col, deck_ids, start_day, end_day=None):
     return cards
 
 
-def render_histogram(before, after, max_per_day, today, short_days):
+def render_histogram(before, after, max_per_day, today, short_days, sliding=False):
+    """Render the day-by-day plan.
+
+    `short_days` means different things per mode: in flat mode it is days
+    below --min, in sliding mode days below the ramp TARGET (due_plan's
+    _short_days is handed `target` there, not the min floor). Labelling both
+    "below --min" was wrong and alarming — a day holding 10 cards with
+    --min 8 is not below the minimum, it just missed the ramp.
+    """
     rule = "-" * 50
     lines = [rule, "Day offset | Before | After  | Note"]
     all_days = sorted(set(before) | set(after))
     short_days_set = set(short_days)
+    short_label = "  <- under ramp target" if sliding else "  <- below --min"
     for day in all_days:
         before_count = before.get(day, 0)
         after_count = after.get(day, 0)
         offset = day - today
         marker = ""
         if day in short_days_set:
-            marker = "  <- below --min"
+            marker = short_label
         if max_per_day is not None and after_count > max_per_day:
             marker = "  <- above --max"
         lines.append(f"{offset:>10} | {before_count:>6} | {after_count:>6}{marker}")
@@ -450,6 +459,7 @@ def main():
             args.max_per_day,
             today,
             result.short_days,
+            sliding=args.sliding,
         )
         print(histogram)
 
@@ -467,10 +477,12 @@ def main():
             )
 
         if result.short_days:
-            print(
-                "Days still below --min after the shift cap: "
-                + ", ".join(str(d - today) for d in result.short_days)
+            label = (
+                "Days under the sliding ramp target"
+                if args.sliding
+                else "Days still below --min after the shift cap"
             )
+            print(label + ": " + ", ".join(str(d - today) for d in result.short_days))
 
         if result.over_target_days:
             print(
@@ -482,6 +494,30 @@ def main():
                     f"A --max-shift of at least {report.min_feasible_max_shift} "
                     "would reach the full sliding shape."
                 )
+
+        # The ramp is a SOFT target: --min/--max are the hard bounds and are
+        # always honoured exactly, but the shape is best-effort by design
+        # (DP-F). Say so out loud when it was not fully met, so an imperfect
+        # ramp reads as "as close as the cap allows" rather than a failure.
+        # This lands directly above the existing y/N confirm, so it needs no
+        # new prompt and leaves --yes/--dry-run flows untouched.
+        if args.sliding and (result.short_days or result.over_target_days):
+            print()
+            print(
+                f"NOTE: the sliding ramp was not met exactly — "
+                f"{len(result.over_target_days)} day(s) above target, "
+                f"{len(result.short_days)} day(s) under it."
+            )
+            print(
+                "      Your --min/--max bounds ARE enforced exactly; only the "
+                "ramp shape is approximate."
+            )
+            if report.min_feasible_max_shift is not None:
+                print(
+                    f"      --max-shift {report.min_feasible_max_shift} or more "
+                    "would reach the full shape."
+                )
+            print()
 
         move_count = len(result.moves)
         print(f"{move_count} card(s) would move.")

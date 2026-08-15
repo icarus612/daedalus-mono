@@ -507,7 +507,18 @@ def test_render_histogram_no_longer_accepts_min_per_day():
     signature = inspect.signature(render_histogram)
     params = list(signature.parameters)
     assert "min_per_day" not in params
-    assert params == ["before", "after", "max_per_day", "today", "short_days"]
+    # `sliding` was added later so the short-day marker can say "under ramp
+    # target" in sliding mode instead of the wrong "below --min"; it is
+    # keyword-defaulted so existing 5-arg call sites stay valid.
+    assert params == [
+        "before",
+        "after",
+        "max_per_day",
+        "today",
+        "short_days",
+        "sliding",
+    ]
+    assert signature.parameters["sliding"].default is False
 
     # The old 6-positional-argument call shape must now raise TypeError.
     with pytest.raises(TypeError):

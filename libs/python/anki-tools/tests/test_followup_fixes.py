@@ -98,3 +98,21 @@ def test_sparse_deck_does_not_literally_suggest_min_zero():
     assert "Suggested --min: 0" not in out
     assert "omit --min" in out
     assert "--range" in out
+
+
+def test_sliding_short_day_marker_does_not_claim_below_min():
+    """In sliding mode `short_days` means "under the ramp target", not
+    "below --min" — due_plan hands _short_days the target line there. The
+    old wording alarmed users about days that were comfortably above their
+    minimum (a day of 10 with --min 8 was labelled below-min).
+    """
+    from anki_tools.rebalance_due import render_histogram
+
+    before = {100: 12}
+    after = {100: 10}
+    flat = render_histogram(before, after, 16, 90, [100], sliding=False)
+    ramp = render_histogram(before, after, 16, 90, [100], sliding=True)
+
+    assert "below --min" in flat
+    assert "below --min" not in ramp
+    assert "under ramp target" in ramp
