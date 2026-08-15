@@ -469,7 +469,7 @@ def main():
         if result.short_days:
             print(
                 "Days still below --min after the shift cap: "
-                + ", ".join(str(d) for d in result.short_days)
+                + ", ".join(str(d - today) for d in result.short_days)
             )
 
         if result.over_target_days:

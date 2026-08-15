@@ -7,7 +7,10 @@ libs/golang/*/bin/
 # Stray tracked Go binary at a non-bin/ path (C10)
 libs/golang/process-monitor/main
 
-.claude
+.claude/*
+# ...but the project's own Claude config is shared, not personal: it declares
+# this repo's base branch (main), which the workflow hooks read.
+!.claude/settings.json
 *storybook.log
 storybook-static
 
@@ -39,3 +42,6 @@ pip-delete-this-directory.txt
 
 # dae-pipeline run dirs, inside each worktree
 .artifacts/
+
+# dae-pipeline worktrees (workflow-setup.sh)
+.workflows/

@@ -21,7 +21,7 @@ A grab-bag of small standalone scripts for working with the Anki spaced-repetiti
 - `anki_tools/rebalance_due.py` — CLI that resolves a deck against a real Anki collection and applies `due_plan`'s result. See below.
 - `anki_tools/due_stats.py` — read-only CLI that reports `due_plan`'s feasibility/shape analysis for a deck without planning or writing anything. See below.
 - `package.json` `bin` entries: `anki-build-deck`, `anki-get-deck-info`, `anki-mp3-filename-update`, `anki-rebalance-due`, `anki-due-stats`.
-- `tests/test_due_plan.py`, `tests/test_rebalance_due.py`, `tests/test_due_stats.py` — pytest suites, 189 tests total.
+- `tests/test_due_plan.py`, `tests/test_rebalance_due.py`, `tests/test_due_stats.py`, `tests/test_followup_fixes.py` — pytest suites, 192 tests total.
 
 ## `anki-rebalance-due`
 
@@ -143,7 +143,7 @@ anki-due-stats programming::coding --min 8 --max 16 --sliding
 
 ## Testing
 
-`tests/test_due_plan.py`, `tests/test_rebalance_due.py`, and `tests/test_due_stats.py` — 189 tests total (pytest, run via `uv run --group dev pytest` inside this package, or `pnpm --filter lib.python.anki-tools test` from the repo root). The `due_plan` suite is table-driven, hand-built distributions asserting on move counts and card *identity* (not just final counts) for the one-day-cascade and untouched-first-selection rules, plus the feasibility precheck, the sliding target line, and the cap-aware reachability bisection. The `rebalance_due` suite drives a synthetic temporary Anki collection end to end — subdeck inclusion, skip-report correctness, real (non-dry-run) apply, `--dry-run` no-op, `--set-earlier` rescue, `--max-shift` capping, `--range` containment, `--sliding`/`--strict-sliding`, and default-mode infeasibility (both the precheck failure and a mid-plan `InfeasibleRebalance`) leaving the real collection byte-for-byte unchanged, with backup presence asserted differently for each failure mode. `test_due_stats.py` covers the read-only report end to end, including that it never creates a backup or changes the collection's mtime. No test opens the user's real collection.
+`tests/test_due_plan.py`, `tests/test_rebalance_due.py`, `tests/test_due_stats.py`, and `tests/test_followup_fixes.py` — 192 tests total (pytest, run via `uv run --group dev pytest` inside this package, or `pnpm --filter lib.python.anki-tools test` from the repo root). The `due_plan` suite is table-driven, hand-built distributions asserting on move counts and card *identity* (not just final counts) for the one-day-cascade and untouched-first-selection rules, plus the feasibility precheck, the sliding target line, and the cap-aware reachability bisection. The `rebalance_due` suite drives a synthetic temporary Anki collection end to end — subdeck inclusion, skip-report correctness, real (non-dry-run) apply, `--dry-run` no-op, `--set-earlier` rescue, `--max-shift` capping, `--range` containment, `--sliding`/`--strict-sliding`, and default-mode infeasibility (both the precheck failure and a mid-plan `InfeasibleRebalance`) leaving the real collection byte-for-byte unchanged, with backup presence asserted differently for each failure mode. `test_due_stats.py` covers the read-only report end to end, including that it never creates a backup or changes the collection's mtime. No test opens the user's real collection.
 
 ## Notes
 

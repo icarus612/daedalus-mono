@@ -58,8 +58,10 @@ class RebalanceResult:
 class InfeasibleRebalance(Exception):
     """Raised when --max cannot be satisfied without violating the earlier-only
     invariant and set_earlier is False (or, in the set_earlier=True case, the reverse
-    pass still leaves days over max - a bug signal). Carries the offending days, their
-    counts, and the reason (sink overflow vs shift cap vs sliding target)."""
+    pass still leaves days over max - typically because --range's ceiling refuses
+    the reverse pass, or a bug signal if no --range was given). Carries the
+    offending days, their counts, and the reason (sink overflow vs shift cap vs
+    range ceiling vs sliding target)."""
 
     def __init__(self, days: list[int], counts: dict[int, int], reason: str) -> None:
         self.days = days
@@ -282,9 +284,26 @@ def _days_over_max(state: RunState, max_per_day: int) -> list[int]:
     ]
 
 
-def _infeasible_reason(state: RunState, over_max: Sequence[int]) -> str:
+def _infeasible_reason(
+    state: RunState, over_max: Sequence[int], reverse_pass_used: bool = False
+) -> str:
+    """Distinguishes the three ways --max can remain unsatisfied.
+
+    "sink overflow": start_day itself is still over max_per_day - nowhere
+    earlier to push excess cards.
+    "range ceiling": only reachable once the reverse pass has run
+    (`reverse_pass_used`) - apply_reverse_max_pass is gated purely by
+    `may_move_later_to`/`max_end_day`, never by max_shift, so excess left
+    over after it ran was refused by --range's window ceiling, not by
+    --max-shift.
+    "shift cap": the earlier-only apply_max_pass left excess in place
+    because `may_move_to`'s max_shift gate blocked every candidate - the
+    only case reachable before any reverse pass has run.
+    """
     if state.start_day in over_max:
         return "sink overflow"
+    if reverse_pass_used and state.max_end_day is not None:
+        return "range ceiling"
     return "shift cap"
 
 
@@ -426,7 +445,7 @@ def plan_rebalance(
                 raise InfeasibleRebalance(
                     over_max,
                     {d: len(state.buckets[d]) for d in over_max},
-                    _infeasible_reason(state, over_max),
+                    _infeasible_reason(state, over_max, reverse_pass_used),
                 )
 
     if sliding:

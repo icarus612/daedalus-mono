@@ -1,0 +1,71 @@
+name: Test Python
+
+# Lint Python (ruff) deliberately installs no package dependencies — linting
+# never imports the code. Running tests does, so this is a separate workflow
+# with a real uv install rather than extra steps bolted onto the lint job.
+#
+# It runs `pnpm test` through turbo, so every Python workspace package that
+# declares a `test` script is covered automatically as new ones appear; there
+# is no per-package list to keep in sync here.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/flask/**'
+      - 'apps/microservices/**'
+      - 'libs/python/**'
+      - 'libs/bash/build-tools/**'
+      - 'uv.lock'
+      - 'pyproject.toml'
+      - '.python-version'
+      - 'pnpm-workspace.yaml'
+      - '.github/workflows/test-python.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/flask/**'
+      - 'apps/microservices/**'
+      - 'libs/python/**'
+      - 'libs/bash/build-tools/**'
+      - 'uv.lock'
+      - 'pyproject.toml'
+      - '.python-version'
+      - 'pnpm-workspace.yaml'
+      - '.github/workflows/test-python.yml'
+  workflow_dispatch:
+
+jobs:
+  test-python:
+    name: Test Python (pytest)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: '.python-version'
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # py-test is a no-op in packages without a tests/ directory, so this is
+      # safe to run across the whole workspace.
+      - name: Run Python test suites
+        run: pnpm test --filter './libs/python/*' --filter './apps/flask/*' --filter './apps/microservices/*'
