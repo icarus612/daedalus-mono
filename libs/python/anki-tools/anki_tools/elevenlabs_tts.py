@@ -11,20 +11,35 @@ Shape follows `web_crawlers/anki_scrapers/text_to_speech/basic_google_TTS.py`
 `anki_tools/rebalance_due.py` for the `argparse` CLI conventions
 (`build_parser()` kept separate from `main()` so both are testable).
 
-Voices (D5, settled): the account's three Russian voices, verified live via
-`GET /v2/voices`. The other ~21 voices on the account are premade English
-and must never be used here.
+Voices: the account is on a paid plan and has five verified Russian voices
+(`GET /v2/voices`); the other ~21 voices on the account are premade English
+and must never be used here. The default ROSTER is four of the five, one
+per "slot" -- the slot, not the voice name, is the filename identity:
 
-    Elen Kuragina - Golden & Dangerous   (female)
-    Mishka Yaponcik - Odessa Rogue Charm (male)
-    Nester Surovy - Gravely yet Refined  (male)
+    f1  Alisa - Natural Russian Female
+    f2  Elena Gromova - Podcasts & Conversation
+    m1  Mishka Yaponcik - Odessa Rogue Charm
+    m2  Nester Surovy - Gravely yet Refined
+
+A fifth voice, Elen Kuragina ("Golden & Dangerous"), is a character voice
+displaced from the default roster by the two clearer female voices above;
+it stays defined in this module (see `ELEN_KURAGINA`) for explicit,
+non-default use, and is never included in `VOICES`/`ALL_VOICES` iteration
+by default.
+
+Every synthesis call sends a `voice_settings` object (`stability`,
+`similarity_boost`, both 0.0-1.0 per ElevenLabs' API, default 0.85/0.85).
+Out-of-range values RAISE rather than clamp -- a typo like `85` instead of
+`0.85` must fail loudly, never silently coerce into something that looks
+plausible.
 
 THE HARD COST LIMIT -- the strictest reading, not the convenient one: a
-default run produces exactly ONE `.mp3`. One word, one voice (the first of
-the three, Elen Kuragina), one request. Two independent opt-ins widen it,
-and neither implies the other:
+default run produces exactly ONE `.mp3`. One word, one voice (the first
+slot, `f1`/Alisa), one request. Two independent opt-ins widen it, and
+neither implies the other:
 
-  --all-voices   the same word(s), across all three voices instead of one.
+  --all-voices   the same word(s), across all four roster voices instead
+                 of one.
   --all/--count  more than one word from --file, still one voice unless
                  --all-voices is ALSO given.
 
@@ -36,11 +51,21 @@ anything. There is no default that lets a caller -- CLI, `build_and_save`,
 it is allowed to make; exceeding the declared budget raises
 `BudgetExceededError` instead of silently proceeding, regardless of how the
 word/voice lists upstream were constructed.
+
+Filenames are `<word>_<slot>.mp3` (e.g. `около_f1.mp3`) -- readable, no
+hash suffix. This is safe ONLY because it has been verified collision-free
+against the real 152-row source word list (see
+`test_slug_collision_free_across_real_source_word_list`); the one
+"collision" that DOES occur ("да", appearing twice with identical text
+under two different parts of speech) is a genuine duplicate, not a
+collision, and correctly shares one file. If the source list ever grows to
+include two genuinely DIFFERENT strings that sanitize to the same slug,
+that must be reported and resolved explicitly -- never silently patched by
+re-adding a hash to every filename.
 """
 
 import argparse
 import functools
-import hashlib
 import json
 import os
 import re
@@ -73,13 +98,19 @@ DEFAULT_TIMEOUT = 30  # seconds, per HTTP request
 DEFAULT_WORD_LIMIT = 1
 
 # And, independently, exactly one voice per word by default. Requesting the
-# other two is the SEPARATE --all-voices opt-in -- it must never be implied
-# by --all/--count, and vice versa.
+# other three is the SEPARATE --all-voices opt-in -- it must never be
+# implied by --all/--count, and vice versa.
 DEFAULT_VOICE_LIMIT = 1
 
 # Anything above this many total requests (words x voices) requires either
 # --yes or an interactive confirmation before a single request is issued.
 CONFIRM_ABOVE_REQUESTS = 1
+
+# ElevenLabs' `voice_settings.stability`/`similarity_boost`, both in
+# [0.0, 1.0]. 0.85/0.85 is a safely mid-range default per the user's
+# direction; NEVER clamped -- see `validate_voice_setting`.
+DEFAULT_STABILITY = 0.85
+DEFAULT_SIMILARITY_BOOST = 0.85
 
 DEFAULT_MAX_ATTEMPTS = 5
 DEFAULT_INITIAL_BACKOFF = 1.0
@@ -130,7 +161,7 @@ class TransientServerError(_RetryableTTSError):
 
 
 # ---------------------------------------------------------------------------
-# Voices (D5)
+# Voices
 # ---------------------------------------------------------------------------
 
 
@@ -140,35 +171,87 @@ class Voice:
     voice_id: str
     slug: str
     gender: str
+    slot: str  # the filename identity -- f1/f2/m1/m2 (or f0 for the retired
+    # non-default Elen Kuragina). Must be unique across any roster this
+    # module iterates; see `_check_unique_slots` below.
 
 
 VOICES: tuple = (
-    # Elen Kuragina - Golden & Dangerous (female)
+    # f1: Alisa - Natural Russian Female
     Voice(
-        name="Elen Kuragina - Golden & Dangerous",
-        voice_id="TPIitICAZ8CqlGZ81AKm",
-        slug="elen-kuragina",
+        name="Alisa - Natural Russian Female",
+        voice_id="t6lBrEl93uCiLR1Lgm8v",
+        slug="alisa",
         gender="female",
+        slot="f1",
     ),
-    # Mishka Yaponcik - Odessa Rogue Charm (male)
+    # f2: Elena Gromova - Podcasts & Conversation
+    Voice(
+        name="Elena Gromova - Podcasts & Conversation",
+        voice_id="0ArNnoIAWKlT4WweaVMY",
+        slug="elena-gromova",
+        gender="female",
+        slot="f2",
+    ),
+    # m1: Mishka Yaponcik - Odessa Rogue Charm
     Voice(
         name="Mishka Yaponcik - Odessa Rogue Charm",
         voice_id="RLRdvNFwJJct2XZOgfzy",
         slug="mishka-yaponcik",
         gender="male",
+        slot="m1",
     ),
-    # Nester Surovy - Gravely yet Refined (male)
+    # m2: Nester Surovy - Gravely yet Refined
     Voice(
         name="Nester Surovy - Gravely yet Refined",
         voice_id="pM78bgjPVk0JXtaEnFoj",
         slug="nester-surovy",
         gender="male",
+        slot="m2",
     ),
 )
 
+# A character voice, displaced from the default roster by the two clearer
+# female voices above -- kept defined, never deleted, for explicit,
+# non-default use only (never iterated by `VOICES`, `DEFAULT_VOICES`, or
+# `--all-voices`). Given its own slot ("f0") so it still composes cleanly
+# with the `[word]_[slot].mp3` filename scheme if a caller opts into it
+# directly.
+ELEN_KURAGINA = Voice(
+    name="Elen Kuragina - Golden & Dangerous",
+    voice_id="TPIitICAZ8CqlGZ81AKm",
+    slug="elen-kuragina",
+    gender="female",
+    slot="f0",
+)
+
+# Every voice this module knows about, default roster plus the retired one.
+ALL_VOICES: tuple = VOICES + (ELEN_KURAGINA,)
+
+
+def _check_unique_slots(voices: Sequence[Voice]) -> None:
+    """Make it structurally impossible for two voices to share a slot.
+
+    The slot is the filename identity now (`build_filename` uses
+    `voice.slot`, not `voice.slug`), so a duplicate slot would silently
+    make two different voices overwrite each other's files. Raises
+    `ValueError` -- not a bare `assert`, which `python -O` would strip --
+    so this check cannot be silently disabled.
+    """
+    slots = [v.slot for v in voices]
+    if len(slots) != len(set(slots)):
+        dupes = sorted({s for s in slots if slots.count(s) > 1})
+        raise ValueError(f"Voice roster has duplicate slot(s): {dupes}")
+
+
+# Runs at import time: a future edit that introduces a duplicate slot
+# breaks the whole module immediately, not just whichever code path
+# happens to hit it first.
+_check_unique_slots(ALL_VOICES)
+
 # The default voice touched when the caller doesn't opt into --all-voices --
-# always the first of the three, Elen Kuragina. Trivially widened to the
-# full roster by passing `voices=VOICES` explicitly (direct import) or
+# always the first roster slot, f1/Alisa. Trivially widened to the full
+# roster by passing `voices=VOICES` explicitly (direct import) or
 # `--all-voices` (CLI); never the other way around.
 DEFAULT_VOICES: tuple = VOICES[:DEFAULT_VOICE_LIMIT]
 
@@ -242,8 +325,31 @@ def get_api_key() -> str:
     return api_key
 
 
+def validate_voice_setting(name: str, value) -> None:
+    """Raise if `value` is outside ElevenLabs' accepted [0.0, 1.0] range for
+    `stability`/`similarity_boost`.
+
+    Deliberately RAISES rather than clamps: silently coercing an
+    out-of-range value (e.g. clamping `85` to `1.0`) would make a `0.85`-vs-
+    `85` typo look like it worked while actually sending the wrong voice
+    setting to every request. A typo here must fail loudly, before any
+    network call, not get "fixed" into something that looks plausible.
+    """
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(f"{name} must be a number in [0.0, 1.0], got {value!r}")
+    if not (0.0 <= value <= 1.0):
+        hint = ""
+        if 1.0 < value <= 100.0:
+            hint = f" (did you mean {value / 100.0}?)"
+        raise ValueError(
+            f"{name} must be between 0.0 and 1.0 -- the range ElevenLabs' "
+            f"API accepts -- got {value!r}{hint}. This is never clamped: a "
+            f"typo like 85 instead of 0.85 must fail loudly."
+        )
+
+
 # ---------------------------------------------------------------------------
-# Filename sanitization -- deterministic and collision-free
+# Filename sanitization -- readable, verified collision-free
 # ---------------------------------------------------------------------------
 
 # Cyrillic letters, digits, and underscore all count as "word" characters
@@ -256,28 +362,36 @@ _MULTI_HYPHEN = re.compile(r"-{2,}")
 
 
 def sanitize_word_slug(word: str) -> str:
-    """Turn a Russian word/phrase into a filesystem-safe, reproducible slug.
+    """Turn a Russian word/phrase into a filesystem-safe, readable slug.
 
-    Deliberately defensive rather than merely tidy: two different source
-    strings that simplify to the same visible slug (e.g. "-то" and "то"
-    once leading hyphens are trimmed) still get different filenames, because
-    a short hash of the ORIGINAL (NFC-normalized) string is always appended.
-    Same input -> same output, every time, which is what lets a rerun target
-    the same names and the skip-if-exists check actually skip.
+    No hash suffix, by design (the user asked for `[word]_[slot].mp3`, not
+    an opaque hash) -- but that is safe ONLY because it has been VERIFIED
+    collision-free across the real 152-row source word list, including the
+    genuinely awkward rows ("в / во", "ни... ни...", "-то", "несмотря на то,
+    что", ...): see `test_slug_collision_free_across_real_source_word_list`.
+    The one repeated slug that DOES occur ("да", appearing twice with
+    identical text under two different parts of speech) is a legitimate
+    duplicate -- same word, same audio, correctly sharing one file -- not a
+    collision between two different words.
+
+    If a future word list ever produces a genuine collision (two DIFFERENT
+    strings sanitizing to the same slug), that must be reported and
+    resolved explicitly, never silently patched by re-adding a hash here.
     """
     normalized = unicodedata.normalize("NFC", word.strip())
     slug = _UNSAFE_RUN.sub("-", normalized)
     slug = _MULTI_HYPHEN.sub("-", slug).strip("-")
     if not slug:
         slug = "word"
-    digest = hashlib.sha1(normalized.encode("utf-8")).hexdigest()[:8]
-    return f"{slug}-{digest}"
+    return slug
 
 
 def build_filename(word: str, voice: Voice, dir_name: str = DEFAULT_OUTPUT_DIR) -> str:
-    """The deterministic path for one (word, voice) pair's .mp3."""
+    """The path for one (word, voice) pair's .mp3: `<word-slug>_<slot>.mp3`
+    (e.g. `около_f1.mp3`). The slot, not the voice's slug/name, is the
+    filename identity -- see `Voice.slot` and `_check_unique_slots`."""
     word_slug = sanitize_word_slug(word)
-    return os.path.join(dir_name, f"{word_slug}__{voice.slug}.mp3")
+    return os.path.join(dir_name, f"{word_slug}_{voice.slot}.mp3")
 
 
 # ---------------------------------------------------------------------------
@@ -333,6 +447,8 @@ def _fetch_tts_audio(
     text: str,
     model_id: str,
     api_key: str,
+    stability: float,
+    similarity_boost: float,
     session=None,
     timeout: int = DEFAULT_TIMEOUT,
 ) -> bytes:
@@ -341,6 +457,11 @@ def _fetch_tts_audio(
     `session` is an injected `requests.Session` (or any object exposing a
     `.post` matching its signature) so callers can reuse a connection across
     a batch, and so tests can substitute a mock with zero real HTTP.
+
+    `stability`/`similarity_boost` are sent as ElevenLabs' `voice_settings`
+    object, verbatim -- they are validated by the caller
+    (`fetch_tts_audio_metered`) before this function is ever reached, so
+    this layer trusts them and only builds the request.
     """
     client = session if session is not None else requests
     url = f"{API_BASE_URL}/text-to-speech/{voice_id}"
@@ -349,7 +470,14 @@ def _fetch_tts_audio(
         "Accept": "audio/mpeg",
         "Content-Type": "application/json",
     }
-    payload = {"text": text, "model_id": model_id}
+    payload = {
+        "text": text,
+        "model_id": model_id,
+        "voice_settings": {
+            "stability": stability,
+            "similarity_boost": similarity_boost,
+        },
+    }
 
     try:
         response = client.post(url, headers=headers, json=payload, timeout=timeout)
@@ -394,22 +522,33 @@ def fetch_tts_audio_metered(
     budget: RequestBudget,
     session=None,
     timeout: int = DEFAULT_TIMEOUT,
+    stability: float = DEFAULT_STABILITY,
+    similarity_boost: float = DEFAULT_SIMILARITY_BOOST,
 ) -> bytes:
     """THE single choke point: the only function in this module that is
     allowed to actually issue a real ElevenLabs request.
 
     `budget` is a REQUIRED positional-adjacent argument with no default --
     there is no way to call this function without declaring, up front, how
-    many requests are allowed. `budget.spend(1)` runs BEFORE the network
-    call, so a would-exceed attempt raises `BudgetExceededError` and never
-    touches the network at all, rather than spending first and complaining
-    after. `build_and_save` (and therefore `build_and_save_batch` and
+    many requests are allowed. `stability`/`similarity_boost` are validated
+    (raising, never clamping) BEFORE `budget.spend(1)`, so a bad voice
+    setting fails before any budget is consumed, let alone any network call
+    made. `build_and_save` (and therefore `build_and_save_batch` and
     `main`) is the only other code in this module that calls this function;
     anything that wants to synthesize audio funnels through here.
     """
+    validate_voice_setting("stability", stability)
+    validate_voice_setting("similarity_boost", similarity_boost)
     budget.spend(1)
     return _fetch_tts_audio(
-        voice.voice_id, text, model_id, api_key, session=session, timeout=timeout
+        voice.voice_id,
+        text,
+        model_id,
+        api_key,
+        stability,
+        similarity_boost,
+        session=session,
+        timeout=timeout,
     )
 
 
@@ -428,13 +567,15 @@ def build_and_save(
     replace: bool = False,
     api_key: Optional[str] = None,
     session=None,
+    stability: float = DEFAULT_STABILITY,
+    similarity_boost: float = DEFAULT_SIMILARITY_BOOST,
 ) -> list:
     """Synthesize ONE word across every voice in `voices`.
 
-    `voices` defaults to `DEFAULT_VOICES` -- exactly ONE voice (Elen
-    Kuragina). Passing `voices=VOICES` (all three) is itself the explicit
-    opt-in for a direct-import caller; the CLI's `--all-voices` is the
-    equivalent opt-in on that surface. `budget` is required (see
+    `voices` defaults to `DEFAULT_VOICES` -- exactly ONE voice (the f1 slot,
+    Alisa). Passing `voices=VOICES` (all four) is itself the explicit opt-in
+    for a direct-import caller; the CLI's `--all-voices` is the equivalent
+    opt-in on that surface. `budget` is required (see
     `fetch_tts_audio_metered`) -- there is no way to call this and
     accidentally issue more requests than `budget.limit` allows.
 
@@ -443,6 +584,8 @@ def build_and_save(
     `budget` at all -- nothing is spent on them). Returns one
     `SynthesisResult` per voice, generated or skipped.
     """
+    validate_voice_setting("stability", stability)
+    validate_voice_setting("similarity_boost", similarity_boost)
     api_key = api_key or get_api_key()
     os.makedirs(dir_name, exist_ok=True)
 
@@ -457,7 +600,14 @@ def build_and_save(
             continue
 
         audio_bytes = fetch_tts_audio_metered(
-            voice, word, model_id, api_key, budget, session=session
+            voice,
+            word,
+            model_id,
+            api_key,
+            budget,
+            session=session,
+            stability=stability,
+            similarity_boost=similarity_boost,
         )
         with open(file_name, "wb") as fh:
             fh.write(audio_bytes)
@@ -478,6 +628,8 @@ def build_and_save_batch(
     replace: bool = False,
     api_key: Optional[str] = None,
     session=None,
+    stability: float = DEFAULT_STABILITY,
+    similarity_boost: float = DEFAULT_SIMILARITY_BOOST,
 ) -> list:
     """Synthesize many words, each across every voice in `voices`.
 
@@ -489,6 +641,8 @@ def build_and_save_batch(
     caller -- issue more requests than `budget.limit` without that having
     been explicitly raised beforehand.
     """
+    validate_voice_setting("stability", stability)
+    validate_voice_setting("similarity_boost", similarity_boost)
     api_key = api_key or get_api_key()
     session = session if session is not None else requests.Session()
     results = []
@@ -503,6 +657,8 @@ def build_and_save_batch(
                 replace=replace,
                 api_key=api_key,
                 session=session,
+                stability=stability,
+                similarity_boost=similarity_boost,
             )
         )
     return results
@@ -543,11 +699,10 @@ def build_parser() -> argparse.ArgumentParser:
         prog="anki-elevenlabs-tts",
         description=(
             "Synthesize Russian text to speech via ElevenLabs. The default "
-            "run produces exactly ONE .mp3 -- one word, one voice (Elen "
-            "Kuragina) -- and stops. --all-voices opts into the same "
-            "word(s) across all three configured voices; --all/--count opt "
-            "into more than one word from --file. Neither implies the "
-            "other."
+            "run produces exactly ONE .mp3 -- one word, one voice (f1, "
+            "Alisa) -- and stops. --all-voices opts into the same word(s) "
+            "across all four roster voices; --all/--count opt into more "
+            "than one word from --file. Neither implies the other."
         ),
     )
     target_group = parser.add_mutually_exclusive_group(required=True)
@@ -599,11 +754,32 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         default=False,
         help=(
-            "Synthesize each selected word in all three configured voices "
-            "instead of just the default one (Elen Kuragina). Independent "
-            "of --all/--count -- given alone, it does NOT start walking a "
+            "Synthesize each selected word in all four roster voices "
+            "instead of just the default one (f1, Alisa). Independent of "
+            "--all/--count -- given alone, it does NOT start walking a "
             "--file word list; it only widens the voice axis for whichever "
             "word(s) --all/--count already selected."
+        ),
+    )
+    parser.add_argument(
+        "--stability",
+        type=float,
+        default=DEFAULT_STABILITY,
+        help=(
+            f"ElevenLabs voice_settings.stability, 0.0-1.0. Default: "
+            f"{DEFAULT_STABILITY}. Never clamped -- an out-of-range value "
+            f"(e.g. 85 instead of 0.85) is rejected, not coerced."
+        ),
+    )
+    parser.add_argument(
+        "--similarity-boost",
+        dest="similarity_boost",
+        type=float,
+        default=DEFAULT_SIMILARITY_BOOST,
+        help=(
+            f"ElevenLabs voice_settings.similarity_boost, 0.0-1.0. Default: "
+            f"{DEFAULT_SIMILARITY_BOOST}. Never clamped -- an out-of-range "
+            f"value is rejected, not coerced."
         ),
     )
     parser.add_argument(
@@ -647,6 +823,15 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     # exclusive groups above; only the numeric range check needs doing here.
     if args.count is not None and args.count < 1:
         parser.error("--count must be >= 1")
+
+    # Validate the voice settings BEFORE anything else -- a typo like `85`
+    # instead of `0.85` must fail immediately, before any word list is even
+    # loaded, not deep inside the synthesis loop after other work has run.
+    try:
+        validate_voice_setting("stability", args.stability)
+        validate_voice_setting("similarity_boost", args.similarity_boost)
+    except ValueError as exc:
+        parser.error(str(exc))
 
     if args.word:
         available_words = [args.word]
@@ -715,6 +900,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         replace=args.replace,
         api_key=api_key,
         session=session,
+        stability=args.stability,
+        similarity_boost=args.similarity_boost,
     )
     saved = sum(1 for r in results if not r.skipped)
     skipped = sum(1 for r in results if r.skipped)
