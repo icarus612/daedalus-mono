@@ -19,11 +19,23 @@ and must never be used here.
     Mishka Yaponcik - Odessa Rogue Charm (male)
     Nester Surovy - Gravely yet Refined  (male)
 
-THE HARD COST LIMIT: a default run synthesizes exactly one word across all
-three voices (3 requests) and stops. Processing more than one word requires
-an explicit `--all` or `--count` opt-in on the CLI, or passing more than one
-word to `build_and_save_batch` directly -- there is no code path in `main()`
-that spends money on the full word list without that opt-in.
+THE HARD COST LIMIT -- the strictest reading, not the convenient one: a
+default run produces exactly ONE `.mp3`. One word, one voice (the first of
+the three, Elen Kuragina), one request. Two independent opt-ins widen it,
+and neither implies the other:
+
+  --all-voices   the same word(s), across all three voices instead of one.
+  --all/--count  more than one word from --file, still one voice unless
+                 --all-voices is ALSO given.
+
+This is enforced structurally, not by convention: every actual HTTP call
+this module ever makes funnels through `fetch_tts_audio_metered`, which
+takes a REQUIRED `RequestBudget` and calls `budget.spend(1)` before issuing
+anything. There is no default that lets a caller -- CLI, `build_and_save`,
+`build_and_save_batch`, or a bare import -- skip declaring how many requests
+it is allowed to make; exceeding the declared budget raises
+`BudgetExceededError` instead of silently proceeding, regardless of how the
+word/voice lists upstream were constructed.
 """
 
 import argparse
@@ -60,6 +72,15 @@ DEFAULT_TIMEOUT = 30  # seconds, per HTTP request
 # word. Anything beyond this requires an explicit --all/--count opt-in.
 DEFAULT_WORD_LIMIT = 1
 
+# And, independently, exactly one voice per word by default. Requesting the
+# other two is the SEPARATE --all-voices opt-in -- it must never be implied
+# by --all/--count, and vice versa.
+DEFAULT_VOICE_LIMIT = 1
+
+# Anything above this many total requests (words x voices) requires either
+# --yes or an interactive confirmation before a single request is issued.
+CONFIRM_ABOVE_REQUESTS = 1
+
 DEFAULT_MAX_ATTEMPTS = 5
 DEFAULT_INITIAL_BACKOFF = 1.0
 DEFAULT_MAX_BACKOFF = 40.0
@@ -80,6 +101,16 @@ class MissingAPIKeyError(ElevenLabsTTSError):
 
 class ElevenLabsAPIError(ElevenLabsTTSError):
     """A non-retryable error response from the ElevenLabs API."""
+
+
+class BudgetExceededError(ElevenLabsTTSError):
+    """Raised when a caller tries to spend past its declared `RequestBudget`.
+
+    This is a structural stop, not a bug report: it fires whenever ANY code
+    path -- CLI, batch helper, or direct import -- attempts to issue more
+    requests than were explicitly declared allowed, regardless of how the
+    word/voice lists that led to the attempt were built.
+    """
 
 
 class _RetryableTTSError(ElevenLabsTTSError):
@@ -135,6 +166,12 @@ VOICES: tuple = (
     ),
 )
 
+# The default voice touched when the caller doesn't opt into --all-voices --
+# always the first of the three, Elen Kuragina. Trivially widened to the
+# full roster by passing `voices=VOICES` explicitly (direct import) or
+# `--all-voices` (CLI); never the other way around.
+DEFAULT_VOICES: tuple = VOICES[:DEFAULT_VOICE_LIMIT]
+
 
 @dataclass(frozen=True)
 class SynthesisResult:
@@ -142,6 +179,45 @@ class SynthesisResult:
     voice: Voice
     path: str
     skipped: bool
+
+
+# ---------------------------------------------------------------------------
+# Request budget -- THE single choke point for real ElevenLabs spend
+# ---------------------------------------------------------------------------
+
+
+class RequestBudget:
+    """The one gate every real ElevenLabs request must pass through.
+
+    Deliberately not a default-argument convention: `limit` has no default
+    here either, and `fetch_tts_audio_metered` (the sole function that
+    actually calls `_fetch_tts_audio`) requires a `RequestBudget` instance
+    with no fallback to "unlimited". A caller -- CLI, `build_and_save`,
+    `build_and_save_batch`, or a bare import -- that wants more than one
+    request must construct (or receive) a budget sized for that, explicitly.
+    Exceeding it raises `BudgetExceededError` immediately, before any
+    further network call is attempted, rather than silently proceeding.
+    """
+
+    def __init__(self, limit: int):
+        if limit < 0:
+            raise ValueError(f"RequestBudget limit must be >= 0, got {limit}")
+        self.limit = limit
+        self.spent = 0
+
+    def spend(self, n: int = 1) -> None:
+        if self.spent + n > self.limit:
+            raise BudgetExceededError(
+                f"request budget exceeded: attempting request "
+                f"{self.spent + n} against a cap of {self.limit}. This is a "
+                f"deliberate stop, not a bug -- construct a larger "
+                f"RequestBudget (or pass --all-voices / --all / --count on "
+                f"the CLI) to explicitly allow more spend."
+            )
+        self.spent += n
+
+    def remaining(self) -> int:
+        return self.limit - self.spent
 
 
 # ---------------------------------------------------------------------------
@@ -310,6 +386,33 @@ def _fetch_tts_audio(
     return response.content
 
 
+def fetch_tts_audio_metered(
+    voice: Voice,
+    text: str,
+    model_id: str,
+    api_key: str,
+    budget: RequestBudget,
+    session=None,
+    timeout: int = DEFAULT_TIMEOUT,
+) -> bytes:
+    """THE single choke point: the only function in this module that is
+    allowed to actually issue a real ElevenLabs request.
+
+    `budget` is a REQUIRED positional-adjacent argument with no default --
+    there is no way to call this function without declaring, up front, how
+    many requests are allowed. `budget.spend(1)` runs BEFORE the network
+    call, so a would-exceed attempt raises `BudgetExceededError` and never
+    touches the network at all, rather than spending first and complaining
+    after. `build_and_save` (and therefore `build_and_save_batch` and
+    `main`) is the only other code in this module that calls this function;
+    anything that wants to synthesize audio funnels through here.
+    """
+    budget.spend(1)
+    return _fetch_tts_audio(
+        voice.voice_id, text, model_id, api_key, session=session, timeout=timeout
+    )
+
+
 # ---------------------------------------------------------------------------
 # Synthesis
 # ---------------------------------------------------------------------------
@@ -318,17 +421,26 @@ def _fetch_tts_audio(
 def build_and_save(
     word: str,
     *,
+    budget: RequestBudget,
     dir_name: str = DEFAULT_OUTPUT_DIR,
-    voices: Sequence[Voice] = VOICES,
+    voices: Sequence[Voice] = DEFAULT_VOICES,
     model_id: str = DEFAULT_MODEL_ID,
     replace: bool = False,
     api_key: Optional[str] = None,
     session=None,
 ) -> list:
-    """Synthesize ONE word across every voice in `voices` (default: all 3).
+    """Synthesize ONE word across every voice in `voices`.
+
+    `voices` defaults to `DEFAULT_VOICES` -- exactly ONE voice (Elen
+    Kuragina). Passing `voices=VOICES` (all three) is itself the explicit
+    opt-in for a direct-import caller; the CLI's `--all-voices` is the
+    equivalent opt-in on that surface. `budget` is required (see
+    `fetch_tts_audio_metered`) -- there is no way to call this and
+    accidentally issue more requests than `budget.limit` allows.
 
     Skips a (word, voice) pair whose file already exists unless `replace` is
-    set, so a resumed run is cheap and idempotent. Returns one
+    set, so a resumed run is cheap and idempotent (skipped pairs never touch
+    `budget` at all -- nothing is spent on them). Returns one
     `SynthesisResult` per voice, generated or skipped.
     """
     api_key = api_key or get_api_key()
@@ -344,8 +456,8 @@ def build_and_save(
             )
             continue
 
-        audio_bytes = _fetch_tts_audio(
-            voice.voice_id, word, model_id, api_key, session=session
+        audio_bytes = fetch_tts_audio_metered(
+            voice, word, model_id, api_key, budget, session=session
         )
         with open(file_name, "wb") as fh:
             fh.write(audio_bytes)
@@ -359,8 +471,9 @@ def build_and_save(
 def build_and_save_batch(
     words: Sequence[str],
     *,
+    budget: RequestBudget,
     dir_name: str = DEFAULT_OUTPUT_DIR,
-    voices: Sequence[Voice] = VOICES,
+    voices: Sequence[Voice] = DEFAULT_VOICES,
     model_id: str = DEFAULT_MODEL_ID,
     replace: bool = False,
     api_key: Optional[str] = None,
@@ -368,11 +481,13 @@ def build_and_save_batch(
 ) -> list:
     """Synthesize many words, each across every voice in `voices`.
 
-    This is the many-words path -- it exists and is exercised by tests, but
-    NOTHING in `main()` reaches it with more than `DEFAULT_WORD_LIMIT` words
-    unless the caller opted in via `--all`/`--count`. Callers driving this
-    directly (not through the CLI) are themselves responsible for the same
-    restraint; this function does not re-enforce the limit.
+    `budget` is shared across the WHOLE batch (every word funnels through
+    the same `RequestBudget` instance), so it caps total spend across the
+    entire call regardless of how many words or voices were passed in --
+    including a bug that duplicates an entry in `words` or `voices`. There
+    is no default that lets this function -- or `main()`, which is its only
+    caller -- issue more requests than `budget.limit` without that having
+    been explicitly raised beforehand.
     """
     api_key = api_key or get_api_key()
     session = session if session is not None else requests.Session()
@@ -381,6 +496,7 @@ def build_and_save_batch(
         results.extend(
             build_and_save(
                 word,
+                budget=budget,
                 dir_name=dir_name,
                 voices=voices,
                 model_id=model_id,
@@ -426,11 +542,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="anki-elevenlabs-tts",
         description=(
-            "Synthesize Russian text to speech via ElevenLabs, one .mp3 per "
-            "configured voice (currently 3: Elen Kuragina, Mishka Yaponcik, "
-            "Nester Surovy). The default run costs at most 3 requests -- ONE "
-            "word times the three voices -- and stops. Processing more than "
-            "one word from --file requires --all or --count."
+            "Synthesize Russian text to speech via ElevenLabs. The default "
+            "run produces exactly ONE .mp3 -- one word, one voice (Elen "
+            "Kuragina) -- and stops. --all-voices opts into the same "
+            "word(s) across all three configured voices; --all/--count opt "
+            "into more than one word from --file. Neither implies the "
+            "other."
         ),
     )
     target_group = parser.add_mutually_exclusive_group(required=True)
@@ -458,9 +575,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         default=False,
         help=(
-            "Process every word in --file, not just the first one. This "
-            "spends real ElevenLabs credits for every word -- see the "
-            "request count printed before the confirmation prompt."
+            "Process every word in --file, not just the first one. "
+            "Independent of --all-voices -- combine them explicitly if you "
+            "want both axes widened. Spends real ElevenLabs credits for "
+            "every word -- see the request count printed before the "
+            "confirmation prompt."
         ),
     )
     count_group.add_argument(
@@ -471,7 +590,20 @@ def build_parser() -> argparse.ArgumentParser:
         help=(
             "Process exactly this many words from --file (an explicit "
             "opt-in override of the default 1-word limit). Mutually "
-            "exclusive with --all."
+            "exclusive with --all; independent of --all-voices."
+        ),
+    )
+    parser.add_argument(
+        "--all-voices",
+        dest="all_voices",
+        action="store_true",
+        default=False,
+        help=(
+            "Synthesize each selected word in all three configured voices "
+            "instead of just the default one (Elen Kuragina). Independent "
+            "of --all/--count -- given alone, it does NOT start walking a "
+            "--file word list; it only widens the voice axis for whichever "
+            "word(s) --all/--count already selected."
         ),
     )
     parser.add_argument(
@@ -521,29 +653,36 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     else:
         available_words = load_words_from_file(args.file)
 
+    # Word axis and voice axis are two SEPARATE opt-ins -- neither implies
+    # the other. --all-voices alone must never start walking the word list,
+    # and --all/--count alone must never add the other two voices.
     total_available = len(available_words)
     if args.count is not None:
-        limit = args.count
+        word_limit = args.count
     elif args.all:
-        limit = total_available
+        word_limit = total_available
     else:
-        limit = DEFAULT_WORD_LIMIT
-    limit = max(0, min(limit, total_available))
-    selected_words = available_words[:limit]
-    request_count = len(selected_words) * len(VOICES)
+        word_limit = DEFAULT_WORD_LIMIT
+    word_limit = max(0, min(word_limit, total_available))
+    selected_words = available_words[:word_limit]
+
+    selected_voices = list(VOICES) if args.all_voices else list(DEFAULT_VOICES)
+
+    request_count = len(selected_words) * len(selected_voices)
+    voice_names = ", ".join(v.name for v in selected_voices)
 
     print(
-        f"Selected {len(selected_words)} of {total_available} word(s) "
-        f"available x {len(VOICES)} voice(s) = {request_count} ElevenLabs "
-        f"request(s) at most (files that already exist are skipped unless "
-        f"--replace is given)."
+        f"About to issue {request_count} ElevenLabs request(s): "
+        f"{len(selected_words)} word(s) (of {total_available} available) x "
+        f"{len(selected_voices)} voice(s) [{voice_names}] (files that "
+        f"already exist are skipped unless --replace is given)."
     )
 
-    if not selected_words:
+    if request_count == 0:
         print("Nothing to do.")
         return 0
 
-    if len(selected_words) > DEFAULT_WORD_LIMIT and not args.yes:
+    if request_count > CONFIRM_ABOVE_REQUESTS and not args.yes:
         answer = input(
             f"This will spend ElevenLabs credits on up to {request_count} "
             f"request(s). Continue? [y/N] "
@@ -558,9 +697,19 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         print(str(exc))
         return 1
 
+    # The budget's limit is exactly the count just printed and (if needed)
+    # confirmed -- computed once, here, independently of the loops inside
+    # build_and_save_batch/build_and_save. If those loops ever tried to
+    # issue more than this (a bug in word/voice-list construction, a stray
+    # extra iteration, anything), fetch_tts_audio_metered's budget.spend()
+    # raises BudgetExceededError before a second unauthorized request could
+    # ever reach the network.
+    budget = RequestBudget(limit=request_count)
     session = requests.Session()
     results = build_and_save_batch(
         selected_words,
+        budget=budget,
+        voices=selected_voices,
         dir_name=args.output_dir,
         model_id=args.model_id,
         replace=args.replace,
@@ -569,7 +718,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     )
     saved = sum(1 for r in results if not r.skipped)
     skipped = sum(1 for r in results if r.skipped)
-    print(f"Done: {saved} file(s) generated, {skipped} skipped (already existed).")
+    print(
+        f"Done: {saved} file(s) generated, {skipped} skipped (already "
+        f"existed). Budget spent: {budget.spent}/{budget.limit}."
+    )
     return 0
 
 
