@@ -19,6 +19,7 @@ from anki.errors import AnkiException, DBError
 from anki.import_export_pb2 import ExportAnkiPackageOptions
 from anki.models import NotetypeDict
 
+from anki_tools.audio_naming import get_anki_collection_path
 from anki_tools.immutable_words_plan import (
     DECK_ROOT,
     FIELD_NAMES,
@@ -36,17 +37,6 @@ from anki_tools.immutable_words_plan import (
 SOURCE_NOTETYPE_ID = 1698803891108
 # exact, no trailing space
 NEW_NOTE_TYPE_NAME = "Russian - Immutable Words (Ellis Version)"
-
-
-def get_anki_collection_path() -> str:
-    if os.name == "nt":  # Windows
-        return os.path.expanduser(
-            "~\\AppData\\Roaming\\Anki2\\User 1\\collection.anki2"
-        )
-    elif os.name == "posix":  # macOS/Linux
-        return os.path.expanduser("~/.local/share/Anki2/User 1/collection.anki2")
-    else:
-        raise OSError("Unsupported operating system")
 
 
 def clone_note_type(

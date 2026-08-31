@@ -59,6 +59,8 @@ from anki_tools.elevenlabs_tts import (
     build_filename,
     build_parser,
     fetch_tts_audio_metered,
+    get_anki_collection_path,
+    get_anki_media_dir,
     get_api_key,
     load_words_from_file,
     main,
@@ -1137,3 +1139,244 @@ def test_cli_stability_and_similarity_boost_flags_reach_the_request(
     assert rc == 0
     sent_json = session.post.call_args.kwargs["json"]
     assert sent_json["voice_settings"] == {"stability": 0.9, "similarity_boost": 0.7}
+
+
+# ---------------------------------------------------------------------------
+# lane l3 packet additions (contract l3.md section 6d): spoken-text
+# substitution reaching the API payload, dual write against a fake Anki
+# media directory, and get_anki_media_dir / --anki-media-dir plumbing.
+#
+# Written blind to anki_tools/audio_naming.py, anki_tools/elevenlabs_tts.py's
+# edits, and anki_tools/immutable_words_plan.py -- from
+# .workflows/russian-immutable-words/.artifacts/contracts/l3.md alone.
+# test_slug_collision_free_across_real_source_word_list and the
+# AWKWARD_WORDS-parametrized tests above are untouched.
+# ---------------------------------------------------------------------------
+
+
+def test_spoken_text_diverges_from_filename_for_v_vo(tmp_path):
+    """Section 4c: the filename derives from the raw `word` ("в / во"), but
+    the text sent to the API is the spoken form ("во") -- the two must never
+    collapse into one value.
+    """
+    session = _mock_session([FakeResponse(200, content=b"audio")])
+    results = build_and_save(
+        "в / во",
+        dir_name=str(tmp_path),
+        api_key="k",
+        session=session,
+        budget=RequestBudget(1),
+    )
+    sent_json = session.post.call_args.kwargs["json"]
+    assert sent_json["text"] == "во"
+    assert os.path.basename(results[0].path) == "в-во_f1.mp3"
+
+
+def test_spoken_text_diverges_from_filename_for_clitic_to(tmp_path):
+    """The clitic most likely to get collapsed by mistake: payload text is
+    the bare "то", filename is still built from the source "-то" text.
+    """
+    session = _mock_session([FakeResponse(200, content=b"audio")])
+    results = build_and_save(
+        "-то",
+        dir_name=str(tmp_path),
+        api_key="k",
+        session=session,
+        budget=RequestBudget(1),
+    )
+    sent_json = session.post.call_args.kwargs["json"]
+    assert sent_json["text"] == "то"
+    assert os.path.basename(results[0].path) == f"{sanitize_word_slug('-то')}_f1.mp3"
+
+
+# ---------------------------------------------------------------------------
+# Dual write against a fake/temp "Anki media" directory (never the real one)
+# ---------------------------------------------------------------------------
+
+
+def test_dual_write_fresh_run_writes_both_locations_one_network_call(tmp_path):
+    primary_dir = str(tmp_path / "audio")
+    media_dir = str(tmp_path / "media")
+    session = _mock_session([FakeResponse(200, content=b"audio-bytes")])
+
+    results = build_and_save(
+        "на",
+        dir_name=primary_dir,
+        anki_media_dir=media_dir,
+        api_key="k",
+        session=session,
+        budget=RequestBudget(1),
+    )
+
+    assert session.post.call_count == 1
+    result = results[0]
+    assert not result.skipped
+    assert result.media_collision is False
+    assert result.media_path
+    assert os.path.isfile(result.path)
+    assert os.path.isfile(result.media_path)
+    with open(result.path, "rb") as fh:
+        assert fh.read() == b"audio-bytes"
+    with open(result.media_path, "rb") as fh:
+        assert fh.read() == b"audio-bytes"
+
+
+def test_dual_write_media_precollision_primary_missing_still_one_network_call(
+    tmp_path, capsys
+):
+    primary_dir = str(tmp_path / "audio")
+    media_dir = str(tmp_path / "media")
+    os.makedirs(media_dir, exist_ok=True)
+    voice = DEFAULT_VOICES[0]
+    media_file = build_filename("на", voice, dir_name=media_dir)
+    with open(media_file, "wb") as fh:
+        fh.write(b"PRE-EXISTING-MEDIA")
+
+    session = _mock_session([FakeResponse(200, content=b"fresh-bytes")])
+    results = build_and_save(
+        "на",
+        dir_name=primary_dir,
+        anki_media_dir=media_dir,
+        api_key="k",
+        session=session,
+        budget=RequestBudget(1),
+    )
+
+    assert session.post.call_count == 1  # primary still needed the request
+    result = results[0]
+    assert not result.skipped
+    assert result.media_collision is True
+    assert os.path.isfile(result.path)
+    with open(result.path, "rb") as fh:
+        assert fh.read() == b"fresh-bytes"
+    # Media file bytes are UNCHANGED from what the fixture put there -- never
+    # overwritten, regardless of the primary being freshly generated.
+    with open(media_file, "rb") as fh:
+        assert fh.read() == b"PRE-EXISTING-MEDIA"
+    assert "COLLISION" in capsys.readouterr().out
+
+
+def test_dual_write_both_preexist_zero_network_calls(tmp_path):
+    primary_dir = str(tmp_path / "audio")
+    media_dir = str(tmp_path / "media")
+    os.makedirs(primary_dir, exist_ok=True)
+    os.makedirs(media_dir, exist_ok=True)
+    voice = DEFAULT_VOICES[0]
+    primary_file = build_filename("на", voice, dir_name=primary_dir)
+    media_file = build_filename("на", voice, dir_name=media_dir)
+    with open(primary_file, "wb") as fh:
+        fh.write(b"OLD-PRIMARY")
+    with open(media_file, "wb") as fh:
+        fh.write(b"OLD-MEDIA")
+
+    session = _mock_session([])
+    results = build_and_save(
+        "на",
+        dir_name=primary_dir,
+        anki_media_dir=media_dir,
+        api_key="k",
+        session=session,
+        budget=RequestBudget(0),
+    )
+
+    assert session.post.call_count == 0  # never called
+    result = results[0]
+    assert result.skipped is True
+    assert result.media_collision is True
+    with open(primary_file, "rb") as fh:
+        assert fh.read() == b"OLD-PRIMARY"
+    with open(media_file, "rb") as fh:
+        assert fh.read() == b"OLD-MEDIA"
+
+
+def test_dual_write_replace_regenerates_primary_but_never_touches_media(
+    tmp_path, capsys
+):
+    primary_dir = str(tmp_path / "audio")
+    media_dir = str(tmp_path / "media")
+    os.makedirs(primary_dir, exist_ok=True)
+    os.makedirs(media_dir, exist_ok=True)
+    voice = DEFAULT_VOICES[0]
+    primary_file = build_filename("на", voice, dir_name=primary_dir)
+    media_file = build_filename("на", voice, dir_name=media_dir)
+    with open(primary_file, "wb") as fh:
+        fh.write(b"OLD-PRIMARY")
+    with open(media_file, "wb") as fh:
+        fh.write(b"OLD-MEDIA")
+
+    session = _mock_session([FakeResponse(200, content=b"NEW-PRIMARY")])
+    results = build_and_save(
+        "на",
+        dir_name=primary_dir,
+        anki_media_dir=media_dir,
+        api_key="k",
+        session=session,
+        budget=RequestBudget(1),
+        replace=True,
+    )
+
+    assert session.post.call_count == 1  # --replace regenerates the primary
+    result = results[0]
+    assert result.media_collision is True  # never subject to --replace
+    with open(primary_file, "rb") as fh:
+        assert fh.read() == b"NEW-PRIMARY"
+    with open(media_file, "rb") as fh:
+        assert fh.read() == b"OLD-MEDIA"  # untouched, proving --replace never
+        # applies to the Anki media directory
+    assert "COLLISION" in capsys.readouterr().out
+
+
+# ---------------------------------------------------------------------------
+# get_anki_media_dir / --anki-media-dir resolution
+# ---------------------------------------------------------------------------
+
+
+def test_get_anki_media_dir_default_resolves_via_get_anki_collection_path(monkeypatch):
+    monkeypatch.setattr(os, "name", "posix")
+    expected = os.path.join(
+        os.path.dirname(get_anki_collection_path()), "collection.media"
+    )
+    assert get_anki_media_dir() == expected
+
+
+def test_anki_media_dir_explicit_override_never_calls_get_anki_collection_path(
+    monkeypatch, tmp_path
+):
+    import anki_tools.elevenlabs_tts as elevenlabs_tts_module
+
+    def _boom():
+        raise AssertionError(
+            "get_anki_collection_path() must not be called when an explicit "
+            "anki_media_dir override is given"
+        )
+
+    monkeypatch.setattr(elevenlabs_tts_module, "get_anki_collection_path", _boom)
+
+    primary_dir = str(tmp_path / "audio")
+    media_dir = str(tmp_path / "media")
+    session = _mock_session([FakeResponse(200, content=b"a")])
+
+    # Must not raise: the explicit anki_media_dir bypasses resolution
+    # entirely, so the spy above is never triggered.
+    build_and_save(
+        "на",
+        dir_name=primary_dir,
+        anki_media_dir=media_dir,
+        api_key="k",
+        session=session,
+        budget=RequestBudget(1),
+    )
+
+
+def test_build_parser_anki_media_dir_flag_exists_and_defaults_to_none():
+    parser = build_parser()
+    args = parser.parse_args(["--word", "на"])
+    assert args.anki_media_dir is None
+
+
+def test_build_parser_anki_media_dir_flag_accepts_explicit_value():
+    parser = build_parser()
+    args = parser.parse_args(
+        ["--word", "на", "--anki-media-dir", "/tmp/some-media-dir"]
+    )
+    assert args.anki_media_dir == "/tmp/some-media-dir"

@@ -19,6 +19,7 @@ accommodate that later pass.
 import argparse
 import hashlib
 import os
+import re
 import shutil
 import sys
 
@@ -383,7 +384,16 @@ def test_build_deck_tree_duplicate_russian_text_both_notes_exist_in_own_decks(
     assert conjunctions_da[0] != particles_da[0]
 
 
-def test_build_deck_tree_audio_field_always_empty(cloned, build_col):
+def test_build_deck_tree_audio_field_predicts_four_filenames(cloned, build_col):
+    """Per the l3 contract (audio_naming.py / immutable_words_plan.py
+    section 3b), the Audio field is no longer always empty: it holds the
+    four predicted filenames for the note's own Russian field, derived via
+    anki_tools.audio_naming's build_filename/SLOTS -- the same shared
+    function the deck builder and the TTS tool both rely on to agree
+    byte-for-byte before any audio file exists.
+    """
+    from anki_tools.audio_naming import SLOTS, build_filename
+
     note_type, _ = cloned
     rows = _fixture_rows()
 
@@ -393,7 +403,10 @@ def test_build_deck_tree_audio_field_always_empty(cloned, build_col):
     assert len(note_ids) == len(rows)
     for note_id in note_ids:
         note = build_col.get_note(note_id)
-        assert note["Audio"] == ""
+        russian = note["Russian"]
+        expected_audio = ",".join(build_filename(russian, slot) for slot in SLOTS)
+        assert note["Audio"] == expected_audio
+        assert note["Audio"] != ""
 
 
 # ---------------------------------------------------------------------------
@@ -564,10 +577,19 @@ def test_main_requires_out_unless_dry_run(tmp_path, monkeypatch):
 # builder writes this directly, after Packet B went green, per the lane
 # contract's "3.1 is the load-bearing evidence" requirement). Full flow:
 # parse the REAL source document -> clone_note_type against a copy of the
-# REAL snapshot -> build_deck_tree all 152 rows -> export_package -> import
+# REAL snapshot -> build_deck_tree all 153 rows -> export_package -> import
 # the resulting .apkg into a brand-new collection that never existed before
 # -> assert against the IMPORTED collection's own decks/notes/models, never
 # against this test's own in-memory rows/build_col state.
+#
+# Updated by lane 3 (integration, `.artifacts/contracts/l3.md`): the source
+# document still has 152 raw rows, but `parse_word_list` now applies a
+# table-driven split/override transform (see `ROW_SPLITS`/
+# `TRANSLATION_OVERRIDES` in `immutable_words_plan.py`) that yields 153
+# final rows (43/36/32/42 by section), and `build_deck_tree` -> `WordRow.
+# fields()` now populates every note's Audio field with four PREDICTED
+# filenames instead of leaving it empty -- lane 3's central "deck before
+# audio" claim.
 # ---------------------------------------------------------------------------
 
 SOURCE_DOC_PATH = (
@@ -581,27 +603,30 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
 ):
     """The plan's load-bearing acceptance evidence.
 
-    Builds the real 152-row .apkg from the real source document and a copy
+    Builds the real 153-row .apkg from the real source document and a copy
     of the real note-type snapshot, imports it into a fresh empty
     collection, and asserts entirely against what THAT import produced.
-    Also covers the amendment's two audio-field cases at the data-plumbing
-    level (not JS execution, which pytest can't do): two of the 152 notes
-    get their Audio field set directly here -- never through
-    build_deck_tree, which must never populate it -- to a single filename
-    and to a comma-separated list of three, and both must survive the
-    export/import round trip byte-for-byte. Every other note's Audio field
-    must still be empty, since that's what this lane actually ships.
+
+    Also covers lane 3's central "deck-before-audio" claim end-to-end: no
+    audio bytes are ever written or read anywhere in this test -- every
+    note's Audio field is a comma-separated list of PREDICTED filenames for
+    files that do not exist on this machine, and the export/import round
+    trip must still succeed and preserve those four names byte-for-byte,
+    matching `elevenlabs_tts.build_filename`'s own predictions for the same
+    (word, slot) pairs -- proving the deck builder and the TTS tool agree
+    on names before either of them ever touches a real audio file.
     """
+    from anki_tools.audio_naming import SLOTS, build_filename
     from anki_tools.immutable_words_plan import counts_by_deck, parse_word_list
 
     with open(SOURCE_DOC_PATH, encoding="utf-8") as fh:
         source_text = fh.read()
     rows = parse_word_list(source_text)
-    assert len(rows) == 152
+    assert len(rows) == 153
     expected_counts = counts_by_deck(rows)
     assert expected_counts == {
         subdeck_name("Prepositions"): 43,
-        subdeck_name("Conjunctions"): 35,
+        subdeck_name("Conjunctions"): 36,
         subdeck_name("Particles"): 32,
         subdeck_name("Indeclinable Nouns"): 42,
     }
@@ -623,19 +648,21 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
     built_counts = build_deck_tree(build_col, rows, note_type)
     assert built_counts == expected_counts
 
-    # Populate two ALREADY-BUILT notes' Audio fields directly -- not through
-    # build_deck_tree -- to cover the amendment's "one filename behaves
-    # identically to three" data-plumbing claim across a real export/import.
-    single_deck = subdeck_name("Prepositions")
-    triple_deck = subdeck_name("Conjunctions")
-    single_nid = build_col.find_notes(f'deck:"{single_deck}"')[0]
-    triple_nid = build_col.find_notes(f'deck:"{triple_deck}"')[0]
-    single_note = build_col.get_note(single_nid)
-    single_note["Audio"] = "single.mp3"
-    build_col.update_note(single_note)
-    triple_note = build_col.get_note(triple_nid)
-    triple_note["Audio"] = "a.mp3,b.mp3,c.mp3"
-    build_col.update_note(triple_note)
+    # Every note's Audio field is already populated by build_deck_tree
+    # itself now -- no manual override needed (unlike this test's
+    # pre-lane-3 shape, when Audio was always empty). Spot-check a handful
+    # directly against build_col before export, including the load-bearing
+    # multi-form case: the filename must derive from the SOURCE text
+    # "в / во", never from the spoken form "во" (lane 3's central hazard).
+    russian_to_audio = {}
+    for note_id in build_col.find_notes(""):
+        note = build_col.get_note(note_id)
+        russian_to_audio[note["Russian"]] = note["Audio"]
+
+    for russian in ("в / во", "словно", "будто", "-то", "-ка", "да"):
+        assert russian in russian_to_audio, f"missing note for {russian!r}"
+        expected_names = [build_filename(russian, slot) for slot in SLOTS]
+        assert russian_to_audio[russian] == ",".join(expected_names)
 
     out_path = os.path.join(str(tmp_path), "immutable-words.apkg")
     export_package(build_col, DECK_ROOT, out_path)
@@ -683,8 +710,8 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
             assert len(note_ids) == expected_counts[name], name
             total_notes += len(note_ids)
             total_cards += len(card_ids)
-        assert total_notes == 152
-        assert total_cards == 304
+        assert total_notes == 153
+        assert total_cards == 306
 
         # Note type present, Part of Speech rendered nowhere.
         imported_note_type = fresh_col.models.by_name(NEW_NOTE_TYPE_NAME)
@@ -703,16 +730,44 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
         assert spot_note["Russian"] == last_indeclinable.russian
         assert spot_note["Translation"] == last_indeclinable.english
 
-        # Audio field: every note this lane ships carries an empty Audio
-        # field -- the amendment's central "renders nothing, throws
-        # nothing" case -- except the two this test populated directly,
-        # which must survive the round trip exactly.
+        # Audio field: the central "deck-before-audio" claim, on the
+        # IMPORTED collection -- every one of the 153 notes carries its
+        # four predicted filenames, byte-for-byte identical to what
+        # build_col had before export (`russian_to_audio`), and to what
+        # `elevenlabs_tts.build_filename` predicts for the same (word,
+        # slot) pairs. No audio file referenced here exists anywhere on
+        # this machine -- the deck exports/imports cleanly on field-level
+        # filename references alone.
         all_note_ids = fresh_col.find_notes(f'note:"{NEW_NOTE_TYPE_NAME}"')
-        assert len(all_note_ids) == 152
-        audio_values = [fresh_col.get_note(nid)["Audio"] for nid in all_note_ids]
-        assert audio_values.count("") == 150
-        assert sorted(v for v in audio_values if v) == sorted(
-            ["single.mp3", "a.mp3,b.mp3,c.mp3"]
-        )
+        assert len(all_note_ids) == 153
+        mismatches = []
+        for note_id in all_note_ids:
+            note = fresh_col.get_note(note_id)
+            audio_value = note["Audio"]
+            russian = note["Russian"]
+
+            # Every entry parses as exactly 4 filenames -- the same split
+            # the card template's own JS performs (`/[,\n]+/`), proving the
+            # template will see four real entries, not one blob or a
+            # trailing empty string.
+            entries = [e for e in re.split(r"[,\n]+", audio_value) if e.strip()]
+            if len(entries) != 4:
+                mismatches.append((russian, "entry-count", entries))
+                continue
+            for entry in entries:
+                if not entry.endswith(".mp3") or "," in entry or entry != entry.strip():
+                    mismatches.append((russian, "malformed-entry", entry))
+
+            if audio_value != russian_to_audio[russian]:
+                mismatches.append(
+                    (
+                        russian,
+                        "round-trip-mismatch",
+                        audio_value,
+                        russian_to_audio[russian],
+                    )
+                )
+
+        assert not mismatches, f"Audio field problems after import: {mismatches}"
     finally:
         fresh_col.close()

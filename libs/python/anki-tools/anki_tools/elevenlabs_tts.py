@@ -68,13 +68,16 @@ import argparse
 import functools
 import json
 import os
-import re
 import time
-import unicodedata
 from dataclasses import dataclass
 from typing import Callable, Optional, Sequence
 
 import requests
+
+from anki_tools.audio_naming import build_filename as _shared_build_filename
+from anki_tools.audio_naming import get_anki_collection_path as get_anki_collection_path
+from anki_tools.audio_naming import get_anki_media_dir, spoken_text_for
+from anki_tools.audio_naming import sanitize_word_slug as sanitize_word_slug
 
 API_BASE_URL = "https://api.elevenlabs.io/v1"
 API_KEY_ENV_VAR = "ELEVENLABS_API_KEY"
@@ -83,7 +86,10 @@ API_KEY_ENV_VAR = "ELEVENLABS_API_KEY"
 # from the environment ONLY -- never a CLI flag (shell history), never
 # logged, never interpolated into an error message.
 
-DEFAULT_OUTPUT_DIR = "audio_files"
+# One of the two "dual write" locations (see `build_and_save`'s docstring):
+# the Desktop location a human reviews the generated files from. The other
+# location, the Anki media directory, is derived via `get_anki_media_dir()`.
+DEFAULT_OUTPUT_DIR = os.path.expanduser("~/Desktop/russian-audio")
 
 # eleven_multilingual_v2 is ElevenLabs' documented multilingual model and the
 # one they recommend for non-English text (including Russian); their
@@ -262,6 +268,8 @@ class SynthesisResult:
     voice: Voice
     path: str
     skipped: bool
+    media_path: str = ""
+    media_collision: bool = False
 
 
 # ---------------------------------------------------------------------------
@@ -349,49 +357,19 @@ def validate_voice_setting(name: str, value) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Filename sanitization -- readable, verified collision-free
+# Filename sanitization -- delegated to the shared `audio_naming` module
 # ---------------------------------------------------------------------------
-
-# Cyrillic letters, digits, and underscore all count as "word" characters
-# under Python's unicode-aware \w, so the source text survives intact; every
-# run of anything else (spaces, "/", ",", ".", quotes, ...) collapses to a
-# single hyphen. This alone makes "/" -- which cannot appear in a filename
-# at all -- disappear along with every other filesystem-hostile character.
-_UNSAFE_RUN = re.compile(r"[^\w\-]+", re.UNICODE)
-_MULTI_HYPHEN = re.compile(r"-{2,}")
-
-
-def sanitize_word_slug(word: str) -> str:
-    """Turn a Russian word/phrase into a filesystem-safe, readable slug.
-
-    No hash suffix, by design (the user asked for `[word]_[slot].mp3`, not
-    an opaque hash) -- but that is safe ONLY because it has been VERIFIED
-    collision-free across the real 152-row source word list, including the
-    genuinely awkward rows ("в / во", "ни... ни...", "-то", "несмотря на то,
-    что", ...): see `test_slug_collision_free_across_real_source_word_list`.
-    The one repeated slug that DOES occur ("да", appearing twice with
-    identical text under two different parts of speech) is a legitimate
-    duplicate -- same word, same audio, correctly sharing one file -- not a
-    collision between two different words.
-
-    If a future word list ever produces a genuine collision (two DIFFERENT
-    strings sanitizing to the same slug), that must be reported and
-    resolved explicitly, never silently patched by re-adding a hash here.
-    """
-    normalized = unicodedata.normalize("NFC", word.strip())
-    slug = _UNSAFE_RUN.sub("-", normalized)
-    slug = _MULTI_HYPHEN.sub("-", slug).strip("-")
-    if not slug:
-        slug = "word"
-    return slug
+#
+# `sanitize_word_slug` is re-exported (via the module-level import above) so
+# the existing test import `from anki_tools.elevenlabs_tts import
+# sanitize_word_slug` keeps working unchanged.
 
 
 def build_filename(word: str, voice: Voice, dir_name: str = DEFAULT_OUTPUT_DIR) -> str:
     """The path for one (word, voice) pair's .mp3: `<word-slug>_<slot>.mp3`
     (e.g. `около_f1.mp3`). The slot, not the voice's slug/name, is the
     filename identity -- see `Voice.slot` and `_check_unique_slots`."""
-    word_slug = sanitize_word_slug(word)
-    return os.path.join(dir_name, f"{word_slug}_{voice.slot}.mp3")
+    return _shared_build_filename(word, voice.slot, dir_name=dir_name)
 
 
 # ---------------------------------------------------------------------------
@@ -569,8 +547,10 @@ def build_and_save(
     session=None,
     stability: float = DEFAULT_STABILITY,
     similarity_boost: float = DEFAULT_SIMILARITY_BOOST,
+    anki_media_dir: Optional[str] = None,
 ) -> list:
-    """Synthesize ONE word across every voice in `voices`.
+    """Synthesize ONE word across every voice in `voices`, writing it to
+    BOTH the primary output directory and the Anki media directory.
 
     `voices` defaults to `DEFAULT_VOICES` -- exactly ONE voice (the f1 slot,
     Alisa). Passing `voices=VOICES` (all four) is itself the explicit opt-in
@@ -579,29 +559,64 @@ def build_and_save(
     `fetch_tts_audio_metered`) -- there is no way to call this and
     accidentally issue more requests than `budget.limit` allows.
 
-    Skips a (word, voice) pair whose file already exists unless `replace` is
-    set, so a resumed run is cheap and idempotent (skipped pairs never touch
-    `budget` at all -- nothing is spent on them). Returns one
-    `SynthesisResult` per voice, generated or skipped.
+    Dual write, independent skip-if-exists per location: `dir_name` (the
+    primary/reviewable output) is subject to `replace`, same as before. The
+    Anki media directory (`anki_media_dir`, or `get_anki_media_dir()` if not
+    given) is NEVER subject to `replace` -- an existing file there is always
+    left alone and always reported as a collision. Exactly one network call
+    is made per (word, voice) pair regardless of how many of the two
+    locations actually need writing; a pair needing no write at all spends
+    nothing from `budget`.
+
+    The text sent to the API is `spoken_text_for(word)`, which may differ
+    from `word` itself (e.g. `"в / во"` speaks as `"во"`); the filename is
+    always derived from `word`, never from the spoken text.
+
+    Returns one `SynthesisResult` per voice, generated or skipped.
     """
     validate_voice_setting("stability", stability)
     validate_voice_setting("similarity_boost", similarity_boost)
     api_key = api_key or get_api_key()
     os.makedirs(dir_name, exist_ok=True)
+    media_dir = anki_media_dir if anki_media_dir is not None else get_anki_media_dir()
 
     results = []
     for voice in voices:
         file_name = build_filename(word, voice, dir_name=dir_name)
-        if not replace and os.path.isfile(file_name):
+        media_file_name = build_filename(word, voice, dir_name=media_dir)
+
+        primary_exists = os.path.isfile(file_name)
+        media_exists = os.path.isfile(media_file_name)
+
+        need_primary_write = replace or not primary_exists
+        # The Anki media directory is NEVER subject to --replace; an
+        # existing file there is always left alone and always reported.
+        media_collision = media_exists
+        need_media_write = not media_exists
+
+        if not need_primary_write and not need_media_write:
             print(f"Skip (exists): {file_name}")
+            if media_collision:
+                print(
+                    f"COLLISION (not overwritten): {media_file_name} already "
+                    f"exists in the Anki media directory"
+                )
             results.append(
-                SynthesisResult(word=word, voice=voice, path=file_name, skipped=True)
+                SynthesisResult(
+                    word=word,
+                    voice=voice,
+                    path=file_name,
+                    skipped=True,
+                    media_path=media_file_name,
+                    media_collision=media_collision,
+                )
             )
             continue
 
+        spoken_text = spoken_text_for(word)
         audio_bytes = fetch_tts_audio_metered(
             voice,
-            word,
+            spoken_text,
             model_id,
             api_key,
             budget,
@@ -609,11 +624,34 @@ def build_and_save(
             stability=stability,
             similarity_boost=similarity_boost,
         )
-        with open(file_name, "wb") as fh:
-            fh.write(audio_bytes)
-        print(f"Saved: {file_name} (voice: {voice.name})")
+
+        if need_primary_write:
+            with open(file_name, "wb") as fh:
+                fh.write(audio_bytes)
+            print(f"Saved: {file_name} (voice: {voice.name})")
+        else:
+            print(f"Skip (exists): {file_name}")
+
+        if need_media_write:
+            os.makedirs(media_dir, exist_ok=True)
+            with open(media_file_name, "wb") as fh:
+                fh.write(audio_bytes)
+            print(f"Saved: {media_file_name} (Anki media)")
+        else:
+            print(
+                f"COLLISION (not overwritten): {media_file_name} already "
+                f"exists in the Anki media directory"
+            )
+
         results.append(
-            SynthesisResult(word=word, voice=voice, path=file_name, skipped=False)
+            SynthesisResult(
+                word=word,
+                voice=voice,
+                path=file_name,
+                skipped=not need_primary_write,
+                media_path=media_file_name,
+                media_collision=media_collision,
+            )
         )
     return results
 
@@ -630,6 +668,7 @@ def build_and_save_batch(
     session=None,
     stability: float = DEFAULT_STABILITY,
     similarity_boost: float = DEFAULT_SIMILARITY_BOOST,
+    anki_media_dir: Optional[str] = None,
 ) -> list:
     """Synthesize many words, each across every voice in `voices`.
 
@@ -659,6 +698,7 @@ def build_and_save_batch(
                 session=session,
                 stability=stability,
                 similarity_boost=similarity_boost,
+                anki_media_dir=anki_media_dir,
             )
         )
     return results
@@ -806,6 +846,19 @@ def build_parser() -> argparse.ArgumentParser:
         help="Regenerate and overwrite files that already exist. Default: skip them.",
     )
     parser.add_argument(
+        "--anki-media-dir",
+        dest="anki_media_dir",
+        type=str,
+        default=None,
+        help=(
+            "Override the auto-detected Anki media directory (default: "
+            "derived from the detected/overridden Anki collection path via "
+            "get_anki_media_dir()). This directory is never subject to "
+            "--replace -- an existing file there is always left alone and "
+            "reported as a collision."
+        ),
+    )
+    parser.add_argument(
         "--yes",
         "-y",
         action="store_true",
@@ -902,6 +955,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         session=session,
         stability=args.stability,
         similarity_boost=args.similarity_boost,
+        anki_media_dir=args.anki_media_dir,
     )
     saved = sum(1 for r in results if not r.skipped)
     skipped = sum(1 for r in results if r.skipped)

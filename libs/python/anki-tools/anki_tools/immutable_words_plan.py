@@ -23,6 +23,8 @@ and playing.
 import re
 from dataclasses import dataclass
 
+from anki_tools.audio_naming import SLOTS, build_filename
+
 # Deck the four part-of-speech subdecks hang off. The `2. ` prefix is the user's
 # choice; they renumber the sibling Russian decks themselves.
 DECK_ROOT = "Languages::Russian::2. Immutable Words"
@@ -81,6 +83,106 @@ _AUDIO_DIV = re.compile(
 )
 
 
+# Rows that combine two NON-interchangeable words into one source-document
+# row split into their own separate cards. Keyed by the exact `.russian`
+# text of the raw parsed row. Each entry is a list of (russian, english)
+# replacement pairs -- one row in, N rows out, same `pos`.
+#
+# "словно / будто" -> ONE new row, "словно" alone. "будто" is NOT created
+# here: it already exists as its own row, Particles rank 28
+# ("| 28 | будто | as if |") -- creating a second "будто" row would be a
+# genuine duplicate card, not a legitimate да/да-style repeat. Its nuance
+# gloss is applied to that EXISTING row instead, via TRANSLATION_OVERRIDES
+# below.
+#
+# "тоже / также" -> TWO new rows: neither word appears anywhere else in
+# the source document (verified against the real 152-row list).
+ROW_SPLITS: dict[str, list[tuple[str, str]]] = {
+    "словно / будто": [
+        ("словно", "as if, like (literary — a poetic simile)"),
+    ],
+    "тоже / также": [
+        (
+            "тоже",
+            'also, too (same action, different subject — "me too": Я тоже иду)',
+        ),
+        (
+            "также",
+            "also, in addition (same subject, an extra thing — "
+            "Я также купил хлеб; more formal)",
+        ),
+    ],
+}
+
+# Per-row English overrides, keyed by exact `.russian` text -- applied
+# instead of the source document's own gloss. Never edits the source
+# document; this is a pure code-side transform.
+TRANSLATION_OVERRIDES: dict[str, str] = {
+    "-то": (
+        "indefinite particle: makes a word specific-but-unknown — "
+        'кто-то "someone", что-то "something", где-то "somewhere". '
+        "Contrast -нибудь, which is non-specific: "
+        'кто-то позвонил "someone called" (a particular person) vs '
+        'позови кого-нибудь "call anyone".'
+    ),
+    "-ка": (
+        "softening particle on imperatives: turns an order into a nudge — "
+        'скажи-ка "go on, tell me", дай-ка "give it here", '
+        'посмотрим-ка "let\'s have a look". Informal, ты-level.'
+    ),
+    "будто": (
+        "as if, as though (often implies doubt — "
+        'он будто не знал "as if he didn\'t know", implying he did)'
+    ),
+}
+
+
+def _apply_row_transforms(rows: list["WordRow"]) -> list["WordRow"]:
+    """Apply `ROW_SPLITS`/`TRANSLATION_OVERRIDES`, then renumber `rank`
+    contiguously `1..N` within each `pos`, preserving document order.
+
+    This keeps the existing invariant -- ranks within a section are exactly
+    `1..count` with no gaps -- through the split, rather than dropping it.
+    """
+    expanded: list[WordRow] = []
+    for row in rows:
+        if row.russian in ROW_SPLITS:
+            for split_russian, split_english in ROW_SPLITS[row.russian]:
+                expanded.append(
+                    WordRow(
+                        pos=row.pos,
+                        rank=row.rank,
+                        russian=split_russian,
+                        english=split_english,
+                    )
+                )
+        elif row.russian in TRANSLATION_OVERRIDES:
+            expanded.append(
+                WordRow(
+                    pos=row.pos,
+                    rank=row.rank,
+                    russian=row.russian,
+                    english=TRANSLATION_OVERRIDES[row.russian],
+                )
+            )
+        else:
+            expanded.append(row)
+
+    counters: dict[str, int] = {}
+    renumbered: list[WordRow] = []
+    for row in expanded:
+        counters[row.pos] = counters.get(row.pos, 0) + 1
+        renumbered.append(
+            WordRow(
+                pos=row.pos,
+                rank=counters[row.pos],
+                russian=row.russian,
+                english=row.english,
+            )
+        )
+    return renumbered
+
+
 class SourceDocumentError(Exception):
     """The source document did not contain the expected four word-list sections."""
 
@@ -100,15 +202,19 @@ class WordRow:
     def fields(self) -> list[str]:
         """The six field values, in FIELD_NAMES order.
 
-        `Pronunciation`, `Audio` and `Additional Info` are left empty; audio is
-        a separate, later step.
+        `Pronunciation` and `Additional Info` are left empty. `Audio` holds the
+        four PREDICTED filenames (comma-separated, no spaces), derived from
+        `self.russian` via the shared `audio_naming.build_filename` -- the same
+        function `elevenlabs_tts.py` uses to name the files it actually writes,
+        so the two agree byte-for-byte before any audio file exists.
         """
+        audio_names = [build_filename(self.russian, slot) for slot in SLOTS]
         return [
             self.russian,
             self.english,
             "",
             POS_FIELD_VALUE[self.pos],
-            "",
+            ",".join(audio_names),
             "",
         ]
 
@@ -168,6 +274,7 @@ def parse_word_list(text: str) -> list[WordRow]:
         )
     if not rows:
         raise SourceDocumentError("source document sections contained no table rows")
+    rows = _apply_row_transforms(rows)
     return rows
 
 
@@ -195,10 +302,11 @@ def rewrite_audio_playback(template_html: str) -> str:
       existing `.hidden` class (`display: none !important`) so it is never
       shown as raw text; and
     - a `<script>` block that reads that hidden text, splits it into filenames,
-      degrades to doing nothing at all when the list is empty (every note this
-      lane creates ships with an empty `Audio` field), and otherwise picks one
-      filename at random and plays it via an autoplaying `<audio>` element plus
-      a visible replay `<button>`.
+      degrades to doing nothing at all when the list is empty (a defensive
+      fallback -- every note this lane creates now ships with `Audio`
+      populated, but the script must not assume that), and otherwise picks
+      one filename at random and plays it via an autoplaying `<audio>`
+      element plus a visible replay `<button>`.
 
     Returns the template unchanged when it has no such element - two of the
     four template sides legitimately don't render `{{Audio}}` at all. Idempotent:
