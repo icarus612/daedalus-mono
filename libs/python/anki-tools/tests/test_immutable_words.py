@@ -1128,3 +1128,302 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
         assert not mismatches, f"Audio field problems after import: {mismatches}"
     finally:
         fresh_col.close()
+
+
+# ---------------------------------------------------------------------------
+# Lane l4 -- builder-authored e2e: real media attachment, Anki's own
+# media-usage scan, and a real fresh-collection import with real bytes.
+#
+# NOT blind, NOT a contract test: written by the builder against the PLAN'S
+# acceptance criteria (the-ask.md / the l4 dispatch), after the l4 packet
+# (AudioRefs field, attach_media, --audio-dir) went green above. Verifies the
+# actual defect this lane fixes -- that Anki's media-usage scan (export
+# bundling, import, Tools -> Check Media) sees the shipped audio as USED, not
+# merely present on disk -- by calling Anki's own `col.media.check()` API,
+# never by reasoning about what the scanner "should" do.
+#
+# Uses the REAL 608 mp3s at ~/Desktop/russian-audio/ (never regenerated, no
+# ElevenLabs calls anywhere in this file) and a tmp_path COPY of the real
+# snapshot collection, exactly like the rest of this file. Every collection
+# opened here is either that copy or a from-scratch temp collection --
+# ~/.local/share/Anki2/User 1/collection.anki2 is never opened.
+# ---------------------------------------------------------------------------
+
+REAL_AUDIO_DIR = os.path.expanduser("~/Desktop/russian-audio")
+
+_real_audio_missing_reason = (
+    f"real audio directory not found or incomplete: {REAL_AUDIO_DIR!r} "
+    "(expects the 608 real .mp3 files generated for this run; this test "
+    "verifies the actual shipped audio, not a fixture, so it skips rather "
+    "than false-failing on a machine that never had them)"
+)
+
+
+def _real_audio_dir_ready():
+    if not os.path.isdir(REAL_AUDIO_DIR):
+        return False
+    return len([f for f in os.listdir(REAL_AUDIO_DIR) if f.endswith(".mp3")]) >= 608
+
+
+@pytest.mark.skipif(not _real_audio_dir_ready(), reason=_real_audio_missing_reason)
+def test_e2e_real_media_is_marked_used_not_merely_present(
+    tmp_path, collection_snapshot_copy
+):
+    """The lane's central claim, proven with Anki's own scanner.
+
+    Builds the real 153-note deck, attaches the real 608 mp3s via
+    `attach_media`, and calls `build_col.media.check()` -- the exact API
+    Tools -> Check Media uses -- BEFORE ever exporting. Asserts zero unused
+    and zero missing.
+
+    Includes a POSITIVE CONTROL (verify-dont-assume: a bare "0 unused" is
+    not evidence on its own -- prove the check could have failed): with
+    `AudioRefs` blanked back out on every note (leaving the plain-filename
+    `Audio` field untouched, exactly the pre-fix shape), the SAME files on
+    the SAME disk are reported unused by the SAME `check()` call. That is
+    the actual defect this lane fixes, demonstrated instead of argued.
+    """
+    from anki_tools.immutable_words_plan import parse_word_list
+
+    with open(SOURCE_DOC_PATH, encoding="utf-8") as fh:
+        rows = parse_word_list(fh.read())
+    assert len(rows) == 153
+
+    build_col = Collection(os.path.join(str(tmp_path), "build.anki2"))
+    source_col = Collection(collection_snapshot_copy)
+    try:
+        note_type = clone_note_type(source_col, build_col, NEW_NOTE_TYPE_NAME)
+    finally:
+        source_col.close()
+
+    build_deck_tree(build_col, rows, note_type)
+
+    found, missing = attach_media(build_col, REAL_AUDIO_DIR)
+    assert missing == [], f"real audio files not found on disk: {missing}"
+    assert len(found) == 608
+
+    check = build_col.media.check()
+    assert list(check.missing) == []
+    assert list(check.unused) == [], (
+        "Check Media would report these as unused -- i.e. deletable -- "
+        f"despite being real, referenced audio: {list(check.unused)[:10]}"
+    )
+
+    # Positive control: blank AudioRefs (the pre-fix shape -- Audio's plain
+    # filenames alone) and prove the SAME scan now flags the SAME files.
+    note_ids = build_col.find_notes("")
+    for note_id in note_ids:
+        note = build_col.get_note(note_id)
+        note["AudioRefs"] = ""
+        build_col.update_note(note)
+
+    control_check = build_col.media.check()
+    assert len(control_check.unused) == 608, (
+        "control failed: blanking AudioRefs should reproduce the original "
+        "defect (all 608 real files reported unused) -- if it doesn't, "
+        "this test's '0 unused' result above is not proof of anything"
+    )
+
+    build_col.close()
+
+
+@pytest.mark.skipif(not _real_audio_dir_ready(), reason=_real_audio_missing_reason)
+def test_e2e_real_media_export_is_full_size_not_empty_manifest(
+    tmp_path, collection_snapshot_copy
+):
+    """The exported `.apkg` actually carries the 608 files' bytes.
+
+    Asserts real size (~8+ MB, not the ~76 KB / 9-byte-manifest shape of the
+    original defect) AND inspects the zip directly (never trusting size
+    alone) for 608 media entries distinct from the package's own
+    `meta`/`media`/`collection.anki2*` bookkeeping entries.
+    """
+    import zipfile
+
+    from anki_tools.immutable_words_plan import parse_word_list
+
+    with open(SOURCE_DOC_PATH, encoding="utf-8") as fh:
+        rows = parse_word_list(fh.read())
+
+    build_col = Collection(os.path.join(str(tmp_path), "build.anki2"))
+    source_col = Collection(collection_snapshot_copy)
+    try:
+        note_type = clone_note_type(source_col, build_col, NEW_NOTE_TYPE_NAME)
+    finally:
+        source_col.close()
+
+    build_deck_tree(build_col, rows, note_type)
+    found, missing = attach_media(build_col, REAL_AUDIO_DIR)
+    assert missing == []
+
+    out_path = os.path.join(str(tmp_path), "immutable-words-with-media.apkg")
+    export_package(build_col, DECK_ROOT, out_path)
+    build_col.close()
+
+    size = os.path.getsize(out_path)
+    assert size > 8 * 1024 * 1024, (
+        f"expected a real media payload (~8+ MB), got {size} bytes -- this "
+        "is the exact 76 KB/empty-manifest shape of the original defect"
+    )
+
+    with zipfile.ZipFile(out_path) as zf:
+        names = set(zf.namelist())
+    bookkeeping = {"meta", "media", "collection.anki2", "collection.anki21b"}
+    media_entries = names - bookkeeping
+    assert len(media_entries) == 608, (
+        f"expected 608 media entries in the package, got {len(media_entries)}"
+    )
+
+
+@pytest.mark.skipif(not _real_audio_dir_ready(), reason=_real_audio_missing_reason)
+def test_e2e_real_media_fresh_import_delivers_608_files_zero_missing(
+    tmp_path, collection_snapshot_copy
+):
+    """The strongest evidence available: import the real package into a
+    collection that never existed before, and assert entirely against what
+    THAT import produced -- 153 notes, 306 cards, 608 media files actually
+    present in the new collection's OWN media directory, and every filename
+    in every note's `Audio` field resolving on disk (zero
+    referenced-but-missing). Also re-runs `media.check()` on the imported
+    collection itself, and confirms `{{AudioRefs}}` renders on neither
+    template while `{{Audio}}` still renders on at least one.
+    """
+    from anki.import_export_pb2 import (
+        ImportAnkiPackageOptions,
+        ImportAnkiPackageRequest,
+    )
+
+    from anki_tools.audio_naming import parse_audio_filenames
+    from anki_tools.immutable_words_plan import parse_word_list
+
+    with open(SOURCE_DOC_PATH, encoding="utf-8") as fh:
+        rows = parse_word_list(fh.read())
+
+    build_col = Collection(os.path.join(str(tmp_path), "build.anki2"))
+    source_col = Collection(collection_snapshot_copy)
+    try:
+        note_type = clone_note_type(source_col, build_col, NEW_NOTE_TYPE_NAME)
+    finally:
+        source_col.close()
+
+    build_deck_tree(build_col, rows, note_type)
+    found, missing = attach_media(build_col, REAL_AUDIO_DIR)
+    assert missing == []
+    assert len(found) == 608
+
+    out_path = os.path.join(str(tmp_path), "immutable-words.apkg")
+    export_package(build_col, DECK_ROOT, out_path)
+    build_col.close()
+
+    fresh_path = os.path.join(str(tmp_path), "fresh-import-target.anki2")
+    assert not os.path.exists(fresh_path)
+    fresh_col = Collection(fresh_path)
+    try:
+        fresh_col.import_anki_package(
+            ImportAnkiPackageRequest(
+                package_path=out_path,
+                options=ImportAnkiPackageOptions(
+                    merge_notetypes=True,
+                    with_scheduling=False,
+                    with_deck_configs=False,
+                ),
+            )
+        )
+
+        total_notes = 0
+        total_cards = 0
+        for name in all_subdeck_names():
+            card_ids = fresh_col.find_cards(f'deck:"{name}"')
+            note_ids = {fresh_col.get_card(cid).nid for cid in card_ids}
+            total_notes += len(note_ids)
+            total_cards += len(card_ids)
+        assert total_notes == 153
+        assert total_cards == 306
+
+        media_files_on_disk = set(os.listdir(fresh_col.media.dir()))
+        assert len(media_files_on_disk) == 608
+
+        all_note_ids = fresh_col.find_notes(f'note:"{NEW_NOTE_TYPE_NAME}"')
+        assert len(all_note_ids) == 153
+        missing_refs = []
+        for note_id in all_note_ids:
+            note = fresh_col.get_note(note_id)
+            names = parse_audio_filenames(note["Audio"])
+            assert len(names) == 4, (note["Russian"], names)
+            for name in names:
+                if name not in media_files_on_disk:
+                    missing_refs.append((note["Russian"], name))
+        assert missing_refs == [], (
+            f"referenced-but-missing after import: {missing_refs[:10]} "
+            f"(+{max(0, len(missing_refs) - 10)} more)"
+        )
+
+        fresh_check = fresh_col.media.check()
+        assert list(fresh_check.missing) == []
+        assert list(fresh_check.unused) == []
+
+        imported_note_type = fresh_col.models.by_name(NEW_NOTE_TYPE_NAME)
+        sides = _template_sides(imported_note_type)
+        assert not any("{{AudioRefs}}" in side for side in sides), (
+            "a template renders {{AudioRefs}} -- this would autoplay all "
+            "four recordings back to back, the exact bug the Audio/"
+            "random-JS split exists to avoid"
+        )
+        assert any("{{Audio}}" in side for side in sides)
+    finally:
+        fresh_col.close()
+
+
+def test_audio_refs_never_rendered_by_any_template_side(cloned):
+    """Narrow, fast, fixture-only regression guard for the same invariant
+    the real-import e2e test above proves at full scale: fails immediately
+    if anyone later "helpfully" wires `{{AudioRefs}}` into a template.
+    Does not need real audio or the real snapshot's live state beyond the
+    already-shared `cloned` fixture.
+    """
+    note_type, _ = cloned
+    sides = _template_sides(note_type)
+    assert not any("{{AudioRefs}}" in side for side in sides)
+    assert any("{{Audio}}" in side for side in sides)
+
+
+def test_random_pick_js_and_empty_audio_render_cleanly(cloned, build_col):
+    """`rewrite_audio_playback`'s JS still drives the `Audio` field (never
+    `AudioRefs`) and a note with an empty `Audio` field still renders
+    without error on every card side -- the defensive fallback documented
+    in `rewrite_audio_playback` must still hold now that a 7th field exists.
+    """
+    note_type, _ = cloned
+    deck_id = build_col.decks.id("Lane l4 render check", create=True)
+
+    with_audio = build_col.new_note(note_type)
+    with_audio["Russian"] = "около"
+    with_audio["Translation"] = "near"
+    with_audio["Audio"] = "около_f1.mp3,около_f2.mp3,около_m1.mp3,около_m2.mp3"
+    with_audio["AudioRefs"] = (
+        "[sound:около_f1.mp3][sound:около_f2.mp3]"
+        "[sound:около_m1.mp3][sound:около_m2.mp3]"
+    )
+    build_col.add_note(with_audio, deck_id)
+
+    empty_audio = build_col.new_note(note_type)
+    empty_audio["Russian"] = "тест"
+    empty_audio["Translation"] = "test"
+    # Audio and AudioRefs both left at their default empty string.
+    build_col.add_note(empty_audio, deck_id)
+
+    saw_audio_data_span = False
+    for note in (with_audio, empty_audio):
+        for card in note.cards():
+            output = card.render_output()  # must not raise
+            question = output.question_text
+            assert "{{AudioRefs}}" not in question
+            if 'id="audio-data"' in question:
+                saw_audio_data_span = True
+                assert "Math.random" in question
+                assert "<script" in question
+
+    # At least one of the two notes' rendered sides actually exercised the
+    # audio div (some sides legitimately don't render Audio at all -- see
+    # rewrite_audio_playback's docstring).
+    assert saw_audio_data_span
