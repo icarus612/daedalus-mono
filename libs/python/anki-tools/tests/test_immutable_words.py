@@ -8,14 +8,32 @@ attach_media" and "CLI wiring in main()") for the media-attachment
 additions -- never read anki_tools/immutable_words.py itself, only the
 contract text describing it.
 
-Every test that needs the source note type works against a tmp_path COPY of
-the real snapshot collection
-(.workflows/russian-immutable-words/.artifacts/col-snapshot.anki2), made
-*before* that copy is ever opened. The real snapshot path itself is never
-opened directly, anywhere in this file. Fixture ".mp3" files used to test
-attach_media / --audio-dir are tiny fabricated byte strings written into
-tmp_path -- never real audio, never anything read from
-~/Desktop/russian-audio/, and no network access anywhere in this file.
+Every test that needs the source note type works against a SYNTHETIC source
+collection built in this file (see `_build_synthetic_source_collection`
+below), never the real `col-snapshot.anki2` snapshot of the user's actual
+Anki collection. That snapshot is a 35 MB copy of the user's real 240-deck,
+10,664-note collection and must never be committed, required to exist on
+disk, or referenced by an absolute path for this suite to pass -- the class
+of bug lane l6 already fixed for the source word-list document, fixed here
+for the note-type snapshot (lane l7). The synthetic note type matches the
+real source note type's *shape*: the same (trailing-space-typo'd) name,
+the same six fields in order, two templates with a `part-of-speech` div
+the clone must strip and an `audio` div driving `rewrite_audio_playback`,
+and non-trivial CSS. Honesty note: these tests now prove the clone logic
+behaves correctly against a note type of the right shape -- they no longer
+prove it behaves correctly against the user's actual account data. That
+was verified manually, once, against the live collection, outside this
+suite.
+
+Every collection built or opened in this file is a from-scratch temp file;
+nothing here ever opens `~/.local/share/Anki2/` or any path outside
+`tmp_path`. Fixture ".mp3" files used to test attach_media / --audio-dir
+are tiny fabricated byte strings written into tmp_path -- never real
+audio, never anything read from ~/Desktop/russian-audio/ except by the two
+`skipif`-guarded real-media e2e tests further down (the one case that
+genuinely cannot be expressed synthetically: proving Anki's own
+media-usage scanner against real bytes is the entire point of those two
+tests) -- and no network access anywhere in this file.
 
 Subphase 3.1 (builder-owned, out of this packet's scope) appends a full
 build -> export -> import round-trip end-to-end test to this same file after
@@ -28,6 +46,7 @@ import hashlib
 import os
 import re
 import shutil
+import sqlite3
 import sys
 from pathlib import Path
 
@@ -55,10 +74,144 @@ from anki_tools.immutable_words_plan import (
     subdeck_name,
 )
 
-SNAPSHOT_PATH = (
-    "/home/icarus64/repos/daedalus-mono/.workflows/russian-immutable-words"
-    "/.artifacts/col-snapshot.anki2"
-)
+# The real source note type's own name has a trailing-space typo (see
+# immutable_words.py's SOURCE_NOTETYPE_ID comment, "look it up by id, never
+# by name, to sidestep that entirely") -- the synthetic fixture copies that
+# quirk so "renamed with no trailing space" actually proves something.
+SOURCE_NOTE_TYPE_NAME = "Russian - Common Words (Ellis Version) "
+
+_SOURCE_FIELD_NAMES = [
+    "Russian",
+    "Translation",
+    "Pronunciation",
+    "Part of Speech",
+    "Audio",
+    "Additional Info",
+]
+
+_FIXTURE_CSS = """\
+.card {
+    font-family: arial;
+    font-size: 20px;
+    text-align: center;
+    color: black;
+    background-color: white;
+}
+.hidden {
+    display: none !important;
+}
+#part-of-speech {
+    font-style: italic;
+    color: #666;
+}
+"""
+
+# The real card templates build a deck-section header via
+# `deckName.split(". ")[1]` (see immutable_words_plan.subdeck_name's
+# docstring) -- reproduced here so the clone is proven to leave arbitrary
+# unrelated script content alone, not just the two elements it transforms.
+_DECK_HEADER_SCRIPT = """\
+<script>
+(function () {
+  var deckName = "{{Deck}}";
+  var header = deckName.split(". ")[1] || deckName;
+  var el = document.getElementById("deck-header");
+  if (el) { el.textContent = header; }
+})();
+</script>"""
+
+_CARD1_QFMT = f"""<div id="deck-header"></div>
+{_DECK_HEADER_SCRIPT}
+<div id="part-of-speech">{{{{Part of Speech}}}}</div>
+{{{{Russian}}}}"""
+
+_CARD1_AFMT = """{{FrontSide}}
+
+<hr id=answer>
+
+{{Translation}}
+<div id="audio">{{Audio}}</div>
+{{Pronunciation}}"""
+
+_CARD2_QFMT = """<div id="audio">{{Audio}}</div>
+{{Translation}}"""
+
+_CARD2_AFMT = """{{FrontSide}}
+
+<hr id=answer>
+
+<div id="part-of-speech">{{Part of Speech}}</div>
+{{Russian}}
+{{Additional Info}}"""
+
+
+def _register_unicase_collation(conn):
+    """Anki's schema declares a `unicase` collation on notetypes.name; the
+    real backend registers a Unicode-aware one, but any case-insensitive
+    comparator satisfies SQLite here since this raw connection only ever
+    renumbers rows, never sorts or searches by name.
+    """
+    conn.create_collation(
+        "unicase", lambda a, b: (a.lower() > b.lower()) - (a.lower() < b.lower())
+    )
+
+
+def _build_synthetic_source_collection(path):
+    """Build a from-scratch Anki collection at `path` containing one note
+    type of the same *shape* as the real source note type this tool clones
+    from: the same (typo'd) name, the same six fields in order, two
+    templates with a `part-of-speech` div (Card 1's question side and Card
+    2's answer side -- the element the clone strips) and an `audio` div
+    driving `rewrite_audio_playback` (the other two sides), and non-trivial
+    CSS so the "CSS copied verbatim" assertion means something.
+
+    `clone_note_type` looks the source note type up by a hardcoded numeric
+    id (`SOURCE_NOTETYPE_ID`), never by name, so this also renumbers the
+    freshly-created note type to that exact id via a direct SQLite write --
+    safe only because this collection never holds any notes, so nothing
+    else references the natural id it was born with.
+    """
+    col = Collection(path)
+    try:
+        note_type = col.models.new(SOURCE_NOTE_TYPE_NAME)
+        for name in _SOURCE_FIELD_NAMES:
+            note_type["flds"].append(col.models.new_field(name))
+
+        card1 = col.models.new_template("Card 1")
+        card1["qfmt"] = _CARD1_QFMT
+        card1["afmt"] = _CARD1_AFMT
+        note_type["tmpls"].append(card1)
+
+        card2 = col.models.new_template("Card 2")
+        card2["qfmt"] = _CARD2_QFMT
+        card2["afmt"] = _CARD2_AFMT
+        note_type["tmpls"].append(card2)
+
+        note_type["css"] = _FIXTURE_CSS
+
+        natural_id = col.models.add_dict(note_type).id
+    finally:
+        col.close()
+
+    conn = sqlite3.connect(path)
+    _register_unicase_collation(conn)
+    try:
+        conn.execute(
+            "update notetypes set id = ? where id = ?",
+            (SOURCE_NOTETYPE_ID, natural_id),
+        )
+        conn.execute(
+            "update fields set ntid = ? where ntid = ?",
+            (SOURCE_NOTETYPE_ID, natural_id),
+        )
+        conn.execute(
+            "update templates set ntid = ? where ntid = ?",
+            (SOURCE_NOTETYPE_ID, natural_id),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
 
 # Shared marker vocabulary from Packet A's contract (rewrite_audio_playback):
 # both packets' blind testers assert against this exact set so they stay
@@ -202,13 +355,28 @@ def _fixture_word_audio_filenames():
 # ---------------------------------------------------------------------------
 
 
+@pytest.fixture(scope="session")
+def _synthetic_source_base(tmp_path_factory):
+    """Build the synthetic source collection once per test session and hand
+    back its path. Per-test isolation still comes entirely from copying
+    this file in `collection_snapshot_copy` below, never from opening it
+    directly -- the base file itself is never passed to `Collection(...)`.
+    """
+    base_dir = tmp_path_factory.mktemp("synthetic-source-base")
+    base_path = os.path.join(str(base_dir), "synthetic-source.anki2")
+    _build_synthetic_source_collection(base_path)
+    return base_path
+
+
 @pytest.fixture
-def collection_snapshot_copy(tmp_path):
-    """Copy the real snapshot into tmp_path BEFORE ever opening it. Every
-    test needing the source note type opens this copy, never the original.
+def collection_snapshot_copy(tmp_path, _synthetic_source_base):
+    """Copy the synthetic source collection into tmp_path BEFORE ever
+    opening it. Every test needing the source note type opens this copy,
+    never the shared session-scoped base file -- same isolation discipline
+    the original real-snapshot design used.
     """
     copy_path = os.path.join(str(tmp_path), "snapshot-copy.anki2")
-    shutil.copy2(SNAPSHOT_PATH, copy_path)
+    shutil.copy2(_synthetic_source_base, copy_path)
     return copy_path
 
 
