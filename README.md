@@ -71,7 +71,8 @@ daedalus-mono
 │       └── <a href="/libs/python/web-crawlers">web-crawlers</a>
 ├── project-plans
 │   ├── anki-due-rebalance-08-12-26
-│   └── completed
+│   ├── completed
+│   └── russian-immutable-words-08-31-26
 ├── templates
 │   └── <a href="/templates/next-js">next-js</a>
 
