@@ -17,11 +17,12 @@ built against the same contract text; this file never touches Anki, the
 test file only.
 
 The real source document
-(``.workflows/russian-immutable-words/.artifacts/source-word-list.md``,
-parent worktree's gitignored run dir) is read directly by its absolute
-path below and used as fixture data for the parser tests; it is a plain
-input document, not part of the implementation under test, so reading it
-does not compromise the blindness this file is required to keep.
+(``project-plans/russian-immutable-words-08-31-26/source-word-list.md``,
+a committed repo fixture copy of the original run dir file) is read
+directly by a repo-relative path below and used as fixture data for the
+parser tests; it is a plain input document, not part of the implementation
+under test, so reading it does not compromise the blindness this file is
+required to keep.
 """
 
 import json
@@ -31,6 +32,7 @@ import shutil
 import subprocess
 import tempfile
 from itertools import groupby
+from pathlib import Path
 
 import pytest
 
@@ -52,8 +54,10 @@ from anki_tools.immutable_words_plan import (
 )
 
 REAL_SOURCE_PATH = (
-    "/home/icarus64/repos/daedalus-mono/.workflows/russian-immutable-words"
-    "/.artifacts/source-word-list.md"
+    Path(__file__).resolve().parents[4]
+    / "project-plans"
+    / "russian-immutable-words-08-31-26"
+    / "source-word-list.md"
 )
 
 # The four sections in document order, with the exact counts the real
@@ -173,9 +177,9 @@ def _remove_section(text, heading_name):
         re.MULTILINE | re.DOTALL,
     )
     new_text, count = pattern.subn("", text)
-    assert (
-        count == 1
-    ), f"fixture setup: expected to remove exactly one {heading_name!r} section"
+    assert count == 1, (
+        f"fixture setup: expected to remove exactly one {heading_name!r} section"
+    )
     return new_text
 
 
@@ -201,9 +205,9 @@ def test_parse_real_document_section_order_counts_and_ranks(real_rows):
         EXPECTED_SECTION_COUNTS, grouped
     ):
         assert pos == name
-        assert (
-            len(rows_in_section) == expected_count
-        ), f"{name}: expected {expected_count} rows, got {len(rows_in_section)}"
+        assert len(rows_in_section) == expected_count, (
+            f"{name}: expected {expected_count} rows, got {len(rows_in_section)}"
+        )
         assert [r.rank for r in rows_in_section] == list(range(1, expected_count + 1))
 
 

@@ -29,6 +29,7 @@ import os
 import re
 import shutil
 import sys
+from pathlib import Path
 
 import pytest
 from anki.collection import Collection
@@ -950,8 +951,10 @@ def test_main_audio_dir_export_measurably_larger_than_without(
 # ---------------------------------------------------------------------------
 
 SOURCE_DOC_PATH = (
-    "/home/icarus64/repos/daedalus-mono/.workflows/russian-immutable-words"
-    "/.artifacts/source-word-list.md"
+    Path(__file__).resolve().parents[4]
+    / "project-plans"
+    / "russian-immutable-words-08-31-26"
+    / "source-word-list.md"
 )
 
 

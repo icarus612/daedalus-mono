@@ -30,6 +30,7 @@ never clamp, on an out-of-range value.
 import json
 import os
 import re
+from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
@@ -271,39 +272,17 @@ def test_all_four_roster_voices_produce_distinct_filenames_for_the_same_word():
 # 152-row source word list.
 # ---------------------------------------------------------------------------
 
-# Computed relative to this test file, not hardcoded to a home directory:
-# .../<run>-l2/libs/python/anki-tools/tests/test_elevenlabs_tts.py
-# -> up 4 levels -> the lane's own worktree root (<run>-l2)
-# -> its sibling, the PARENT worktree (<run>), holds the gitignored run dir.
-_TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
-_LANE_WORKTREE_ROOT = os.path.dirname(
-    os.path.dirname(os.path.dirname(os.path.dirname(_TESTS_DIR)))
-)
-_WORKFLOWS_DIR = os.path.dirname(_LANE_WORKTREE_ROOT)
-_LANE_SUFFIX = "-l2"
-_lane_name = os.path.basename(_LANE_WORKTREE_ROOT)
-_run_name = (
-    _lane_name[: -len(_LANE_SUFFIX)]
-    if _lane_name.endswith(_LANE_SUFFIX)
-    else _lane_name
-)
-SOURCE_WORD_LIST_PATH = os.path.join(
-    _WORKFLOWS_DIR, _run_name, ".artifacts", "source-word-list.md"
-)
-
-_SOURCE_LIST_MISSING_REASON = (
-    "source-word-list.md lives in the parent worktree's gitignored run dir "
-    "(.artifacts/), which is destroyed with that worktree once this run's "
-    "lanes merge and closeout runs -- this test verifies against the REAL "
-    "word list while the run is in flight and skips once the artifact is "
-    "gone, rather than becoming a permanently broken/false-failing test "
-    "long after the data it checks stopped existing."
+# Computed relative to this test file, a committed repo fixture:
+# .../libs/python/anki-tools/tests/test_elevenlabs_tts.py -> up 4 levels ->
+# the repo root -> project-plans/russian-immutable-words-08-31-26/.
+SOURCE_WORD_LIST_PATH = (
+    Path(__file__).resolve().parents[4]
+    / "project-plans"
+    / "russian-immutable-words-08-31-26"
+    / "source-word-list.md"
 )
 
 
-@pytest.mark.skipif(
-    not os.path.isfile(SOURCE_WORD_LIST_PATH), reason=_SOURCE_LIST_MISSING_REASON
-)
 def test_slug_collision_free_across_real_source_word_list():
     """Prove, don't assume: run every word in the real 152-row source list
     through `sanitize_word_slug` and assert the results are pairwise

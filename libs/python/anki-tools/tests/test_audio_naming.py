@@ -12,14 +12,15 @@ never read by this file's author -- every expectation below comes from the
 contract text, not from observed behaviour.
 
 The real source document
-(``.workflows/russian-immutable-words/.artifacts/source-word-list.md``,
-parent worktree's gitignored run dir) is read directly by its absolute path
+(``project-plans/russian-immutable-words-08-31-26/source-word-list.md``,
+a committed repo fixture copy) is read directly by a repo-relative path
 below and used as fixture data for the parser-agreement test; it is a plain
 input document, not part of the implementation under test, so reading it
 does not compromise the blindness this file is required to keep.
 """
 
 import os
+from pathlib import Path
 
 import pytest
 
@@ -38,17 +39,10 @@ from anki_tools.elevenlabs_tts import build_filename as tts_build_filename
 from anki_tools.immutable_words_plan import FIELD_NAMES, parse_word_list
 
 REAL_SOURCE_PATH = (
-    "/home/icarus64/repos/daedalus-mono/.workflows/russian-immutable-words"
-    "/.artifacts/source-word-list.md"
-)
-
-_SOURCE_MISSING_REASON = (
-    "source-word-list.md lives in the parent worktree's gitignored run dir "
-    "(.artifacts/), which is destroyed with that worktree once this run's "
-    "lanes merge and closeout runs -- this test verifies against the REAL "
-    "word list while the run is in flight and skips once the artifact is "
-    "gone, rather than becoming a permanently broken/false-failing test "
-    "long after the data it checks stopped existing."
+    Path(__file__).resolve().parents[4]
+    / "project-plans"
+    / "russian-immutable-words-08-31-26"
+    / "source-word-list.md"
 )
 
 
@@ -250,7 +244,6 @@ def real_rows(real_source_text):
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.skipif(not os.path.isfile(REAL_SOURCE_PATH), reason=_SOURCE_MISSING_REASON)
 def test_deck_audio_field_agrees_with_tts_build_filename_for_every_row_and_slot(
     real_rows,
 ):
@@ -288,7 +281,6 @@ def test_deck_audio_field_agrees_with_tts_build_filename_for_every_row_and_slot(
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.skipif(not os.path.isfile(REAL_SOURCE_PATH), reason=_SOURCE_MISSING_REASON)
 def test_153_rows_152_distinct_slugs_sole_repeat_is_da(real_rows):
     assert len(real_rows) == 153
 
