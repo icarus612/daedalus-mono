@@ -24,7 +24,12 @@ input document, not part of the implementation under test, so reading it
 does not compromise the blindness this file is required to keep.
 """
 
+import json
+import os
 import re
+import shutil
+import subprocess
+import tempfile
 from itertools import groupby
 
 import pytest
@@ -383,6 +388,375 @@ def test_rewrite_audio_playback_idempotent():
 def test_rewrite_audio_playback_noop_when_absent():
     result = rewrite_audio_playback(TEMPLATE_WITHOUT_AUDIO_DIV)
     assert result == TEMPLATE_WITHOUT_AUDIO_DIV
+
+
+# --- New contract tests (lane l5): the "Show Answer plays a second, ---
+# different voice" fix. Derived entirely from
+# `.workflows/russian-immutable-words/.artifacts/contracts/l5.md` -- the
+# implementation (`anki_tools/immutable_words_plan.py`) is never read.
+
+# A "Card 2"-shaped fixture (contract l5.md: the audio div's only
+# appearance is inside the answer-side `#back` block, deliberately
+# different in shape from TEMPLATE_WITH_AUDIO_DIV above) used to re-derive
+# the idempotency/no-op/marker-vocabulary guarantees on a fresh fixture, per
+# l5.md section "New tests required ... A.3".
+TEMPLATE_WITH_AUDIO_DIV_ANSWER_SIDE = """\
+<div class="card">
+  {{FrontSide}}
+  <hr id="answer">
+  <div id="back">
+    <div id="audio">{{Audio}}</div>
+  </div>
+</div>
+"""
+
+TEMPLATE_WITHOUT_AUDIO_DIV_ANSWER_SIDE = """\
+<div class="card">
+  {{FrontSide}}
+  <hr id="answer">
+  <div id="back">
+    <div id="translation">{{Translation}}</div>
+  </div>
+</div>
+"""
+
+
+def test_rewrite_audio_playback_defers_via_settimeout_and_checks_back_marker():
+    # l5.md "New tests required" A.1: the rewrite must defer its work and
+    # branch on an answer-side marker.
+    result = rewrite_audio_playback(TEMPLATE_WITH_AUDIO_DIV)
+    assert "setTimeout" in result
+    assert 'getElementById("back")' in result
+
+
+def test_rewrite_audio_playback_autoplay_is_computed_not_constant():
+    # l5.md "New tests required" A.2: `audio.autoplay = true;` unconditionally
+    # is exactly the defect this lane fixes and must not appear literally.
+    result = rewrite_audio_playback(TEMPLATE_WITH_AUDIO_DIV)
+    assert re.search(r"\.autoplay\s*=\s*true\s*;", result) is None
+
+
+def test_rewrite_audio_playback_marker_vocabulary_present_on_answer_side_fixture():
+    # l5.md A.3: re-derive marker vocabulary on a fresh, differently-shaped
+    # fixture (Card 2's shape -- audio div lives only inside `#back`).
+    result = rewrite_audio_playback(TEMPLATE_WITH_AUDIO_DIV_ANSWER_SIDE)
+    for marker in (
+        'id="audio-data"',
+        "{{Audio}}",
+        'class="hidden"',
+        "<script",
+        "setTimeout",
+        "Math.random",
+        "autoplay",
+        "<button",
+        'getElementById("back")',
+        "__immutableWordsAudioChoice",
+    ):
+        assert marker in result, f"expected marker {marker!r} in rewritten template"
+
+
+def test_rewrite_audio_playback_removes_original_literal_block_on_answer_side_fixture():
+    result = rewrite_audio_playback(TEMPLATE_WITH_AUDIO_DIV_ANSWER_SIDE)
+    assert '<div id="audio">{{Audio}}</div>' not in result
+
+
+def test_rewrite_audio_playback_never_emits_sound_tag_syntax_on_answer_side_fixture():
+    # l5.md A.3: "no `[sound:`" must keep holding on the new output.
+    result = rewrite_audio_playback(TEMPLATE_WITH_AUDIO_DIV_ANSWER_SIDE)
+    assert "[sound:" not in result
+
+
+def test_rewrite_audio_playback_idempotent_on_answer_side_fixture():
+    # l5.md A.3: idempotency must hold for the new script too, re-derived on
+    # a fresh fixture (not just the module's original TEMPLATE_WITH_AUDIO_DIV).
+    once = rewrite_audio_playback(TEMPLATE_WITH_AUDIO_DIV_ANSWER_SIDE)
+    twice = rewrite_audio_playback(once)
+    assert twice == once
+
+
+def test_rewrite_audio_playback_noop_when_absent_on_answer_side_fixture():
+    # l5.md A.3: "no-op when absent" re-derived on a fresh fixture.
+    result = rewrite_audio_playback(TEMPLATE_WITHOUT_AUDIO_DIV_ANSWER_SIDE)
+    assert result == TEMPLATE_WITHOUT_AUDIO_DIV_ANSWER_SIDE
+
+
+# --- Part B: behavioral tests that actually execute the emitted <script> in
+# Node, against a minimal hand-written DOM shim (no jsdom, no npm deps), per
+# l5.md "New tests required" section B. ---
+
+DEFAULT_AUDIO_FILES = ["a.mp3", "b.mp3", "c.mp3"]
+
+
+@pytest.fixture(scope="module")
+def node_executable():
+    """Locate `node` the way a developer shell would (l5.md section B: via
+    `shutil.which`, never a hardcoded nvm path), and actually try
+    `node --version` before deciding it is unusable -- skip, don't assume."""
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("node not found on PATH; cannot run behavioral JS tests")
+    probe = subprocess.run([node, "--version"], capture_output=True, text=True)
+    if probe.returncode != 0:
+        pytest.skip(
+            f"`node --version` failed (rc={probe.returncode}); "
+            "cannot run behavioral JS tests"
+        )
+    return node
+
+
+def _extract_script_body(rewritten_template: str) -> str:
+    """Slice out the JS body between the first `<script>` and the last
+    `</script>` in the rewritten template (l5.md section B: "regex or simple
+    string slicing ... is sufficient")."""
+    start = rewritten_template.index("<script>") + len("<script>")
+    end = rewritten_template.rindex("</script>")
+    assert start < end, "expected a <script>...</script> block in rewritten output"
+    return rewritten_template[start:end]
+
+
+def _build_harness(
+    *,
+    script_body: str,
+    audio_text: str,
+    back_present: bool,
+    preseeded_choice,
+    forced_random: float,
+) -> str:
+    """Build a standalone Node source file: a minimal hand-written DOM/window/
+    setTimeout/Math.random shim (l5.md section B), followed by the extracted
+    script body verbatim, followed by a probe that reports the resulting
+    state as JSON via console.log. Built by string concatenation (never
+    str.format/%-substitution over the untrusted script body, whose braces
+    would collide with a format template)."""
+    lines = [
+        "var __audioDataEl = { textContent: " + json.dumps(audio_text) + " };",
+        "var __audioContainerEl = { _children: [], "
+        "appendChild: function (el) { this._children.push(el); } };",
+        "var __backEl = " + ("true" if back_present else "false") + " ? {} : null;",
+        "",
+        "var document = {",
+        "  getElementById: function (id) {",
+        '    if (id === "audio-data") { return __audioDataEl; }',
+        '    if (id === "audio") { return __audioContainerEl; }',
+        '    if (id === "back") { return __backEl; }',
+        "    return null;",
+        "  },",
+        "  createElement: function (tag) {",
+        "    return {",
+        "      tagName: tag,",
+        "      _listeners: {},",
+        "      src: undefined,",
+        "      autoplay: undefined,",
+        "      textContent: undefined,",
+        "      currentTime: undefined,",
+        "      playCount: 0,",
+        "      addEventListener: function (event, handler) {",
+        "        this._listeners[event] = handler;",
+        "      },",
+        "      play: function () {",
+        "        this.playCount += 1;",
+        "      },",
+        "    };",
+        "  },",
+        "};",
+        "",
+        "var window = { __immutableWordsAudioChoice: "
+        + json.dumps(preseeded_choice)
+        + " };",
+        "",
+        "var setTimeout = function (fn, ms) { fn(); };",
+        "",
+        "Math.random = function () { return " + repr(float(forced_random)) + "; };",
+        "",
+        script_body,
+        "",
+        "var __audioEl = null;",
+        "var __buttonEl = null;",
+        "__audioContainerEl._children.forEach(function (c) {",
+        '  if (c.tagName === "audio") { __audioEl = c; }',
+        '  if (c.tagName === "button") { __buttonEl = c; }',
+        "});",
+        "",
+        "var __result = {",
+        "  audioCreated: !!__audioEl,",
+        "  audioSrc: __audioEl ? __audioEl.src : null,",
+        "  audioAutoplay: __audioEl ? __audioEl.autoplay : null,",
+        "  choiceGlobal: window.__immutableWordsAudioChoice,",
+        "  buttonCreated: !!__buttonEl,",
+        "  audioCurrentTimeAfterClick: null,",
+        "  audioPlayCountAfterClick: null,",
+        "};",
+        "",
+        'if (__buttonEl && typeof __buttonEl._listeners.click === "function") {',
+        "  __audioEl.currentTime = 999;",
+        "  __buttonEl._listeners.click();",
+        "  __result.audioCurrentTimeAfterClick = __audioEl.currentTime;",
+        "  __result.audioPlayCountAfterClick = __audioEl.playCount;",
+        "}",
+        "",
+        "console.log(JSON.stringify(__result));",
+    ]
+    return "\n".join(lines)
+
+
+def _run_audio_script_scenario(
+    node,
+    *,
+    files,
+    back_present,
+    preseeded_choice=None,
+    forced_random,
+):
+    rewritten = rewrite_audio_playback(TEMPLATE_WITH_AUDIO_DIV)
+    script_body = _extract_script_body(rewritten)
+    harness = _build_harness(
+        script_body=script_body,
+        audio_text=",".join(files),
+        back_present=back_present,
+        preseeded_choice=preseeded_choice,
+        forced_random=forced_random,
+    )
+
+    with tempfile.NamedTemporaryFile(
+        mode="w", suffix=".js", delete=False, encoding="utf-8"
+    ) as handle:
+        handle.write(harness)
+        script_path = handle.name
+    try:
+        completed = subprocess.run(
+            [node, script_path], capture_output=True, text=True, check=True
+        )
+    finally:
+        os.unlink(script_path)
+
+    stdout_lines = [line for line in completed.stdout.splitlines() if line.strip()]
+    assert stdout_lines, f"harness produced no stdout; stderr={completed.stderr!r}"
+    return json.loads(stdout_lines[-1])
+
+
+def test_rewrite_audio_playback_js_fresh_question_side_pick(node_executable):
+    # l5.md section B scenario 1: no #back, no pre-seeded global -> fresh
+    # random pick, autoplay true, global set to that pick.
+    result = _run_audio_script_scenario(
+        node_executable,
+        files=DEFAULT_AUDIO_FILES,
+        back_present=False,
+        preseeded_choice=None,
+        forced_random=0.0,  # floor(0.0 * 3) == 0 -> "a.mp3"
+    )
+    assert result["audioCreated"] is True
+    assert result["audioAutoplay"] is True
+    assert result["audioSrc"] == "a.mp3"
+    assert result["choiceGlobal"] == "a.mp3"
+
+
+def test_rewrite_audio_playback_js_duplicate_answer_side_reuses_choice(node_executable):
+    # l5.md section B scenario 2: #back present, global pre-seeded to a
+    # member of this render's files -> reuse it, autoplay false, even though
+    # a fresh roll would (wrongly) pick a different file.
+    result = _run_audio_script_scenario(
+        node_executable,
+        files=DEFAULT_AUDIO_FILES,
+        back_present=True,
+        preseeded_choice="b.mp3",
+        forced_random=0.99,  # floor(0.99 * 3) == 2 -> would be "c.mp3" if rerolled
+    )
+    assert result["audioCreated"] is True
+    assert result["audioAutoplay"] is False
+    assert result["audioSrc"] == "b.mp3"
+    assert result["choiceGlobal"] == "b.mp3"
+
+
+def test_rewrite_audio_playback_js_answer_side_stale_global_from_other_note_rerolls(
+    node_executable,
+):
+    # l5.md section B scenario 3 (Card 2's shape / "the trap"): #back
+    # present, but the stored global belongs to a DIFFERENT note's file
+    # list -> must still be treated as a fresh pick, not reused.
+    result = _run_audio_script_scenario(
+        node_executable,
+        files=DEFAULT_AUDIO_FILES,
+        back_present=True,
+        preseeded_choice="stale-from-other-note.mp3",
+        forced_random=0.4,  # floor(0.4 * 3) == 1 -> "b.mp3"
+    )
+    assert result["audioCreated"] is True
+    assert result["audioAutoplay"] is True
+    assert result["audioSrc"] == "b.mp3"
+    assert result["choiceGlobal"] == "b.mp3"
+
+
+def test_rewrite_audio_playback_js_answer_side_unset_global_also_rerolls(
+    node_executable,
+):
+    # l5.md section B scenario 3, "either none was ever stored" variant:
+    # #back present, no global at all -> also a fresh pick.
+    result = _run_audio_script_scenario(
+        node_executable,
+        files=DEFAULT_AUDIO_FILES,
+        back_present=True,
+        preseeded_choice=None,
+        forced_random=0.7,  # floor(0.7 * 3) == 2 -> "c.mp3"
+    )
+    assert result["audioCreated"] is True
+    assert result["audioAutoplay"] is True
+    assert result["audioSrc"] == "c.mp3"
+    assert result["choiceGlobal"] == "c.mp3"
+
+
+def test_rewrite_audio_playback_js_later_review_question_side_always_rerolls(
+    node_executable,
+):
+    # l5.md section B scenario 4: a later review of the same card is still a
+    # pure question-side render (#back absent) -> must reroll even though a
+    # global from an earlier cycle is pre-seeded and belongs to this file
+    # list; force Math.random to pick a DIFFERENT file than the pre-seeded
+    # one to prove it's a genuine reroll, not a no-op that happens to match.
+    result = _run_audio_script_scenario(
+        node_executable,
+        files=DEFAULT_AUDIO_FILES,
+        back_present=False,
+        preseeded_choice="a.mp3",
+        forced_random=0.99,  # floor(0.99 * 3) == 2 -> "c.mp3", not "a.mp3"
+    )
+    assert result["audioAutoplay"] is True
+    assert result["audioSrc"] == "c.mp3"
+    assert result["choiceGlobal"] == "c.mp3"
+    assert result["audioSrc"] != "a.mp3"
+
+
+def test_rewrite_audio_playback_js_replay_button_wired_on_question_side(
+    node_executable,
+):
+    # l5.md section B scenario 5, question-side leg: the replay button's
+    # click handler rewinds the SAME <audio> element to 0 and plays it again.
+    result = _run_audio_script_scenario(
+        node_executable,
+        files=DEFAULT_AUDIO_FILES,
+        back_present=False,
+        preseeded_choice=None,
+        forced_random=0.0,
+    )
+    assert result["buttonCreated"] is True
+    assert result["audioCurrentTimeAfterClick"] == 0
+    assert result["audioPlayCountAfterClick"] == 1
+
+
+def test_rewrite_audio_playback_js_replay_button_wired_on_answer_side_reuse(
+    node_executable,
+):
+    # l5.md section B scenario 5, answer-side leg: replay button must be
+    # wired identically when the render reused a prior choice.
+    result = _run_audio_script_scenario(
+        node_executable,
+        files=DEFAULT_AUDIO_FILES,
+        back_present=True,
+        preseeded_choice="b.mp3",
+        forced_random=0.99,
+    )
+    assert result["buttonCreated"] is True
+    assert result["audioCurrentTimeAfterClick"] == 0
+    assert result["audioPlayCountAfterClick"] == 1
 
 
 # ---------------------------------------------------------------------------

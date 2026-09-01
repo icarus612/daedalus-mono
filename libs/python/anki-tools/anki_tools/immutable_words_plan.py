@@ -324,8 +324,41 @@ def rewrite_audio_playback(template_html: str) -> str:
       degrades to doing nothing at all when the list is empty (a defensive
       fallback -- every note this lane creates now ships with `Audio`
       populated, but the script must not assume that), and otherwise picks
-      one filename at random and plays it via an autoplaying `<audio>`
-      element plus a visible replay `<button>`.
+      a filename to play via an autoplaying `<audio>` element plus a visible
+      replay `<button>`.
+
+    The script defers its actual work one macrotask via `setTimeout(fn, 0)`:
+    it runs at parse/DOM-insertion time, before any answer-side `#back`
+    element that will ever exist for this render has actually been inserted,
+    so a synchronous check could never see it. Once deferred,
+    `document.getElementById("back")` reliably discriminates a pure
+    question-side render (no `#back` exists yet) from any answer-side render
+    (`#back` always exists by then).
+
+    This discrimination matters because `afmt` always re-embeds the
+    question side's rendered HTML -- script tag included -- via Anki's own
+    `{{FrontSide}}` macro, so a template that places this div on the
+    question side re-runs this very script a second time when the answer is
+    shown. Without correction that second run would re-roll `Math.random()`
+    and autoplay a different file than the one just heard. To prevent that,
+    the chosen filename is stashed on `window.__immutableWordsAudioChoice`
+    and, on an answer-side render, reused (without autoplaying it again)
+    instead of re-rolled -- but ONLY when that stored choice is a member of
+    *this* render's own file list. That membership check is the
+    anti-staleness guard: without it, a template whose audio div lives only
+    on the answer side (never duplicated in from a question side) would
+    wrongly reuse a leftover global from a different note reviewed moments
+    earlier -- `#back` is present there too, since the div is its
+    descendant, even though no genuine question-side pick has happened yet
+    for this note. Any render that isn't a genuine same-note duplicate --
+    every question-side render, or an answer-side render with no usable
+    stored choice -- makes and stores a fresh random pick instead, so a
+    later review of the same card also rolls a fresh voice rather than
+    repeating one forever.
+
+    The script also renders a `<button>` on every render so the native R-key
+    replay isn't simply lost, always wired to whichever `<audio>` element
+    this render actually chose or reused.
 
     Returns the template unchanged when it has no such element - two of the
     four template sides legitimately don't render `{{Audio}}` at all. Idempotent:
@@ -335,45 +368,79 @@ def rewrite_audio_playback(template_html: str) -> str:
     if not _AUDIO_DIV.search(template_html):
         return template_html
 
-    replacement = (
-        "<!-- Audio field holds a plain-text, comma/newline-separated list of\n"
-        "     bare media filenames -- it is NOT wrapped in Anki's own sound-tag\n"
-        "     syntax. Anki's backend autoplays every sound-tagged reference in\n"
-        "     a field, in order, before any template JS runs, so three tagged\n"
-        "     recordings would play back to back with no way for JS to\n"
-        "     suppress or reorder that queue. Keeping the field as plain text\n"
-        "     lets the script below pick and play just one. The script also\n"
-        "     renders a <button> so the native R-key replay isn't simply\n"
-        "     lost. -->\n"
-        '<div id="audio"><span id="audio-data" class="hidden">{{Audio}}</span>'
-        '<span id="audio-controls"></span></div>\n'
-        "<script>\n"
-        "(function () {\n"
-        '  var data = document.getElementById("audio-data");\n'
-        "  if (!data) return;\n"
-        "  var text = data.textContent.trim();\n"
-        "  if (!text) return;\n"
-        "  var files = text\n"
-        "    .split(/[,\\n]+/)\n"
-        "    .map(function (f) { return f.trim(); })\n"
-        "    .filter(function (f) { return f.length > 0; });\n"
-        "  if (files.length === 0) return;\n"
-        "  var chosen = files[Math.floor(Math.random() * files.length)];\n"
-        '  var container = document.getElementById("audio");\n'
-        '  var audio = document.createElement("audio");\n'
-        "  audio.autoplay = true;\n"
-        "  audio.src = chosen;\n"
-        '  var button = document.createElement("button");\n'
-        '  button.textContent = "\\u25b6";\n'
-        '  button.addEventListener("click", function () {\n'
-        "    audio.currentTime = 0;\n"
-        "    audio.play();\n"
-        "  });\n"
-        "  container.appendChild(audio);\n"
-        "  container.appendChild(button);\n"
-        "})();\n"
-        "</script>\n"
-    )
+    replacement = """\
+<!-- Audio field holds a plain-text, comma/newline-separated list of
+     bare media filenames -- it is NOT wrapped in Anki's own sound-tag
+     syntax. Anki's backend autoplays every sound-tagged reference in
+     a field, in order, before any template JS runs, so three tagged
+     recordings would play back to back with no way for JS to
+     suppress or reorder that queue. Keeping the field as plain text
+     lets the script below pick and play just one.
+
+     The pick must survive unchanged from the question render to the
+     answer render of the SAME review: `afmt` always re-embeds the
+     question's rendered HTML via `{{FrontSide}}`, which re-runs this
+     very script a second time whenever a template places this div on
+     the question side -- without this logic that second run would
+     call Math.random() again and autoplay a DIFFERENT file than the
+     one just heard. The script defers its work with setTimeout(fn, 0)
+     because it runs at parse time, before the answer side's own
+     `#back` element has actually been inserted into the page --
+     checking for it synchronously would never see it. Once deferred,
+     document.getElementById("back") reliably tells a pure
+     question-side render (no #back anywhere yet) apart from any
+     answer-side render (#back always exists by then, whether this
+     particular audio div started life on the question side and got
+     duplicated in via FrontSide, or lives on the answer side alone).
+     window.__immutableWordsAudioChoice carries the chosen filename
+     across exactly one such question->answer duplication; every fresh
+     render -- every question-side render, or an answer-side render
+     whose stored choice doesn't belong to THIS note's own file list
+     (a template that only ever shows audio on the answer side, or a
+     global left over from a different note reviewed a moment ago) --
+     overwrites it with a new random pick, so a later review of the
+     same card rolls a fresh voice rather than repeating one forever.
+     The script also renders a <button> so the native R-key replay
+     isn't simply lost, on both sides, always pointing at whichever
+     file this render actually chose or reused. -->
+<div id="audio"><span id="audio-data" class="hidden">{{Audio}}</span>
+<span id="audio-controls"></span></div>
+<script>
+(function () {
+  var data = document.getElementById("audio-data");
+  if (!data) return;
+  var text = data.textContent.trim();
+  if (!text) return;
+  var files = text
+    .split(/[,\\n]+/)
+    .map(function (f) { return f.trim(); })
+    .filter(function (f) { return f.length > 0; });
+  if (files.length === 0) return;
+  setTimeout(function () {
+    var container = document.getElementById("audio");
+    if (!container) return;
+    var onAnswerSide = !!document.getElementById("back");
+    var previous = window.__immutableWordsAudioChoice;
+    var reusable = onAnswerSide && !!previous && files.indexOf(previous) !== -1;
+    var chosen = reusable
+      ? previous
+      : files[Math.floor(Math.random() * files.length)];
+    window.__immutableWordsAudioChoice = chosen;
+    var audio = document.createElement("audio");
+    audio.autoplay = !reusable;
+    audio.src = chosen;
+    var button = document.createElement("button");
+    button.textContent = "▶";
+    button.addEventListener("click", function () {
+      audio.currentTime = 0;
+      audio.play();
+    });
+    container.appendChild(audio);
+    container.appendChild(button);
+  }, 0);
+})();
+</script>
+"""
     # A plain string replacement (not a lambda) would have re.sub interpret the
     # JS source's own backslash escapes (\n, ▶, ...) as regex template
     # backreferences, so pass it through a callable instead.
