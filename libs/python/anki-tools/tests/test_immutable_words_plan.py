@@ -168,9 +168,9 @@ def _remove_section(text, heading_name):
         re.MULTILINE | re.DOTALL,
     )
     new_text, count = pattern.subn("", text)
-    assert count == 1, (
-        f"fixture setup: expected to remove exactly one {heading_name!r} section"
-    )
+    assert (
+        count == 1
+    ), f"fixture setup: expected to remove exactly one {heading_name!r} section"
     return new_text
 
 
@@ -196,9 +196,9 @@ def test_parse_real_document_section_order_counts_and_ranks(real_rows):
         EXPECTED_SECTION_COUNTS, grouped
     ):
         assert pos == name
-        assert len(rows_in_section) == expected_count, (
-            f"{name}: expected {expected_count} rows, got {len(rows_in_section)}"
-        )
+        assert (
+            len(rows_in_section) == expected_count
+        ), f"{name}: expected {expected_count} rows, got {len(rows_in_section)}"
         assert [r.rank for r in rows_in_section] == list(range(1, expected_count + 1))
 
 
@@ -419,6 +419,8 @@ def test_counts_by_deck_includes_all_four_decks_even_zero():
 
 
 def test_field_names_constant():
+    # Corrected per lane l4 contract (.artifacts/contracts/l4.md, section 2):
+    # AudioRefs is appended as the 7th and last field.
     assert FIELD_NAMES == (
         "Russian",
         "Translation",
@@ -426,21 +428,24 @@ def test_field_names_constant():
         "Part of Speech",
         "Audio",
         "Additional Info",
+        "AudioRefs",
     )
 
 
 @pytest.mark.parametrize("pos", list(SUBDECK_LEAVES))
 def test_word_row_fields_shape_and_values(pos):
     # NOTE: per the l3 contract (section 3b), Audio is no longer always
-    # empty -- it now holds the four predicted filenames. This test was
-    # updated in lane l3 (see also
+    # empty -- it now holds the four predicted filenames. Per the l4
+    # contract (section 2), a 7th field AudioRefs is appended, carrying the
+    # same four filenames as [sound:...] tags (see
     # test_word_row_fields_audio_matches_shared_build_filename below, which
-    # covers the Audio slot's exact contents in more detail).
+    # covers the Audio slot's exact contents in more detail, and the
+    # AudioRefs-specific tests further down this file).
     row = WordRow(pos=pos, rank=1, russian="русский текст", english="english text")
 
     fields = row.fields()
 
-    assert len(fields) == len(FIELD_NAMES) == 6
+    assert len(fields) == len(FIELD_NAMES) == 7
     assert fields[0] == "русский текст"  # Russian
     assert fields[1] == "english text"  # Translation
     assert fields[2] == ""  # Pronunciation
@@ -449,6 +454,9 @@ def test_word_row_fields_shape_and_values(pos):
         shared_build_filename("русский текст", slot) for slot in SLOTS
     )  # Audio -- four predicted filenames, comma-joined
     assert fields[5] == ""  # Additional Info
+    assert fields[6] == "".join(
+        f"[sound:{shared_build_filename('русский текст', slot)}]" for slot in SLOTS
+    )  # AudioRefs -- same four filenames, as concatenated [sound:...] tags
 
     # Singular label, not the plural section name verbatim.
     assert POS_FIELD_VALUE[pos] != pos
@@ -616,3 +624,92 @@ def test_word_row_fields_audio_matches_shared_build_filename(pos, rank, russian)
     expected = ",".join(shared_build_filename(russian, slot) for slot in SLOTS)
     assert fields[audio_index] == expected
     assert fields[audio_index] != ""
+
+
+# ---------------------------------------------------------------------------
+# WordRow.fields() -- AudioRefs slot (index 6), added by lane l4 contract
+# section 2. AudioRefs and Audio must always describe the SAME four
+# filenames -- one as a plain CSV, one as concatenated [sound:...] tags --
+# never independently computed, and both derived from the SOURCE text, never
+# spoken_text_for.
+# ---------------------------------------------------------------------------
+
+
+def test_word_row_fields_audio_refs_formula_for_okolo():
+    row = WordRow(pos="Prepositions", rank=1, russian="около", english="near")
+    fields = row.fields()
+    audio_refs_index = FIELD_NAMES.index("AudioRefs")
+    assert fields[audio_refs_index] == (
+        "[sound:около_f1.mp3][sound:около_f2.mp3]"
+        "[sound:около_m1.mp3][sound:около_m2.mp3]"
+    )
+
+
+@pytest.mark.parametrize(
+    "pos,rank,russian",
+    [
+        ("Prepositions", 1, "в / во"),  # real multi-form row
+        ("Conjunctions", 1, "и"),
+        ("Particles", 20, "да"),
+        ("Indeclinable Nouns", 2, "метро"),
+    ],
+)
+def test_word_row_fields_audio_refs_matches_shared_build_filename(pos, rank, russian):
+    row = WordRow(pos=pos, rank=rank, russian=russian, english="whatever")
+    fields = row.fields()
+    audio_refs_index = FIELD_NAMES.index("AudioRefs")
+    expected = "".join(
+        f"[sound:{shared_build_filename(russian, slot)}]" for slot in SLOTS
+    )
+    assert fields[audio_refs_index] == expected
+    assert fields[audio_refs_index] != ""
+
+
+@pytest.mark.parametrize(
+    "pos,rank,russian",
+    [
+        ("Prepositions", 1, "в / во"),
+        ("Conjunctions", 1, "и"),
+        ("Particles", 20, "да"),
+        ("Indeclinable Nouns", 2, "метро"),
+        ("Prepositions", 2, "около"),
+    ],
+)
+def test_word_row_fields_audio_refs_and_audio_describe_same_four_filenames(
+    pos, rank, russian
+):
+    """AudioRefs (index 6) and Audio (index 4) must never independently
+    compute their filenames -- AudioRefs is Audio's own names wrapped in
+    [sound:...] tags, same word, same slots, same order.
+    """
+    row = WordRow(pos=pos, rank=rank, russian=russian, english="whatever")
+    fields = row.fields()
+    audio_index = FIELD_NAMES.index("Audio")
+    audio_refs_index = FIELD_NAMES.index("AudioRefs")
+
+    audio_names = fields[audio_index].split(",")
+    expected_refs = "".join(f"[sound:{name}]" for name in audio_names)
+
+    assert fields[audio_refs_index] == expected_refs
+    assert len(audio_names) == len(SLOTS) == 4
+
+
+def test_word_row_fields_audio_refs_multi_form_hazard_uses_source_text():
+    """The lane 3 multi-form hazard restated for AudioRefs: filenames (and
+    therefore the AudioRefs tags) must derive from the SOURCE text
+    "в / во", never from spoken_text_for's "во".
+    """
+    row = WordRow(pos="Prepositions", rank=1, russian="в / во", english="in")
+    fields = row.fields()
+    audio_refs_index = FIELD_NAMES.index("AudioRefs")
+
+    expected = "".join(
+        f"[sound:{shared_build_filename('в / во', slot)}]" for slot in SLOTS
+    )
+    assert fields[audio_refs_index] == expected
+
+    # The wrong (spoken-text-derived) filenames must NOT appear.
+    wrong = "".join(f"[sound:{shared_build_filename('во', slot)}]" for slot in SLOTS)
+    assert fields[audio_refs_index] != wrong
+    for slot in SLOTS:
+        assert shared_build_filename("в / во", slot) in fields[audio_refs_index]

@@ -19,6 +19,7 @@ from anki.errors import AnkiException, DBError
 from anki.import_export_pb2 import ExportAnkiPackageOptions
 from anki.models import NotetypeDict
 
+from anki_tools import audio_naming
 from anki_tools.audio_naming import get_anki_collection_path
 from anki_tools.immutable_words_plan import (
     DECK_ROOT,
@@ -48,9 +49,14 @@ def clone_note_type(
     `.models.copy(nt, add=False)` on it, nothing else, ever. Applies
     `strip_part_of_speech` then `rewrite_audio_playback` (in that order) to
     every template's `qfmt` and `afmt` -- 4 sides total across the note
-    type's 2 templates. Registers the transformed dict into `build_col` and
-    returns the registered version (looked up fresh, since the dict passed
-    to `add_dict` still has `id == 0` after it returns).
+    type's 2 templates. Appends a 7th field, `AudioRefs`, invented here (not
+    copied from the source) via `build_col.models.new_field`, so the
+    registered note type has 7 fields total, matching
+    `immutable_words_plan.FIELD_NAMES`. No template side ever references
+    `{{AudioRefs}}` -- see `FIELD_NAMES`'s comment for why. Registers the
+    transformed dict into `build_col` and returns the registered version
+    (looked up fresh, since the dict passed to `add_dict` still has `id == 0`
+    after it returns).
     """
     source_note_type = source_col.models.get(SOURCE_NOTETYPE_ID)
     if source_note_type is None:
@@ -68,6 +74,10 @@ def clone_note_type(
         template["afmt"] = rewrite_audio_playback(
             strip_part_of_speech(template["afmt"])
         )
+
+    audio_refs_field = build_col.models.new_field("AudioRefs")
+    audio_refs_field["ord"] = len(cloned["flds"])
+    cloned["flds"].append(audio_refs_field)
 
     build_col.models.add_dict(cloned)
     return build_col.models.by_name(new_name)
@@ -109,6 +119,48 @@ def build_deck_tree(
         counts[row.deck] += 1
 
     return counts
+
+
+def attach_media(build_col: Collection, audio_dir: str) -> tuple[list[str], list[str]]:
+    """Copy every filename referenced by any note's `Audio` field from
+    `audio_dir` into `build_col`'s own media folder, so `export_package`
+    (called after this, with `with_media=True`) actually bundles real bytes
+    instead of shipping references to files that were never present in the
+    scratch collection's media directory.
+
+    Does NOT touch `AudioRefs` -- that field's `[sound:...]` tags already
+    mark these filenames as used for Anki's media-usage scan; this function
+    only supplies the bytes those tags (and the plain `Audio` names) point
+    at. Never raises on a missing source file -- deck-before-audio: a note
+    whose recordings do not exist yet must still export and import cleanly
+    -- so the caller decides what to do with `missing`.
+
+    Returns `(found, missing)`, both sorted lists of bare filenames, over
+    the UNION of every referenced filename across every note in `build_col`
+    (not per-note), so a file shared by two notes (e.g. the `да`/`да` case)
+    is only copied once.
+    """
+    referenced: set[str] = set()
+    for note_id in build_col.find_notes(""):
+        note = build_col.get_note(note_id)
+        referenced.update(audio_naming.parse_audio_filenames(note["Audio"]))
+
+    found: list[str] = []
+    missing: list[str] = []
+    for name in referenced:
+        source_path = os.path.join(audio_dir, name)
+        if not os.path.isfile(source_path):
+            missing.append(name)
+            continue
+        added_name = build_col.media.add_file(source_path)
+        if added_name != name:
+            raise RuntimeError(
+                f"Anki renamed {name!r} to {added_name!r} while adding it to "
+                "the collection's media folder"
+            )
+        found.append(name)
+
+    return sorted(found), sorted(missing)
 
 
 def export_package(
@@ -208,6 +260,21 @@ def build_parser() -> argparse.ArgumentParser:
         default=False,
         help="Allow --out to overwrite an existing file.",
     )
+    parser.add_argument(
+        "--audio-dir",
+        dest="audio_dir",
+        type=str,
+        default=None,
+        help=(
+            "Directory of already-generated <word>_<slot>.mp3 files (see "
+            "anki_tools.elevenlabs_tts, DEFAULT_OUTPUT_DIR) to attach as real "
+            "media before export. Omit to export with AudioRefs [sound:...] "
+            "tags marking the names as used but no bytes attached -- an "
+            "explicit opt-in, matching this package's existing "
+            "--all-voices-style convention of never defaulting to a real path "
+            "on the user's machine."
+        ),
+    )
     return parser
 
 
@@ -266,6 +333,14 @@ def main() -> None:
 
         deck_counts = build_deck_tree(build_col, rows, note_type)
         print_deck_table(deck_counts)
+
+        if args.audio_dir:
+            found, missing = attach_media(build_col, args.audio_dir)
+            print(f"Attached {len(found)} media file(s) from {args.audio_dir!r}.")
+            if missing:
+                print(f"WARNING: {len(missing)} referenced audio file(s) not found:")
+                for name in missing:
+                    print(f"  missing: {name}")
 
         export_package(build_col, DECK_ROOT, args.out_path, force=args.force)
         build_col.close()

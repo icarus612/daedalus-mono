@@ -42,6 +42,18 @@ SUBDECK_LEAVES = {
 # Field order of the note type, cloned from the source note type. `Part of
 # Speech` is still populated (it is useful in the browser's search) but is no
 # longer rendered on either side of the card - the deck name carries it instead.
+#
+# `AudioRefs` is the 7th and last field: the same four filenames as `Audio`,
+# but as concatenated `[sound:...]` tags. It exists SOLELY so Anki's
+# media-usage scan (export bundling, import, Tools -> Check Media) sees those
+# filenames as used -- that scan reads note field TEXT DIRECTLY, independent
+# of any template, whereas Anki's autoplay is triggered only by
+# `[sound:...]` tags present in RENDERED template output. Because of that
+# asymmetry, an unrendered field can mark media "used" without ever playing
+# it, so `AudioRefs` must NEVER be referenced by any template
+# (`{{AudioRefs}}`) -- rendering it would autoplay all four recordings back
+# to back, the exact bug the `Audio`/random-JS split (see module docstring)
+# was built to avoid. Do not "helpfully" wire it into a template.
 FIELD_NAMES = (
     "Russian",
     "Translation",
@@ -49,6 +61,7 @@ FIELD_NAMES = (
     "Part of Speech",
     "Audio",
     "Additional Info",
+    "AudioRefs",
 )
 
 # The singular part-of-speech value written into the `Part of Speech` field,
@@ -200,15 +213,20 @@ class WordRow:
         return subdeck_name(self.pos)
 
     def fields(self) -> list[str]:
-        """The six field values, in FIELD_NAMES order.
+        """The seven field values, in FIELD_NAMES order.
 
         `Pronunciation` and `Additional Info` are left empty. `Audio` holds the
         four PREDICTED filenames (comma-separated, no spaces), derived from
         `self.russian` via the shared `audio_naming.build_filename` -- the same
         function `elevenlabs_tts.py` uses to name the files it actually writes,
-        so the two agree byte-for-byte before any audio file exists.
+        so the two agree byte-for-byte before any audio file exists. `AudioRefs`
+        holds the SAME four filenames, as concatenated `[sound:...]` tags --
+        never independently computed -- so the two fields always describe the
+        same media (see FIELD_NAMES's comment for why AudioRefs must never be
+        rendered by a template).
         """
         audio_names = [build_filename(self.russian, slot) for slot in SLOTS]
+        audio_refs = "".join(f"[sound:{name}]" for name in audio_names)
         return [
             self.russian,
             self.english,
@@ -216,6 +234,7 @@ class WordRow:
             POS_FIELD_VALUE[self.pos],
             ",".join(audio_names),
             "",
+            audio_refs,
         ]
 
 

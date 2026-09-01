@@ -107,6 +107,19 @@ def spoken_text_for(source_text: str) -> str:
     return SPOKEN_TEXT_OVERRIDES.get(source_text, source_text)
 
 
+def parse_audio_filenames(value: str) -> list[str]:
+    """Split an `Audio`-field value into its bare filenames.
+
+    Mirrors the card template's own JS split (`/[,\\n]+/` in
+    `rewrite_audio_playback`) byte-for-byte, so the Python side that later
+    looks these files up on disk agrees exactly with what the browser will
+    try to play. Entries are stripped; empty/whitespace-only entries
+    (including from an empty or whitespace-only `value`) are dropped, so an
+    empty `Audio` field yields `[]`, never `[""]`.
+    """
+    return [name.strip() for name in re.split(r"[,\n]+", value) if name.strip()]
+
+
 def get_anki_collection_path() -> str:
     if os.name == "nt":  # Windows
         return os.path.expanduser(

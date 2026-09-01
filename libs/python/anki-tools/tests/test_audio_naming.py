@@ -1,9 +1,11 @@
-"""Contract tests for ``anki_tools.audio_naming`` (lane l3 packet, section 6a).
+"""Contract tests for ``anki_tools.audio_naming`` (lane l3 packet, section 6a;
+``parse_audio_filenames`` added by lane l4, section 1).
 
 Written from the lane contract alone
 (``.workflows/russian-immutable-words/.artifacts/contracts/l3.md``, section 1
 "``anki_tools/audio_naming.py`` -- the ONE shared module" plus section 6a
-"NEW ``tests/test_audio_naming.py``"). The implementation
+"NEW ``tests/test_audio_naming.py``"; ``parse_audio_filenames`` from
+``.artifacts/contracts/l4.md``, section 1). The implementation
 (``anki_tools/audio_naming.py``, and the two modules that import from it,
 ``anki_tools/immutable_words_plan.py`` / ``anki_tools/elevenlabs_tts.py``) is
 never read by this file's author -- every expectation below comes from the
@@ -27,6 +29,7 @@ from anki_tools.audio_naming import (
     build_filename,
     get_anki_collection_path,
     get_anki_media_dir,
+    parse_audio_filenames,
     sanitize_word_slug,
     spoken_text_for,
 )
@@ -311,3 +314,55 @@ def test_153_rows_152_distinct_slugs_sole_repeat_is_da(real_rows):
     budto_slug = sanitize_word_slug("будто")
     assert budto_slug != da_slug
     assert len(slug_to_words.get(budto_slug, [])) == 1
+
+
+# ---------------------------------------------------------------------------
+# parse_audio_filenames (lane l4, contract section 1) -- the Python-side
+# mirror of the card template's own JS split (`/[,\n]+/` in
+# rewrite_audio_playback), so attach_media (immutable_words.py) looks up
+# on disk exactly the filenames the browser will try to play.
+# ---------------------------------------------------------------------------
+
+
+def test_parse_audio_filenames_comma_separated():
+    assert parse_audio_filenames("a.mp3,b.mp3") == ["a.mp3", "b.mp3"]
+
+
+def test_parse_audio_filenames_newline_and_comma_both_split():
+    assert parse_audio_filenames("a.mp3\nb.mp3,c.mp3") == [
+        "a.mp3",
+        "b.mp3",
+        "c.mp3",
+    ]
+
+
+def test_parse_audio_filenames_empty_string_yields_empty_list():
+    assert parse_audio_filenames("") == []
+
+
+def test_parse_audio_filenames_whitespace_only_string_yields_empty_list():
+    assert parse_audio_filenames("  ") == []
+
+
+def test_parse_audio_filenames_strips_incidental_whitespace():
+    assert parse_audio_filenames("a.mp3, b.mp3") == ["a.mp3", "b.mp3"]
+
+
+def test_parse_audio_filenames_never_yields_a_lone_empty_string_entry():
+    # An empty/whitespace-only value must yield [], never [""].
+    assert parse_audio_filenames("") != [""]
+    assert parse_audio_filenames("   ") != [""]
+
+
+def test_parse_audio_filenames_real_four_slot_value_round_trips():
+    # The shape attach_media will actually see: build_filename's own CSV
+    # output for a real word, all four slots.
+    names = [build_filename("около", slot) for slot in SLOTS]
+    csv_value = ",".join(names)
+    assert parse_audio_filenames(csv_value) == names
+
+
+def test_parse_audio_filenames_mixed_newline_comma_runs_collapse():
+    # Consecutive separators (a run of commas/newlines) must not produce
+    # empty entries in between -- mirrors the JS regex's `+` quantifier.
+    assert parse_audio_filenames("a.mp3,,\n\nb.mp3") == ["a.mp3", "b.mp3"]

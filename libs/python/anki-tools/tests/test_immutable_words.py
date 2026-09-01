@@ -1,14 +1,21 @@
-"""Contract tests for anki_tools.immutable_words (Packet B, subphases 2.1-2.3).
+"""Contract tests for anki_tools.immutable_words (Packet B, subphases 2.1-2.3;
+``attach_media`` and the ``--audio-dir`` CLI flag added by lane l4).
 
 Written blind to the implementation, from the plan and the lane l1 contract
-(.artifacts/contracts/l1.md, "Packet B -- Anki plumbing") alone -- never read
-anki_tools/immutable_words.py itself, only the contract text describing it.
+(.artifacts/contracts/l1.md, "Packet B -- Anki plumbing") alone, plus the
+lane l4 contract (.artifacts/contracts/l4.md, section 3, "New function
+attach_media" and "CLI wiring in main()") for the media-attachment
+additions -- never read anki_tools/immutable_words.py itself, only the
+contract text describing it.
 
 Every test that needs the source note type works against a tmp_path COPY of
 the real snapshot collection
 (.workflows/russian-immutable-words/.artifacts/col-snapshot.anki2), made
 *before* that copy is ever opened. The real snapshot path itself is never
-opened directly, anywhere in this file.
+opened directly, anywhere in this file. Fixture ".mp3" files used to test
+attach_media / --audio-dir are tiny fabricated byte strings written into
+tmp_path -- never real audio, never anything read from
+~/Desktop/russian-audio/, and no network access anywhere in this file.
 
 Subphase 3.1 (builder-owned, out of this packet's scope) appends a full
 build -> export -> import round-trip end-to-end test to this same file after
@@ -30,6 +37,7 @@ from anki_tools.immutable_words import (
     NEW_NOTE_TYPE_NAME,
     SOURCE_NOTETYPE_ID,
     assert_unmodified,
+    attach_media,
     build_deck_tree,
     build_parser,
     clone_note_type,
@@ -147,6 +155,47 @@ def _write_fixture_source(tmp_path, name="source.md"):
     return path
 
 
+def _write_fake_mp3(directory, name, content=b"fake mp3 data"):
+    """A tiny fabricated ``.mp3`` -- never real audio, never network. Used
+    to test attach_media / --audio-dir without touching
+    ~/Desktop/russian-audio/ or any real recording.
+    """
+    path = os.path.join(str(directory), name)
+    with open(path, "wb") as fh:
+        fh.write(content)
+    return path
+
+
+def _referenced_filenames(build_col):
+    """Independent oracle: every filename referenced by any note's Audio
+    field, parsed the same way the card template's own JS does (comma/
+    newline split) -- built directly here rather than importing
+    attach_media's own parsing helper, so this doesn't just restate the
+    implementation under test.
+    """
+    names = set()
+    for note_id in build_col.find_notes(""):
+        note = build_col.get_note(note_id)
+        for entry in re.split(r"[,\n]+", note["Audio"]):
+            entry = entry.strip()
+            if entry:
+                names.add(entry)
+    return names
+
+
+def _fixture_word_audio_filenames():
+    """The predicted filenames for every word in _FIXTURE_SOURCE_DOC (one
+    per section: Prepositions "в", Conjunctions "и", Particles "же",
+    Indeclinable Nouns "метро"), keyed by word, four filenames each. Used
+    by the --audio-dir CLI tests to build a fixture audio directory whose
+    contents are known in advance.
+    """
+    from anki_tools.audio_naming import SLOTS, build_filename
+
+    words = ["в", "и", "же", "метро"]
+    return {word: [build_filename(word, slot) for slot in SLOTS] for word in words}
+
+
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -255,7 +304,15 @@ def test_clone_note_type_field_list_matches_field_names_in_order(cloned):
         "Part of Speech",
         "Audio",
         "Additional Info",
+        "AudioRefs",
     ]
+
+    # AudioRefs exists solely for Anki's media-usage scan (export/import/
+    # Check Media) -- it must never be rendered by any template side, or it
+    # would autoplay all four [sound:...] tags back to back (contract
+    # l4.md section 2).
+    for side in _template_sides(note_type):
+        assert "{{AudioRefs}}" not in side
 
 
 def test_clone_note_type_css_byte_identical_to_source(cloned):
@@ -407,6 +464,112 @@ def test_build_deck_tree_audio_field_predicts_four_filenames(cloned, build_col):
         expected_audio = ",".join(build_filename(russian, slot) for slot in SLOTS)
         assert note["Audio"] == expected_audio
         assert note["Audio"] != ""
+
+
+# ---------------------------------------------------------------------------
+# attach_media (lane l4 contract, section 3 "New function attach_media")
+# ---------------------------------------------------------------------------
+
+
+def test_attach_media_zero_notes_returns_empty_lists_and_touches_nothing(
+    build_col, tmp_path
+):
+    audio_dir = os.path.join(str(tmp_path), "audio")
+    os.makedirs(audio_dir)
+
+    found, missing = attach_media(build_col, audio_dir)
+
+    assert found == []
+    assert missing == []
+
+
+def test_attach_media_found_missing_split_sorted_and_byte_identical_copy(
+    cloned, build_col, tmp_path
+):
+    note_type, _ = cloned
+    rows = _fixture_rows()
+    build_deck_tree(build_col, rows, note_type)
+
+    all_names = sorted(_referenced_filenames(build_col))
+    assert all_names  # sanity: some filenames are actually referenced
+
+    # Fixture bytes for roughly half of the referenced filenames; the rest
+    # are deliberately absent from disk.
+    half = len(all_names) // 2
+    assert half > 0  # sanity: split is meaningful, not degenerate
+    present_names = all_names[:half]
+    absent_names = all_names[half:]
+
+    audio_dir = os.path.join(str(tmp_path), "audio")
+    os.makedirs(audio_dir)
+    contents = {}
+    for name in present_names:
+        content = f"fake mp3 data for {name}".encode("utf-8")
+        contents[name] = content
+        _write_fake_mp3(audio_dir, name, content)
+
+    found, missing = attach_media(build_col, audio_dir)
+
+    assert found == sorted(present_names)
+    assert missing == sorted(absent_names)
+    assert found == present_names  # already sorted -- confirms sort, not luck
+    assert missing == absent_names
+
+    media_dir = build_col.media.dir()
+    for name in found:
+        media_path = os.path.join(media_dir, name)
+        assert os.path.isfile(media_path)
+        with open(media_path, "rb") as fh:
+            assert fh.read() == contents[name]
+
+
+def test_attach_media_duplicate_filename_across_two_notes_deduplicated(
+    cloned, build_col, tmp_path
+):
+    """The da/da fixture rows (Conjunctions rank 2, Particles rank 1) share
+    identical .russian text and therefore identical predicted filenames --
+    attach_media must copy each shared filename once (present exactly once
+    in `found`, not twice) and must not raise a duplicate-add error.
+    """
+    from anki_tools.audio_naming import SLOTS, build_filename
+
+    note_type, _ = cloned
+    rows = _fixture_rows()
+    build_deck_tree(build_col, rows, note_type)
+
+    da_names = [build_filename("да", slot) for slot in SLOTS]
+    audio_dir = os.path.join(str(tmp_path), "audio")
+    os.makedirs(audio_dir)
+    for name in da_names:
+        _write_fake_mp3(audio_dir, name)
+
+    found, missing = attach_media(build_col, audio_dir)  # must not raise
+
+    for name in da_names:
+        assert found.count(name) == 1
+        assert name not in missing
+    assert len(found) == len(set(found))  # no duplicates anywhere in found
+    assert found == da_names  # only the да filenames were provided on disk
+
+
+def test_attach_media_missing_source_file_is_never_raised_as_an_error(
+    cloned, build_col, tmp_path
+):
+    """deck-before-audio: a note whose recordings do not exist yet must
+    still let attach_media complete cleanly -- missing files are reported,
+    never raised.
+    """
+    note_type, _ = cloned
+    build_deck_tree(build_col, _fixture_rows(), note_type)
+
+    audio_dir = os.path.join(str(tmp_path), "empty-audio")
+    os.makedirs(audio_dir)
+
+    found, missing = attach_media(build_col, audio_dir)  # must not raise
+
+    assert found == []
+    assert missing == sorted(_referenced_filenames(build_col))
+    assert missing != []
 
 
 # ---------------------------------------------------------------------------
@@ -570,6 +733,200 @@ def test_main_requires_out_unless_dry_run(tmp_path, monkeypatch):
         main()
 
     assert exc_info.value.code != 0
+
+
+# ---------------------------------------------------------------------------
+# --audio-dir CLI wiring (lane l4 contract, section 3 "CLI wiring in main()")
+# ---------------------------------------------------------------------------
+
+
+def test_main_audio_dir_omitted_never_calls_attach_media(
+    tmp_path, monkeypatch, collection_snapshot_copy, capsys
+):
+    """--audio-dir omitted: byte-for-byte identical to today -- no call to
+    attach_media, export proceeds as before (contract l4.md section 3).
+    """
+    source_path = _write_fixture_source(tmp_path)
+    out_path = os.path.join(str(tmp_path), "out.apkg")
+
+    calls = []
+    monkeypatch.setattr(
+        "anki_tools.immutable_words.attach_media",
+        lambda *a, **k: calls.append((a, k)) or ([], []),
+    )
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "immutable-words",
+            "--source",
+            source_path,
+            "--out",
+            out_path,
+            "--collection",
+            collection_snapshot_copy,
+        ],
+    )
+
+    with pytest.raises(SystemExit) as exc_info:
+        main()
+
+    assert exc_info.value.code == 0
+    assert calls == []  # attach_media never invoked without --audio-dir
+    assert os.path.exists(out_path)
+    assert os.path.getsize(out_path) > 0
+
+    captured = capsys.readouterr()
+    assert "Attached" not in captured.out
+    assert "WARNING" not in captured.out
+
+
+def test_main_audio_dir_some_files_present_attaches_and_warns_on_rest(
+    tmp_path, monkeypatch, collection_snapshot_copy, capsys
+):
+    source_path = _write_fixture_source(tmp_path)
+    out_path = os.path.join(str(tmp_path), "with-audio.apkg")
+    audio_dir = os.path.join(str(tmp_path), "audio")
+    os.makedirs(audio_dir)
+
+    word_filenames = _fixture_word_audio_filenames()
+    present_names = word_filenames["в"] + word_filenames["и"]
+    missing_names = word_filenames["же"] + word_filenames["метро"]
+    for name in present_names:
+        _write_fake_mp3(audio_dir, name)
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "immutable-words",
+            "--source",
+            source_path,
+            "--out",
+            out_path,
+            "--collection",
+            collection_snapshot_copy,
+            "--audio-dir",
+            audio_dir,
+        ],
+    )
+
+    with pytest.raises(SystemExit) as exc_info:
+        main()
+
+    assert exc_info.value.code == 0
+    captured = capsys.readouterr()
+    assert f"Attached {len(present_names)} media file(s)" in captured.out
+    assert "WARNING" in captured.out
+    for name in missing_names:
+        assert name in captured.out
+    for name in present_names:
+        # Only the ones genuinely missing should appear in the warning.
+        assert f"missing: {name}" not in captured.out
+
+    assert os.path.exists(out_path)
+    assert os.path.getsize(out_path) > 0
+
+
+def test_main_audio_dir_no_matching_files_completes_and_warns_all(
+    tmp_path, monkeypatch, collection_snapshot_copy, capsys
+):
+    """--audio-dir pointing at a directory with none of the referenced
+    filenames: main() must still complete (never raise), report zero
+    attached, and warn on every referenced filename.
+    """
+    source_path = _write_fixture_source(tmp_path)
+    out_path = os.path.join(str(tmp_path), "out.apkg")
+    audio_dir = os.path.join(str(tmp_path), "empty-audio")
+    os.makedirs(audio_dir)
+    _write_fake_mp3(audio_dir, "unrelated-file.mp3")  # present, never referenced
+
+    word_filenames = _fixture_word_audio_filenames()
+    all_names = [name for names in word_filenames.values() for name in names]
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "immutable-words",
+            "--source",
+            source_path,
+            "--out",
+            out_path,
+            "--collection",
+            collection_snapshot_copy,
+            "--audio-dir",
+            audio_dir,
+        ],
+    )
+
+    with pytest.raises(SystemExit) as exc_info:
+        main()
+
+    assert exc_info.value.code == 0
+    captured = capsys.readouterr()
+    assert "Attached 0 media file(s)" in captured.out
+    assert "WARNING" in captured.out
+    for name in all_names:
+        assert name in captured.out
+    assert os.path.exists(out_path)
+    assert os.path.getsize(out_path) > 0
+
+
+def test_main_audio_dir_export_measurably_larger_than_without(
+    tmp_path, monkeypatch, collection_snapshot_copy
+):
+    source_path = _write_fixture_source(tmp_path)
+
+    out_without = os.path.join(str(tmp_path), "without-audio.apkg")
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "immutable-words",
+            "--source",
+            source_path,
+            "--out",
+            out_without,
+            "--collection",
+            collection_snapshot_copy,
+        ],
+    )
+    with pytest.raises(SystemExit) as exc_info:
+        main()
+    assert exc_info.value.code == 0
+
+    audio_dir = os.path.join(str(tmp_path), "audio-full")
+    os.makedirs(audio_dir)
+    word_filenames = _fixture_word_audio_filenames()
+    all_names = [name for names in word_filenames.values() for name in names]
+    for name in all_names:
+        # Sizeable, distinct-enough content per file so a naive "same
+        # bytes reused" bug would still measurably grow the export.
+        _write_fake_mp3(audio_dir, name, content=os.urandom(2048))
+
+    out_with = os.path.join(str(tmp_path), "with-audio.apkg")
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "immutable-words",
+            "--source",
+            source_path,
+            "--out",
+            out_with,
+            "--collection",
+            collection_snapshot_copy,
+            "--audio-dir",
+            audio_dir,
+        ],
+    )
+    with pytest.raises(SystemExit) as exc_info:
+        main()
+    assert exc_info.value.code == 0
+
+    assert os.path.getsize(out_with) > os.path.getsize(out_without)
 
 
 # ---------------------------------------------------------------------------
