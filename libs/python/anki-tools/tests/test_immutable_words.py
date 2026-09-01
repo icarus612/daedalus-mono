@@ -29,11 +29,11 @@ Every collection built or opened in this file is a from-scratch temp file;
 nothing here ever opens `~/.local/share/Anki2/` or any path outside
 `tmp_path`. Fixture ".mp3" files used to test attach_media / --audio-dir
 are tiny fabricated byte strings written into tmp_path -- never real
-audio, never anything read from ~/Desktop/russian-audio/ except by the two
-`skipif`-guarded real-media e2e tests further down (the one case that
-genuinely cannot be expressed synthetically: proving Anki's own
-media-usage scanner against real bytes is the entire point of those two
-tests) -- and no network access anywhere in this file.
+audio, never anything read from ~/Desktop/russian-audio/ except by the
+three `skipif`-guarded real-media e2e tests further down (the one case
+that genuinely cannot be expressed synthetically: proving Anki's own
+media-usage scanner against real bytes is the entire point of those
+three tests) -- and no network access anywhere in this file.
 
 Subphase 3.1 (builder-owned, out of this packet's scope) appends a full
 build -> export -> import round-trip end-to-end test to this same file after
