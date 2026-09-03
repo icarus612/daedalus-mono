@@ -10,14 +10,17 @@ entry point (`anki-build-immutable-words` / `python -m anki_tools.immutable_word
 """
 
 import argparse
+import hashlib
 import os
 import shutil
 import tempfile
+import time
 
 from anki.collection import Collection, DeckIdLimit
 from anki.errors import AnkiException, DBError
 from anki.import_export_pb2 import ExportAnkiPackageOptions
 from anki.models import NotetypeDict
+from anki.utils import to_json_bytes
 
 from anki_tools import audio_naming
 from anki_tools.audio_naming import get_anki_collection_path
@@ -40,6 +43,40 @@ SOURCE_NOTETYPE_ID = 1698803891108
 NEW_NOTE_TYPE_NAME = "Russian - Immutable Words (Ellis Version)"
 
 
+def _notetype_id_for_name(name: str) -> int:
+    """Deterministic Anki notetype id for `name`.
+
+    Mirrors `immutable_words_plan.guid_for_row`'s reasoning exactly,
+    transplanted from note identity to note-TYPE identity: Anki's import
+    merge logic (`rslib/src/import_export/package/apkg/import/notes.rs`,
+    `NoteContext::import_notetypes`) matches an incoming note type against
+    an existing one BY ID ALONE, never by name or content. If this id is
+    not stable across builds, a rebuilt `.apkg` is treated as a brand-new
+    note type on every re-import -- this is precisely the live defect
+    this module exists to fix (see module-level notes above `clone_note_type`
+    -- or the lane 9 contract this was written from).
+
+    Never Anki's own auto-assigned id (a real-time-based value from
+    `add_notetype_legacy`, different on every process/every build).
+    Derived via sha256 over `name`, first 8 bytes read as a big-endian
+    unsigned int, masked to 62 bits: Anki's `NotetypeId` is a signed
+    64-bit integer, and 62 bits keeps this comfortably positive and clear
+    of that boundary (the same caution `guid_for_row` takes, applied to a
+    plain integer instead of a base91 string).
+    """
+    digest = hashlib.sha256(name.encode("utf-8")).digest()
+    return int.from_bytes(digest[:8], "big") & ((1 << 62) - 1)
+
+
+# Fixed forever, for exactly the reason `_notetype_id_for_name`'s docstring
+# explains: every rebuild must reproduce this same id, or Anki treats the
+# rebuilt package as an unrelated note type (the "+"-suffixed duplicate
+# note-type defect this module exists to prevent). Recomputing it here
+# from NEW_NOTE_TYPE_NAME rather than hand-copying a literal keeps the
+# value visibly tied to the name it identifies.
+NEW_NOTE_TYPE_ID = _notetype_id_for_name(NEW_NOTE_TYPE_NAME)
+
+
 def clone_note_type(
     source_col: Collection, build_col: Collection, new_name: str
 ) -> NotetypeDict:
@@ -53,10 +90,16 @@ def clone_note_type(
     copied from the source) via `build_col.models.new_field`, so the
     registered note type has 7 fields total, matching
     `immutable_words_plan.FIELD_NAMES`. No template side ever references
-    `{{AudioRefs}}` -- see `FIELD_NAMES`'s comment for why. Registers the
-    transformed dict into `build_col` and returns the registered version
-    (looked up fresh, since the dict passed to `add_dict` still has `id == 0`
-    after it returns).
+    `{{AudioRefs}}` -- see `FIELD_NAMES`'s comment for why.
+
+    Registers the transformed dict into `build_col` and returns the
+    registered version, looked up fresh by id. The returned note type's
+    `id` is always `NEW_NOTE_TYPE_ID` -- never a freshly-minted one --
+    so a rebuilt package's note type is recognized as the SAME note type
+    by Anki's importer, letting a re-import update its notes, templates
+    and CSS in place instead of creating a `+`-suffixed duplicate that
+    orphans the existing notes (see the lane 9 contract this was written
+    from for the full defect analysis).
     """
     source_note_type = source_col.models.get(SOURCE_NOTETYPE_ID)
     if source_note_type is None:
@@ -76,11 +119,42 @@ def clone_note_type(
         )
 
     audio_refs_field = build_col.models.new_field("AudioRefs")
+    # `new_field()` hands back a field dict with a real, randomly-chosen id
+    # already set (confirmed: two calls in two fresh collections returned
+    # different non-None ids). Pin it to None so this field falls back to
+    # NAME-based matching on import, exactly like five of the source note
+    # type's own six fields already do (only `Pronunciation` carries a real
+    # persisted id) -- see `NoteField::is_match` in rslib's
+    # `notetype/merge.rs`: both ids present and non-None -> compare by id;
+    # otherwise -> compare by name. Leaving new_field()'s random id in
+    # place would make this field never match itself across builds.
+    audio_refs_field["id"] = None
     audio_refs_field["ord"] = len(cloned["flds"])
     cloned["flds"].append(audio_refs_field)
 
-    build_col.models.add_dict(cloned)
-    return build_col.models.by_name(new_name)
+    cloned["id"] = NEW_NOTE_TYPE_ID
+    # Bump the modification time to "now" on every build. Anki's own
+    # reimport only refreshes an existing note type's templates/CSS in
+    # place when the incoming note type's mod time is NEWER than what's
+    # already there (ImportAnkiPackageUpdateCondition.IF_NEWER, the
+    # default) -- see this file's module-level notes on why this is not
+    # optional. `time.time()` truncated to seconds matches Anki's own
+    # `mod` column resolution.
+    cloned["mod"] = int(time.time())
+
+    # `build_col.models.add_dict` (-> the backend's `add_notetype_legacy`)
+    # PANICS if given a non-zero id -- it only ever mints a fresh one. The
+    # only backend call that will persist an EXPLICIT non-zero id, adding
+    # it fresh when (as here, always) it doesn't already exist in this
+    # from-scratch `build_col`, is `add_or_update_notetype` with
+    # `preserve_usn_and_mtime=True` -- that flag is what makes it trust
+    # OUR `id` and `mod` instead of minting/bumping its own. See this
+    # file's module-level notes for why this is the load-bearing call in
+    # this whole function.
+    returned_id = build_col._backend.add_or_update_notetype(
+        json=to_json_bytes(cloned), preserve_usn_and_mtime=True, skip_checks=False
+    )
+    return build_col.models.get(returned_id)
 
 
 def assert_unmodified(collection_path: str, mtime_before: float) -> None:
