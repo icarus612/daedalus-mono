@@ -20,6 +20,7 @@ template side that renders that field so its own JavaScript does the picking
 and playing.
 """
 
+import hashlib
 import re
 from dataclasses import dataclass
 
@@ -94,6 +95,72 @@ _AUDIO_DIV = re.compile(
     r"^[ \t]*<div[^>]*\bid=[\"']audio[\"'][^>]*>\s*\{\{Audio\}\}\s*</div>[ \t]*\r?\n?",
     re.M | re.S,
 )
+
+# Anki's own `anki.utils.base91`/`guid64()` alphabet: `base62` (letters + digits)
+# plus these extra printable-ASCII characters (every printable character except
+# quotes, backslash, and Anki's own field/record separators). Reproduced here,
+# not imported from `anki.utils`, to keep this module's "no Anki imports"
+# invariant -- a deterministic GUID should still render in exactly the
+# alphabet a genuine Anki-minted GUID would.
+_GUID_ALPHABET = (
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    "!#$%&()*+,-./:;<=>?@[]^_`{|}~"
+)
+
+
+def _base91(num: int) -> str:
+    """Encode a non-negative int in Anki's own guid64 alphabet.
+
+    Mirrors `anki.utils.base62`/`base91` exactly (same table, same
+    algorithm), including its one sharp edge: `num == 0` encodes as the
+    empty string in a naive port. Guarded explicitly here (returns the
+    alphabet's first character instead) because an empty GUID is a real
+    risk this function must not reproduce, however astronomically
+    unlikely a zero hash is.
+    """
+    if num == 0:
+        return _GUID_ALPHABET[0]
+
+    base = len(_GUID_ALPHABET)
+    digits: list[str] = []
+    while num > 0:
+        num, remainder = divmod(num, base)
+        digits.append(_GUID_ALPHABET[remainder])
+    return "".join(reversed(digits))
+
+
+def guid_for_row(russian: str, pos: str) -> str:
+    """Deterministic Anki note GUID for one source row.
+
+    Derived from `russian` + `pos` ONLY -- never from `english`
+    (Translation) or anything audio-related, both of which legitimately
+    change on a rebuild and must UPDATE the existing note in place, not
+    mint a new one. `russian` alone is not enough: "да" is a legitimate
+    exact duplicate across Conjunctions and Particles (see `WordRow`'s
+    docstring / `ROW_SPLITS`), and the two notes must never collide onto
+    the same GUID. `pos` -- the section-heading identity
+    ("Prepositions", "Conjunctions", ...), not the full `::`-joined deck
+    path from `subdeck_name` -- is what's hashed, so a GUID survives even
+    if the user later renumbers the `2.`/`3.`/`4.` deck-root prefix
+    (`DECK_ROOT` is user-renumbered territory; see the-ask.md decision 2).
+
+    Uses sha256 over a canonical `pos + "\\x1f" + russian` string (the
+    `\\x1f` separator matches `anki.utils.join_fields`'s own convention,
+    preventing e.g. `pos="AB", russian="C"` from colliding with
+    `pos="A", russian="BC"`), takes the first 8 bytes as a big-endian
+    unsigned int, and base91-encodes it -- never Python's built-in
+    `hash()`, which is salted per-process specifically to be
+    non-reproducible and would silently reintroduce this exact defect.
+
+    Same `(russian, pos)` -> the same 64-bit hash -> the same GUID string,
+    every time, on every machine, forever. This is what makes a rebuilt
+    `.apkg` re-importable in place instead of duplicating the deck --
+    see `immutable_words.py`'s `build_deck_tree`, the only caller.
+    """
+    canonical = f"{pos}\x1f{russian}".encode()
+    digest = hashlib.sha256(canonical).digest()
+    num = int.from_bytes(digest[:8], byteorder="big", signed=False)
+    return _base91(num)
 
 
 # Rows that combine two NON-interchangeable words into one source-document
@@ -211,6 +278,11 @@ class WordRow:
     def deck(self) -> str:
         """Full `::` deck path this row's note belongs in."""
         return subdeck_name(self.pos)
+
+    @property
+    def guid(self) -> str:
+        """This row's deterministic Anki note GUID -- see `guid_for_row`."""
+        return guid_for_row(self.russian, self.pos)
 
     def fields(self) -> list[str]:
         """The seven field values, in FIELD_NAMES order.
