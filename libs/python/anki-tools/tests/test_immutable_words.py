@@ -1495,13 +1495,19 @@ def test_e2e_rebuild_after_translation_edit_reimports_in_place_not_duplicated(
         assert still 153 notes (not 306), and the changed Translation is
         now updated on the existing note
 
-    The edited row is a real Prepositions row ("в / во"), and its new
-    Translation carries a literal `<br>` tag -- matching the style of the
-    live source document's own recent edit (dispatch: "its preposition
-    glosses now contain `<br>` tags; they must survive the round trip
-    verbatim") -- so this test also proves that HTML content in a
-    Translation edit survives the whole build -> export -> import ->
-    update round trip byte-for-byte.
+    The edited row is a real Prepositions row ("в / во"); the new Translation
+    is DERIVED from whatever that row's `.english` currently holds (never a
+    hardcoded full literal) by appending a marker that itself contains a
+    literal `<br>` tag -- matching the style of the live source document's
+    own `<br>`-tag edits (dispatch: "its preposition glosses now contain
+    `<br>` tags; they must survive the round trip verbatim") -- so this test
+    also proves that HTML content in a Translation edit survives the whole
+    build -> export -> import -> update round trip byte-for-byte. Deriving
+    the new value from the row's own current content, rather than pasting a
+    literal expected string, means this test cannot be defeated by the
+    source document being revised out from under it: appending a non-empty
+    marker guarantees `new_translation != original_translation` by
+    construction, whatever the document currently says.
     """
     from anki.import_export_pb2 import (
         ImportAnkiPackageOptions,
@@ -1519,8 +1525,15 @@ def test_e2e_rebuild_after_translation_edit_reimports_in_place_not_duplicated(
         for i, row in enumerate(rows_v1)
         if row.pos == "Prepositions" and row.russian == "в / во"
     )
-    new_translation = "in / at (where)<br>into (where/what)"
-    assert new_translation != rows_v1[edited_index].english
+    original_translation = rows_v1[edited_index].english
+    marker = (
+        "<br>(l8 e2e rebuild-edit marker -- proves the round trip, not a real gloss)"
+    )
+    new_translation = original_translation + marker
+    # Guaranteed by construction (a strict superstring), not by assuming the
+    # source document doesn't already say this -- see this test's docstring.
+    assert new_translation != original_translation
+    assert "<br>" in new_translation
 
     rows_v2 = list(rows_v1)
     old_row = rows_v2[edited_index]
