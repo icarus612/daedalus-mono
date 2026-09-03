@@ -102,6 +102,14 @@ def build_deck_tree(
 ) -> dict[str, int]:
     """Create the four subdecks and one note per row.
 
+    Every note's GUID is deterministic (`row.guid`, derived from `russian` +
+    `pos` -- see `immutable_words_plan.guid_for_row`), never Anki's own
+    randomly-minted default. This is precisely what makes a rebuilt `.apkg`
+    re-importable in place -- Anki's importer matches an incoming note
+    against an existing one by GUID, not by field content, so a stable GUID
+    per source row means a re-import updates the existing 153 notes instead
+    of minting 153 new ones alongside them.
+
     Returns per-deck note counts keyed by full deck path, in
     `all_subdeck_names()` order, with all four keys always present (0 if a
     deck got no rows). Never sets the Audio field to anything other than
@@ -113,6 +121,7 @@ def build_deck_tree(
 
     for row in rows:
         note = build_col.new_note(note_type)
+        note.guid = row.guid
         for field_name, value in zip(FIELD_NAMES, row.fields()):
             note[field_name] = value
         build_col.add_note(note, deck_ids[row.deck])

@@ -30,6 +30,7 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 from itertools import groupby
 from pathlib import Path
@@ -45,8 +46,10 @@ from anki_tools.immutable_words_plan import (
     SUBDECK_LEAVES,
     SourceDocumentError,
     WordRow,
+    _base91,
     all_subdeck_names,
     counts_by_deck,
+    guid_for_row,
     parse_word_list,
     rewrite_audio_playback,
     strip_part_of_speech,
@@ -1091,3 +1094,240 @@ def test_word_row_fields_audio_refs_multi_form_hazard_uses_source_text():
     assert fields[audio_refs_index] != wrong
     for slot in SLOTS:
         assert shared_build_filename("в / во", slot) in fields[audio_refs_index]
+
+
+# ---------------------------------------------------------------------------
+# New contract tests (lane l8): deterministic GUID derivation for note
+# identity, per
+# `.workflows/russian-immutable-words/.artifacts/contracts/l8.md`, section 1
+# ("anki_tools/immutable_words_plan.py -- deterministic GUID derivation").
+# Derived entirely from that contract's prose and its embedded docstrings --
+# `anki_tools/immutable_words_plan.py` itself is never read.
+# ---------------------------------------------------------------------------
+
+# Anki's own guid64 alphabet, transcribed VERBATIM from the l8 contract text
+# (section 1) as an independent oracle -- deliberately NOT imported from the
+# module under test's own `_GUID_ALPHABET`, so alphabet-membership checks
+# below don't just restate the implementation.
+GUID_ALPHABET = (
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    "!#$%&()*+,-./:;<=>?@[]^_`{|}~"
+)
+
+
+def test_guid_alphabet_oracle_has_91_characters():
+    """Sanity check on the test's own fixture data, not the implementation."""
+    assert len(GUID_ALPHABET) == 91
+
+
+# ---------------------------------------------------------------------------
+# _base91
+# ---------------------------------------------------------------------------
+
+
+def test_base91_zero_returns_alphabet_first_char_not_empty():
+    # l8.md section 1 acceptance for _base91: "_base91(0) returns a
+    # non-empty string (the alphabet's first character, "a"), not ""."
+    result = _base91(0)
+    assert result != ""
+    assert result == "a"
+    assert result == GUID_ALPHABET[0]
+
+
+@pytest.mark.parametrize(
+    "num,expected",
+    [
+        (1, "b"),
+        (91, "ba"),
+    ],
+)
+def test_base91_hand_computed_values(num, expected):
+    # l8.md section 1 acceptance for _base91: "verify against a couple of
+    # hand-computed values (e.g. _base91(1) == "b"`, `_base91(91) == "ba"`)."
+    assert _base91(num) == expected
+
+
+def test_base91_matches_independent_positional_encoder_oracle():
+    """Re-derives `_base91` against a from-scratch base-N encoder built
+    directly from the contract's own description of the algorithm
+    ("standard base-N positional algorithm ... repeated divmod,
+    most-significant digit first", l8.md section 1) over the GUID_ALPHABET
+    oracle above -- an independent implementation, not a restatement of the
+    one under test.
+    """
+
+    def oracle_base91(num):
+        if num == 0:
+            return GUID_ALPHABET[0]
+        digits = []
+        while num > 0:
+            num, remainder = divmod(num, len(GUID_ALPHABET))
+            digits.append(GUID_ALPHABET[remainder])
+        return "".join(reversed(digits))
+
+    for num in (0, 1, 2, 90, 91, 92, 8280, 123456789, 2**63 - 1):
+        assert _base91(num) == oracle_base91(num), f"mismatch for num={num}"
+
+
+# ---------------------------------------------------------------------------
+# guid_for_row
+# ---------------------------------------------------------------------------
+
+
+# Package root (one level above this `tests/` directory), inserted onto the
+# subprocess's `sys.path` explicitly below -- mirrors this package's own
+# `conftest.py`, which solves the identical "bare ambient interpreter can't
+# import anki_tools" problem for the CURRENT process; a freshly spawned
+# subprocess gets none of that for free, so it needs the same fix repeated.
+_PACKAGE_ROOT = Path(__file__).resolve().parents[1]
+
+
+def _guid_for_row_in_subprocess(russian, pos, pythonhashseed):
+    """Call `guid_for_row(russian, pos)` in a brand-new Python process with a
+    given `PYTHONHASHSEED`, returning its printed result.
+
+    Used to prove determinism holds ACROSS processes (l8.md: "calling it
+    twice with the same (russian, pos) returns the identical string, called
+    from a fresh Python process each time (spawn a subprocess ...)"), and
+    specifically that the value does NOT vary with `PYTHONHASHSEED` (l8.md:
+    "Not Python's built-in hash(): ... PYTHONHASHSEED differs by default
+    per-process ... this is the test that would have caught the defect if
+    someone had implemented this with hash((russian, pos)) instead of
+    hashlib.sha256").
+    """
+    env = dict(os.environ)
+    env["PYTHONHASHSEED"] = pythonhashseed
+    code = (
+        "import sys\n"
+        f"sys.path.insert(0, {str(_PACKAGE_ROOT)!r})\n"
+        "from anki_tools.immutable_words_plan import guid_for_row\n"
+        f"print(guid_for_row({russian!r}, {pos!r}))\n"
+    )
+    completed = subprocess.run(
+        [sys.executable, "-c", code],
+        env=env,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return completed.stdout.strip()
+
+
+def test_guid_for_row_deterministic_across_fresh_subprocesses():
+    first = _guid_for_row_in_subprocess("около", "Prepositions", "0")
+    second = _guid_for_row_in_subprocess("около", "Prepositions", "0")
+    assert first != ""
+    assert first == second
+
+
+def test_guid_for_row_not_sensitive_to_pythonhashseed():
+    # The test that would have caught `hash((russian, pos))` in place of
+    # `hashlib.sha256`: PYTHONHASHSEED differs by default per process, so a
+    # salted-builtin-hash implementation would disagree across these two
+    # explicitly-different-seed subprocess invocations.
+    seed_0 = _guid_for_row_in_subprocess("до того, как", "Conjunctions", "0")
+    seed_1 = _guid_for_row_in_subprocess("до того, как", "Conjunctions", "1")
+    assert seed_0 != ""
+    assert seed_0 == seed_1
+
+
+def test_guid_for_row_no_collision_on_da_da_case():
+    assert guid_for_row("да", "Conjunctions") != guid_for_row("да", "Particles")
+
+
+def test_guid_for_row_sensitive_to_russian():
+    assert guid_for_row("а", "Prepositions") != guid_for_row("б", "Prepositions")
+
+
+def test_guid_for_row_sensitive_to_pos_general_property():
+    # Restated as the general property (l8.md): different pos, same
+    # russian -> different result -- same underlying assertion as the
+    # да/да collision case above.
+    assert guid_for_row("да", "Conjunctions") != guid_for_row("да", "Particles")
+
+
+def test_guid_for_row_signature_accepts_only_russian_and_pos():
+    # l8.md: "there is no english/Translation parameter at all -- the
+    # function's signature itself enforces this; a test should confirm the
+    # signature only accepts (russian, pos)."
+    import inspect
+
+    signature = inspect.signature(guid_for_row)
+    assert list(signature.parameters) == ["russian", "pos"]
+
+    with pytest.raises(TypeError):
+        guid_for_row("да", "Particles", english="yes")
+
+    with pytest.raises(TypeError):
+        guid_for_row("да", "Particles", "yes")
+
+
+@pytest.fixture(scope="module")
+def guid_probe_russian_strings(real_rows):
+    """A dozen-plus varied real Russian strings pulled from the parsed
+    source document, deliberately including the multi-form entries the l8
+    contract names explicitly ("в / во", "-то", "несмотря на то, что"), per
+    l8.md section 1's "Non-empty, alphabet-only" acceptance criterion.
+    """
+    required = ["в / во", "-то", "несмотря на то, что"]
+    picks = list(required)
+    seen = set(picks)
+    for row in real_rows:
+        if row.russian not in seen:
+            seen.add(row.russian)
+            picks.append(row.russian)
+        if len(picks) >= 12:
+            break
+    for russian in required:
+        assert russian in picks, f"expected {russian!r} to survive into the probe set"
+    assert len(picks) >= 12
+    return picks
+
+
+@pytest.mark.parametrize("pos", list(SUBDECK_LEAVES))
+def test_guid_for_row_nonempty_and_alphabet_only_across_real_strings(
+    guid_probe_russian_strings, pos
+):
+    for russian in guid_probe_russian_strings:
+        result = guid_for_row(russian, pos)
+        assert result != "", f"empty guid for russian={russian!r} pos={pos!r}"
+        bad_chars = [ch for ch in result if ch not in GUID_ALPHABET]
+        assert not bad_chars, (
+            f"non-alphabet characters {bad_chars!r} in guid for "
+            f"russian={russian!r} pos={pos!r}: {result!r}"
+        )
+
+
+# ---------------------------------------------------------------------------
+# WordRow.guid
+# ---------------------------------------------------------------------------
+
+
+def test_word_row_guid_matches_guid_for_row():
+    # l8.md section 1 acceptance: WordRow(pos="Particles", rank=1,
+    # russian="да", english="anything").guid == guid_for_row("да",
+    # "Particles").
+    row = WordRow(pos="Particles", rank=1, russian="да", english="anything")
+    assert row.guid == guid_for_row("да", "Particles")
+
+
+def test_word_row_guid_same_when_rank_or_english_differ():
+    base = WordRow(pos="Conjunctions", rank=1, russian="и", english="and")
+    different_rank = WordRow(pos="Conjunctions", rank=99, russian="и", english="and")
+    different_english = WordRow(
+        pos="Conjunctions", rank=1, russian="и", english="totally different gloss"
+    )
+
+    assert different_rank.guid == base.guid
+    assert different_english.guid == base.guid
+
+
+def test_word_row_guid_differs_when_russian_or_pos_differ():
+    base = WordRow(pos="Conjunctions", rank=1, russian="да", english="and, but")
+    different_russian = WordRow(
+        pos="Conjunctions", rank=1, russian="и", english="and, but"
+    )
+    different_pos = WordRow(pos="Particles", rank=1, russian="да", english="and, but")
+
+    assert different_russian.guid != base.guid
+    assert different_pos.guid != base.guid

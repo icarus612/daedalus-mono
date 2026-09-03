@@ -48,6 +48,7 @@ import re
 import shutil
 import sqlite3
 import sys
+import time
 from pathlib import Path
 
 import pytest
@@ -71,6 +72,7 @@ from anki_tools.immutable_words_plan import (
     FIELD_NAMES,
     WordRow,
     all_subdeck_names,
+    guid_for_row,
     subdeck_name,
 )
 
@@ -609,6 +611,13 @@ def test_build_deck_tree_duplicate_russian_text_both_notes_exist_in_own_decks(
     assert len(particles_da) == 1
     assert conjunctions_da[0] != particles_da[0]
 
+    # l8.md section 2 acceptance: the two да notes must never collide onto
+    # the same GUID (extended in place per the contract's instruction,
+    # rather than duplicated as a separate test).
+    conjunctions_da_note = build_col.get_note(conjunctions_da[0])
+    particles_da_note = build_col.get_note(particles_da[0])
+    assert conjunctions_da_note.guid != particles_da_note.guid
+
 
 def test_build_deck_tree_audio_field_predicts_four_filenames(cloned, build_col):
     """Per the l3 contract (audio_naming.py / immutable_words_plan.py
@@ -633,6 +642,85 @@ def test_build_deck_tree_audio_field_predicts_four_filenames(cloned, build_col):
         expected_audio = ",".join(build_filename(russian, slot) for slot in SLOTS)
         assert note["Audio"] == expected_audio
         assert note["Audio"] != ""
+
+
+# ---------------------------------------------------------------------------
+# Note GUIDs (lane l8 contract, section 2 "wire the GUID into note
+# creation"): `.artifacts/contracts/l8.md`. Derived entirely from that
+# contract's prose -- `anki_tools/immutable_words.py` itself is never read.
+# ---------------------------------------------------------------------------
+
+
+def test_build_deck_tree_every_note_guid_matches_its_row_guid(cloned, build_col):
+    """l8.md section 2 acceptance: "After build_deck_tree, every note's
+    .guid (read back via build_col.get_note(note_id).guid) equals row.guid
+    for the row that produced it -- for every row, not a sample."
+    """
+    note_type, _ = cloned
+    rows = _fixture_rows()
+
+    build_deck_tree(build_col, rows, note_type)
+
+    checked = 0
+    for row in rows:
+        deck_name = subdeck_name(row.pos)
+        note_ids = build_col.find_notes(
+            'deck:"%s" Russian:"%s"' % (deck_name, row.russian)
+        )
+        assert len(note_ids) == 1, (
+            f"expected exactly one note for pos={row.pos!r} "
+            f"russian={row.russian!r}, got {len(note_ids)}"
+        )
+        note = build_col.get_note(note_ids[0])
+        assert note.guid == row.guid
+        # Independent restatement: the row's own .guid property is not the
+        # only path checked here -- also verify directly against
+        # guid_for_row(russian, pos), the function row.guid itself wraps.
+        assert note.guid == guid_for_row(row.russian, row.pos)
+        checked += 1
+
+    assert checked == len(rows)  # every row, not a sample
+
+
+def test_build_deck_tree_two_builds_from_same_rows_produce_identical_guid_set(
+    collection_snapshot_copy, tmp_path
+):
+    """l8.md section 2 acceptance: "Calling build_deck_tree twice, in two
+    separate scratch collections, from the same rows list, produces the
+    identical set of GUIDs both times (order may differ; compare as
+    sets)."
+    """
+    rows = _fixture_rows()
+
+    first_col = Collection(os.path.join(str(tmp_path), "first-build.anki2"))
+    second_col = Collection(os.path.join(str(tmp_path), "second-build.anki2"))
+    try:
+        source_col_1 = Collection(collection_snapshot_copy)
+        try:
+            note_type_1 = clone_note_type(source_col_1, first_col, NEW_NOTE_TYPE_NAME)
+        finally:
+            source_col_1.close()
+
+        source_col_2 = Collection(collection_snapshot_copy)
+        try:
+            note_type_2 = clone_note_type(source_col_2, second_col, NEW_NOTE_TYPE_NAME)
+        finally:
+            source_col_2.close()
+
+        build_deck_tree(first_col, rows, note_type_1)
+        build_deck_tree(second_col, rows, note_type_2)
+
+        first_guids = {first_col.get_note(nid).guid for nid in first_col.find_notes("")}
+        second_guids = {
+            second_col.get_note(nid).guid for nid in second_col.find_notes("")
+        }
+
+        assert first_guids  # sanity: not vacuously equal empty sets
+        assert first_guids == second_guids
+        assert len(first_guids) == len(rows)
+    finally:
+        first_col.close()
+        second_col.close()
 
 
 # ---------------------------------------------------------------------------
@@ -1297,6 +1385,220 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
                 )
 
         assert not mismatches, f"Audio field problems after import: {mismatches}"
+    finally:
+        fresh_col.close()
+
+
+# ---------------------------------------------------------------------------
+# Lane l8 -- builder-authored e2e: deterministic note GUIDs, verified against
+# the ACTUAL live defect (l8 dispatch): the user rebuilt the package from an
+# updated source document and re-imported it, expecting the 153 notes to be
+# updated in place. Instead Anki added 153 NEW notes (10,664 -> 10,817),
+# duplicating the entire deck -- because every note got a fresh random GUID
+# on every build, so Anki's GUID-based import matching never found an
+# existing note to update.
+#
+# NOT blind, NOT a contract test: written by the builder against the
+# DISPATCH'S acceptance criteria (never the l8 packet contract), after the
+# l8 packet (guid_for_row, WordRow.guid, build_deck_tree's note.guid wiring)
+# went green above. Works against the REAL 153-row source document, not a
+# small synthetic fixture -- the l8 packet's own tests already prove the
+# GUID logic correct in isolation; this proves the defect the user actually
+# hit is gone, end to end.
+# ---------------------------------------------------------------------------
+
+
+def _build_real_package_with_guids(rows, collection_snapshot_copy, tmp_path, out_name):
+    """Clone the (synthetic-shape) source note type, build the full deck
+    tree for `rows`, export to `tmp_path/out_name`.
+
+    Returns `(out_path, guids)`, where `guids` maps each row's own
+    `(pos, russian)` identity to the GUID `build_deck_tree` actually gave
+    its note -- looked up via a deck+field query against `build_col`
+    itself (never by assuming `find_notes("")` iteration order lines up
+    with `rows` order), so a caller can compare GUIDs across two
+    independent builds without re-opening either exported `.apkg`.
+    """
+    build_col = Collection(os.path.join(str(tmp_path), f"build-{out_name}.anki2"))
+    source_col = Collection(collection_snapshot_copy)
+    try:
+        note_type = clone_note_type(source_col, build_col, NEW_NOTE_TYPE_NAME)
+    finally:
+        source_col.close()
+
+    build_deck_tree(build_col, rows, note_type)
+
+    guids = {}
+    for row in rows:
+        note_ids = build_col.find_notes(
+            'deck:"%s" Russian:"%s"' % (row.deck, row.russian)
+        )
+        assert len(note_ids) == 1, (
+            f"expected exactly one note for pos={row.pos!r} "
+            f"russian={row.russian!r}, got {len(note_ids)}"
+        )
+        guids[(row.pos, row.russian)] = build_col.get_note(note_ids[0]).guid
+
+    out_path = os.path.join(str(tmp_path), out_name)
+    export_package(build_col, DECK_ROOT, out_path)
+    build_col.close()
+    return out_path, guids
+
+
+def test_e2e_guid_determinism_real_document_full_set(
+    tmp_path, collection_snapshot_copy
+):
+    """Dispatch verification bar, item 1: "build the package twice from the
+    same source; every note's GUID is identical between builds. Assert on
+    the full set, not a sample." Also covers item 3 (no collision) at real
+    scale: the two да notes (Conjunctions, Particles) get different GUIDs.
+    """
+    from anki_tools.immutable_words_plan import parse_word_list
+
+    with open(SOURCE_DOC_PATH, encoding="utf-8") as fh:
+        rows = parse_word_list(fh.read())
+    assert len(rows) == 153
+
+    _, guids_first = _build_real_package_with_guids(
+        rows, collection_snapshot_copy, tmp_path, "determinism-a.apkg"
+    )
+    _, guids_second = _build_real_package_with_guids(
+        rows, collection_snapshot_copy, tmp_path, "determinism-b.apkg"
+    )
+
+    # Full set, not a sample: same 153 (pos, russian) keys both times.
+    assert len(guids_first) == 153
+    assert set(guids_first) == set(guids_second)
+
+    mismatches = [key for key in guids_first if guids_first[key] != guids_second[key]]
+    assert mismatches == [], (
+        f"{len(mismatches)} of 153 notes got a DIFFERENT guid on the "
+        f"second build (should be impossible -- guid_for_row is a pure "
+        f"function of (russian, pos)): {mismatches[:5]}"
+    )
+
+    # Item 3: no collision between the two real да rows.
+    conjunctions_da_guid = guids_first[("Conjunctions", "да")]
+    particles_da_guid = guids_first[("Particles", "да")]
+    assert conjunctions_da_guid != particles_da_guid
+
+
+def test_e2e_rebuild_after_translation_edit_reimports_in_place_not_duplicated(
+    tmp_path, collection_snapshot_copy
+):
+    """Dispatch verification bar, item 2 -- THE load-bearing evidence for
+    this lane, reproducing then proving fixed the exact live defect:
+
+        fresh empty collection -> import package -> assert 153 notes
+        change a Translation in the source, rebuild
+        import the *rebuilt* package into that *same* collection
+        assert still 153 notes (not 306), and the changed Translation is
+        now updated on the existing note
+
+    The edited row is a real Prepositions row ("в / во"), and its new
+    Translation carries a literal `<br>` tag -- matching the style of the
+    live source document's own recent edit (dispatch: "its preposition
+    glosses now contain `<br>` tags; they must survive the round trip
+    verbatim") -- so this test also proves that HTML content in a
+    Translation edit survives the whole build -> export -> import ->
+    update round trip byte-for-byte.
+    """
+    from anki.import_export_pb2 import (
+        ImportAnkiPackageOptions,
+        ImportAnkiPackageRequest,
+    )
+
+    from anki_tools.immutable_words_plan import parse_word_list
+
+    with open(SOURCE_DOC_PATH, encoding="utf-8") as fh:
+        rows_v1 = parse_word_list(fh.read())
+    assert len(rows_v1) == 153
+
+    edited_index = next(
+        i
+        for i, row in enumerate(rows_v1)
+        if row.pos == "Prepositions" and row.russian == "в / во"
+    )
+    new_translation = "in / at (where)<br>into (where/what)"
+    assert new_translation != rows_v1[edited_index].english
+
+    rows_v2 = list(rows_v1)
+    old_row = rows_v2[edited_index]
+    rows_v2[edited_index] = WordRow(
+        pos=old_row.pos,
+        rank=old_row.rank,
+        russian=old_row.russian,
+        english=new_translation,
+    )
+    # Same identity (pos, russian) -> same GUID -- the whole point.
+    assert rows_v2[edited_index].guid == old_row.guid
+
+    out1, _ = _build_real_package_with_guids(
+        rows_v1, collection_snapshot_copy, tmp_path, "rebuild-v1.apkg"
+    )
+    # A real rebuild is never literally instantaneous. Anki's own import
+    # default (`ImportAnkiPackageOptions.update_notes` left unset here,
+    # exactly as every other import in this file already does) is
+    # IMPORT_ANKI_PACKAGE_UPDATE_CONDITION_IF_NEWER: a matched note's
+    # fields only refresh when the incoming note is NEWER than the one
+    # already present. Anki's own note timestamps are second-resolution,
+    # so this sleep reproduces a genuine later rebuild rather than an
+    # artificial one -- exactly what the user's live "I later rebuilt..."
+    # sequence was.
+    time.sleep(1.1)
+    out2, _ = _build_real_package_with_guids(
+        rows_v2, collection_snapshot_copy, tmp_path, "rebuild-v2.apkg"
+    )
+
+    fresh_path = os.path.join(str(tmp_path), "fresh-reimport-target.anki2")
+    assert not os.path.exists(fresh_path)
+    fresh_col = Collection(fresh_path)
+    try:
+        import_options = ImportAnkiPackageOptions(
+            merge_notetypes=True,
+            with_scheduling=False,
+            with_deck_configs=False,
+        )
+
+        fresh_col.import_anki_package(
+            ImportAnkiPackageRequest(package_path=out1, options=import_options)
+        )
+        assert fresh_col.note_count() == 153
+
+        # The exact live scenario: import the REBUILT package into the
+        # SAME collection.
+        fresh_col.import_anki_package(
+            ImportAnkiPackageRequest(package_path=out2, options=import_options)
+        )
+
+        # The defect this lane fixes: must still be 153, never 306.
+        assert fresh_col.note_count() == 153, (
+            f"expected 153 notes after re-importing the rebuilt package, "
+            f"got {fresh_col.note_count()} -- this is exactly the live "
+            f"defect (10,664 -> 10,817) reproduced at this lane's own "
+            f"153-note scale"
+        )
+
+        edited_row = rows_v2[edited_index]
+        note_ids = fresh_col.find_notes(
+            'deck:"%s" Russian:"%s"' % (edited_row.deck, edited_row.russian)
+        )
+        assert len(note_ids) == 1, (
+            "the edited row must still resolve to exactly ONE note after "
+            "the rebuild+reimport -- more than one means it duplicated "
+            "instead of updating in place"
+        )
+        updated_note = fresh_col.get_note(note_ids[0])
+        assert updated_note["Translation"] == new_translation, (
+            f"the existing note's Translation was not updated by the "
+            f"reimport: expected {new_translation!r}, got "
+            f"{updated_note['Translation']!r}"
+        )
+        assert "<br>" in updated_note["Translation"]
+
+        # Every OTHER note (unchanged rows) must be untouched and still
+        # present -- the fix must not disturb notes it had no reason to.
+        assert fresh_col.note_count() == len(rows_v2) == 153
     finally:
         fresh_col.close()
 
