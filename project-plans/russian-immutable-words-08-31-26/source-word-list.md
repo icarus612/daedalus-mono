@@ -11,49 +11,49 @@ Prepositions never change themselves, though they dictate the case of the noun t
 
 | Rank | Russian | English |
 |---|---|---|
-| 1 | в / во | in, at, into |
-| 2 | на | on, at, onto |
-| 3 | с / со | with, from |
-| 4 | по | along, by, according to |
-| 5 | к / ко | to, toward |
-| 6 | из | from, out of |
-| 7 | у | by, at (used for "to have") |
-| 8 | за | behind, for |
-| 9 | от | from, away from |
-| 10 | о / об | about |
-| 11 | до | up to, until, before |
-| 12 | без | without |
-| 13 | под | under, below |
-| 14 | над | above, over |
-| 15 | перед | in front of, before |
-| 16 | при | in the presence of, attached to |
-| 17 | через | through, across, in (time) |
-| 18 | после | after |
-| 19 | кроме | except, besides |
-| 20 | между | between, among |
-| 21 | против | against, opposite |
-| 22 | вокруг | around |
-| 23 | вместо | instead of |
-| 24 | из-за | because of, from behind |
-| 25 | около | near, around |
-| 26 | возле | by, near |
-| 27 | вдоль | along |
-| 28 | сквозь | through |
-| 29 | среди | among |
-| 30 | внутри | inside |
-| 31 | вне | outside |
-| 32 | мимо | past, by |
-| 33 | ради | for the sake of |
-| 34 | насчёт | about, regarding |
-| 35 | из-под | from under |
-| 36 | вопреки | despite, contrary to |
-| 37 | благодаря | thanks to |
-| 38 | согласно | according to |
-| 39 | навстречу | towards |
-| 40 | позади | behind |
-| 41 | посреди | in the middle of |
-| 42 | поверх | over, on top of |
-| 43 | ввиду | in view of |
+| 1 | в / во | in / at (where)<br>into (where/what) |
+| 2 | на | on / at (where)<br>onto (where/what) |
+| 3 | с / со | with (whom/what)<br>from / off of (where/what) |
+| 4 | по | along / around (where)<br>according to (what/whom) |
+| 5 | к / ко | to, toward (whom/what/where) |
+| 6 | из | from (where)<br>out of (what/where) |
+| 7 | у | by / at (where/whom)<br>to have (possessed by whom) |
+| 8 | за | behind (where/whom/what)<br>for (whom/what) |
+| 9 | от | from, away from (whom/what/where) |
+| 10 | о / об | about (whom/what) |
+| 11 | до | up to (where/what)<br>until / before (when) |
+| 12 | без | without (whom/what) |
+| 13 | под | under, below (where/what/whom) |
+| 14 | над | above, over (where/what/whom) |
+| 15 | перед | in front of, before (where/whom/what/when) |
+| 16 | при | in the presence of (whom)<br>attached to (what/where) |
+| 17 | через | through, across (what/where)<br>in (when/time) |
+| 18 | после | after (whom/what/when) |
+| 19 | кроме | except, besides (whom/what) |
+| 20 | между | between, among (whom/what) |
+| 21 | против | against, opposite (whom/what/where) |
+| 22 | вокруг | around (whom/what/where) |
+| 23 | вместо | instead of (whom/what) |
+| 24 | из-за | because of (whom/what)<br>from behind (what/where) |
+| 25 | около | near, around (whom/what/where/when) |
+| 26 | возле | by, near (whom/what/where) |
+| 27 | вдоль | along (what/where) |
+| 28 | сквозь | through (what/where) |
+| 29 | среди | among (whom/what) |
+| 30 | внутри | inside (what/where) |
+| 31 | вне | outside of (what/where) |
+| 32 | мимо | past, by (whom/what/where) |
+| 33 | ради | for the sake of (whom/what) |
+| 34 | насчёт | about, regarding (whom/what) |
+| 35 | из-под | from under (what/where) |
+| 36 | вопреки | despite, contrary to (what/whom) |
+| 37 | благодаря | thanks to (whom/what) |
+| 38 | согласно | according to (what/whom) |
+| 39 | навстречу | towards (whom/what) |
+| 40 | позади | behind (whom/what/where) |
+| 41 | посреди | in the middle of (what/where) |
+| 42 | поверх | over, on top of (what/where) |
+| 43 | ввиду | in view of (what) |
 
 ### Conjunctions (Союзы)
 Used to connect clauses, sentences, or concepts.
