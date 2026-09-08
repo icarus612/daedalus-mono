@@ -258,6 +258,7 @@ def main():
             args.max_per_day,
             DEFAULT_MAX_SHIFT,
             sliding=args.sliding,
+            day_offset_base=today,
         )
 
         _print_window_summary(report, start_day, resolved_end_day, today)

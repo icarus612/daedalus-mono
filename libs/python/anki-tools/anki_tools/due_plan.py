@@ -18,7 +18,7 @@ scalar behaviour exactly.
 import math
 from bisect import bisect_left
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True)
@@ -26,6 +26,7 @@ class CardDue:
     card_id: int  # Anki card id
     day: int  # absolute due day number, i.e. the review-queue `due` column
     ivl: int  # current interval in days, used only as a move-selection tiebreak
+    deck_id: int = 0  # grouping key for per-day deck DIVERSITY; 0 = ungrouped
 
 
 @dataclass
@@ -40,6 +41,10 @@ class RunState:
     max_end_day: (
         int | None
     )  # containment ceiling; None = unbounded (horizon may extend)
+    # card_id -> grouping key for per-day deck DIVERSITY. Defaulted and read
+    # through .get(cid, 0) so an omitted map means "one group", which makes
+    # every deck term inert and reproduces the pre-diversity ordering exactly.
+    deck_by_id: dict[int, int] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -120,17 +125,74 @@ def build_buckets(
     return buckets
 
 
+def deck_counts(card_ids: Sequence[int], state: RunState) -> dict[int, int]:
+    """How many cards of each grouping key sit in `card_ids`."""
+    counts: dict[int, int] = {}
+    for cid in card_ids:
+        key = state.deck_by_id.get(cid, 0)
+        counts[key] = counts.get(key, 0) + 1
+    return counts
+
+
+def deck_rank(card_ids: Sequence[int], state: RunState, priority) -> dict[int, int]:
+    """Round-robin rank: each card's index WITHIN its own deck group, walking
+    `card_ids` in `priority` order. Rank 0 is the first card of each deck to
+    move. Sorting by rank therefore takes one card from every deck before the
+    second from any of them, so what is left behind stays mixed.
+
+    A single-group input makes rank monotone in `priority`, so the resulting
+    order is identical to sorting by `priority` alone - which is why every
+    pre-diversity ordering is preserved exactly."""
+    seen: dict[int, int] = {}
+    rank: dict[int, int] = {}
+    for cid in sorted(card_ids, key=priority):
+        key = state.deck_by_id.get(cid, 0)
+        r = seen.get(key, 0)
+        rank[cid] = r
+        seen[key] = r + 1
+    return rank
+
+
 def max_move_order(card_ids: Sequence[int], state: RunState) -> list[int]:
+    """Order for moving cards OFF a day. Within a deck the largest-ivl card
+    still goes first (a one-day nudge is proportionally smallest for it); the
+    rank term rotates between decks so a day never empties one deck at a time.
+
+    Cards tied on a day are genuinely tied. The old (ivl, card_id) tiebreak
+    was not merely arbitrary but deck-CORRELATED: Anki card ids are creation
+    timestamps, and a deck's cards are created together and reviewed together
+    (so they share an ivl too). Breaking ties that way walked whole subdecks
+    in creation order - the clumping this rank term exists to remove."""
+
+    def priority(cid: int) -> tuple[int, int]:
+        return (-state.ivl_by_id[cid], cid)
+
+    rank = deck_rank(card_ids, state, priority)
     return sorted(
         card_ids,
-        key=lambda cid: (cid in state.moved, -state.ivl_by_id[cid], cid),
+        key=lambda cid: (cid in state.moved, rank[cid], priority(cid)),
     )
 
 
-def min_move_order(card_ids: Sequence[int], state: RunState) -> list[int]:
+def min_move_order(
+    card_ids: Sequence[int],
+    state: RunState,
+    dest_counts: Mapping[int, int] | None = None,
+) -> list[int]:
+    """Order for pulling cards INTO a day. Diversity is judged against the
+    DESTINATION day (`dest_counts`), recomputed by the caller after each pick:
+    prefer a card whose deck is least represented where it is going. Omit
+    `dest_counts` and the deck term is inert, reproducing the pre-diversity
+    ordering exactly."""
+    dest: Mapping[int, int] = dest_counts if dest_counts is not None else {}
     return sorted(
         card_ids,
-        key=lambda cid: (cid in state.moved, state.ivl_by_id[cid], cid),
+        key=lambda cid: (
+            cid in state.moved,
+            dest.get(state.deck_by_id.get(cid, 0), 0),
+            state.ivl_by_id[cid],
+            cid,
+        ),
     )
 
 
@@ -215,11 +277,14 @@ def apply_min_pass(state: RunState, floor: DayTargets) -> None:
             continue
         for _ in range(deficit):
             picked: tuple[int, int] | None = None
+            # Recomputed per pick: each card placed on `d` changes what is
+            # under-represented there for the next one.
+            dest_counts = deck_counts(state.buckets[d], state)
             for s in range(d + 1, state.end_day + 1):
                 source = state.buckets.get(s)
                 if not source:
                     continue
-                for cid in min_move_order(source, state):
+                for cid in min_move_order(source, state, dest_counts):
                     if may_move_to(cid, d, state):
                         picked = (cid, s)
                         break
@@ -455,6 +520,7 @@ def plan_rebalance(
         buckets=buckets,
         ivl_by_id={card.card_id: card.ivl for card in cards},
         origin_by_id={card.card_id: card.day for card in cards},
+        deck_by_id={card.card_id: card.deck_id for card in cards},
         moved=set(),
         start_day=start_day,
         end_day=derived_end_day,
@@ -669,7 +735,13 @@ def check_hard_feasibility(
     max_shift: int | None,
     *,
     set_earlier: bool = False,
+    day_offset_base: int | None = None,
 ) -> HardFeasibility:
+    """`day_offset_base`, when given, is the day number that day-offset 0
+    corresponds to (the caller's `today`). It affects only how the window
+    violation LABELS its day range, so that the message reads in the same
+    offsets every other line of CLI output uses. Omit it and the raw
+    absolute day numbers are printed, unchanged."""
     total = len(cards)
     resolved_end_day = _resolve_end_day(cards, start_day, end_day)
     horizon_days = resolved_end_day - start_day + 1
@@ -722,8 +794,15 @@ def check_hard_feasibility(
         )
         if window_hits:
             worst = max(window_hits, key=lambda w: (w[2] - w[3], -w[1]))
+            if day_offset_base is None:
+                window_label = f"window [{worst[0]}, {worst[1]}]"
+            else:
+                window_label = (
+                    f"window [day offset {worst[0] - day_offset_base}"
+                    f"..{worst[1] - day_offset_base}]"
+                )
             msg = (
-                f"window [{worst[0]}, {worst[1]}] over capacity: "
+                f"{window_label} over capacity: "
                 f"{worst[2]} cards confined vs {worst[3]} slots "
                 f"(gap {worst[2] - worst[3]})"
             )
@@ -818,6 +897,7 @@ def check_feasibility(
     *,
     sliding: bool = False,
     set_earlier: bool = False,
+    day_offset_base: int | None = None,
 ) -> FeasibilityReport:
     hard = check_hard_feasibility(
         cards,
@@ -827,6 +907,7 @@ def check_feasibility(
         max_per_day,
         max_shift,
         set_earlier=set_earlier,
+        day_offset_base=day_offset_base,
     )
     resolved_end_day = _resolve_end_day(cards, start_day, end_day)
     horizon_days = resolved_end_day - start_day + 1

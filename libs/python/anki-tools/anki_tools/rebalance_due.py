@@ -77,7 +77,30 @@ def parse_range(raw: str) -> tuple[int, int]:
     return lo, hi
 
 
-def collect_cards(col, deck_ids, start_day, end_day=None):
+def build_group_map(col, root_name, deck_ids):
+    """Map each in-scope deck id to a DIVERSITY GROUP: the ancestor deck that
+    is a direct child of `root_name` (or the root itself for cards sitting
+    directly in it).
+
+    Grouping at the root's immediate children is what matches intent without
+    a flag: rebalancing `Programming::Coding` spreads across Python /
+    JavaScript / Golang / Bash / SQL / RegEx, while rebalancing
+    `Programming::Coding::Python` spreads across Python's own subdecks. Using
+    the raw leaf deck id instead would fragment into ~158 groups, so nearly
+    every day would see each group at most once and the diversity term would
+    stop discriminating."""
+    depth = len(root_name.split("::")) + 1
+    keys = {}
+    group_of = {}
+    for did in deck_ids:
+        name = "::".join(col.decks.name(did).split("::")[:depth])
+        if name not in keys:
+            keys[name] = len(keys) + 1
+        group_of[did] = keys[name]
+    return group_of
+
+
+def collect_cards(col, deck_ids, start_day, end_day=None, group_of=None):
     cards = []
     skip_new = 0
     skip_learning = 0
@@ -118,7 +141,14 @@ def collect_cards(col, deck_ids, start_day, end_day=None):
                 skip_outside_range += 1
                 continue
 
-            cards.append(CardDue(card_id=card.id, day=card.due, ivl=card.ivl))
+            cards.append(
+                CardDue(
+                    card_id=card.id,
+                    day=card.due,
+                    ivl=card.ivl,
+                    deck_id=(group_of or {}).get(did, 0),
+                )
+            )
 
     skip_msg = (
         f"Skipped {skip_new} new, {skip_learning} learning, "
@@ -397,7 +427,8 @@ def main():
             start_day = today + args.start_offset
             end_day = None
 
-        cards = collect_cards(col, deck_ids, start_day, end_day)
+        group_of = build_group_map(col, args.deck, deck_ids)
+        cards = collect_cards(col, deck_ids, start_day, end_day, group_of)
 
         report = check_feasibility(
             cards,
@@ -408,6 +439,7 @@ def main():
             max_shift,
             sliding=args.sliding,
             set_earlier=args.set_earlier,
+            day_offset_base=today,
         )
         if not report.feasible:
             _print_infeasibility(report, today)
