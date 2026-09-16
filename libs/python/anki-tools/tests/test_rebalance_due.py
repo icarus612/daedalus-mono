@@ -1848,9 +1848,8 @@ def test_e2e_omitting_range_matches_the_pure_core_oracle_exactly(tmp_path, monke
         CardDue(card_id=cid, day=day, ivl=ivl_by_id[cid])
         for cid, day in origin_by_id.items()
     ]
-    # Pinned seed: tie-break order is seed-driven, so both sides must
-    # agree on it. Every note is a fresh single-card "Basic" note here,
-    # so this protects only tie-break order, not separation.
+    # Pinned seed: both sides must agree on tie-break order (fresh
+    # single-card notes here, so only tie-break order is at stake).
     oracle = plan_rebalance(
         oracle_cards, start_day, min_per_day=1, max_per_day=8, max_shift=14, seed=12345
     )
@@ -2001,9 +2000,8 @@ def test_e2e_cap_unreachable_sliding_completes_and_reports_over_target_days(
         CardDue(card_id=cid, day=day, ivl=ivl_by_id[cid])
         for cid, day in origin_by_id.items()
     ]
-    # Pinned seed: tie-break order is seed-driven, so both sides must
-    # agree on it. Every note is a fresh single-card "Basic" note here,
-    # so this protects only tie-break order, not separation.
+    # Pinned seed: both sides must agree on tie-break order (fresh
+    # single-card notes here, so only tie-break order is at stake).
     oracle = plan_rebalance(
         oracle_cards,
         start_day,
@@ -2179,10 +2177,8 @@ def _sibling_pair(col, deck_id, *, due, ivl=10):
 def test_e2e_default_min_separation_pushes_siblings_apart_by_the_decks_own_half_max_ivl(
     tmp_path, monkeypatch
 ):
-    # Deck's own preset (maxIvl=20) resolves to separation 10 here, not
-    # the global default -- and needs real capacity pressure (--max 1
-    # against 2 same-day siblings) since the flag only redirects a move
-    # already happening, it doesn't proactively fix a quiet pair.
+    # Deck's own preset (maxIvl=20) resolves to separation 10 here;
+    # --max 1 against 2 same-day siblings supplies the needed pressure.
     col_path = os.path.join(str(tmp_path), "test.anki2")
     col = Collection(col_path)
     coding_id = col.decks.id("programming::coding")
@@ -2278,18 +2274,16 @@ def test_min_separation_below_negative_one_is_rejected(monkeypatch, capsys):
 def test_seed_flag_produces_identical_final_days_across_separate_fresh_collections(
     tmp_path, monkeypatch
 ):
-    # Reproducibility means the SAME collection (same card ids) re-run
-    # with the same seed -- so this uses a byte-identical copy, not an
-    # independently-built lookalike whose ids would differ.
+    # Reproducibility means the SAME collection re-run with the same
+    # seed -- a byte-identical copy, not an independently-built lookalike.
     col_path = os.path.join(str(tmp_path), "test.anki2")
     col = Collection(col_path)
     deck_id = col.decks.id("programming::coding")
     today = col.sched.today
     start_day = today + 1
     ids = []
-    # Tied pool, 3 days out (not on start_day itself, which has
-    # nowhere earlier to shed to): the tie is what makes the
-    # seeded tiebreak actually matter for the outcome.
+    # Tied pool, 3 days out (not start_day, which has nowhere
+    # earlier to shed to) -- the tie is what makes the tiebreak matter.
     for _ in range(20):
         card = _add_card(col, deck_id, due=start_day + 3, ivl=50)
         ids.append(card.id)
