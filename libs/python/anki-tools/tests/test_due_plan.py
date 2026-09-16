@@ -311,10 +311,8 @@ def test_move_orders_break_ties_by_seeded_random_value():
     assert order_for(0, max_move_order) == order_for(0, max_move_order)
     assert order_for(0, min_move_order) == order_for(0, min_move_order)
 
-    # Genuinely seed-driven: with only two tied candidates, both possible
-    # orderings must appear somewhere across a handful of seeds -- if the
-    # tiebreak were still secretly card_id-ascending, only one order would
-    # ever be seen.
+    # Genuinely seed-driven, not secretly still card_id-ascending: both
+    # orderings must appear somewhere across a handful of seeds.
     max_orders = {order_for(seed, max_move_order) for seed in range(10)}
     min_orders = {order_for(seed, min_move_order) for seed in range(10)}
     assert max_orders == {(5, 3), (3, 5)}
@@ -417,14 +415,8 @@ def test_apply_max_pass_prefers_untouched_over_already_moved():
         moved={1, 2},
     )
     apply_max_pass(state, wide_ceiling(state, 3))
-    # Cards 3, 4, 5 are tied on every substantive key (all untouched, all
-    # ivl=1), so which two of them get picked is an implementation detail
-    # of the seeded random tiebreak (covered separately by
-    # test_move_orders_break_ties_by_seeded_random_value). What this test
-    # exists to prove is untouched-first-as-primary: the excess of 2 must
-    # come entirely from the untouched pool {3, 4, 5}, and the
-    # already-moved pool {1, 2} must be left alone since untouched cards
-    # never run out here.
+    # Which two of {3, 4, 5} get picked is the seeded tiebreak's business
+    # (covered elsewhere); this proves untouched-first is primary.
     moved_off_day_5 = {1, 2, 3, 4, 5} - set(state.buckets[5])
     assert len(moved_off_day_5) == 2
     assert moved_off_day_5 <= {3, 4, 5}
@@ -1444,15 +1436,6 @@ def test_two_callers_distinguishable_same_window_different_capacity():
     assert hard.feasible is True
     shape = analyze_shape(cards, 1, 10, target=shape_capacity, max_shift=None)
     assert shape.shape_reachable is False
-
-
-# ---------------------------------------------------------------------------
-# Sibling min-separation (this lane's own contract slice). Written from the
-# contract text alone: CardDue.note_id/min_separation, RunState.day_by_id/
-# siblings_by_id/separation_by_id/separation_blocked, separation_ok, and the
-# separation leg of may_move_to/plan_rebalance. The implementation is never
-# read.
-# ---------------------------------------------------------------------------
 
 
 def test_separation_ok_blocks_siblings_too_close_together():

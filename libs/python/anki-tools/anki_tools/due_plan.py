@@ -43,23 +43,15 @@ class RunState:
     max_end_day: (
         int | None
     )  # containment ceiling; None = unbounded (horizon may extend)
-    # card_id -> its CURRENT day, updated on every move. Unlike origin_by_id
-    # (which never changes) this always reflects the live position, which is
-    # what separation_ok needs: a sibling that has already moved this run
-    # must be checked at its new day, not its origin day.
+    # card_id -> its CURRENT day, kept live on every move (see separation_ok).
     day_by_id: dict[int, int] = field(default_factory=dict)
-    # card_id -> the OTHER card ids sharing its note_id. Only cards with a
-    # non-None note_id and at least one sibling get an entry; a missing entry
-    # means "no siblings", which makes separation_ok trivially True for it.
+    # card_id -> other card ids sharing its note_id; absent means no siblings.
     siblings_by_id: dict[int, list[int]] = field(default_factory=dict)
     # card_id -> its resolved min_separation, read through .get(cid, 0) so a
     # card absent from the map is treated as unconstrained.
     separation_by_id: dict[int, int] = field(default_factory=dict)
-    # Diagnostic only: card ids whose most recent placement attempt failed
-    # SPECIFICALLY because of the separation gate, never because of
-    # start_day/max_shift - may_move_to only records here when the earlier
-    # checks already passed, which is what makes this a reliable signal for
-    # _infeasible_reason rather than noise from unrelated rejections.
+    # Diagnostic: card ids most recently rejected specifically by separation
+    # (see may_move_to / _infeasible_reason), never by start_day/max_shift.
     separation_blocked: set[int] = field(default_factory=set)
     seed: int = 0  # seeds the deterministic random tiebreak in *_move_order
 

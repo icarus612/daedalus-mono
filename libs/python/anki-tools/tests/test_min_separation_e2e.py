@@ -129,9 +129,7 @@ def test_every_note_respects_its_deck_resolved_separation_at_scale(
     python_days = _final_days(col_path, python_pairs)
     golang_days = _final_days(col_path, golang_pairs)
 
-    # Every note's sibling pair was actually touched (the fixture's own
-    # pressure guarantee) -- proves the assertion below is exercising the
-    # feature, not vacuously true because nothing moved.
+    # Every pair was actually touched, so the check below isn't vacuous.
     assert all(d1 != d2 for d1, d2 in python_days)
     assert all(d1 != d2 for d1, d2 in golang_days)
 

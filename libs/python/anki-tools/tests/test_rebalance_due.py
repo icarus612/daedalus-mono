@@ -360,11 +360,6 @@ def test_collect_cards_min_separation_falls_back_to_zero_for_deck_missing_from_m
     assert by_id[card_b.id].min_separation == 0
 
 
-# ---------------------------------------------------------------------------
-# build_separation_map
-# ---------------------------------------------------------------------------
-
-
 def test_build_separation_map_zero_maps_every_deck_to_zero(collection):
     col = collection
     deck_ids = [col.decks.id("deck_a"), col.decks.id("deck_b")]
@@ -409,11 +404,6 @@ def test_build_separation_map_minus_one_resolves_per_deck_from_its_own_preset(
     assert result[deck_a_id] == 200 // 2
     assert result[deck_b_id] == 60 // 2
     assert result[deck_a_id] != result[deck_b_id]
-
-
-# ---------------------------------------------------------------------------
-# derive_seed
-# ---------------------------------------------------------------------------
 
 
 def test_derive_seed_is_deterministic_across_a_freshly_reopened_collection(tmp_path):
@@ -1858,11 +1848,9 @@ def test_e2e_omitting_range_matches_the_pure_core_oracle_exactly(tmp_path, monke
         CardDue(card_id=cid, day=day, ivl=ivl_by_id[cid])
         for cid, day in origin_by_id.items()
     ]
-    # Tie-break order is now seed-driven (Phase 7): the oracle and the CLI
-    # must be pinned to the identical seed, or a random tiebreak could make
-    # this equivalence claim spuriously fail. Every note here is a fresh
-    # single-card "Basic" note (per _add_card), so this pinned seed protects
-    # only tie-break order, never anything sibling-separation-related.
+    # Pinned seed: tie-break order is seed-driven, so both sides must
+    # agree on it. Every note is a fresh single-card "Basic" note here,
+    # so this protects only tie-break order, not separation.
     oracle = plan_rebalance(
         oracle_cards, start_day, min_per_day=1, max_per_day=8, max_shift=14, seed=12345
     )
@@ -2013,11 +2001,9 @@ def test_e2e_cap_unreachable_sliding_completes_and_reports_over_target_days(
         CardDue(card_id=cid, day=day, ivl=ivl_by_id[cid])
         for cid, day in origin_by_id.items()
     ]
-    # Pinned seed on both sides (Phase 7): tie-break order is now
-    # seed-driven, so the oracle and the CLI must agree on it or this
-    # equivalence claim could spuriously fail. Every note here is a fresh
-    # single-card "Basic" note (per _add_card), so this protects only
-    # tie-break order, never anything sibling-separation-related.
+    # Pinned seed: tie-break order is seed-driven, so both sides must
+    # agree on it. Every note is a fresh single-card "Basic" note here,
+    # so this protects only tie-break order, not separation.
     oracle = plan_rebalance(
         oracle_cards,
         start_day,
@@ -2169,11 +2155,6 @@ def test_e2e_sliding_dry_run_produces_descending_shape_and_writes_nothing(
     assert re.search(r"(?<!\d)1(?!\d)\s*\|\s*\d+\s*\|\s*16", out)
 
 
-# ---------------------------------------------------------------------------
-# --min-separation / --seed
-# ---------------------------------------------------------------------------
-
-
 def _sibling_pair(col, deck_id, *, due, ivl=10):
     """Two cards on one note (Basic and reversed card), both forced to the
     same due/ivl, per the plan pattern _add_card already uses for a single
@@ -2198,27 +2179,18 @@ def _sibling_pair(col, deck_id, *, due, ivl=10):
 def test_e2e_default_min_separation_pushes_siblings_apart_by_the_decks_own_half_max_ivl(
     tmp_path, monkeypatch
 ):
-    # Deck's own preset gives maxIvl=20, so the default (-1) min-separation
-    # resolves to 20 // 2 == 10 for this deck specifically -- not the global
-    # default (36500 // 2), which would make this fixture unworkable.
-    #
-    # --min-separation only constrains WHERE a card lands once something
-    # else is already forcing it to move -- it is not a proactive scan that
-    # goes and fixes quiet, untouched pairs on its own. So this fixture
-    # needs real capacity pressure: both siblings are the ONLY two cards in
-    # the collection, both due the same day, and --max 1 makes that day
-    # hold 2 cards against a ceiling of 1, forcing exactly one to move.
+    # Deck's own preset (maxIvl=20) resolves to separation 10 here, not
+    # the global default -- and needs real capacity pressure (--max 1
+    # against 2 same-day siblings) since the flag only redirects a move
+    # already happening, it doesn't proactively fix a quiet pair.
     col_path = os.path.join(str(tmp_path), "test.anki2")
     col = Collection(col_path)
     coding_id = col.decks.id("programming::coding")
     _assign_deck_config(col, coding_id, "small_max_ivl", 20)
     today = col.sched.today
     start_day = today + 1
-    # The forced mover needs to land >=10 days (the resolved separation)
-    # before same_due while staying within the default --max-shift 14:
-    # same_due - 14 == start_day + 1 is still in-window, and same_due - 10
-    # == start_day + 5 is comfortably inside that shift budget, so
-    # same_due sits 15 days into the window to leave that room.
+    # same_due sits 15 days into the window: same_due - 10 (the needed
+    # separation) still leaves room inside the default --max-shift 14.
     same_due = start_day + 15
     card1, card2 = _sibling_pair(col, coding_id, due=same_due)
     card1_id, card2_id = card1.id, card2.id
@@ -2237,9 +2209,8 @@ def test_e2e_default_min_separation_pushes_siblings_apart_by_the_decks_own_half_
     finally:
         col2.close()
 
-    # Capacity pressure actually forced a move -- not both cards silently
-    # left exactly where they started (which would trivially satisfy the
-    # separation assertion below without the feature doing anything).
+    # Confirms a move actually happened -- otherwise the check below would
+    # trivially pass without the feature doing anything.
     assert not (due1 == same_due and due2 == same_due)
     assert abs(due1 - due2) >= 10  # 20 // 2, the deck's own configured half-maxIvl
 
@@ -2247,10 +2218,8 @@ def test_e2e_default_min_separation_pushes_siblings_apart_by_the_decks_own_half_
 def test_e2e_explicit_min_separation_zero_leaves_siblings_exactly_where_they_started(
     tmp_path, monkeypatch
 ):
-    # Same fixture as the default-mode test above, but --min-separation 0:
-    # with nothing else forcing movement (huge --max, no other cards), the
-    # flag must genuinely disable the constraint rather than silently
-    # keeping some default -- so both siblings stay put, arbitrarily close.
+    # Same fixture, but --min-separation 0 must genuinely disable the
+    # constraint (not silently keep a default) -- nothing forces a move.
     col_path = os.path.join(str(tmp_path), "test.anki2")
     col = Collection(col_path)
     coding_id = col.decks.id("programming::coding")
@@ -2309,27 +2278,18 @@ def test_min_separation_below_negative_one_is_rejected(monkeypatch, capsys):
 def test_seed_flag_produces_identical_final_days_across_separate_fresh_collections(
     tmp_path, monkeypatch
 ):
-    # The seeded tiebreak is a function of (seed, card_id) -- reproducible
-    # for the SAME collection (same ids) re-run with the same seed, not
-    # across two INDEPENDENTLY built collections whose cards are only
-    # structurally analogous: ids are creation timestamps assigned at each
-    # collection's own creation moment, so two unrelated ids have no reason
-    # to draw related tiebreak values. The real property under test is a
-    # copy of one starting collection (identical bytes, identical card
-    # ids) run twice with the same --seed.
+    # Reproducibility means the SAME collection (same card ids) re-run
+    # with the same seed -- so this uses a byte-identical copy, not an
+    # independently-built lookalike whose ids would differ.
     col_path = os.path.join(str(tmp_path), "test.anki2")
     col = Collection(col_path)
     deck_id = col.decks.id("programming::coding")
     today = col.sched.today
     start_day = today + 1
     ids = []
-    # A big tied pool (identical ivl) three days out, with room to
-    # spread across the whole [start_day, start_day+3] window (4 days
-    # * max 10 == 40 >= 30) -- default earlier-only mode has nowhere to
-    # shed cards that already sit on start_day itself, so the pool must
-    # NOT start there, or the fixture would be infeasible by
-    # construction (D2/DP-B). The tie (every card sharing one ivl) is
-    # what makes the seeded tiebreak actually matter for the outcome.
+    # Tied pool, 3 days out (not on start_day itself, which has
+    # nowhere earlier to shed to): the tie is what makes the
+    # seeded tiebreak actually matter for the outcome.
     for _ in range(20):
         card = _add_card(col, deck_id, due=start_day + 3, ivl=50)
         ids.append(card.id)
@@ -2363,7 +2323,6 @@ def test_seed_flag_produces_identical_final_days_across_separate_fresh_collectio
         finally:
             col.close()
 
-    # Same absolute card ids on both sides (byte-identical starting files),
-    # so comparing by id directly is a strictly stronger check than the
-    # positional comparison it replaces.
+    # Byte-identical starting files -> same ids on both sides, so
+    # comparing by id is strictly stronger than positional comparison.
     assert _final_days_by_id(path_a, ids) == _final_days_by_id(path_b, ids)
