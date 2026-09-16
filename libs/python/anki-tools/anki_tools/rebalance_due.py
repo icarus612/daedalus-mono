@@ -11,6 +11,7 @@ adds `--range` (an explicit day-offset window) and `--sliding`/
 """
 
 import argparse
+import hashlib
 import os
 
 from anki.collection import Collection
@@ -77,30 +78,53 @@ def parse_range(raw: str) -> tuple[int, int]:
     return lo, hi
 
 
-def build_group_map(col, root_name, deck_ids):
-    """Map each in-scope deck id to a DIVERSITY GROUP: the ancestor deck that
-    is a direct child of `root_name` (or the root itself for cards sitting
-    directly in it).
-
-    Grouping at the root's immediate children is what matches intent without
-    a flag: rebalancing `Programming::Coding` spreads across Python /
-    JavaScript / Golang / Bash / SQL / RegEx, while rebalancing
-    `Programming::Coding::Python` spreads across Python's own subdecks. Using
-    the raw leaf deck id instead would fragment into ~158 groups, so nearly
-    every day would see each group at most once and the diversity term would
-    stop discriminating."""
-    depth = len(root_name.split("::")) + 1
-    keys = {}
-    group_of = {}
-    for did in deck_ids:
-        name = "::".join(col.decks.name(did).split("::")[:depth])
-        if name not in keys:
-            keys[name] = len(keys) + 1
-        group_of[did] = keys[name]
-    return group_of
+def build_separation_map(col, deck_ids, min_separation_arg: int) -> dict:
+    """Map each in-scope deck id to its minimum sibling-card separation, in
+    days. `min_separation_arg == 0` disables the constraint everywhere;
+    a positive value applies uniformly; `-1` (the default) derives each
+    deck's own separation from half of its options preset's max review
+    interval (`rev.maxIvl`), so a deck reviewed less often tolerates a
+    wider gap between its two cards."""
+    if min_separation_arg == 0:
+        return {did: 0 for did in deck_ids}
+    if min_separation_arg > 0:
+        return {did: min_separation_arg for did in deck_ids}
+    return {
+        did: col.decks.config_dict_for_deck_id(did)["rev"]["maxIvl"] // 2
+        for did in deck_ids
+    }
 
 
-def collect_cards(col, deck_ids, start_day, end_day=None, group_of=None):
+def derive_seed(
+    col,
+    deck_root_id: int,
+    start_day: int,
+    end_day,
+    min_per_day,
+    max_per_day,
+    max_shift,
+    min_separation_arg: int,
+) -> int:
+    """Derive a reproducible tiebreak seed from the collection and this
+    run's own parameters, so omitting `--seed` still reproduces identically
+    across separate processes. `hash()` is not usable here: it is salted
+    per-process by `PYTHONHASHSEED` for strings and tuples of strings, so
+    it would silently break reproducibility across separate runs."""
+    key = (
+        col.crt,
+        deck_root_id,
+        start_day,
+        end_day if end_day is not None else -1,
+        min_per_day if min_per_day is not None else -1,
+        max_per_day if max_per_day is not None else -1,
+        max_shift if max_shift is not None else -1,
+        min_separation_arg,
+    )
+    digest = hashlib.sha256(repr(key).encode()).digest()
+    return int.from_bytes(digest[:8], "big")
+
+
+def collect_cards(col, deck_ids, start_day, end_day=None, separation_by_deck=None):
     cards = []
     skip_new = 0
     skip_learning = 0
@@ -146,7 +170,10 @@ def collect_cards(col, deck_ids, start_day, end_day=None, group_of=None):
                     card_id=card.id,
                     day=card.due,
                     ivl=card.ivl,
-                    deck_id=(group_of or {}).get(did, 0),
+                    note_id=card.nid,
+                    min_separation=(
+                        separation_by_deck.get(did, 0) if separation_by_deck else 0
+                    ),
                 )
             )
 
@@ -280,6 +307,34 @@ def build_parser():
         ),
     )
     parser.add_argument(
+        "--min-separation",
+        dest="min_separation",
+        type=int,
+        default=-1,
+        help=(
+            "Minimum days between a note's two cards' scheduled dates -- "
+            "they will never be placed closer together than this. Default "
+            "-1 derives it per-card from its own deck's options preset "
+            "(half of --rev maxIvl). 0 disables the constraint. Any other "
+            "non-negative integer applies that many days uniformly to "
+            "every card."
+        ),
+    )
+    parser.add_argument(
+        "--seed",
+        dest="seed",
+        type=int,
+        default=None,
+        help=(
+            "Seed for the pseudo-random tiebreak used when choosing among "
+            "equally-ranked cards. Default is derived deterministically "
+            "from the collection and this run's own parameters, so "
+            "omitting it still reproduces identically across separate "
+            "runs given the same arguments. Pass an explicit integer to "
+            "pin a specific ordering."
+        ),
+    )
+    parser.add_argument(
         "--dry-run",
         dest="dry_run",
         action="store_true",
@@ -389,6 +444,12 @@ def main():
             f"--max-shift must be an integer or 'none', got {args.max_shift!r}"
         )
 
+    if args.min_separation < -1:
+        parser.error(
+            "--min-separation must be >= -1 (or -1 for auto), got "
+            f"{args.min_separation}"
+        )
+
     if args.sliding and (args.min_per_day is None or args.max_per_day is None):
         parser.error("--sliding requires both --min and --max")
 
@@ -427,8 +488,10 @@ def main():
             start_day = today + args.start_offset
             end_day = None
 
-        group_of = build_group_map(col, args.deck, deck_ids)
-        cards = collect_cards(col, deck_ids, start_day, end_day, group_of)
+        separation_by_deck = build_separation_map(col, deck_ids, args.min_separation)
+        cards = collect_cards(
+            col, deck_ids, start_day, end_day, separation_by_deck=separation_by_deck
+        )
 
         report = check_feasibility(
             cards,
@@ -458,6 +521,21 @@ def main():
 
         pre_reverse_end_day = max((card.day for card in cards), default=start_day - 1)
 
+        seed = (
+            args.seed
+            if args.seed is not None
+            else derive_seed(
+                col,
+                col.decks.id_for_name(args.deck),
+                start_day,
+                end_day,
+                args.min_per_day,
+                args.max_per_day,
+                max_shift,
+                args.min_separation,
+            )
+        )
+
         try:
             result = plan_rebalance(
                 cards,
@@ -469,6 +547,7 @@ def main():
                 sliding=args.sliding,
                 strict_sliding=args.strict_sliding,
                 end_day=end_day,
+                seed=seed,
             )
         except InfeasibleRebalance as exc:
             print(f"Could not satisfy the constraints ({exc.reason}).")
@@ -477,6 +556,11 @@ def main():
                 print(
                     "Try re-running with --set-earlier, or a larger "
                     "--max-shift (or --max-shift none)."
+                )
+            elif exc.reason == "min separation":
+                print(
+                    "Try a smaller --min-separation, relax --min/--max, "
+                    "or increase --max-shift."
                 )
             else:
                 print(
