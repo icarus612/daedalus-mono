@@ -1349,10 +1349,7 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
         assert spot_note["Russian"] == last_indeclinable.russian
         assert spot_note["Translation"] == last_indeclinable.english
 
-        # Spot-checked particle-gloss notes, verbatim against lane l1's
-        # contract table (not against `rows`, `build_col`, or
-        # `TRANSLATION_OVERRIDES` -- against what the fresh import
-        # actually produced).
+        # Spot-checked against the fresh import, not `rows`/`build_col`.
         particles_deck = subdeck_name("Particles")
         to_note_ids = fresh_col.find_notes(f'deck:"{particles_deck}" Russian:"-то"')
         assert len(to_note_ids) == 1
