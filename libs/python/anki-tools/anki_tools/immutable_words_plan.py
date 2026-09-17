@@ -199,21 +199,11 @@ ROW_SPLITS: dict[str, list[tuple[str, str]]] = {
 # document; this is a pure code-side transform.
 TRANSLATION_OVERRIDES: dict[str, str] = {
     "-то": (
-        "indefinite particle: makes a word specific-but-unknown — "
-        'кто-то "someone", что-то "something", где-то "somewhere". '
-        "Contrast -нибудь, which is non-specific: "
-        'кто-то позвонил "someone called" (a particular person) vs '
-        'позови кого-нибудь "call anyone".'
+        'some- (indefinite: кто-то "someone", '
+        'где-то "somewhere"; contrast -нибудь = any-)'
     ),
-    "-ка": (
-        "softening particle on imperatives: turns an order into a nudge — "
-        'скажи-ка "go on, tell me", дай-ка "give it here", '
-        'посмотрим-ка "let\'s have a look". Informal, ты-level.'
-    ),
-    "будто": (
-        "as if, as though (often implies doubt — "
-        'он будто не знал "as if he didn\'t know", implying he did)'
-    ),
+    "-ка": 'go on, just (softens an imperative: скажи-ка "go on, tell me"; informal)',
+    "будто": "as if, as though (often implies doubt)",
 }
 
 

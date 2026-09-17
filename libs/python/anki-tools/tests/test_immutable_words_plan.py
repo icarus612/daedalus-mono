@@ -862,9 +862,15 @@ TOZHE_TRANSLATION = 'also, too (same action, different subject — "me too": Я 
 TAKZHE_TRANSLATION = (
     "also, in addition (same subject, an extra thing — Я также купил хлеб; more formal)"
 )
-BUDTO_TRANSLATION = (
-    "as if, as though (often implies doubt — "
-    'он будто не знал "as if he didn\'t know", implying he did)'
+BUDTO_TRANSLATION = "as if, as though (often implies doubt)"
+
+# The exact override texts for -то and -ка from lane l1's contract table
+# (transcribed verbatim from the contract, not from any implementation).
+TO_TRANSLATION = (
+    'some- (indefinite: кто-то "someone", где-то "somewhere"; contrast -нибудь = any-)'
+)
+KA_TRANSLATION = (
+    'go on, just (softens an imperative: скажи-ка "go on, tell me"; informal)'
 )
 
 
@@ -908,6 +914,22 @@ def test_budto_row_overridden_translation_not_bare_as_if(real_rows):
     assert matches[0].english == BUDTO_TRANSLATION
     # Not the source document's own bare gloss.
     assert matches[0].english != "as if"
+
+
+def test_to_row_overridden_translation(real_rows):
+    matches = [
+        row for row in real_rows if row.pos == "Particles" and row.russian == "-то"
+    ]
+    assert len(matches) == 1
+    assert matches[0].english == TO_TRANSLATION
+
+
+def test_ka_row_overridden_translation(real_rows):
+    matches = [
+        row for row in real_rows if row.pos == "Particles" and row.russian == "-ка"
+    ]
+    assert len(matches) == 1
+    assert matches[0].english == KA_TRANSLATION
 
 
 def _parse_raw_section_glosses(text):
