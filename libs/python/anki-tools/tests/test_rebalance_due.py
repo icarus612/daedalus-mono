@@ -2329,9 +2329,7 @@ def test_seed_flag_produces_identical_final_days_across_separate_fresh_collectio
 def test_e2e_set_earlier_capacity_overflow_blocked_by_horizon_ceiling_range_ceiling(
     tmp_path, monkeypatch, capsys
 ):
-    # maxIvl=5 caps the reverse pass to 5 days past today, short of what
-    # 30 cards at max=2 need -- sibling-free, so this isolates the horizon
-    # mechanism from separation repair.
+    # maxIvl=5 caps the reverse pass short of what 30 cards at max=2 need.
     col_path = os.path.join(str(tmp_path), "test.anki2")
     col = Collection(col_path)
     coding_id = col.decks.id("programming::coding")

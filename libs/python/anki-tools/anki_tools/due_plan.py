@@ -757,9 +757,8 @@ def _check_post_conditions(
     for cid in state.moved:
         origin = state.origin_by_id[cid]
         new_day = current_day_by_id[cid]
-        # Unlike max_end_day, horizon_ceiling has no input-side guard, so a
-        # pre-existing out-of-range card must not trip this -- only a move
-        # that itself carried a card later past the ceiling should.
+        # Unlike max_end_day, horizon_ceiling has no input-side guard: only
+        # a move that itself carried a card later past it should trip this.
         if (
             state.horizon_ceiling is not None
             and new_day > origin

@@ -494,9 +494,8 @@ def main():
 
         separation_by_deck = build_separation_map(col, deck_ids, args.min_separation)
 
-        # No --range means no other ceiling on later moves. min() across
-        # decks is conservative but guarantees no card exceeds its OWN
-        # deck's maxIvl.
+        # No --range means no other ceiling on later moves; min() across
+        # decks guarantees no card exceeds its OWN deck's maxIvl.
         horizon_ceiling = None
         if range_bounds is None:
             max_ivls = [
