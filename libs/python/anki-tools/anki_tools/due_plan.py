@@ -13,9 +13,14 @@ legs, `check_hard_feasibility` / `analyze_shape`), explicit range windowing
 `plan_rebalance`'s orchestration now take per-day `DayTargets` mappings
 instead of scalar bounds; `constant_targets` reproduces the pre-Phase-6
 scalar behaviour exactly.
+
+Phase 7 adds: active sibling-separation repair (`apply_separation_repair_pass`)
+and a horizon safety ceiling (`RunState.horizon_ceiling`) independent of
+`--range`.
 """
 
 import math
+import random
 from bisect import bisect_left
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
@@ -26,7 +31,8 @@ class CardDue:
     card_id: int  # Anki card id
     day: int  # absolute due day number, i.e. the review-queue `due` column
     ivl: int  # current interval in days, used only as a move-selection tiebreak
-    deck_id: int = 0  # grouping key for per-day deck DIVERSITY; 0 = ungrouped
+    note_id: int | None = None  # sibling-grouping key; None = no sibling info
+    min_separation: int = 0  # required days from any sibling; 0 = disabled
 
 
 @dataclass
@@ -41,10 +47,20 @@ class RunState:
     max_end_day: (
         int | None
     )  # containment ceiling; None = unbounded (horizon may extend)
-    # card_id -> grouping key for per-day deck DIVERSITY. Defaulted and read
-    # through .get(cid, 0) so an omitted map means "one group", which makes
-    # every deck term inert and reproduces the pre-diversity ordering exactly.
-    deck_by_id: dict[int, int] = field(default_factory=dict)
+    # card_id -> its CURRENT day, kept live on every move (see separation_ok).
+    day_by_id: dict[int, int] = field(default_factory=dict)
+    # card_id -> other card ids sharing its note_id; absent means no siblings.
+    siblings_by_id: dict[int, list[int]] = field(default_factory=dict)
+    # card_id -> its resolved min_separation, read through .get(cid, 0) so a
+    # card absent from the map is treated as unconstrained.
+    separation_by_id: dict[int, int] = field(default_factory=dict)
+    # Diagnostic: card ids most recently rejected specifically by separation
+    # (see may_move_to / _infeasible_reason), never by start_day/max_shift.
+    separation_blocked: set[int] = field(default_factory=set)
+    seed: int = 0  # seeds the deterministic random tiebreak in *_move_order
+    horizon_ceiling: int | None = None  # absolute day; None = no extra ceiling
+    # beyond max_end_day. Set only by the caller when no explicit --range
+    # was given (see may_move_later_to).
 
 
 @dataclass(frozen=True)
@@ -65,8 +81,20 @@ class InfeasibleRebalance(Exception):
     invariant and set_earlier is False (or, in the set_earlier=True case, the reverse
     pass still leaves days over max - typically because --range's ceiling refuses
     the reverse pass, or a bug signal if no --range was given). Carries the
-    offending days, their counts, and the reason (sink overflow vs shift cap vs
-    range ceiling vs sliding target)."""
+    offending days, their counts, and the reason (sink overflow vs min separation
+    vs range ceiling vs shift cap).
+
+    "min separation" (Phase 7): either excess left on a day after the
+    max/reverse-max pass was refused every candidate specifically by the
+    sibling-separation gate (recorded into `state.separation_blocked` by
+    `may_move_to`/`apply_reverse_max_pass`), rather than by start_day or
+    max_shift; OR a sibling pair still in violation after
+    `apply_separation_repair_pass` could not be repaired at all (neither
+    member had a legal earlier day, and - when set_earlier - the later
+    member had no legal later day either). The latter is a placement-time
+    vs. active-repair distinction, not a different failure mode: both
+    report the same reason string since both mean separation could not be
+    satisfied under the current bounds."""
 
     def __init__(self, days: list[int], counts: dict[int, int], reason: str) -> None:
         self.days = days
@@ -125,89 +153,332 @@ def build_buckets(
     return buckets
 
 
-def deck_counts(card_ids: Sequence[int], state: RunState) -> dict[int, int]:
-    """How many cards of each grouping key sit in `card_ids`."""
-    counts: dict[int, int] = {}
-    for cid in card_ids:
-        key = state.deck_by_id.get(cid, 0)
-        counts[key] = counts.get(key, 0) + 1
-    return counts
-
-
-def deck_rank(card_ids: Sequence[int], state: RunState, priority) -> dict[int, int]:
-    """Round-robin rank: each card's index WITHIN its own deck group, walking
-    `card_ids` in `priority` order. Rank 0 is the first card of each deck to
-    move. Sorting by rank therefore takes one card from every deck before the
-    second from any of them, so what is left behind stays mixed.
-
-    A single-group input makes rank monotone in `priority`, so the resulting
-    order is identical to sorting by `priority` alone - which is why every
-    pre-diversity ordering is preserved exactly."""
-    seen: dict[int, int] = {}
-    rank: dict[int, int] = {}
-    for cid in sorted(card_ids, key=priority):
-        key = state.deck_by_id.get(cid, 0)
-        r = seen.get(key, 0)
-        rank[cid] = r
-        seen[key] = r + 1
-    return rank
-
-
 def max_move_order(card_ids: Sequence[int], state: RunState) -> list[int]:
-    """Order for moving cards OFF a day. Within a deck the largest-ivl card
-    still goes first (a one-day nudge is proportionally smallest for it); the
-    rank term rotates between decks so a day never empties one deck at a time.
+    """Order for moving cards OFF a day. The largest-ivl card still goes
+    first (a one-day nudge is proportionally smallest for it); ties are
+    broken by a seeded random draw, `tie`, computed ONCE per call as
+    `random.Random(hash((state.seed, cid))).random()` for each candidate - purely
+    a function of `(seed, cid)`, never of call order or iteration order, so
+    the same card gets the same draw regardless of which day or pass asks.
 
-    Cards tied on a day are genuinely tied. The old (ivl, card_id) tiebreak
-    was not merely arbitrary but deck-CORRELATED: Anki card ids are creation
-    timestamps, and a deck's cards are created together and reviewed together
-    (so they share an ivl too). Breaking ties that way walked whole subdecks
-    in creation order - the clumping this rank term exists to remove."""
+    This replaced an earlier per-deck round-robin rank term (removed):
+    Anki card ids are creation timestamps, and a deck's cards are created
+    (and reviewed, and thus ivl-tied) together, so the plain (ivl, card_id)
+    tiebreak walked whole subdecks in creation order. A forced round-robin
+    fixed that but was rejected in favor of picking among genuine ties at
+    random.
+
+    Because ties are now broken randomly rather than by ascending card id,
+    the old claim that a single-group input reproduces the pre-diversity
+    ordering exactly no longer holds in general - it still holds trivially
+    whenever there are no genuine ties (every candidate has a distinct
+    ivl), since then `tie` never enters the comparison."""
 
     def priority(cid: int) -> tuple[int, int]:
         return (-state.ivl_by_id[cid], cid)
 
-    rank = deck_rank(card_ids, state, priority)
+    tie = {cid: random.Random(hash((state.seed, cid))).random() for cid in card_ids}
     return sorted(
         card_ids,
-        key=lambda cid: (cid in state.moved, rank[cid], priority(cid)),
+        key=lambda cid: (cid in state.moved, -state.ivl_by_id[cid], tie[cid], cid),
     )
 
 
-def min_move_order(
-    card_ids: Sequence[int],
-    state: RunState,
-    dest_counts: Mapping[int, int] | None = None,
-) -> list[int]:
-    """Order for pulling cards INTO a day. Diversity is judged against the
-    DESTINATION day (`dest_counts`), recomputed by the caller after each pick:
-    prefer a card whose deck is least represented where it is going. Omit
-    `dest_counts` and the deck term is inert, reproducing the pre-diversity
-    ordering exactly."""
-    dest: Mapping[int, int] = dest_counts if dest_counts is not None else {}
+def min_move_order(card_ids: Sequence[int], state: RunState) -> list[int]:
+    """Order for pulling cards INTO a day. Ties are broken by the same
+    seeded random draw as `max_move_order` (recomputed here, never shared
+    across the two functions, since each call's `tie` is stateless and
+    depends only on `(state.seed, cid)`).
+
+    Because ties are now broken randomly rather than by ascending card id,
+    the old claim that a single-group input reproduces the pre-diversity
+    ordering exactly no longer holds in general - it still holds trivially
+    whenever there are no genuine ties (every candidate has a distinct
+    ivl), since then `tie` never enters the comparison."""
+    tie = {cid: random.Random(hash((state.seed, cid))).random() for cid in card_ids}
     return sorted(
         card_ids,
-        key=lambda cid: (
-            cid in state.moved,
-            dest.get(state.deck_by_id.get(cid, 0), 0),
-            state.ivl_by_id[cid],
-            cid,
-        ),
+        key=lambda cid: (cid in state.moved, state.ivl_by_id[cid], tie[cid], cid),
     )
+
+
+def separation_ok(card_id: int, target_day: int, state: RunState) -> bool:
+    """False iff placing `card_id` on `target_day` would land it within its
+    resolved required separation of a sibling's CURRENT day. Always reads
+    `state.day_by_id` - never a snapshot - since a sibling that has itself
+    already moved this run must be checked at its new day, not its origin
+    day. A card absent from `siblings_by_id` (no siblings, or its note_id
+    was None) is always OK."""
+    siblings = state.siblings_by_id.get(card_id)
+    if not siblings:
+        return True
+    for sibling in siblings:
+        required = max(
+            state.separation_by_id.get(card_id, 0),
+            state.separation_by_id.get(sibling, 0),
+        )
+        if required <= 0:
+            continue
+        sibling_day = state.day_by_id[sibling]
+        if abs(target_day - sibling_day) < required:
+            return False
+    return True
 
 
 def may_move_to(card_id: int, target_day: int, state: RunState) -> bool:
     if target_day < state.start_day:
         return False
-    return not (
+    if (
         state.max_shift is not None
         and target_day < state.origin_by_id[card_id] - state.max_shift
-    )
+    ):
+        return False
+    if not separation_ok(card_id, target_day, state):
+        state.separation_blocked.add(card_id)
+        return False
+    return True
 
 
 def may_move_later_to(target_day: int, state: RunState) -> bool:
-    """Later-direction gate. False when the containment ceiling would be crossed."""
-    return state.max_end_day is None or target_day <= state.max_end_day
+    """Later-direction gate. False when either ceiling would be crossed:
+    `max_end_day` (the explicit --range containment ceiling, set only when
+    the caller gave an explicit range) or `horizon_ceiling` (a maxIvl-derived
+    safety ceiling the caller sets only when no --range was given, so a
+    later move still has SOME bound even without an explicit window)."""
+    if state.max_end_day is not None and target_day > state.max_end_day:
+        return False
+    if state.horizon_ceiling is not None and target_day > state.horizon_ceiling:
+        return False
+    return True
+
+
+def _clear_of_separation_at_or_before(card_id: int, day: int, state: RunState) -> int:
+    """The largest day <= `day` where separation_ok(card_id, ..., state) holds,
+    considering ONLY the separation gate (ignores start_day/max_shift entirely
+    - callers check those separately against the result). Computed by
+    repeatedly pushing `day` below whichever sibling's forbidden interval it
+    currently falls inside, rather than scanning day by day. Converges in at
+    most len(siblings) iterations: pushing past one sibling's zone can only
+    ever land inside ANOTHER sibling's zone, never back into the first (each
+    push strictly decreases `day`)."""
+    siblings = state.siblings_by_id.get(card_id)
+    if not siblings:
+        return day
+    changed = True
+    while changed:
+        changed = False
+        for sibling in siblings:
+            required = max(
+                state.separation_by_id.get(card_id, 0),
+                state.separation_by_id.get(sibling, 0),
+            )
+            if required <= 0:
+                continue
+            sibling_day = state.day_by_id[sibling]
+            if abs(day - sibling_day) < required:
+                day = sibling_day - required
+                changed = True
+    return day
+
+
+def _clear_of_separation_at_or_after(card_id: int, day: int, state: RunState) -> int:
+    """Symmetric to `_clear_of_separation_at_or_before`: the smallest day
+    >= `day` that clears every sibling's forbidden zone."""
+    siblings = state.siblings_by_id.get(card_id)
+    if not siblings:
+        return day
+    changed = True
+    while changed:
+        changed = False
+        for sibling in siblings:
+            required = max(
+                state.separation_by_id.get(card_id, 0),
+                state.separation_by_id.get(sibling, 0),
+            )
+            if required <= 0:
+                continue
+            sibling_day = state.day_by_id[sibling]
+            if abs(day - sibling_day) < required:
+                day = sibling_day + required
+                changed = True
+    return day
+
+
+def _first_legal_earlier_day(
+    card_id: int, state: RunState, ceiling: "DayTargets | None", floor_day: int
+) -> int | None:
+    """The largest day >= floor_day, <= card_id's current day, that clears
+    every sibling's separation zone AND has capacity headroom under
+    `ceiling` (len(bucket) < ceiling[day], via the same
+    `ceiling.get(day, ceiling[state.start_day])` fallback convention
+    `apply_reverse_max_pass` already uses for days beyond the precomputed
+    range). `ceiling=None` means no capacity ceiling to respect (mirrors
+    "no --max given" everywhere else in this module). Returns None when no
+    such day exists at or above floor_day. Repeatedly re-clears separation
+    after every capacity-forced step down, since stepping past one
+    sibling's zone can land inside another's."""
+    day = state.day_by_id[card_id]
+    while True:
+        day = _clear_of_separation_at_or_before(card_id, day, state)
+        if day < floor_day:
+            return None
+        if ceiling is None or len(state.buckets.get(day, [])) < ceiling.get(
+            day, ceiling[state.start_day]
+        ):
+            return day
+        day -= 1
+
+
+def _first_legal_later_day(
+    card_id: int, state: RunState, ceiling: "DayTargets | None"
+) -> int | None:
+    """Symmetric to `_first_legal_earlier_day` for the later direction.
+    Bounded by `may_move_later_to` (both max_end_day and horizon_ceiling),
+    never by max_shift - matches `_resolve_later_target`'s existing
+    later-direction contract. Returns None when `may_move_later_to` refuses
+    before capacity headroom is found."""
+    day = state.day_by_id[card_id]
+    while True:
+        day = _clear_of_separation_at_or_after(card_id, day, state)
+        if not may_move_later_to(day, state):
+            return None
+        if ceiling is None or len(state.buckets.get(day, [])) < ceiling.get(
+            day, ceiling[state.start_day]
+        ):
+            return day
+        day += 1
+
+
+def _repair_pair(
+    cid: int,
+    sib: int,
+    state: RunState,
+    ceiling: "DayTargets | None",
+    set_earlier: bool,
+) -> tuple[bool, bool]:
+    """Attempts to repair one currently-violating sibling pair. Identifies
+    lo/hi by current day (lo = earlier or equal). Tries moving lo earlier
+    first via `_first_legal_earlier_day`, bounded below by
+    `max(state.start_day, state.origin_by_id[lo] - state.max_shift)` (or
+    just `state.start_day` when `max_shift is None`) - cumulative from
+    ORIGIN, exactly like every other earlier-direction move in this module.
+    Only when that fails AND `set_earlier` is True, tries moving hi later
+    via `_first_legal_later_day`. Returns `(repaired, moved_later)` -
+    `moved_later` is True only when the hi branch actually fired. Never
+    moves both members for one pair."""
+    if state.day_by_id[cid] <= state.day_by_id[sib]:
+        lo, hi = cid, sib
+    else:
+        lo, hi = sib, cid
+
+    floor_day = state.start_day
+    if state.max_shift is not None:
+        floor_day = max(floor_day, state.origin_by_id[lo] - state.max_shift)
+
+    target = _first_legal_earlier_day(lo, state, ceiling, floor_day)
+    if target is not None:
+        move_card(lo, state.day_by_id[lo], target, state)
+        return True, False
+
+    if set_earlier:
+        target = _first_legal_later_day(hi, state, ceiling)
+        if target is not None:
+            move_card(hi, state.day_by_id[hi], target, state)
+            return True, True
+
+    return False, False
+
+
+def apply_separation_repair_pass(
+    state: RunState, ceiling: "DayTargets | None", set_earlier: bool
+) -> tuple[set[int], bool]:
+    """Actively relocates cards to fix sibling pairs that are ALREADY in
+    violation at call time - this is not a placement gate, it is an active
+    repair. Builds the pair list once from `state.siblings_by_id`
+    (deduplicated, `cid < sib`, sorted for determinism), then makes exactly
+    one forward pass: for each pair still violating at the moment it is
+    visited (a prior pair's repair may have already fixed it - re-checked
+    here, not assumed), calls `_repair_pair`. Returns
+    `(unrepaired_card_ids, any_later_move_used)`. Groups of 3+ siblings are
+    handled correctly: a repair move always targets a day clearing EVERY
+    sibling of the card being moved (via `_clear_of_separation_at_or_*`),
+    so fixing pair (a, b) can never silently leave (a, c) violating if c
+    was already resolved."""
+    pairs = sorted(
+        {
+            (min(cid, sib), max(cid, sib))
+            for cid, sibs in state.siblings_by_id.items()
+            for sib in sibs
+        }
+    )
+    unrepaired: set[int] = set()
+    moved_later = False
+    for cid, sib in pairs:
+        required = max(
+            state.separation_by_id.get(cid, 0), state.separation_by_id.get(sib, 0)
+        )
+        if required <= 0:
+            continue
+        if abs(state.day_by_id[cid] - state.day_by_id[sib]) >= required:
+            continue
+        fixed, used_later = _repair_pair(cid, sib, state, ceiling, set_earlier)
+        moved_later = moved_later or used_later
+        if not fixed:
+            unrepaired.add(cid)
+            unrepaired.add(sib)
+    return unrepaired, moved_later
+
+
+def _resolve_earlier_target(
+    card_id: int, ceiling_day: int, state: RunState
+) -> int | None:
+    """The day to actually move `card_id` to when the pass's preferred
+    target is `ceiling_day` (normally one day earlier than its current
+    bucket) but a legal day could be even earlier. Returns `ceiling_day`
+    unchanged when it is already legal (the overwhelmingly common case: no
+    siblings, or separation already satisfied). When only the separation
+    gate blocks `ceiling_day`, jumps directly to the nearest earlier day
+    that clears every sibling's forbidden zone, so a mover can leap past a
+    stationary sibling's zone in one placement instead of being retried one
+    day at a time by the pass's own day-by-day cascade - that cascade only
+    ever advances by whatever step the CALLER requests, and separation's
+    forbidden interval is usually far wider than one day. Returns None when
+    no day within [start_day, origin - max_shift] (the same earlier-only
+    bound `may_move_to` already enforces) clears every sibling - the
+    caller's excess then stays unresolved on its origin day, which is what
+    makes it visible to `_infeasible_reason`'s "min separation" branch.
+    Records into `state.separation_blocked` only on total failure, never on
+    an intermediate day probed while searching, so a successful jump never
+    leaves behind a stale entry that could misattribute an unrelated later
+    infeasibility."""
+    if ceiling_day < state.start_day:
+        return None
+    floor_day = state.start_day
+    if state.max_shift is not None:
+        floor_day = max(floor_day, state.origin_by_id[card_id] - state.max_shift)
+    if ceiling_day < floor_day:
+        return None
+    target = _clear_of_separation_at_or_before(card_id, ceiling_day, state)
+    if target < floor_day:
+        state.separation_blocked.add(card_id)
+        return None
+    return target
+
+
+def _resolve_later_target(card_id: int, floor_day: int, state: RunState) -> int | None:
+    """Symmetric to `_resolve_earlier_target`, for the reverse (later)
+    direction: the day to move `card_id` to when the pass's preferred
+    target is `floor_day` (normally one day later) but a legal day could be
+    further out. Bounded by `may_move_later_to` (the containment ceiling),
+    never by max_shift - the reverse pass ignores max_shift by design, same
+    as it always has."""
+    if not may_move_later_to(floor_day, state):
+        return None
+    target = _clear_of_separation_at_or_after(card_id, floor_day, state)
+    if not may_move_later_to(target, state):
+        state.separation_blocked.add(card_id)
+        return None
+    return target
 
 
 def move_card(card_id: int, from_day: int, to_day: int, state: RunState) -> None:
@@ -219,6 +490,7 @@ def move_card(card_id: int, from_day: int, to_day: int, state: RunState) -> None
     bucket.append(card_id)
     bucket.sort()
     state.moved.add(card_id)
+    state.day_by_id[card_id] = to_day
 
 
 # DayTargets: day -> per-day number, defined for every day in the window.
@@ -238,9 +510,11 @@ def apply_max_pass(state: RunState, ceiling: DayTargets) -> None:
         for cid in max_move_order(state.buckets[d], state):
             if moved_here == excess:
                 break
-            if may_move_to(cid, d - 1, state):
-                move_card(cid, d, d - 1, state)
-                moved_here += 1
+            target = _resolve_earlier_target(cid, d - 1, state)
+            if target is None:
+                continue
+            move_card(cid, d, target, state)
+            moved_here += 1
 
 
 def apply_reverse_max_pass(state: RunState, ceiling: DayTargets) -> None:
@@ -250,9 +524,16 @@ def apply_reverse_max_pass(state: RunState, ceiling: DayTargets) -> None:
         # state.end_day past that range, so fall back to the uniform
         # start-day value for any day the ceiling doesn't (yet) cover.
         excess = len(state.buckets[d]) - ceiling.get(d, ceiling[state.start_day])
-        if excess > 0 and may_move_later_to(d + 1, state):
-            for cid in max_move_order(state.buckets[d], state)[:excess]:
-                move_card(cid, d, d + 1, state)
+        if excess > 0:
+            moved_here = 0
+            for cid in max_move_order(state.buckets[d], state):
+                if moved_here == excess:
+                    break
+                target = _resolve_later_target(cid, d + 1, state)
+                if target is None:
+                    continue
+                move_card(cid, d, target, state)
+                moved_here += 1
         if d >= state.end_day and len(state.buckets.get(d + 1, [])) == 0:
             break
         d += 1
@@ -277,14 +558,11 @@ def apply_min_pass(state: RunState, floor: DayTargets) -> None:
             continue
         for _ in range(deficit):
             picked: tuple[int, int] | None = None
-            # Recomputed per pick: each card placed on `d` changes what is
-            # under-represented there for the next one.
-            dest_counts = deck_counts(state.buckets[d], state)
             for s in range(d + 1, state.end_day + 1):
                 source = state.buckets.get(s)
                 if not source:
                     continue
-                for cid in min_move_order(source, state, dest_counts):
+                for cid in min_move_order(source, state):
                     if may_move_to(cid, d, state):
                         picked = (cid, s)
                         break
@@ -303,7 +581,15 @@ def apply_shape_pass(
     `hard_ceiling`. The break on a full receiver is a REFUSAL that stops
     shaping day `d` and moves the sweep on - it never looks at `d - 2`.
     Never raises; days still above `target[d]` on exit become
-    `over_target_days`."""
+    `over_target_days`.
+
+    Unlike `apply_max_pass`, this never jumps past a sibling's separation
+    zone - it still only ever tries `d - 1` (via `may_move_to`, which
+    already refuses a separation-blocked target rather than violating it),
+    so a card stuck behind a wide separation zone is left in place the same
+    as any other refusal, which may surface as `over_target_days`. This is
+    a deliberate scope boundary, not an oversight: sliding mode is already
+    documented as best-effort."""
     for d in range(state.end_day, state.start_day, -1):
         while len(state.buckets[d]) > target[d]:
             if len(state.buckets[d - 1]) >= hard_ceiling[d - 1]:
@@ -394,22 +680,39 @@ def _days_over_max(state: RunState, max_per_day: int) -> list[int]:
 def _infeasible_reason(
     state: RunState, over_max: Sequence[int], reverse_pass_used: bool = False
 ) -> str:
-    """Distinguishes the three ways --max can remain unsatisfied.
+    """Distinguishes the four ways --max can remain unsatisfied.
 
     "sink overflow": start_day itself is still over max_per_day - nowhere
     earlier to push excess cards.
+    "min separation": some card left on an over-max day was refused every
+    candidate move specifically by the sibling-separation gate (present in
+    `state.separation_blocked`) - checked before the range/shift-cap
+    reasons below so a separation-caused rejection is never misreported as
+    one of those.
     "range ceiling": only reachable once the reverse pass has run
     (`reverse_pass_used`) - apply_reverse_max_pass is gated purely by
-    `may_move_later_to`/`max_end_day`, never by max_shift, so excess left
-    over after it ran was refused by --range's window ceiling, not by
-    --max-shift.
+    `may_move_later_to` (`max_end_day` and/or `horizon_ceiling`), never by
+    max_shift, so excess left over after it ran was refused by one of those
+    later-direction ceilings, not by --max-shift. Reachable whether the
+    ceiling in play is an explicit --range (`max_end_day`) or the implicit
+    maxIvl-derived safety ceiling used when no --range was given
+    (`horizon_ceiling`) - reporting "shift cap" in the latter case would be
+    wrong, since max_shift never gates the reverse pass at all.
     "shift cap": the earlier-only apply_max_pass left excess in place
     because `may_move_to`'s max_shift gate blocked every candidate - the
     only case reachable before any reverse pass has run.
     """
     if state.start_day in over_max:
         return "sink overflow"
-    if reverse_pass_used and state.max_end_day is not None:
+    if any(
+        cid in state.separation_blocked
+        for d in over_max
+        for cid in state.buckets.get(d, [])
+    ):
+        return "min separation"
+    if reverse_pass_used and (
+        state.max_end_day is not None or state.horizon_ceiling is not None
+    ):
         return "range ceiling"
     return "shift cap"
 
@@ -431,7 +734,7 @@ def _check_post_conditions(
     max_per_day: int | None,
     max_shift: int | None,
     set_earlier: bool,
-    reverse_pass_used: bool,
+    later_move_used: bool,
 ) -> None:
     all_ids = [cid for ids in state.buckets.values() for cid in ids]
     if len(all_ids) != len(set(all_ids)):
@@ -454,14 +757,28 @@ def _check_post_conditions(
     for cid in state.moved:
         origin = state.origin_by_id[cid]
         new_day = current_day_by_id[cid]
+        # Unlike max_end_day, horizon_ceiling has no input-side guard: only
+        # a move that itself carried a card later past it should trip this.
+        if (
+            state.horizon_ceiling is not None
+            and new_day > origin
+            and new_day > state.horizon_ceiling
+        ):
+            raise AssertionError(
+                f"card {cid} was pushed later past horizon_ceiling "
+                f"{state.horizon_ceiling}"
+            )
         if not set_earlier:
             if new_day >= origin:
                 raise AssertionError(
                     f"card {cid} did not move strictly earlier: "
                     f"origin {origin}, new day {new_day}"
                 )
-        elif new_day > origin and not reverse_pass_used:
-            raise AssertionError(f"card {cid} moved later without a reverse pass")
+        elif new_day > origin and not later_move_used:
+            raise AssertionError(
+                f"card {cid} moved later without a sanctioned later-mover "
+                "(reverse pass or separation repair)"
+            )
 
     if max_per_day is not None:
         for d in range(state.start_day, state.end_day + 1):
@@ -494,6 +811,8 @@ def plan_rebalance(
     sliding: bool = False,
     strict_sliding: bool = False,
     end_day: int | None = None,
+    seed: int = 0,
+    horizon_ceiling: int | None = None,
 ) -> RebalanceResult:
     validate_bounds(min_per_day, max_per_day)
 
@@ -516,16 +835,32 @@ def plan_rebalance(
         derived_end_day = end_day
         buckets = build_buckets(cards, start_day, end_day)
 
+    siblings_by_id: dict[int, list[int]] = {}
+    by_note: dict[int, list[int]] = {}
+    for card in cards:
+        if card.note_id is None:
+            continue
+        by_note.setdefault(card.note_id, []).append(card.card_id)
+    for members in by_note.values():
+        if len(members) < 2:
+            continue
+        for cid in members:
+            siblings_by_id[cid] = [other for other in members if other != cid]
+
     state = RunState(
         buckets=buckets,
         ivl_by_id={card.card_id: card.ivl for card in cards},
         origin_by_id={card.card_id: card.day for card in cards},
-        deck_by_id={card.card_id: card.deck_id for card in cards},
         moved=set(),
         start_day=start_day,
         end_day=derived_end_day,
         max_shift=max_shift,
         max_end_day=end_day,
+        day_by_id={card.card_id: card.day for card in cards},
+        siblings_by_id=siblings_by_id,
+        separation_by_id={card.card_id: card.min_separation for card in cards},
+        seed=seed,
+        horizon_ceiling=horizon_ceiling,
     )
     before = {day: len(ids) for day, ids in state.buckets.items()}
 
@@ -554,6 +889,23 @@ def plan_rebalance(
                     {d: len(state.buckets[d]) for d in over_max},
                     _infeasible_reason(state, over_max, reverse_pass_used),
                 )
+
+    repair_ceiling = (
+        constant_targets(state.start_day, state.end_day, max_per_day)
+        if max_per_day is not None
+        else None
+    )
+    unrepaired, repair_moved_later = apply_separation_repair_pass(
+        state, repair_ceiling, set_earlier
+    )
+    if unrepaired:
+        bad_days = sorted({state.day_by_id[cid] for cid in unrepaired})
+        raise InfeasibleRebalance(
+            bad_days,
+            {d: len(state.buckets.get(d, [])) for d in bad_days},
+            "min separation",
+        )
+    later_move_used = reverse_pass_used or repair_moved_later
 
     if sliding:
         # Both min_per_day and max_per_day are assumed present by the caller
@@ -599,9 +951,7 @@ def plan_rebalance(
         if day != state.origin_by_id[cid]
     }
 
-    _check_post_conditions(
-        state, max_per_day, max_shift, set_earlier, reverse_pass_used
-    )
+    _check_post_conditions(state, max_per_day, max_shift, set_earlier, later_move_used)
 
     return RebalanceResult(
         moves=moves,

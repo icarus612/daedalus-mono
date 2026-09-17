@@ -30,10 +30,14 @@ from anki_tools.due_plan import (
     CardDue,
     InfeasibleRebalance,
     RunState,
+    _first_legal_earlier_day,
+    _first_legal_later_day,
+    _repair_pair,
     analyze_shape,
     apply_max_pass,
     apply_min_pass,
     apply_reverse_max_pass,
+    apply_separation_repair_pass,
     apply_shape_pass,
     build_buckets,
     build_target_line,
@@ -47,6 +51,7 @@ from anki_tools.due_plan import (
     min_move_order,
     move_card,
     plan_rebalance,
+    separation_ok,
     validate_bounds,
     window_violations,
 )
@@ -65,6 +70,10 @@ def make_state(
     origin_by_id=None,
     moved=None,
     max_end_day=None,
+    siblings_by_id=None,
+    separation_by_id=None,
+    seed=0,
+    horizon_ceiling=None,
 ):
     """Build a RunState directly. Every day in the intended sweep range must
     be present as a key in ``buckets`` (including empty days) -- exactly
@@ -73,7 +82,17 @@ def make_state(
 
     ``max_end_day`` defaults to ``None`` (unbounded/no --range), which is
     the Phase 6 default path and reproduces pre-Phase-6 behaviour exactly
-    -- see Packet D's RunState contract."""
+    -- see Packet D's RunState contract.
+
+    ``day_by_id`` (a card's CURRENT day, as opposed to ``origin_by_id``,
+    which never changes) is derived from ``buckets`` the same way
+    ``origin_by_id`` is -- production builds it the same way at RunState
+    construction time. ``siblings_by_id``/``separation_by_id``/``seed``
+    are the min-separation additions; they default to empty/0 so every
+    pre-existing call site is unaffected. ``horizon_ceiling`` is this
+    lane's addition (an absolute-day ceiling on later-direction moves, on
+    top of ``max_end_day``); it defaults to ``None`` so every pre-existing
+    call site is unaffected."""
     all_ids = [cid for ids in buckets.values() for cid in ids]
     if ivl_by_id is None:
         ivl_by_id = {cid: 1 for cid in all_ids}
@@ -82,21 +101,32 @@ def make_state(
         for day, ids in buckets.items():
             for cid in ids:
                 origin_by_id[cid] = day
+    day_by_id = {}
+    for day, ids in buckets.items():
+        for cid in ids:
+            day_by_id[cid] = day
     if end_day is None:
         end_day = max(buckets.keys())
     return RunState(
         buckets={day: list(ids) for day, ids in buckets.items()},
         ivl_by_id=dict(ivl_by_id),
         origin_by_id=dict(origin_by_id),
+        day_by_id=day_by_id,
         moved=set(moved or ()),
         start_day=start_day,
         end_day=end_day,
         max_shift=max_shift,
         max_end_day=max_end_day,
+        siblings_by_id=dict(siblings_by_id or {}),
+        separation_by_id=dict(separation_by_id or {}),
+        seed=seed,
+        horizon_ceiling=horizon_ceiling,
     )
 
 
-def state_from_counts(counts, start_day, max_shift=None, max_end_day=None):
+def state_from_counts(
+    counts, start_day, max_shift=None, max_end_day=None, horizon_ceiling=None
+):
     """Build a RunState with sequential unique card ids, ``counts[i]`` cards
     on day ``start_day + i``. Every card starts on its own (untouched)
     origin day with ivl=1, so selection-order ties break on card_id."""
@@ -106,7 +136,13 @@ def state_from_counts(counts, start_day, max_shift=None, max_end_day=None):
         day = start_day + offset
         buckets[day] = list(range(next_id, next_id + count))
         next_id += count
-    return make_state(buckets, start_day, max_shift=max_shift, max_end_day=max_end_day)
+    return make_state(
+        buckets,
+        start_day,
+        max_shift=max_shift,
+        max_end_day=max_end_day,
+        horizon_ceiling=horizon_ceiling,
+    )
 
 
 def wide_ceiling(state, value, buffer=1000):
@@ -271,15 +307,33 @@ def test_move_orders_degrade_to_pure_ivl_once_everything_has_moved():
     assert min_move_order([1, 2], state) == [1, 2]
 
 
-def test_move_orders_break_ties_by_ascending_card_id():
-    state = make_state(
-        {10: [5, 3]},
-        start_day=10,
-        ivl_by_id={5: 7, 3: 7},
-        origin_by_id={5: 10, 3: 10},
-    )
-    assert max_move_order([5, 3], state) == [3, 5]
-    assert min_move_order([5, 3], state) == [3, 5]
+def test_move_orders_break_ties_by_seeded_random_value():
+    """The deck-diversity round-robin tiebreak is gone; the final tiebreak
+    among genuinely tied candidates (same moved-status, same ivl) is now a
+    value derived only from (state.seed, card_id) -- deterministic for a
+    given seed, but not pinned to any one ordering across seeds. This
+    replaces the old ascending-card-id guarantee, which no longer holds."""
+
+    def order_for(seed, order_fn):
+        state = make_state(
+            {10: [5, 3]},
+            start_day=10,
+            ivl_by_id={5: 7, 3: 7},
+            origin_by_id={5: 10, 3: 10},
+            seed=seed,
+        )
+        return tuple(order_fn([5, 3], state))
+
+    # Determinism: the same seed always gives the same order.
+    assert order_for(0, max_move_order) == order_for(0, max_move_order)
+    assert order_for(0, min_move_order) == order_for(0, min_move_order)
+
+    # Genuinely seed-driven, not secretly still card_id-ascending: both
+    # orderings must appear somewhere across a handful of seeds.
+    max_orders = {order_for(seed, max_move_order) for seed in range(10)}
+    min_orders = {order_for(seed, min_move_order) for seed in range(10)}
+    assert max_orders == {(5, 3), (3, 5)}
+    assert min_orders == {(5, 3), (3, 5)}
 
 
 def test_may_move_to_false_below_start_day():
@@ -378,11 +432,12 @@ def test_apply_max_pass_prefers_untouched_over_already_moved():
         moved={1, 2},
     )
     apply_max_pass(state, wide_ceiling(state, 3))
-    # Excess of 2 is drawn from the untouched pool {3, 4, 5}; the
-    # already-moved {1, 2} are only ever picked once untouched cards run
-    # out, which does not happen here.
-    assert state.buckets[4] == [3, 4]
-    assert state.buckets[5] == [1, 2, 5]
+    # Which two of {3, 4, 5} get picked is the seeded tiebreak's business
+    # (covered elsewhere); this proves untouched-first is primary.
+    moved_off_day_5 = {1, 2, 3, 4, 5} - set(state.buckets[5])
+    assert len(moved_off_day_5) == 2
+    assert moved_off_day_5 <= {3, 4, 5}
+    assert set(state.buckets[5]) & {1, 2} == {1, 2}  # both already-moved cards stayed
 
 
 def test_apply_max_pass_shift_cap_blocks_further_cascade_without_raising():
@@ -1398,3 +1453,588 @@ def test_two_callers_distinguishable_same_window_different_capacity():
     assert hard.feasible is True
     shape = analyze_shape(cards, 1, 10, target=shape_capacity, max_shift=None)
     assert shape.shape_reachable is False
+
+
+def test_separation_ok_blocks_siblings_too_close_together():
+    state = make_state(
+        {10: [1, 2]},
+        start_day=1,
+        siblings_by_id={1: [2], 2: [1]},
+        separation_by_id={1: 3, 2: 3},
+    )
+    assert separation_ok(1, 10, state) is False
+
+
+def test_separation_ok_boundary_at_exactly_required_days_is_allowed():
+    state = make_state(
+        {10: [2]},
+        start_day=1,
+        siblings_by_id={1: [2], 2: [1]},
+        separation_by_id={1: 5, 2: 5},
+    )
+    assert separation_ok(1, 15, state) is True  # exactly 5 days -- inclusive
+
+
+def test_separation_ok_one_day_short_of_required_is_blocked():
+    state = make_state(
+        {10: [2]},
+        start_day=1,
+        siblings_by_id={1: [2], 2: [1]},
+        separation_by_id={1: 5, 2: 5},
+    )
+    assert separation_ok(1, 14, state) is False  # 4 days -- one short
+
+
+def test_separation_ok_true_when_both_siblings_disable_separation():
+    state = make_state(
+        {10: [1, 2]},
+        start_day=1,
+        siblings_by_id={1: [2], 2: [1]},
+        separation_by_id={1: 0, 2: 0},
+    )
+    assert separation_ok(1, 10, state) is True
+
+
+def test_separation_ok_true_with_no_siblings_entry_regardless_of_day():
+    state = make_state({10: [1]}, start_day=1)
+    assert separation_ok(1, 10, state) is True
+    assert separation_ok(1, 999, state) is True
+
+
+def test_separation_ok_pairwise_requirement_is_the_max_not_the_movers_own_value():
+    """Sibling A disables its own separation (0) but sibling B requires 10
+    -- the pair's required separation is max(0, 10) = 10; A's own zero does
+    not waive B's requirement."""
+    state = make_state(
+        {10: [1, 2]},
+        start_day=1,
+        siblings_by_id={1: [2], 2: [1]},
+        separation_by_id={1: 0, 2: 10},
+    )
+    assert separation_ok(1, 10, state) is False  # 0 days apart, need 10
+    assert separation_ok(1, 20, state) is True  # exactly 10 days apart
+
+
+def test_may_move_to_denies_and_flags_separation_blocked():
+    state = make_state(
+        {10: [1, 2]},
+        start_day=1,
+        siblings_by_id={1: [2], 2: [1]},
+        separation_by_id={1: 5, 2: 5},
+    )
+    assert may_move_to(1, 10, state) is False
+    assert 1 in state.separation_blocked
+
+
+def test_may_move_to_denied_by_max_shift_does_not_flag_separation_blocked():
+    """A card with no sibling info at all, denied purely by the shift cap,
+    must never show up in separation_blocked -- that set is specifically
+    for the separation gate, not a catch-all for every denial."""
+    state = make_state({20: [1]}, start_day=1, origin_by_id={1: 20}, max_shift=14)
+    assert may_move_to(1, 5, state) is False  # 15 days earlier -- over the cap
+    assert 1 not in state.separation_blocked
+
+
+def test_plan_rebalance_respects_sibling_min_separation_under_pressure():
+    """Two siblings crowded onto one day, both forced to move by
+    max_per_day pressure (a third, unrelated card absorbs the day's one
+    remaining slot) -- min_separation=3 must hold between their FINAL
+    days, not merely be left to whatever ordinary capacity-driven
+    placement would otherwise have produced."""
+    cards = [
+        CardDue(1, 20, 100, note_id=1, min_separation=3),
+        CardDue(2, 20, 80, note_id=1, min_separation=3),
+        CardDue(3, 20, 1),
+    ]
+    result = plan_rebalance(
+        cards, start_day=1, min_per_day=None, max_per_day=1, max_shift=None
+    )
+    final = {c.card_id: result.moves.get(c.card_id, c.day) for c in cards}
+    assert final[1] != 20 and final[2] != 20  # both siblings were forced to move
+    assert final[3] == 20  # the unrelated filler never had to move
+    assert abs(final[1] - final[2]) >= 3
+
+
+def test_plan_rebalance_uses_a_moved_siblings_new_day_not_its_origin():
+    """Card 3 is the lowest-ivl of the trio crowded onto day 5 and stays
+    there; cards 1 and 2 (siblings, min_separation=2) are both evicted by
+    max_per_day=1 pressure. Whichever is evicted first rests on day 3 (day
+    4 is vetoed -- distance 1 from the other, still sitting at its origin,
+    day 5). The second-evicted sibling must then treat day 4 AND day 2 as
+    too close to the FIRST sibling's NEW day 3 (distance 1 < 2 either way)
+    and continues on to day 1. A stale implementation that instead checked
+    against the first sibling's ORIGINAL day 5 would have accepted day 2
+    (distance 3 >= 2) and stopped there -- so the correct final pair of
+    days is {1, 3}, not {2, 3}. Which of the two card ids lands on which
+    day depends on tie-breaking this test does not pin down, so the pair
+    of final days is checked order-independently."""
+    cards = [
+        CardDue(1, 5, 100, note_id=1, min_separation=2),
+        CardDue(2, 5, 50, note_id=1, min_separation=2),
+        CardDue(3, 5, 1),
+    ]
+    result = plan_rebalance(
+        cards, start_day=1, min_per_day=None, max_per_day=1, max_shift=None
+    )
+    final_siblings = sorted(result.moves.get(cid, 5) for cid in (1, 2))
+    assert final_siblings == [1, 3]
+    assert result.moves.get(3, 5) == 5  # the unrelated filler never moved
+
+
+def test_plan_rebalance_raises_min_separation_when_the_window_cannot_absorb_it():
+    """Two siblings share day 5; max_per_day=1 forces exactly one of them
+    off it. start_day=4 leaves exactly one day of room below the origin --
+    enough to satisfy capacity alone (the evicted sibling could rest on day
+    4), but day 4 is only 1 day from day 5, short of min_separation=2. With
+    only two cards and nowhere else to place either of them, there is no
+    combination of choices that satisfies both --max and the separation --
+    the raise is attributable to separation specifically."""
+    cards = [
+        CardDue(1, 5, 100, note_id=1, min_separation=2),
+        CardDue(2, 5, 50, note_id=1, min_separation=2),
+    ]
+    with pytest.raises(InfeasibleRebalance) as exc_info:
+        plan_rebalance(
+            cards, start_day=4, min_per_day=None, max_per_day=1, max_shift=None
+        )
+    assert exc_info.value.reason == "min separation"
+
+
+def test_plan_rebalance_seed_reproducibility_with_siblings():
+    def run():
+        cards = [
+            CardDue(1, 10, 50, note_id=1, min_separation=2),
+            CardDue(2, 10, 50, note_id=1, min_separation=2),
+            CardDue(3, 10, 50, note_id=2, min_separation=2),
+            CardDue(4, 10, 50, note_id=2, min_separation=2),
+        ]
+        return plan_rebalance(
+            cards,
+            start_day=1,
+            min_per_day=None,
+            max_per_day=2,
+            max_shift=None,
+            seed=7,
+        ).moves
+
+    assert run() == run()
+
+
+# Lane 2, Packet 1: active separation repair + horizon ceiling.
+
+
+# --- may_move_later_to: horizon_ceiling
+
+
+def test_may_move_later_to_respects_horizon_ceiling_with_no_max_end_day():
+    state = make_state({1: []}, start_day=1, end_day=1, horizon_ceiling=5)
+    assert may_move_later_to(5, state) is True  # exactly the ceiling
+    assert may_move_later_to(6, state) is False  # one past it
+
+
+def test_may_move_later_to_refuses_when_either_ceiling_is_crossed():
+    state = make_state(
+        {1: []}, start_day=1, end_day=1, max_end_day=10, horizon_ceiling=5
+    )
+    assert may_move_later_to(5, state) is True
+    assert may_move_later_to(6, state) is False  # horizon_ceiling is the tighter one
+    assert may_move_later_to(9, state) is False  # would pass max_end_day, not horizon
+
+
+# --- _first_legal_earlier_day
+
+
+def test_first_legal_earlier_day_steps_past_a_capacity_blocked_day_to_the_next():
+    """Day 15 is separation-clear but at capacity; day 14 is also
+    separation-clear (distance only grows as we move earlier) and has
+    room -- the search must not stop at 15."""
+    state = make_state(
+        {23: [1], 20: [2], 15: [900]},
+        start_day=1,
+        siblings_by_id={1: [2], 2: [1]},
+        separation_by_id={1: 5, 2: 5},
+    )
+    ceiling = constant_targets(1, 30, 1)
+
+    assert _first_legal_earlier_day(1, state, ceiling, floor_day=1) == 14
+
+
+def test_first_legal_earlier_day_resolves_past_a_day_blocked_by_both_constraints():
+    """Day 21 (the card's own day) fails separation AND is already at its
+    own capacity ceiling; day 15 is separation-clear but capacity-blocked;
+    day 14 clears both -- the correct answer, not the first day that
+    clears only one dimension."""
+    state = make_state(
+        {21: [1], 20: [2], 15: [901]},
+        start_day=1,
+        siblings_by_id={1: [2], 2: [1]},
+        separation_by_id={1: 5, 2: 5},
+    )
+    ceiling = constant_targets(1, 30, 1)
+
+    assert _first_legal_earlier_day(1, state, ceiling, floor_day=1) == 14
+
+
+def test_first_legal_earlier_day_ceiling_none_never_blocks_on_capacity():
+    state = make_state(
+        {23: [1] + list(range(9000, 9500)), 20: [2]},
+        start_day=1,
+        siblings_by_id={1: [2], 2: [1]},
+        separation_by_id={1: 5, 2: 5},
+    )
+    for day in range(15, 23):
+        state.buckets[day] = list(range(day * 100, day * 100 + 500))
+
+    assert _first_legal_earlier_day(1, state, None, floor_day=1) == 15
+
+
+# --- _first_legal_later_day
+
+
+def test_first_legal_later_day_returns_none_when_max_end_day_refuses():
+    state = make_state(
+        {10: [1, 2]},
+        start_day=1,
+        end_day=12,
+        max_end_day=12,
+        siblings_by_id={1: [2], 2: [1]},
+        separation_by_id={1: 5, 2: 5},
+    )
+    assert _first_legal_later_day(1, state, None) is None
+
+
+def test_first_legal_later_day_returns_none_when_horizon_ceiling_refuses():
+    state = make_state(
+        {10: [1, 2]},
+        start_day=1,
+        end_day=12,
+        max_end_day=None,
+        horizon_ceiling=12,
+        siblings_by_id={1: [2], 2: [1]},
+        separation_by_id={1: 5, 2: 5},
+    )
+    assert _first_legal_later_day(1, state, None) is None
+
+
+def test_first_legal_later_day_succeeds_when_neither_ceiling_refuses():
+    state = make_state(
+        {10: [1, 2]},
+        start_day=1,
+        end_day=20,
+        siblings_by_id={1: [2], 2: [1]},
+        separation_by_id={1: 5, 2: 5},
+    )
+    assert _first_legal_later_day(1, state, None) == 15
+
+
+# --- _repair_pair
+
+
+def test_repair_pair_fixes_by_moving_the_earlier_member_earlier():
+    state = make_state(
+        {12: [20], 20: [10]},
+        start_day=1,
+        siblings_by_id={10: [20], 20: [10]},
+        separation_by_id={10: 10, 20: 10},
+    )
+
+    result = _repair_pair(10, 20, state, None, False)
+
+    assert result == (True, False)
+    assert state.day_by_id[20] == 10
+    assert state.day_by_id[10] == 20
+
+
+def test_repair_pair_later_direction_fixes_when_earlier_is_blocked():
+    state = make_state(
+        {10: [1, 2]},
+        start_day=10,
+        siblings_by_id={1: [2], 2: [1]},
+        separation_by_id={1: 5, 2: 5},
+    )
+
+    result = _repair_pair(1, 2, state, None, True)
+
+    assert result == (True, True)
+    days = {state.day_by_id[1], state.day_by_id[2]}
+    assert days == {10, 15}
+
+
+def test_repair_pair_set_earlier_false_never_falls_back_to_later_move():
+    state = make_state(
+        {10: [1, 2]},
+        start_day=10,
+        siblings_by_id={1: [2], 2: [1]},
+        separation_by_id={1: 5, 2: 5},
+    )
+
+    result = _repair_pair(1, 2, state, None, False)
+
+    assert result == (False, False)
+    assert state.day_by_id[1] == 10
+    assert state.day_by_id[2] == 10
+
+
+def test_repair_pair_defensive_call_on_already_satisfied_pair_moves_nothing():
+    state = make_state(
+        {10: [1], 20: [2]},
+        start_day=1,
+        siblings_by_id={1: [2], 2: [1]},
+        separation_by_id={1: 5, 2: 5},
+    )
+
+    _repair_pair(1, 2, state, None, True)
+
+    assert state.day_by_id[1] == 10
+    assert state.day_by_id[2] == 20
+
+
+# --- apply_separation_repair_pass
+
+
+def test_apply_separation_repair_pass_repairs_every_pair_at_scale():
+    siblings_by_id = {}
+    separation_by_id = {}
+    buckets = {}
+    pairs = []
+    next_id = 1
+    required = 3
+    for i in range(220):
+        day = 1000 + i
+        a, b = next_id, next_id + 1
+        next_id += 2
+        buckets[day] = [a, b]
+        siblings_by_id[a] = [b]
+        siblings_by_id[b] = [a]
+        separation_by_id[a] = required
+        separation_by_id[b] = required
+        pairs.append((a, b))
+
+    state = make_state(
+        buckets,
+        start_day=1,
+        siblings_by_id=siblings_by_id,
+        separation_by_id=separation_by_id,
+    )
+
+    unrepaired, _ = apply_separation_repair_pass(state, None, True)
+
+    assert unrepaired == set()
+    for a, b in pairs:
+        assert abs(state.day_by_id[a] - state.day_by_id[b]) >= required
+
+
+def test_apply_separation_repair_pass_three_sibling_note_moves_minimal_set():
+    state = make_state(
+        {200: [1, 2, 3]},
+        start_day=1,
+        siblings_by_id={1: [2, 3], 2: [1, 3], 3: [1, 2]},
+        separation_by_id={1: 5, 2: 5, 3: 5},
+    )
+
+    unrepaired, _ = apply_separation_repair_pass(state, None, False)
+
+    assert unrepaired == set()
+    days = {cid: state.day_by_id[cid] for cid in (1, 2, 3)}
+    unmoved = [cid for cid, day in days.items() if day == 200]
+    moved = [cid for cid, day in days.items() if day != 200]
+    assert len(unmoved) == 1  # moves clear ALL of a card's siblings at once
+    assert len(moved) == 2
+    assert abs(days[moved[0]] - days[moved[1]]) >= 5
+    assert abs(days[moved[0]] - days[unmoved[0]]) >= 5
+    assert abs(days[moved[1]] - days[unmoved[0]]) >= 5
+
+
+def test_apply_separation_repair_pass_partial_success_isolates_the_unrepairable_pair():
+    state = make_state(
+        {50: [20, 21, 30, 31]},
+        start_day=1,
+        siblings_by_id={20: [21], 21: [20], 30: [31], 31: [30]},
+        separation_by_id={20: 100_000, 21: 100_000, 30: 3, 31: 3},
+    )
+
+    unrepaired, _ = apply_separation_repair_pass(state, None, False)
+
+    assert unrepaired == {20, 21}
+    assert abs(state.day_by_id[30] - state.day_by_id[31]) >= 3
+
+
+# --- plan_rebalance: active repair end to end
+
+
+def test_plan_rebalance_actively_repairs_pre_existing_violations_untouched_by_load():
+    """The load-bearing bug-sensitivity test: dozens of already-violating
+    sibling pairs, each comfortably within --min/--max on its own day, so
+    ordinary load balancing has no reason to touch any of them. Only
+    active repair explains any resulting move -- the old placement-only
+    behaviour would leave every one of these pairs exactly as it started."""
+    cards = []
+    for i in range(40):
+        day = 100 + i
+        cards.append(CardDue(i * 2 + 1, day, 100, note_id=i, min_separation=5))
+        cards.append(CardDue(i * 2 + 2, day, 90, note_id=i, min_separation=5))
+
+    result = plan_rebalance(
+        cards,
+        start_day=1,
+        min_per_day=1,
+        max_per_day=1000,
+        max_shift=20,
+        set_earlier=True,
+    )
+
+    final = {c.card_id: result.moves.get(c.card_id, c.day) for c in cards}
+    for i in range(40):
+        a, b = i * 2 + 1, i * 2 + 2
+        assert abs(final[a] - final[b]) >= 5
+
+    assert result.moves  # ordinary balancing alone would never have moved anything
+    origin = {c.card_id: c.day for c in cards}
+    assert any(final[cid] != origin[cid] for cid in origin)
+
+
+def test_plan_rebalance_honours_max_after_repair_with_genuine_overflow_pressure():
+    cards = []
+    for note in range(5):
+        a, b = note * 2 + 1, note * 2 + 2
+        cards.append(CardDue(a, 50, 100, note_id=note, min_separation=4))
+        cards.append(CardDue(b, 50, 90, note_id=note, min_separation=4))
+
+    result = plan_rebalance(
+        cards,
+        start_day=1,
+        min_per_day=1,
+        max_per_day=4,
+        max_shift=30,
+        set_earlier=True,
+    )
+
+    for day in range(1, result.end_day + 1):
+        assert result.after.get(day, 0) <= 4
+
+    final = {c.card_id: result.moves.get(c.card_id, c.day) for c in cards}
+    for note in range(5):
+        a, b = note * 2 + 1, note * 2 + 2
+        assert abs(final[a] - final[b]) >= 4
+
+
+def test_plan_rebalance_horizon_ceiling_blocks_infeasible_later_repair():
+    cards = [
+        CardDue(1, 10, 100, note_id=1, min_separation=5),
+        CardDue(2, 10, 90, note_id=1, min_separation=5),
+    ]
+    with pytest.raises(InfeasibleRebalance) as exc_info:
+        plan_rebalance(
+            cards,
+            start_day=10,
+            min_per_day=None,
+            max_per_day=1000,
+            max_shift=0,
+            set_earlier=True,
+            horizon_ceiling=12,
+        )
+    assert exc_info.value.reason == "min separation"
+
+
+def test_plan_rebalance_horizon_ceiling_allows_reachable_later_repair():
+    cards = [
+        CardDue(1, 10, 100, note_id=1, min_separation=5),
+        CardDue(2, 10, 90, note_id=1, min_separation=5),
+    ]
+    result = plan_rebalance(
+        cards,
+        start_day=10,
+        min_per_day=None,
+        max_per_day=1000,
+        max_shift=0,
+        set_earlier=True,
+        horizon_ceiling=15,
+    )
+    final = {c.card_id: result.moves.get(c.card_id, c.day) for c in cards}
+    assert abs(final[1] - final[2]) >= 5
+    assert final[1] <= 15
+    assert final[2] <= 15
+
+
+def test_plan_rebalance_range_mode_blocks_infeasible_later_repair_as_min_separation():
+    """end_day (range mode) blocking the only repair route must still be
+    reported as the repair pass's own failure ("min separation"), not the
+    reverse-max-pass's "range ceiling" label -- that label is reserved for
+    the existing pass's own failure path (tested separately below)."""
+    cards = [
+        CardDue(1, 10, 100, note_id=1, min_separation=5),
+        CardDue(2, 10, 90, note_id=1, min_separation=5),
+    ]
+    with pytest.raises(InfeasibleRebalance) as exc_info:
+        plan_rebalance(
+            cards,
+            start_day=10,
+            min_per_day=None,
+            max_per_day=1000,
+            max_shift=0,
+            set_earlier=True,
+            end_day=12,
+        )
+    assert exc_info.value.reason == "min separation"
+
+
+def test_plan_rebalance_reproducible_with_active_separation_repair():
+    def run():
+        cards = [
+            CardDue(1, 50, 100, note_id=1, min_separation=5),
+            CardDue(2, 50, 90, note_id=1, min_separation=5),
+            CardDue(3, 80, 100, note_id=2, min_separation=4),
+            CardDue(4, 80, 90, note_id=2, min_separation=4),
+        ]
+        return plan_rebalance(
+            cards,
+            start_day=1,
+            min_per_day=1,
+            max_per_day=1000,
+            max_shift=20,
+            set_earlier=True,
+        ).moves
+
+    first = run()
+    second = run()
+    assert first == second
+    assert first  # sanity: the repair pass actually produced moves
+
+
+def test_plan_rebalance_omitting_horizon_ceiling_is_backward_compatible():
+    """No siblings at all, horizon_ceiling omitted -- must reproduce the
+    pre-existing (Packet D) flagship trace exactly."""
+    cards = cards_from_counts([0, 40, 2, 0, 25, 1], start_day=1)
+    result = plan_rebalance(
+        cards,
+        start_day=1,
+        min_per_day=8,
+        max_per_day=16,
+        max_shift=14,
+        set_earlier=True,
+    )
+    assert result.reverse_pass_used is True
+    assert result.end_day == 6
+    assert [result.after.get(d, 0) for d in range(1, 7)] == [16, 16, 10, 9, 16, 1]
+
+
+# --- _infeasible_reason's broadened "range ceiling" branch
+
+
+def test_plan_rebalance_horizon_ceiling_blocks_reverse_pass_as_range_ceiling():
+    """Pure capacity/horizon scenario, no siblings involved: the existing
+    reverse-max-pass fails under horizon_ceiling pressure with no --range
+    given (end_day=None, so max_end_day ends up None) -- the broadened
+    "range ceiling" branch must fire, not "shift cap"."""
+    cards = cards_from_counts([28, 16, 16], start_day=1)
+    with pytest.raises(InfeasibleRebalance) as exc_info:
+        plan_rebalance(
+            cards,
+            start_day=1,
+            min_per_day=None,
+            max_per_day=16,
+            max_shift=None,
+            set_earlier=True,
+            horizon_ceiling=3,
+        )
+    assert exc_info.value.reason == "range ceiling"

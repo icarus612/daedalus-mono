@@ -14,6 +14,7 @@ should be removed or altered to accommodate that later pass.
 import json
 import os
 import re
+import shutil
 import sys
 import time
 
@@ -24,7 +25,9 @@ from anki_tools.due_plan import CardDue, plan_rebalance
 from anki_tools.rebalance_due import (
     apply_moves,
     build_parser,
+    build_separation_map,
     collect_cards,
+    derive_seed,
     get_anki_collection_path,
     main,
     render_histogram,
@@ -262,6 +265,181 @@ def test_collect_cards_excludes_due_before_start_day(collection):
     result = collect_cards(col, deck_ids, start_day)
 
     assert result == []
+
+
+def test_collect_cards_carddue_note_id_matches_the_real_cards_note(collection):
+    col = collection
+    coding_id = col.decks.id("programming::coding")
+    today = col.sched.today
+    start_day = today + 1
+    card = _add_card(col, coding_id, due=start_day + 1, ivl=12)
+
+    deck_ids = resolve_deck_ids(col, "programming::coding")
+    result = collect_cards(col, deck_ids, start_day)
+
+    assert len(result) == 1
+    assert result[0].note_id == card.nid
+
+
+def test_collect_cards_sibling_cards_from_one_note_share_the_same_note_id(collection):
+    col = collection
+    coding_id = col.decks.id("programming::coding")
+    today = col.sched.today
+    start_day = today + 1
+    model = col.models.by_name("Basic (and reversed card)")
+    note = col.new_note(model)
+    note["Front"] = "front"
+    note["Back"] = "back"
+    col.add_note(note, coding_id)
+    for card in note.cards():
+        card.type = 2
+        card.queue = 2
+        card.due = start_day + 2
+        card.ivl = 15
+        card.factor = 2500
+        card.reps = 3
+        col.update_card(card)
+
+    deck_ids = resolve_deck_ids(col, "programming::coding")
+    result = collect_cards(col, deck_ids, start_day)
+
+    assert len(result) == 2
+    assert {c.note_id for c in result} == {note.id}
+
+
+def test_collect_cards_min_separation_defaults_to_zero_without_a_separation_map(
+    collection,
+):
+    col = collection
+    coding_id = col.decks.id("programming::coding")
+    today = col.sched.today
+    start_day = today + 1
+    _add_card(col, coding_id, due=start_day + 1, ivl=12)
+
+    deck_ids = resolve_deck_ids(col, "programming::coding")
+    result = collect_cards(col, deck_ids, start_day)
+
+    assert result[0].min_separation == 0
+
+
+def test_collect_cards_min_separation_comes_from_the_cards_own_deck(collection):
+    col = collection
+    deck_a_id = col.decks.id("deck_a")
+    deck_b_id = col.decks.id("deck_b")
+    today = col.sched.today
+    start_day = today + 1
+    card_a = _add_card(col, deck_a_id, due=start_day + 1, ivl=20)
+    card_b = _add_card(col, deck_b_id, due=start_day + 1, ivl=20)
+
+    separation_by_deck = {deck_a_id: 5, deck_b_id: 9}
+    result = collect_cards(
+        col, [deck_a_id, deck_b_id], start_day, separation_by_deck=separation_by_deck
+    )
+
+    by_id = {c.card_id: c for c in result}
+    assert by_id[card_a.id].min_separation == 5
+    assert by_id[card_b.id].min_separation == 9
+
+
+def test_collect_cards_min_separation_falls_back_to_zero_for_deck_missing_from_map(
+    collection,
+):
+    col = collection
+    deck_a_id = col.decks.id("deck_a")
+    deck_b_id = col.decks.id("deck_b")
+    today = col.sched.today
+    start_day = today + 1
+    card_b = _add_card(col, deck_b_id, due=start_day + 1, ivl=20)
+
+    separation_by_deck = {deck_a_id: 7}  # deck_b intentionally absent
+    result = collect_cards(
+        col, [deck_a_id, deck_b_id], start_day, separation_by_deck=separation_by_deck
+    )
+
+    by_id = {c.card_id: c for c in result}
+    assert by_id[card_b.id].min_separation == 0
+
+
+def test_build_separation_map_zero_maps_every_deck_to_zero(collection):
+    col = collection
+    deck_ids = [col.decks.id("deck_a"), col.decks.id("deck_b")]
+
+    result = build_separation_map(col, deck_ids, 0)
+
+    assert result == {deck_ids[0]: 0, deck_ids[1]: 0}
+
+
+def test_build_separation_map_positive_value_maps_every_deck_to_that_value(collection):
+    col = collection
+    deck_ids = [col.decks.id("deck_a"), col.decks.id("deck_b"), col.decks.id("deck_c")]
+
+    result = build_separation_map(col, deck_ids, 9)
+
+    assert result == {did: 9 for did in deck_ids}
+
+
+def _assign_deck_config(col, deck_id, config_name, max_ivl):
+    """Give deck_id its own options preset with the given rev.maxIvl, per
+    the anki.decks.DeckManager API (add_config -> update_config -> assign
+    the returned config id to the deck's own 'conf' key -> save)."""
+    conf = col.decks.add_config(config_name)
+    conf["rev"]["maxIvl"] = max_ivl
+    col.decks.update_config(conf)
+    deck = col.decks.get(deck_id)
+    deck["conf"] = conf["id"]
+    col.decks.save(deck)
+
+
+def test_build_separation_map_minus_one_resolves_per_deck_from_its_own_preset(
+    collection,
+):
+    col = collection
+    deck_a_id = col.decks.id("deck_a")
+    deck_b_id = col.decks.id("deck_b")
+    _assign_deck_config(col, deck_a_id, "conf_a", 200)
+    _assign_deck_config(col, deck_b_id, "conf_b", 60)
+
+    result = build_separation_map(col, [deck_a_id, deck_b_id], -1)
+
+    assert result[deck_a_id] == 50  # 200 // 4
+    assert result[deck_b_id] == 15  # 60 // 4
+    assert result[deck_a_id] != result[deck_b_id]
+
+
+def test_derive_seed_is_deterministic_across_a_freshly_reopened_collection(tmp_path):
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    deck_id = col.decks.id("programming::coding")
+    today = col.sched.today
+    col.close()
+
+    col1 = Collection(col_path)
+    try:
+        seed1 = derive_seed(col1, deck_id, today + 1, None, 8, 16, 14, -1)
+    finally:
+        col1.close()
+
+    col2 = Collection(col_path)
+    try:
+        seed2 = derive_seed(col2, deck_id, today + 1, None, 8, 16, 14, -1)
+    finally:
+        col2.close()
+
+    assert isinstance(seed1, int)
+    assert seed1 == seed2
+
+
+def test_derive_seed_changes_when_min_separation_arg_alone_changes(tmp_path):
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    deck_id = col.decks.id("programming::coding")
+    today = col.sched.today
+
+    seed_a = derive_seed(col, deck_id, today + 1, None, 8, 16, 14, 0)
+    seed_b = derive_seed(col, deck_id, today + 1, None, 8, 16, 14, 5)
+    col.close()
+
+    assert seed_a != seed_b
 
 
 # ---------------------------------------------------------------------------
@@ -693,6 +871,32 @@ def test_collection_and_backup_dir_overrides():
     )
     assert _first_present(args, "collection", "collection_path") == "/tmp/custom.anki2"
     assert _first_present(args, "backup_dir") == "/tmp/custom-backups"
+
+
+def test_min_separation_default_is_negative_one():
+    parser = build_parser()
+    args = parser.parse_args(["programming::coding", "--min", "8"])
+    assert _first_present(args, "min_separation") == -1
+
+
+def test_min_separation_accepts_an_explicit_value():
+    parser = build_parser()
+    args = parser.parse_args(
+        ["programming::coding", "--min", "8", "--min-separation", "5"]
+    )
+    assert _first_present(args, "min_separation") == 5
+
+
+def test_seed_default_is_none():
+    parser = build_parser()
+    args = parser.parse_args(["programming::coding", "--min", "8"])
+    assert _first_present(args, "seed") is None
+
+
+def test_seed_accepts_an_explicit_integer():
+    parser = build_parser()
+    args = parser.parse_args(["programming::coding", "--min", "8", "--seed", "99"])
+    assert _first_present(args, "seed") == 99
 
 
 # ---------------------------------------------------------------------------
@@ -1644,8 +1848,10 @@ def test_e2e_omitting_range_matches_the_pure_core_oracle_exactly(tmp_path, monke
         CardDue(card_id=cid, day=day, ivl=ivl_by_id[cid])
         for cid, day in origin_by_id.items()
     ]
+    # Pinned seed: both sides must agree on tie-break order (fresh
+    # single-card notes here, so only tie-break order is at stake).
     oracle = plan_rebalance(
-        oracle_cards, start_day, min_per_day=1, max_per_day=8, max_shift=14
+        oracle_cards, start_day, min_per_day=1, max_per_day=8, max_shift=14, seed=12345
     )
 
     exit_code = _run_cli(
@@ -1655,6 +1861,8 @@ def test_e2e_omitting_range_matches_the_pure_core_oracle_exactly(tmp_path, monke
             "1",
             "--max",
             "8",
+            "--seed",
+            "12345",
             "--yes",
             "--collection",
             col_path,
@@ -1792,6 +2000,8 @@ def test_e2e_cap_unreachable_sliding_completes_and_reports_over_target_days(
         CardDue(card_id=cid, day=day, ivl=ivl_by_id[cid])
         for cid, day in origin_by_id.items()
     ]
+    # Pinned seed: both sides must agree on tie-break order (fresh
+    # single-card notes here, so only tie-break order is at stake).
     oracle = plan_rebalance(
         oracle_cards,
         start_day,
@@ -1800,6 +2010,7 @@ def test_e2e_cap_unreachable_sliding_completes_and_reports_over_target_days(
         max_shift=2,
         sliding=True,
         strict_sliding=False,
+        seed=12345,
     )
     assert oracle.over_target_days  # sanity: the fixture really is cap-unreachable
 
@@ -1813,6 +2024,8 @@ def test_e2e_cap_unreachable_sliding_completes_and_reports_over_target_days(
             "--max-shift",
             "2",
             "--sliding",
+            "--seed",
+            "12345",
             "--yes",
             "--collection",
             col_path,
@@ -1938,3 +2151,421 @@ def test_e2e_sliding_dry_run_produces_descending_shape_and_writes_nothing(
     # The histogram's first row (offset 1, the window start) shows the full
     # max_per_day (16) -- the shape's own descending ramp starts there.
     assert re.search(r"(?<!\d)1(?!\d)\s*\|\s*\d+\s*\|\s*16", out)
+
+
+def _sibling_pair(col, deck_id, *, due, ivl=10):
+    """Two cards on one note (Basic and reversed card), both forced to the
+    same due/ivl, per the plan pattern _add_card already uses for a single
+    card."""
+    model = col.models.by_name("Basic (and reversed card)")
+    note = col.new_note(model)
+    note["Front"] = "front"
+    note["Back"] = "back"
+    col.add_note(note, deck_id)
+    cards = note.cards()
+    for card in cards:
+        card.type = 2
+        card.queue = 2
+        card.due = due
+        card.ivl = ivl
+        card.factor = 2500
+        card.reps = 3
+        col.update_card(card)
+    return cards
+
+
+def test_e2e_default_min_separation_pushes_siblings_apart_by_decks_own_quarter_maxivl(
+    tmp_path, monkeypatch
+):
+    # Deck's own preset (maxIvl=20) resolves to separation 5 here;
+    # --max 1 against 2 same-day siblings supplies the needed pressure.
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    _assign_deck_config(col, coding_id, "small_max_ivl", 20)
+    today = col.sched.today
+    start_day = today + 1
+    # same_due sits 15 days into the window: same_due - 5 (the needed
+    # separation) still leaves room inside the default --max-shift 14.
+    same_due = start_day + 15
+    card1, card2 = _sibling_pair(col, coding_id, due=same_due)
+    card1_id, card2_id = card1.id, card2.id
+    col.close()
+
+    exit_code = _run_cli(
+        ["programming::coding", "--max", "1", "--yes", "--collection", col_path],
+        monkeypatch,
+    )
+    assert exit_code == 0
+
+    col2 = Collection(col_path)
+    try:
+        due1 = col2.get_card(card1_id).due
+        due2 = col2.get_card(card2_id).due
+    finally:
+        col2.close()
+
+    # Confirms a move actually happened -- otherwise the check below would
+    # trivially pass without the feature doing anything.
+    assert not (due1 == same_due and due2 == same_due)
+    assert abs(due1 - due2) >= 5  # 20 // 4, the deck's own configured quarter-maxIvl
+
+
+def test_e2e_explicit_min_separation_zero_leaves_siblings_exactly_where_they_started(
+    tmp_path, monkeypatch
+):
+    # Same fixture, but --min-separation 0 must genuinely disable the
+    # constraint (not silently keep a default) -- nothing forces a move.
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    _assign_deck_config(col, coding_id, "small_max_ivl", 20)
+    today = col.sched.today
+    start_day = today + 1
+    same_due = start_day + 15
+    card1, card2 = _sibling_pair(col, coding_id, due=same_due)
+    card1_id, card2_id = card1.id, card2.id
+    col.close()
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--max",
+            "1000",
+            "--min-separation",
+            "0",
+            "--yes",
+            "--collection",
+            col_path,
+        ],
+        monkeypatch,
+    )
+    assert exit_code == 0
+
+    col2 = Collection(col_path)
+    try:
+        due1 = col2.get_card(card1_id).due
+        due2 = col2.get_card(card2_id).due
+    finally:
+        col2.close()
+
+    assert due1 == due2 == same_due
+
+
+def test_min_separation_below_negative_one_is_rejected(monkeypatch, capsys):
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--min",
+            "8",
+            "--max",
+            "16",
+            "--min-separation",
+            "-2",
+        ],
+        monkeypatch,
+    )
+    err = capsys.readouterr().err
+
+    assert exit_code != 0
+    assert "--min-separation" in err
+
+
+def test_seed_flag_produces_identical_final_days_across_separate_fresh_collections(
+    tmp_path, monkeypatch
+):
+    # Reproducibility means the SAME collection re-run with the same
+    # seed -- a byte-identical copy, not an independently-built lookalike.
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    deck_id = col.decks.id("programming::coding")
+    today = col.sched.today
+    start_day = today + 1
+    ids = []
+    # Tied pool, 3 days out (not start_day, which has nowhere
+    # earlier to shed to) -- the tie is what makes the tiebreak matter.
+    for _ in range(20):
+        card = _add_card(col, deck_id, due=start_day + 3, ivl=50)
+        ids.append(card.id)
+    col.close()
+
+    # A byte-identical copy of the SAME starting collection -- same card
+    # ids on both sides -- made BEFORE either is run through the CLI.
+    path_a = col_path
+    path_b = os.path.join(str(tmp_path), "test_copy.anki2")
+    shutil.copy2(path_a, path_b)
+
+    common_args = [
+        "programming::coding",
+        "--max",
+        "10",
+        "--seed",
+        "42",
+        "--yes",
+        "--collection",
+    ]
+
+    exit_code_a = _run_cli(common_args + [path_a], monkeypatch)
+    exit_code_b = _run_cli(common_args + [path_b], monkeypatch)
+    assert exit_code_a == 0
+    assert exit_code_b == 0
+
+    def _final_days_by_id(path, ids):
+        col = Collection(path)
+        try:
+            return {cid: col.get_card(cid).due for cid in ids}
+        finally:
+            col.close()
+
+    # Byte-identical starting files -> same ids on both sides, so
+    # comparing by id is strictly stronger than positional comparison.
+    assert _final_days_by_id(path_a, ids) == _final_days_by_id(path_b, ids)
+
+
+# Lane 2 packet 2: horizon ceiling (maxIvl-derived) and its interaction
+# with --set-earlier / active separation repair.
+
+
+def test_e2e_set_earlier_capacity_overflow_blocked_by_horizon_ceiling_range_ceiling(
+    tmp_path, monkeypatch, capsys
+):
+    # maxIvl=5 caps the reverse pass short of what 30 cards at max=2 need.
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    python_id = col.decks.id("programming::coding::python")
+    _assign_deck_config(col, coding_id, "tight_horizon", 5)
+    _assign_deck_config(col, python_id, "loose_horizon", 50)
+    today = col.sched.today
+    start_day = today + 1
+
+    ids = []
+    for i in range(30):
+        card = _add_card(col, coding_id, due=start_day, ivl=10 + i)
+        ids.append(card.id)
+    col.close()
+
+    before = _snapshot_due_ivl(col_path, ids)
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--max",
+            "2",
+            "--set-earlier",
+            "--yes",
+            "--collection",
+            col_path,
+        ],
+        monkeypatch,
+    )
+    captured = capsys.readouterr()
+    combined = (captured.out + captured.err).lower()
+
+    assert exit_code != 0
+    assert "range ceiling" in combined
+
+    after = _snapshot_due_ivl(col_path, ids)
+    assert before == after
+
+
+def test_e2e_range_given_makes_horizon_ceiling_inert_allows_move_past_maxivl(
+    tmp_path, monkeypatch
+):
+    # --range 1-30 given this time, so horizon_ceiling stays None and the
+    # range's own HI (30) is what governs, not the tight maxIvl=5 preset.
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    _assign_deck_config(col, coding_id, "tight_horizon", 5)
+    today = col.sched.today
+    start_day = today + 1
+
+    ids = []
+    for i in range(30):
+        card = _add_card(col, coding_id, due=start_day, ivl=10 + i)
+        ids.append(card.id)
+    col.close()
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--range",
+            "1-30",
+            "--max",
+            "2",
+            "--set-earlier",
+            "--yes",
+            "--collection",
+            col_path,
+        ],
+        monkeypatch,
+    )
+    assert exit_code == 0
+
+    col2 = Collection(col_path)
+    try:
+        max_final_day = max(col2.get_card(cid).due for cid in ids)
+    finally:
+        col2.close()
+
+    maxivl_ceiling = today + 5
+    assert max_final_day > maxivl_ceiling
+    assert max_final_day <= today + 30
+
+
+def test_e2e_active_separation_repair_via_set_earlier_stays_within_horizon_ceiling(
+    tmp_path, monkeypatch
+):
+    # 20-day separation exceeds default --max-shift (14)'s earlier-only
+    # reach, so --set-earlier is required to relocate a sibling later.
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    _assign_deck_config(col, coding_id, "repair_horizon", 60)
+    today = col.sched.today
+    start_day = today + 1
+    same_due = start_day + 5
+
+    card1, card2 = _sibling_pair(col, coding_id, due=same_due, ivl=12)
+    card1_id, card2_id = card1.id, card2.id
+    ivl_before = {card1_id: 12, card2_id: 12}
+    col.close()
+
+    min_separation = 20
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--max",
+            "1000",
+            "--min-separation",
+            str(min_separation),
+            "--set-earlier",
+            "--yes",
+            "--collection",
+            col_path,
+        ],
+        monkeypatch,
+    )
+    assert exit_code == 0
+
+    col2 = Collection(col_path)
+    try:
+        due1 = col2.get_card(card1_id).due
+        due2 = col2.get_card(card2_id).due
+        ivl1 = col2.get_card(card1_id).ivl
+        ivl2 = col2.get_card(card2_id).ivl
+    finally:
+        col2.close()
+
+    assert abs(due1 - due2) >= min_separation
+    assert ivl1 == ivl_before[card1_id]
+    assert ivl2 == ivl_before[card2_id]
+    horizon_ceiling = today + 60
+    assert due1 <= horizon_ceiling
+    assert due2 <= horizon_ceiling
+
+
+def test_apply_moves_preserves_ivl_for_a_large_later_move(collection):
+    # Closes a coverage gap: preserves_ivl_and_sets_due only covers small
+    # earlier moves; this is the large, later move shape (+194 days).
+    col = collection
+    coding_id = col.decks.id("programming::coding")
+    today = col.sched.today
+    card = _add_card(col, coding_id, due=today + 6, ivl=91)
+
+    apply_moves(col, {card.id: today + 200}, today)
+
+    reloaded = col.get_card(card.id)
+    assert reloaded.ivl == 91
+    assert reloaded.due == today + 200
+
+
+def test_e2e_min_separation_infeasibility_message_mentions_set_earlier(
+    tmp_path, monkeypatch, capsys
+):
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    today = col.sched.today
+    start_day = today + 1
+    # max-shift 0 and no --set-earlier: a 500-day separation is unreachable.
+    _sibling_pair(col, coding_id, due=start_day + 5, ivl=10)
+    col.close()
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--max",
+            "1000",
+            "--min-separation",
+            "500",
+            "--max-shift",
+            "0",
+            "--yes",
+            "--collection",
+            col_path,
+        ],
+        monkeypatch,
+    )
+    captured = capsys.readouterr()
+    combined = (captured.out + captured.err).lower()
+
+    assert exit_code != 0
+    assert "min separation" in combined
+    assert "--set-earlier" in combined
+
+
+def test_e2e_extended_horizon_message_mentions_min_separation_alongside_max(
+    tmp_path, monkeypatch, capsys
+):
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    today = col.sched.today
+    start_day = today + 1
+    for i in range(50):
+        _add_card(col, coding_id, due=start_day, ivl=10 + i)
+    col.close()
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--max",
+            "16",
+            "--set-earlier",
+            "--yes",
+            "--collection",
+            col_path,
+        ],
+        monkeypatch,
+    )
+    out = capsys.readouterr().out
+
+    assert exit_code == 0
+    assert "LATER" in out
+    assert "--min-separation" in out
+    assert "--max" in out
+
+
+def _help_block(help_text, flag):
+    # Anchor past the usage synopsis, which repeats every flag with no description.
+    options_text = help_text[help_text.index("\noptions:") :]
+    match = re.search(
+        rf"\n  {re.escape(flag)}\b.*?(?=\n  -|\Z)", options_text, re.DOTALL
+    )
+    assert match, f"{flag} not found in the options section of the help text"
+    return match.group(0)
+
+
+def test_help_documents_maxivl_cap_near_set_earlier():
+    help_text = build_parser().format_help()
+    block = _help_block(help_text, "--set-earlier")
+    assert "maxIvl" in block
+
+
+def test_help_documents_set_earlier_as_a_remedy_near_min_separation():
+    help_text = build_parser().format_help()
+    block = _help_block(help_text, "--min-separation")
+    assert "--set-earlier" in block
