@@ -1349,6 +1349,33 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
         assert spot_note["Russian"] == last_indeclinable.russian
         assert spot_note["Translation"] == last_indeclinable.english
 
+        # Spot-checked particle-gloss notes, verbatim against lane l1's
+        # contract table (not against `rows`, `build_col`, or
+        # `TRANSLATION_OVERRIDES` -- against what the fresh import
+        # actually produced).
+        particles_deck = subdeck_name("Particles")
+        to_note_ids = fresh_col.find_notes(f'deck:"{particles_deck}" Russian:"-то"')
+        assert len(to_note_ids) == 1
+        to_note = fresh_col.get_note(to_note_ids[0])
+        assert to_note["Translation"] == (
+            'some- (indefinite: кто-то "someone", где-то "somewhere"; '
+            "contrast -нибудь = any-)"
+        )
+
+        ka_note_ids = fresh_col.find_notes(f'deck:"{particles_deck}" Russian:"-ка"')
+        assert len(ka_note_ids) == 1
+        ka_note = fresh_col.get_note(ka_note_ids[0])
+        assert ka_note["Translation"] == (
+            'go on, just (softens an imperative: скажи-ка "go on, tell me"; informal)'
+        )
+
+        budto_note_ids = fresh_col.find_notes(
+            f'deck:"{particles_deck}" Russian:"будто"'
+        )
+        assert len(budto_note_ids) == 1
+        budto_note = fresh_col.get_note(budto_note_ids[0])
+        assert budto_note["Translation"] == "as if, as though (often implies doubt)"
+
         # Audio field: the central "deck-before-audio" claim, on the
         # IMPORTED collection -- every one of the 153 notes carries its
         # four predicted filenames, byte-for-byte identical to what
