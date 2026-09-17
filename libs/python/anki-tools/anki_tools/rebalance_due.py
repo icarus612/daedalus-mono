@@ -279,7 +279,9 @@ def build_parser():
         help=(
             "Allow a reverse pass to push excess cards to LATER dates when "
             "--max cannot otherwise be satisfied. This is the only mode in "
-            "which a card's due date can move further away."
+            "which a card's due date can move further away. Without "
+            "--range, later moves (including active separation repair) are "
+            "capped at each in-scope deck's own maxIvl, never unbounded."
         ),
     )
     parser.add_argument(
@@ -317,7 +319,9 @@ def build_parser():
             "-1 derives it per-card from its own deck's options preset "
             "(half of --rev maxIvl). 0 disables the constraint. Any other "
             "non-negative integer applies that many days uniformly to "
-            "every card."
+            "every card. Repairing an existing violation that needs more "
+            "than --max-shift days of earlier movement requires "
+            "--set-earlier."
         ),
     )
     parser.add_argument(
@@ -489,6 +493,24 @@ def main():
             end_day = None
 
         separation_by_deck = build_separation_map(col, deck_ids, args.min_separation)
+
+        # Without --range there is otherwise no ceiling on how far later a
+        # card can be pushed (by --set-earlier's reverse pass, or now by
+        # separation repair). Use min() rather than each card's own deck's
+        # maxIvl: conservative when in-scope decks carry different maxIvl
+        # presets, since a uniform ceiling still guarantees no card is ever
+        # pushed past ITS OWN deck's configured maxIvl, even though a card
+        # in a looser-configured deck could in principle have tolerated a
+        # later date.
+        horizon_ceiling = None
+        if range_bounds is None:
+            max_ivls = [
+                col.decks.config_dict_for_deck_id(did)["rev"]["maxIvl"]
+                for did in deck_ids
+            ]
+            if max_ivls:
+                horizon_ceiling = today + min(max_ivls)
+
         cards = collect_cards(
             col, deck_ids, start_day, end_day, separation_by_deck=separation_by_deck
         )
@@ -548,6 +570,7 @@ def main():
                 strict_sliding=args.strict_sliding,
                 end_day=end_day,
                 seed=seed,
+                horizon_ceiling=horizon_ceiling,
             )
         except InfeasibleRebalance as exc:
             print(f"Could not satisfy the constraints ({exc.reason}).")
@@ -559,8 +582,8 @@ def main():
                 )
             elif exc.reason == "min separation":
                 print(
-                    "Try a smaller --min-separation, relax --min/--max, "
-                    "or increase --max-shift."
+                    "Try a smaller --min-separation, relax --min/--max, pass "
+                    "--set-earlier to allow later moves, or increase --max-shift."
                 )
             else:
                 print(
@@ -588,8 +611,8 @@ def main():
         # actually free to grow, i.e. no explicit --range was given.
         if end_day is None and result.end_day > pre_reverse_end_day:
             print(
-                f"Some cards were moved to LATER dates to satisfy --max; "
-                f"the horizon was extended to day offset "
+                f"Some cards were moved to LATER dates (to satisfy --max or "
+                f"--min-separation); the horizon was extended to day offset "
                 f"{result.end_day - today}."
             )
 

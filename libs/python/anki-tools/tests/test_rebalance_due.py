@@ -2320,3 +2320,269 @@ def test_seed_flag_produces_identical_final_days_across_separate_fresh_collectio
     # Byte-identical starting files -> same ids on both sides, so
     # comparing by id is strictly stronger than positional comparison.
     assert _final_days_by_id(path_a, ids) == _final_days_by_id(path_b, ids)
+
+
+# ---------------------------------------------------------------------------
+# rebalance-min-separation lane 2 packet 2 -- horizon ceiling (maxIvl-derived)
+# and its interaction with --set-earlier / active separation repair.
+# ---------------------------------------------------------------------------
+
+
+def test_e2e_set_earlier_capacity_overflow_blocked_by_horizon_ceiling_range_ceiling(
+    tmp_path, monkeypatch, capsys
+):
+    # No --range given, so horizon_ceiling = today + min(maxIvl) across the
+    # in-scope decks: maxIvl=5 on the parent caps the reverse pass to 5 days
+    # past today, far short of what 30 cards at max=2 would need (~15 days)
+    # were the ceiling not in effect. Sibling-free by construction so this
+    # isolates the horizon mechanism from separation repair.
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    python_id = col.decks.id("programming::coding::python")
+    _assign_deck_config(col, coding_id, "tight_horizon", 5)
+    _assign_deck_config(col, python_id, "loose_horizon", 50)
+    today = col.sched.today
+    start_day = today + 1
+
+    ids = []
+    for i in range(30):
+        card = _add_card(col, coding_id, due=start_day, ivl=10 + i)
+        ids.append(card.id)
+    col.close()
+
+    before = _snapshot_due_ivl(col_path, ids)
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--max",
+            "2",
+            "--set-earlier",
+            "--yes",
+            "--collection",
+            col_path,
+        ],
+        monkeypatch,
+    )
+    captured = capsys.readouterr()
+    combined = (captured.out + captured.err).lower()
+
+    assert exit_code != 0
+    assert "range ceiling" in combined
+
+    after = _snapshot_due_ivl(col_path, ids)
+    assert before == after
+
+
+def test_e2e_range_given_makes_horizon_ceiling_inert_allows_move_past_maxivl(
+    tmp_path, monkeypatch
+):
+    # Same tight maxIvl=5 preset as above, but --range 1-30 is given this
+    # time, so horizon_ceiling stays None and the range's own HI (30) is
+    # what governs -- proving --range does not additionally constrain via
+    # horizon_ceiling on top of its own window.
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    _assign_deck_config(col, coding_id, "tight_horizon", 5)
+    today = col.sched.today
+    start_day = today + 1
+
+    ids = []
+    for i in range(30):
+        card = _add_card(col, coding_id, due=start_day, ivl=10 + i)
+        ids.append(card.id)
+    col.close()
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--range",
+            "1-30",
+            "--max",
+            "2",
+            "--set-earlier",
+            "--yes",
+            "--collection",
+            col_path,
+        ],
+        monkeypatch,
+    )
+    assert exit_code == 0
+
+    col2 = Collection(col_path)
+    try:
+        max_final_day = max(col2.get_card(cid).due for cid in ids)
+    finally:
+        col2.close()
+
+    maxivl_ceiling = today + 5
+    assert max_final_day > maxivl_ceiling
+    assert max_final_day <= today + 30
+
+
+def test_e2e_active_separation_repair_via_set_earlier_stays_within_horizon_ceiling(
+    tmp_path, monkeypatch
+):
+    # min_separation (20) exceeds the default --max-shift (14)'s earlier-only
+    # reach, so an earlier-only repair cannot satisfy it; --set-earlier lets
+    # the repair relocate a sibling later instead, bounded by
+    # horizon_ceiling = today + maxIvl (60), since no --range is given.
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    _assign_deck_config(col, coding_id, "repair_horizon", 60)
+    today = col.sched.today
+    start_day = today + 1
+    same_due = start_day + 5
+
+    card1, card2 = _sibling_pair(col, coding_id, due=same_due, ivl=12)
+    card1_id, card2_id = card1.id, card2.id
+    ivl_before = {card1_id: 12, card2_id: 12}
+    col.close()
+
+    min_separation = 20
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--max",
+            "1000",
+            "--min-separation",
+            str(min_separation),
+            "--set-earlier",
+            "--yes",
+            "--collection",
+            col_path,
+        ],
+        monkeypatch,
+    )
+    assert exit_code == 0
+
+    col2 = Collection(col_path)
+    try:
+        due1 = col2.get_card(card1_id).due
+        due2 = col2.get_card(card2_id).due
+        ivl1 = col2.get_card(card1_id).ivl
+        ivl2 = col2.get_card(card2_id).ivl
+    finally:
+        col2.close()
+
+    assert abs(due1 - due2) >= min_separation
+    assert ivl1 == ivl_before[card1_id]
+    assert ivl2 == ivl_before[card2_id]
+    horizon_ceiling = today + 60
+    assert due1 <= horizon_ceiling
+    assert due2 <= horizon_ceiling
+
+
+def test_apply_moves_preserves_ivl_for_a_large_later_move(collection):
+    # Coverage gap: the existing preserves_ivl_and_sets_due test only covers
+    # small earlier moves (-7, -9 days). apply_moves itself is unchanged by
+    # this lane; this closes the gap for a large, later move (+194 days),
+    # mirroring the real reported bug shape the separation-repair mechanism
+    # now also produces.
+    col = collection
+    coding_id = col.decks.id("programming::coding")
+    today = col.sched.today
+    card = _add_card(col, coding_id, due=today + 6, ivl=91)
+
+    apply_moves(col, {card.id: today + 200}, today)
+
+    reloaded = col.get_card(card.id)
+    assert reloaded.ivl == 91
+    assert reloaded.due == today + 200
+
+
+def test_e2e_min_separation_infeasibility_message_mentions_set_earlier(
+    tmp_path, monkeypatch, capsys
+):
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    today = col.sched.today
+    start_day = today + 1
+    # max-shift 0 forbids any earlier movement and --set-earlier is omitted,
+    # so a 500-day separation requirement between same-day siblings is
+    # unreachable by any means.
+    _sibling_pair(col, coding_id, due=start_day + 5, ivl=10)
+    col.close()
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--max",
+            "1000",
+            "--min-separation",
+            "500",
+            "--max-shift",
+            "0",
+            "--yes",
+            "--collection",
+            col_path,
+        ],
+        monkeypatch,
+    )
+    captured = capsys.readouterr()
+    combined = (captured.out + captured.err).lower()
+
+    assert exit_code != 0
+    assert "min separation" in combined
+    assert "--set-earlier" in combined
+
+
+def test_e2e_extended_horizon_message_mentions_min_separation_alongside_max(
+    tmp_path, monkeypatch, capsys
+):
+    col_path = os.path.join(str(tmp_path), "test.anki2")
+    col = Collection(col_path)
+    coding_id = col.decks.id("programming::coding")
+    today = col.sched.today
+    start_day = today + 1
+    for i in range(50):
+        _add_card(col, coding_id, due=start_day, ivl=10 + i)
+    col.close()
+
+    exit_code = _run_cli(
+        [
+            "programming::coding",
+            "--max",
+            "16",
+            "--set-earlier",
+            "--yes",
+            "--collection",
+            col_path,
+        ],
+        monkeypatch,
+    )
+    out = capsys.readouterr().out
+
+    assert exit_code == 0
+    assert "LATER" in out
+    assert "--min-separation" in out
+    assert "--max" in out
+
+
+def _help_block(help_text, flag):
+    # format_help() repeats every flag in the usage synopsis before the
+    # "options:" section spells out its actual description, so the search
+    # must be anchored past that marker to land on the real help block.
+    options_text = help_text[help_text.index("\noptions:") :]
+    match = re.search(
+        rf"\n  {re.escape(flag)}\b.*?(?=\n  -|\Z)", options_text, re.DOTALL
+    )
+    assert match, f"{flag} not found in the options section of the help text"
+    return match.group(0)
+
+
+def test_help_documents_maxivl_cap_near_set_earlier():
+    help_text = build_parser().format_help()
+    block = _help_block(help_text, "--set-earlier")
+    assert "maxIvl" in block
+
+
+def test_help_documents_set_earlier_as_a_remedy_near_min_separation():
+    help_text = build_parser().format_help()
+    block = _help_block(help_text, "--min-separation")
+    assert "--set-earlier" in block
