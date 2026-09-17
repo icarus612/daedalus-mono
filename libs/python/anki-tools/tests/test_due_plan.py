@@ -1620,16 +1620,7 @@ def test_plan_rebalance_seed_reproducibility_with_siblings():
     assert run() == run()
 
 
-# ---------------------------------------------------------------------------
-# Lane 2, Packet 1 -- active separation repair + horizon ceiling.
-#
-# Written from this packet's own contract text alone (RunState.horizon_ceiling,
-# may_move_later_to's broadened refusal, _infeasible_reason's broadened
-# "range ceiling" branch, and the new _first_legal_earlier_day /
-# _first_legal_later_day / _repair_pair / apply_separation_repair_pass
-# helpers plus plan_rebalance's new horizon_ceiling parameter). The
-# implementation is never read.
-# ---------------------------------------------------------------------------
+# Lane 2, Packet 1: active separation repair + horizon ceiling.
 
 
 # --- may_move_later_to: horizon_ceiling

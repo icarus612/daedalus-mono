@@ -2322,20 +2322,16 @@ def test_seed_flag_produces_identical_final_days_across_separate_fresh_collectio
     assert _final_days_by_id(path_a, ids) == _final_days_by_id(path_b, ids)
 
 
-# ---------------------------------------------------------------------------
-# rebalance-min-separation lane 2 packet 2 -- horizon ceiling (maxIvl-derived)
-# and its interaction with --set-earlier / active separation repair.
-# ---------------------------------------------------------------------------
+# Lane 2 packet 2: horizon ceiling (maxIvl-derived) and its interaction
+# with --set-earlier / active separation repair.
 
 
 def test_e2e_set_earlier_capacity_overflow_blocked_by_horizon_ceiling_range_ceiling(
     tmp_path, monkeypatch, capsys
 ):
-    # No --range given, so horizon_ceiling = today + min(maxIvl) across the
-    # in-scope decks: maxIvl=5 on the parent caps the reverse pass to 5 days
-    # past today, far short of what 30 cards at max=2 would need (~15 days)
-    # were the ceiling not in effect. Sibling-free by construction so this
-    # isolates the horizon mechanism from separation repair.
+    # maxIvl=5 caps the reverse pass to 5 days past today, short of what
+    # 30 cards at max=2 need -- sibling-free, so this isolates the horizon
+    # mechanism from separation repair.
     col_path = os.path.join(str(tmp_path), "test.anki2")
     col = Collection(col_path)
     coding_id = col.decks.id("programming::coding")
@@ -2378,10 +2374,8 @@ def test_e2e_set_earlier_capacity_overflow_blocked_by_horizon_ceiling_range_ceil
 def test_e2e_range_given_makes_horizon_ceiling_inert_allows_move_past_maxivl(
     tmp_path, monkeypatch
 ):
-    # Same tight maxIvl=5 preset as above, but --range 1-30 is given this
-    # time, so horizon_ceiling stays None and the range's own HI (30) is
-    # what governs -- proving --range does not additionally constrain via
-    # horizon_ceiling on top of its own window.
+    # --range 1-30 given this time, so horizon_ceiling stays None and the
+    # range's own HI (30) is what governs, not the tight maxIvl=5 preset.
     col_path = os.path.join(str(tmp_path), "test.anki2")
     col = Collection(col_path)
     coding_id = col.decks.id("programming::coding")
@@ -2425,10 +2419,8 @@ def test_e2e_range_given_makes_horizon_ceiling_inert_allows_move_past_maxivl(
 def test_e2e_active_separation_repair_via_set_earlier_stays_within_horizon_ceiling(
     tmp_path, monkeypatch
 ):
-    # min_separation (20) exceeds the default --max-shift (14)'s earlier-only
-    # reach, so an earlier-only repair cannot satisfy it; --set-earlier lets
-    # the repair relocate a sibling later instead, bounded by
-    # horizon_ceiling = today + maxIvl (60), since no --range is given.
+    # 20-day separation exceeds default --max-shift (14)'s earlier-only
+    # reach, so --set-earlier is required to relocate a sibling later.
     col_path = os.path.join(str(tmp_path), "test.anki2")
     col = Collection(col_path)
     coding_id = col.decks.id("programming::coding")
@@ -2478,11 +2470,8 @@ def test_e2e_active_separation_repair_via_set_earlier_stays_within_horizon_ceili
 
 
 def test_apply_moves_preserves_ivl_for_a_large_later_move(collection):
-    # Coverage gap: the existing preserves_ivl_and_sets_due test only covers
-    # small earlier moves (-7, -9 days). apply_moves itself is unchanged by
-    # this lane; this closes the gap for a large, later move (+194 days),
-    # mirroring the real reported bug shape the separation-repair mechanism
-    # now also produces.
+    # Closes a coverage gap: preserves_ivl_and_sets_due only covers small
+    # earlier moves; this is the large, later move shape (+194 days).
     col = collection
     coding_id = col.decks.id("programming::coding")
     today = col.sched.today
@@ -2503,9 +2492,7 @@ def test_e2e_min_separation_infeasibility_message_mentions_set_earlier(
     coding_id = col.decks.id("programming::coding")
     today = col.sched.today
     start_day = today + 1
-    # max-shift 0 forbids any earlier movement and --set-earlier is omitted,
-    # so a 500-day separation requirement between same-day siblings is
-    # unreachable by any means.
+    # max-shift 0 and no --set-earlier: a 500-day separation is unreachable.
     _sibling_pair(col, coding_id, due=start_day + 5, ivl=10)
     col.close()
 
@@ -2565,9 +2552,7 @@ def test_e2e_extended_horizon_message_mentions_min_separation_alongside_max(
 
 
 def _help_block(help_text, flag):
-    # format_help() repeats every flag in the usage synopsis before the
-    # "options:" section spells out its actual description, so the search
-    # must be anchored past that marker to land on the real help block.
+    # Anchor past the usage synopsis, which repeats every flag with no description.
     options_text = help_text[help_text.index("\noptions:") :]
     match = re.search(
         rf"\n  {re.escape(flag)}\b.*?(?=\n  -|\Z)", options_text, re.DOTALL

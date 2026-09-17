@@ -757,16 +757,9 @@ def _check_post_conditions(
     for cid in state.moved:
         origin = state.origin_by_id[cid]
         new_day = current_day_by_id[cid]
-        # horizon_ceiling, unlike max_end_day, has no input-side validation
-        # (build_buckets never checks it): a pre-existing card's ORIGIN day
-        # may already sit beyond it for reasons unrelated to this run (a
-        # stale due date, a since-tightened maxIvl preset). The hard rule is
-        # that this tool never PUSHES a card later past the ceiling, not
-        # that no card may ever already be there -- so this only fires when
-        # a move actually carried a card later past it, never for an
-        # untouched card or one this run moved earlier (even if it's still
-        # beyond the ceiling afterward, unmoved-forward, that's an
-        # improvement or a no-op, never a new violation this run caused).
+        # Unlike max_end_day, horizon_ceiling has no input-side guard, so a
+        # pre-existing out-of-range card must not trip this -- only a move
+        # that itself carried a card later past the ceiling should.
         if (
             state.horizon_ceiling is not None
             and new_day > origin

@@ -201,12 +201,8 @@ def test_repair_fixes_every_violating_note_while_honouring_load_and_horizon(
     finally:
         col.close()
 
-    # Sensitivity to the actual bug: a byte-identical starting collection,
-    # run with the constraint disabled, proves load balancing alone (the
-    # only mechanism lane 1's placement-only behaviour could ever have
-    # relied on here, since every day already sits inside the band) never
-    # would have moved these pairs -- so the fix above is attributable to
-    # active repair, not to incidental capacity pressure.
+    # Sensitivity: a byte-identical copy, constraint disabled, proves load
+    # balancing alone never would have moved these pairs.
     control_exit_code = _run_cli(
         [
             "programming::coding",

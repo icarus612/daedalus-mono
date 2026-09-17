@@ -494,14 +494,9 @@ def main():
 
         separation_by_deck = build_separation_map(col, deck_ids, args.min_separation)
 
-        # Without --range there is otherwise no ceiling on how far later a
-        # card can be pushed (by --set-earlier's reverse pass, or now by
-        # separation repair). Use min() rather than each card's own deck's
-        # maxIvl: conservative when in-scope decks carry different maxIvl
-        # presets, since a uniform ceiling still guarantees no card is ever
-        # pushed past ITS OWN deck's configured maxIvl, even though a card
-        # in a looser-configured deck could in principle have tolerated a
-        # later date.
+        # No --range means no other ceiling on later moves. min() across
+        # decks is conservative but guarantees no card exceeds its OWN
+        # deck's maxIvl.
         horizon_ceiling = None
         if range_bounds is None:
             max_ivls = [
