@@ -401,8 +401,8 @@ def test_build_separation_map_minus_one_resolves_per_deck_from_its_own_preset(
 
     result = build_separation_map(col, [deck_a_id, deck_b_id], -1)
 
-    assert result[deck_a_id] == 200 // 2
-    assert result[deck_b_id] == 60 // 2
+    assert result[deck_a_id] == 50  # 200 // 4
+    assert result[deck_b_id] == 15  # 60 // 4
     assert result[deck_a_id] != result[deck_b_id]
 
 
@@ -2174,10 +2174,10 @@ def _sibling_pair(col, deck_id, *, due, ivl=10):
     return cards
 
 
-def test_e2e_default_min_separation_pushes_siblings_apart_by_the_decks_own_half_max_ivl(
+def test_e2e_default_min_separation_pushes_siblings_apart_by_decks_own_quarter_maxivl(
     tmp_path, monkeypatch
 ):
-    # Deck's own preset (maxIvl=20) resolves to separation 10 here;
+    # Deck's own preset (maxIvl=20) resolves to separation 5 here;
     # --max 1 against 2 same-day siblings supplies the needed pressure.
     col_path = os.path.join(str(tmp_path), "test.anki2")
     col = Collection(col_path)
@@ -2185,7 +2185,7 @@ def test_e2e_default_min_separation_pushes_siblings_apart_by_the_decks_own_half_
     _assign_deck_config(col, coding_id, "small_max_ivl", 20)
     today = col.sched.today
     start_day = today + 1
-    # same_due sits 15 days into the window: same_due - 10 (the needed
+    # same_due sits 15 days into the window: same_due - 5 (the needed
     # separation) still leaves room inside the default --max-shift 14.
     same_due = start_day + 15
     card1, card2 = _sibling_pair(col, coding_id, due=same_due)
@@ -2208,7 +2208,7 @@ def test_e2e_default_min_separation_pushes_siblings_apart_by_the_decks_own_half_
     # Confirms a move actually happened -- otherwise the check below would
     # trivially pass without the feature doing anything.
     assert not (due1 == same_due and due2 == same_due)
-    assert abs(due1 - due2) >= 10  # 20 // 2, the deck's own configured half-maxIvl
+    assert abs(due1 - due2) >= 5  # 20 // 4, the deck's own configured quarter-maxIvl
 
 
 def test_e2e_explicit_min_separation_zero_leaves_siblings_exactly_where_they_started(

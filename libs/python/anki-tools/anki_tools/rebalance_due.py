@@ -82,15 +82,15 @@ def build_separation_map(col, deck_ids, min_separation_arg: int) -> dict:
     """Map each in-scope deck id to its minimum sibling-card separation, in
     days. `min_separation_arg == 0` disables the constraint everywhere;
     a positive value applies uniformly; `-1` (the default) derives each
-    deck's own separation from half of its options preset's max review
-    interval (`rev.maxIvl`), so a deck reviewed less often tolerates a
+    deck's own separation from one quarter of its options preset's max
+    review interval (`rev.maxIvl`), so a deck reviewed less often tolerates a
     wider gap between its two cards."""
     if min_separation_arg == 0:
         return {did: 0 for did in deck_ids}
     if min_separation_arg > 0:
         return {did: min_separation_arg for did in deck_ids}
     return {
-        did: col.decks.config_dict_for_deck_id(did)["rev"]["maxIvl"] // 2
+        did: col.decks.config_dict_for_deck_id(did)["rev"]["maxIvl"] // 4
         for did in deck_ids
     }
 
@@ -317,7 +317,7 @@ def build_parser():
             "Minimum days between a note's two cards' scheduled dates -- "
             "they will never be placed closer together than this. Default "
             "-1 derives it per-card from its own deck's options preset "
-            "(half of --rev maxIvl). 0 disables the constraint. Any other "
+            "(one quarter of --rev maxIvl). 0 disables the constraint. Any other "
             "non-negative integer applies that many days uniformly to "
             "every card. Repairing an existing violation that needs more "
             "than --max-shift days of earlier movement requires "

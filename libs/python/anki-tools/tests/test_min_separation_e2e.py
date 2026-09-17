@@ -29,8 +29,8 @@ from anki_tools.rebalance_due import main
 
 PY_MAX_IVL = 730  # matches the real collection's "All Cards" preset
 GO_MAX_IVL = 200  # a second, smaller preset, resolved independently
-PY_SEPARATION = PY_MAX_IVL // 2  # 365
-GO_SEPARATION = GO_MAX_IVL // 2  # 100
+PY_SEPARATION = PY_MAX_IVL // 4  # 182
+GO_SEPARATION = GO_MAX_IVL // 4  # 50
 N_PY_NOTES = 300
 N_GO_NOTES = 200
 
@@ -74,7 +74,7 @@ def _build_realistic_collection(col_path):
 
     today = col.sched.today
     start_day = today + 1
-    base = start_day + 700  # ample room below for a 365-day jump + margin
+    base = start_day + 700  # ample room below for a 182-day jump + margin
 
     python_pairs = [
         _sibling_pair(col, python_id, due=base + i, ivl=10 + (i % 50))
