@@ -2410,21 +2410,20 @@ def test_e2e_two_builds_no_source_change_notetype_id_and_fields_byte_identical(
 
 
 # Builder-authored e2e, closing the actual data-loss trap this lane fixes.
-# `live-translations.json` is fixture data only, like `SOURCE_DOC_PATH`.
+# Proves round-trip fidelity against the document itself -- the document is
+# now the sole translation authority, so this needs no fixture outside the
+# repo (a prior version compared against a local capture of the live
+# collection; that comparison was a one-time migration check, run by hand
+# once, and cannot live on as a test -- see the coordinator's note).
 
-LIVE_TRANSLATIONS_PATH = (
-    Path(__file__).resolve().parents[4] / ".artifacts" / "live-translations.json"
-)
 
-
-def test_e2e_every_imported_translation_exactly_matches_live_collection_capture(
+def test_e2e_every_imported_translation_exactly_matches_source_document(
     tmp_path, collection_snapshot_copy
 ):
-    """Every imported note's `Translation` matches the live-collection
-    capture byte-for-byte, all 152, plus the да-dedup and с/со HTML checks.
+    """Every imported note's `Translation` matches what `parse_word_list`
+    says that same row's document text is, byte-for-byte, all 152, plus
+    the да-dedup and с/со HTML checks.
     """
-    import json
-
     from anki.import_export_pb2 import (
         ImportAnkiPackageOptions,
         ImportAnkiPackageRequest,
@@ -2432,13 +2431,15 @@ def test_e2e_every_imported_translation_exactly_matches_live_collection_capture(
 
     from anki_tools.immutable_words_plan import parse_word_list
 
-    with open(LIVE_TRANSLATIONS_PATH, encoding="utf-8") as fh:
-        live_translations = json.load(fh)
-    assert len(live_translations) == 152  # positive control: not a trivial empty dict
-
     with open(SOURCE_DOC_PATH, encoding="utf-8") as fh:
         rows = parse_word_list(fh.read())
     assert len(rows) == 152
+
+    expected_by_key = {
+        f"{row.russian}||{subdeck_name(row.pos).rsplit('::', 1)[-1]}": row.english
+        for row in rows
+    }
+    assert len(expected_by_key) == 152  # no (russian, deck) key collided
 
     build_col = Collection(os.path.join(str(tmp_path), "build.anki2"))
     source_col = Collection(collection_snapshot_copy)
@@ -2448,7 +2449,7 @@ def test_e2e_every_imported_translation_exactly_matches_live_collection_capture(
         source_col.close()
     build_deck_tree(build_col, rows, note_type)
 
-    out_path = os.path.join(str(tmp_path), "l1-e2e-live-match.apkg")
+    out_path = os.path.join(str(tmp_path), "l1-e2e-doc-match.apkg")
     export_package(build_col, DECK_ROOT, out_path)
     build_col.close()
 
@@ -2480,18 +2481,18 @@ def test_e2e_every_imported_translation_exactly_matches_live_collection_capture(
             ).rsplit("::", 1)[-1]
             key = f"{note['Russian']}||{deck_leaf}"
             seen_keys.add(key)
-            expected = live_translations.get(key)
+            expected = expected_by_key.get(key)
             if expected is None:
-                mismatches.append((key, "no-live-entry", note["Translation"]))
+                mismatches.append((key, "no-document-row", note["Translation"]))
             elif note["Translation"] != expected:
                 mismatches.append((key, expected, note["Translation"]))
 
         assert not mismatches, (
-            f"{len(mismatches)} imported note(s) disagree with the real "
-            f"collection capture: {mismatches[:10]}"
+            f"{len(mismatches)} imported note(s) disagree with the source "
+            f"document: {mismatches[:10]}"
         )
         # Full set, not a sample.
-        assert seen_keys == set(live_translations.keys())
+        assert seen_keys == set(expected_by_key.keys())
 
         total_notes = 0
         total_cards = 0
