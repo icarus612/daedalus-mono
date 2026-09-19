@@ -43,13 +43,14 @@ def sanitize_word_slug(word: str) -> str:
 
     No hash suffix, by design (the user asked for `[word]_[slot].mp3`, not
     an opaque hash) -- but that is safe ONLY because it has been VERIFIED
-    collision-free across the real 152-row source word list, including the
+    collision-free across the real 151-row source word list, including the
     genuinely awkward rows ("в / во", "ни... ни...", "-то", "несмотря на то,
     что", ...): see `test_slug_collision_free_across_real_source_word_list`.
-    The one repeated slug that DOES occur ("да", appearing twice with
-    identical text under two different parts of speech) is a legitimate
-    duplicate -- same word, same audio, correctly sharing one file -- not a
-    collision between two different words.
+    Every slug in the current list is distinct -- but the sanitizer must
+    still treat two IDENTICAL Russian strings appearing under different
+    parts of speech as a legitimate shared file, not a collision, should
+    such a case ever recur (it has before, and does not today only because
+    a duplicate note was removed from the source document).
 
     If a future word list ever produces a genuine collision (two DIFFERENT
     strings sanitizing to the same slug), that must be reported and

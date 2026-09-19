@@ -13,7 +13,7 @@ Prepositions never change themselves, though they dictate the case of the noun t
 |---|---|---|
 | 1 | в / во | in / at (where)<br>into (where/what) |
 | 2 | на | on / at (where)<br>onto (where/what) |
-| 3 | с / со | with (whom/what)<br>from / off of (where/what) |
+| 3 | с / со | with (whom/what)<br>from / off of (where/what)<div>since (when)</div> |
 | 4 | по | along / around (where)<br>according to (what/whom) |
 | 5 | к / ко | to, toward (whom/what/where) |
 | 6 | из | from (where)<br>out of (what/where) |
@@ -60,15 +60,15 @@ Used to connect clauses, sentences, or concepts.
 
 | Rank | Russian | English |
 |---|---|---|
-| 1 | и | and |
-| 2 | что | that, what |
+| 1 | и | and (standard) |
+| 2 | что | what, that |
 | 3 | а | but, and (when contrasting) |
 | 4 | но | but (direct contrast) |
-| 5 | как | as, like, how |
+| 5 | как | how, like, as |
 | 6 | если | if |
 | 7 | или | or |
 | 8 | чтобы / чтоб | so that, in order to |
-| 9 | когда | when |
+| 9 | когда | when, while, as |
 | 10 | хотя | although |
 | 11 | потому что | because |
 | 12 | так как | since, as |
@@ -79,32 +79,31 @@ Used to connect clauses, sentences, or concepts.
 | 17 | зато | but on the other hand |
 | 18 | тоже / также | also, too |
 | 19 | либо | either / or |
-| 20 | да | and, but |
-| 21 | пока | while, until |
-| 22 | чем | than |
-| 23 | ни... ни... | neither... nor... |
-| 24 | то... то... | now... now... (alternating) |
-| 25 | как только | as soon as |
-| 26 | несмотря на то, что | despite the fact that |
-| 27 | для того, чтобы | in order to |
-| 28 | с тех пор, как | since (the time that) |
-| 29 | до того, как | before (doing something) |
-| 30 | перед тем, как | just before (doing something) |
-| 31 | оттого что | because (less common) |
-| 32 | причём | moreover, and what's more |
-| 33 | притом | besides |
-| 34 | как будто | as if, as though |
-| 35 | пускай | even though, let |
+| 20 | пока | while, until |
+| 21 | чем | than |
+| 22 | ни... ни... | neither... nor... |
+| 23 | то... то... | now... now... (alternating) |
+| 24 | как только | as soon as |
+| 25 | несмотря на то, что | despite the fact that |
+| 26 | для того, чтобы | in order to |
+| 27 | с тех пор, как | since (the time that) |
+| 28 | до того, как | before (doing something) |
+| 29 | перед тем, как | just before (doing something) |
+| 30 | оттого что | because (less common) |
+| 31 | причём | moreover, and what's more |
+| 32 | притом | besides |
+| 33 | как будто | as if, as though |
+| 34 | пускай | even though, let |
 
 ### Particles (Частицы)
 Short words that add grammatical function, emotion, or tone to speech.
 
 | Rank | Russian | English |
 |---|---|---|
-| 1 | не | not |
-| 2 | же | (adds strong emphasis) |
-| 3 | бы | (forms the conditional/subjunctive mood) |
-| 4 | вот | here is, there is (pointing something out) |
+| 1 | не | not, don’t |
+| 2 | же | but, then, after all (emphasis — Что же делать? "But what to do?") |
+| 3 | бы | would (forms the conditional) |
+| 4 | вот | here/there is (pointing something out) |
 | 5 | только | only |
 | 6 | даже | even |
 | 7 | ли | whether, if (turns a statement into a question) |
@@ -124,13 +123,13 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 21 | нет | no |
 | 22 | лишь | only, merely |
 | 23 | всё | still, constantly |
-| 24 | -то | (suffix to add vagueness, e.g., кто-то = someone) |
-| 25 | -ка | (suffix to soften a command, e.g., скажи-ка = tell me) |
+| 24 | -то | some- (indefinite: кто-то "someone", где-то "somewhere"; contrast -нибудь = any-) |
+| 25 | -ка | go on, just (softens an imperative: скажи-ка "go on, tell me"; informal) |
 | 26 | таки | after all, nevertheless (often hyphenated: всё-таки) |
 | 27 | пожалуй | perhaps, I suppose |
-| 28 | будто | as if |
-| 29 | мол | (indicates reported speech/quote) |
-| 30 | дескать | (indicates reported speech/quote) |
+| 28 | будто | as if, as though (often implies doubt) |
+| 29 | мол | supposedly, "he said" (marks reported speech; colloquial) |
+| 30 | дескать | allegedly, "so they claim" (marks someone else's words; more formal than мол) |
 | 31 | во | wow, look at that |
 | 32 | ну и | what a... (emphasis, e.g., ну и день = what a day) |
 

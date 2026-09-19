@@ -44,6 +44,7 @@ from anki_tools.immutable_words_plan import (
     FIELD_NAMES,
     POS_FIELD_VALUE,
     SUBDECK_LEAVES,
+    TRANSLATION_OVERRIDES,
     SourceDocumentError,
     WordRow,
     _base91,
@@ -66,11 +67,11 @@ REAL_SOURCE_PATH = (
 # The four sections in document order, with the exact counts the real
 # document is known to contain AFTER the l3 split/transform pass (contract
 # l3.md section 3, "Acceptance numbers for this section"): raw parse is
-# 152 rows / 43-35-32-42, but parse_word_list applies _apply_row_transforms
+# 151 rows / 43-34-32-42, but parse_word_list applies _apply_row_transforms
 # before returning, so the counts below are the POST-transform ones.
 EXPECTED_SECTION_COUNTS = [
     ("Prepositions", 43),
-    ("Conjunctions", 36),
+    ("Conjunctions", 35),
     ("Particles", 32),
     ("Indeclinable Nouns", 42),
 ]
@@ -102,13 +103,13 @@ MULTI_FORM_ROWS = [
     ("Prepositions", 5, "к / ко"),
     ("Prepositions", 10, "о / об"),
     ("Conjunctions", 8, "чтобы / чтоб"),
-    ("Conjunctions", 24, "ни... ни..."),
-    ("Conjunctions", 25, "то... то..."),
-    ("Conjunctions", 27, "несмотря на то, что"),
-    ("Conjunctions", 28, "для того, чтобы"),
-    ("Conjunctions", 29, "с тех пор, как"),
-    ("Conjunctions", 30, "до того, как"),
-    ("Conjunctions", 31, "перед тем, как"),
+    ("Conjunctions", 23, "ни... ни..."),
+    ("Conjunctions", 24, "то... то..."),
+    ("Conjunctions", 26, "несмотря на то, что"),
+    ("Conjunctions", 27, "для того, чтобы"),
+    ("Conjunctions", 28, "с тех пор, как"),
+    ("Conjunctions", 29, "до того, как"),
+    ("Conjunctions", 30, "перед тем, как"),
     ("Particles", 16, "пусть / пускай"),
     ("Particles", 24, "-то"),
     ("Particles", 25, "-ка"),
@@ -192,7 +193,7 @@ def _remove_section(text, heading_name):
 
 
 def test_parse_real_document_total_row_count(real_rows):
-    assert len(real_rows) == EXPECTED_TOTAL_ROWS == 153
+    assert len(real_rows) == EXPECTED_TOTAL_ROWS == 152
 
 
 def test_parse_real_document_section_order_counts_and_ranks(real_rows):
@@ -237,7 +238,7 @@ def test_parse_real_document_part_two_produces_no_spurious_rows(real_rows):
     AwesomeTTS / HyperTTS / add-on-install subsections) has no tables and
     must not contribute rows or raise.
     """
-    assert len(real_rows) == 153
+    assert len(real_rows) == 152
     assert all(row.pos in SUBDECK_LEAVES for row in real_rows)
 
 
@@ -906,13 +907,15 @@ def test_original_combined_split_strings_no_longer_appear(real_rows):
     assert "тоже / также" not in russians
 
 
-def test_budto_row_overridden_translation_not_bare_as_if(real_rows):
+def test_budto_row_translation_not_bare_as_if(real_rows):
+    # The fuller gloss now lives directly in the document's own English
+    # column (no code-side override) -- see lane l1 contract sections A2/A3.
     matches = [
         row for row in real_rows if row.pos == "Particles" and row.russian == "будто"
     ]
     assert len(matches) == 1
     assert matches[0].english == BUDTO_TRANSLATION
-    # Not the source document's own bare gloss.
+    # Not the source document's old, stale bare gloss.
     assert matches[0].english != "as if"
 
 
@@ -957,16 +960,27 @@ def _parse_raw_section_glosses(text):
     return result
 
 
-def test_exactly_three_rows_have_an_overridden_translation(real_source_text, real_rows):
-    """Aggregate check restated from l3.md section 6b: exactly the -то, -ка,
-    and budto rows have a translation that differs from what parse_word_list
-    would have produced pre-transform for the same `.russian` text. The two
+def test_translation_overrides_table_is_empty_and_no_row_is_overridden(
+    real_source_text, real_rows
+):
+    """Document is sole authority; TRANSLATION_OVERRIDES must stay empty or
+    stay in permanent agreement with the document -- never diverge from it.
+
+    After lane l1's A2/A3 edits, the -то/-ка/будто values that used to come
+    from TRANSLATION_OVERRIDES now live directly in the document's own
+    English column, and TRANSLATION_OVERRIDES itself is empty. So no row's
+    final `.english` should differ from what parse_word_list would have
+    produced pre-transform for the same `.russian` text. The two
     ROW_SPLITS-created rows (словно, тоже, также) are excluded from this
     count -- they have no pre-transform row sharing their exact `.russian`
     text (their pre-image was the combined "словно / будто" / "тоже / также"
     string, not their own text), so a pre/post comparison keyed on `.russian`
-    is not meaningful for them.
+    is not meaningful for them. This is the test that would catch a future
+    re-introduction of the exact defect this lane fixes (a value in both a
+    code override and the document, disagreeing).
     """
+    assert TRANSLATION_OVERRIDES == {}
+
     raw_glosses = _parse_raw_section_glosses(real_source_text)
 
     split_created_russian = {"словно", "тоже", "также"}
@@ -982,8 +996,7 @@ def test_exactly_three_rows_have_an_overridden_translation(real_source_text, rea
         if row.english != raw_english:
             overridden.append(row.russian)
 
-    assert set(overridden) == {"-то", "-ка", "будто"}
-    assert len(overridden) == 3
+    assert overridden == []
 
 
 @pytest.mark.parametrize(

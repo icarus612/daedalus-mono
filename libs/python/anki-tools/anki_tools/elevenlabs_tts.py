@@ -54,14 +54,14 @@ word/voice lists upstream were constructed.
 
 Filenames are `<word>_<slot>.mp3` (e.g. `около_f1.mp3`) -- readable, no
 hash suffix. This is safe ONLY because it has been verified collision-free
-against the real 152-row source word list (see
-`test_slug_collision_free_across_real_source_word_list`); the one
-"collision" that DOES occur ("да", appearing twice with identical text
-under two different parts of speech) is a genuine duplicate, not a
-collision, and correctly shares one file. If the source list ever grows to
-include two genuinely DIFFERENT strings that sanitize to the same slug,
-that must be reported and resolved explicitly -- never silently patched by
-re-adding a hash to every filename.
+against the real 151-row source word list (see
+`test_slug_collision_free_across_real_source_word_list`); every slug in
+the current list is distinct. If two IDENTICAL Russian strings ever again
+appear under different parts of speech, that is a legitimate duplicate
+that should correctly share one file, not an error -- but if the source
+list ever grows to include two genuinely DIFFERENT strings that sanitize
+to the same slug, that must be reported and resolved explicitly -- never
+silently patched by re-adding a hash to every filename.
 """
 
 import argparse

@@ -17,10 +17,9 @@ Voice roster (paid plan, four slots + one retired, non-default voice):
 f1 Alisa, f2 Elena Gromova, m1 Mishka Yaponcik, m2 Nester Surovy, plus
 f0 Elen Kuragina (defined, never default). Filenames are
 `<word-slug>_<slot>.mp3`, readable and hash-free -- verified collision-free
-against the real 152-row source word list below, distinguishing the one
-legitimate duplicate ("да", same text twice) from a genuine collision
-(two DIFFERENT words sanitizing to the same slug, which must never happen
-silently).
+against the real 151-row raw source word list below; every slug in the
+current list is distinct (a genuine collision -- two DIFFERENT words
+sanitizing to the same slug -- must never happen silently).
 
 Every synthesis call sends ElevenLabs' `voice_settings` (`stability`,
 `similarity_boost`, both 0.0-1.0, default 0.85/0.85) -- validated to RAISE,
@@ -269,7 +268,7 @@ def test_all_four_roster_voices_produce_distinct_filenames_for_the_same_word():
 # ---------------------------------------------------------------------------
 # THE hazard the coordinator asked to be checked, not assumed: dropping the
 # hash suffix must not silently reintroduce collisions across the REAL
-# 152-row source word list.
+# 151-row raw source word list.
 # ---------------------------------------------------------------------------
 
 # Computed relative to this test file, a committed repo fixture:
@@ -284,11 +283,11 @@ SOURCE_WORD_LIST_PATH = (
 
 
 def test_slug_collision_free_across_real_source_word_list():
-    """Prove, don't assume: run every word in the real 152-row source list
-    through `sanitize_word_slug` and assert the results are pairwise
-    unique, with exactly one KNOWN, LEGITIMATE exception -- "да" appears
-    twice (Conjunctions #20, Particles #20) with IDENTICAL text, so it
-    correctly shares one slug/file. Any OTHER repeated slug would mean two
+    """Prove, don't assume: run every word in the real 151-row raw source
+    list through `sanitize_word_slug` and assert the results are pairwise
+    unique -- there is no known exception any more. After this lane removed
+    the duplicate "да" row from the document (Conjunctions #20; "да" now
+    appears exactly once, under Particles), any repeated slug would mean two
     DIFFERENT words silently overwriting each other's audio, which this
     test must catch and report, never paper over by re-adding a hash.
     """
@@ -303,8 +302,8 @@ def test_slug_collision_free_across_real_source_word_list():
     # A positive control on the parse itself: a bare zero (or a suspiciously
     # low count from a regex that stopped matching) would make every
     # assertion below trivially true for the wrong reason.
-    assert len(words) == 152, (
-        f"expected 152 parsed rows from the source word list, got "
+    assert len(words) == 151, (
+        f"expected 151 parsed rows from the source word list, got "
         f"{len(words)} -- the parser regex may no longer match the table "
         f"format; investigate before trusting this test's result."
     )
@@ -315,20 +314,13 @@ def test_slug_collision_free_across_real_source_word_list():
         slug_to_words.setdefault(slug, []).append(word)
     collisions = {slug: ws for slug, ws in slug_to_words.items() if len(ws) > 1}
 
-    da_slug = sanitize_word_slug("да")
-    assert list(collisions.keys()) == [da_slug], (
-        f"expected exactly one repeated slug (the legitimate 'да' "
-        f"duplicate); found instead: {collisions}"
-    )
-    da_words = collisions[da_slug]
-    assert da_words == ["да", "да"], (
-        f"the one expected duplicate slug must come from two IDENTICAL "
-        f"occurrences of 'да' (same word, same audio) -- got {da_words}, "
-        f"which would mean a GENUINE collision between different words."
+    assert collisions == {}, (
+        f"expected zero repeated slugs after the duplicate 'да' row was "
+        f"removed from the source document; found instead: {collisions}"
     )
 
-    # The headline number, asserted on the actual count -- 152 rows, one
-    # legitimate duplicate pair, so 151 distinct slugs.
+    # The headline number, asserted on the actual count -- 151 rows, zero
+    # duplicates, so 151 distinct slugs.
     assert len(set(slugs)) == 151
 
     # The specific hazard named in the request: "/" cannot appear in a

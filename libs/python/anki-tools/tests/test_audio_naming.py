@@ -237,7 +237,7 @@ def real_rows(real_source_text):
 
 
 # ---------------------------------------------------------------------------
-# THE full 153x4 agreement test -- the single most important test in this
+# THE full 152x4 agreement test -- the single most important test in this
 # lane: the deck builder's predicted Audio field and the TTS tool's own
 # build_filename must agree byte-for-byte, for every row and every slot, on
 # the full real document, never a sample.
@@ -247,7 +247,7 @@ def real_rows(real_source_text):
 def test_deck_audio_field_agrees_with_tts_build_filename_for_every_row_and_slot(
     real_rows,
 ):
-    assert len(real_rows) == 153  # positive control: don't trivially pass on 0 rows
+    assert len(real_rows) == 152  # positive control: don't trivially pass on 0 rows
 
     audio_index = FIELD_NAMES.index("Audio")
     slot_to_voice = {voice.slot: voice for voice in VOICES}
@@ -273,7 +273,7 @@ def test_deck_audio_field_agrees_with_tts_build_filename_for_every_row_and_slot(
             )
             checked += 1
 
-    assert checked == 153 * 4 == 612
+    assert checked == 152 * 4 == 608
 
 
 # ---------------------------------------------------------------------------
@@ -281,8 +281,12 @@ def test_deck_audio_field_agrees_with_tts_build_filename_for_every_row_and_slot(
 # ---------------------------------------------------------------------------
 
 
-def test_153_rows_152_distinct_slugs_sole_repeat_is_da(real_rows):
-    assert len(real_rows) == 153
+def test_152_rows_152_distinct_slugs_no_collisions(real_rows):
+    """After this lane removed the duplicate 'да' row (Conjunctions), the
+    real document has exactly one 'да' row (Particles) -- so the sanitized
+    slug set has zero repeats, not one legitimate 'да' duplicate.
+    """
+    assert len(real_rows) == 152
 
     slugs = [sanitize_word_slug(row.russian) for row in real_rows]
     slug_to_words = {}
@@ -292,17 +296,13 @@ def test_153_rows_152_distinct_slugs_sole_repeat_is_da(real_rows):
         slug: words for slug, words in slug_to_words.items() if len(words) > 1
     }
 
-    da_slug = sanitize_word_slug("да")
-    assert list(collisions.keys()) == [da_slug], (
-        f"expected exactly one repeated slug (the legitimate 'да' "
-        f"duplicate); found instead: {collisions}"
-    )
-    assert collisions[da_slug] == ["да", "да"]
+    assert collisions == {}
 
     assert len(set(slugs)) == 152
 
     # The split rule was corrected specifically to avoid manufacturing a
     # "будто" duplicate -- assert it explicitly is not one.
+    da_slug = sanitize_word_slug("да")
     budto_slug = sanitize_word_slug("будто")
     assert budto_slug != da_slug
     assert len(slug_to_words.get(budto_slug, [])) == 1
