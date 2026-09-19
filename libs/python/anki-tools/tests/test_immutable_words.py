@@ -292,9 +292,8 @@ def _template_sides(note_type):
 
 
 def _fixture_rows():
-    """7 WordRows across all 4 decks, uneven counts, including the
-    real document's "two da notes, both intended" case: one Conjunctions
-    row and one Particles row sharing identical .russian text.
+    """7 WordRows across all 4 decks, uneven counts, including two rows
+    (one Conjunctions, one Particles) sharing identical Russian text "да".
     """
     return [
         WordRow(pos="Prepositions", rank=1, russian="в", english="in"),
@@ -608,8 +607,8 @@ def test_build_deck_tree_duplicate_russian_text_both_notes_exist_in_own_decks(
     particles_da = build_col.find_notes('deck:"%s" Russian:да' % particles_deck)
 
     # Both notes exist, one per deck, and they are not the same note --
-    # this is the real document's "da appears once under Conjunctions and
-    # once under Particles" case: two intended notes, not a duplicate bug.
+    # two intended notes, not a duplicate bug (a synthetic fixture; the
+    # real document itself has only one "да" row now).
     assert len(conjunctions_da) == 1
     assert len(particles_da) == 1
     assert conjunctions_da[0] != particles_da[0]
@@ -1194,19 +1193,12 @@ def test_main_audio_dir_export_measurably_larger_than_without(
 # builder writes this directly, after Packet B went green, per the lane
 # contract's "3.1 is the load-bearing evidence" requirement). Full flow:
 # parse the REAL source document -> clone_note_type against a copy of the
-# REAL snapshot -> build_deck_tree all 153 rows -> export_package -> import
+# REAL snapshot -> build_deck_tree all 152 rows -> export_package -> import
 # the resulting .apkg into a brand-new collection that never existed before
 # -> assert against the IMPORTED collection's own decks/notes/models, never
 # against this test's own in-memory rows/build_col state.
 #
-# Updated by lane 3 (integration, `.artifacts/contracts/l3.md`): the source
-# document still has 152 raw rows, but `parse_word_list` now applies a
-# table-driven split/override transform (see `ROW_SPLITS`/
-# `TRANSLATION_OVERRIDES` in `immutable_words_plan.py`) that yields 153
-# final rows (43/36/32/42 by section), and `build_deck_tree` -> `WordRow.
-# fields()` now populates every note's Audio field with four PREDICTED
-# filenames instead of leaving it empty -- lane 3's central "deck before
-# audio" claim.
+# Lane 3's transform turns 151 raw rows into 152 final rows (43/35/32/42).
 # ---------------------------------------------------------------------------
 
 SOURCE_DOC_PATH = (
@@ -1222,7 +1214,7 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
 ):
     """The plan's load-bearing acceptance evidence.
 
-    Builds the real 153-row .apkg from the real source document and a copy
+    Builds the real 152-row .apkg from the real source document and a copy
     of the real note-type snapshot, imports it into a fresh empty
     collection, and asserts entirely against what THAT import produced.
 
@@ -1241,11 +1233,11 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
     with open(SOURCE_DOC_PATH, encoding="utf-8") as fh:
         source_text = fh.read()
     rows = parse_word_list(source_text)
-    assert len(rows) == 153
+    assert len(rows) == 152
     expected_counts = counts_by_deck(rows)
     assert expected_counts == {
         subdeck_name("Prepositions"): 43,
-        subdeck_name("Conjunctions"): 36,
+        subdeck_name("Conjunctions"): 35,
         subdeck_name("Particles"): 32,
         subdeck_name("Indeclinable Nouns"): 42,
     }
@@ -1329,8 +1321,8 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
             assert len(note_ids) == expected_counts[name], name
             total_notes += len(note_ids)
             total_cards += len(card_ids)
-        assert total_notes == 153
-        assert total_cards == 306
+        assert total_notes == 152
+        assert total_cards == 304
 
         # Note type present, Part of Speech rendered nowhere.
         imported_note_type = fresh_col.models.by_name(NEW_NOTE_TYPE_NAME)
@@ -1374,7 +1366,7 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
         assert budto_note["Translation"] == "as if, as though (often implies doubt)"
 
         # Audio field: the central "deck-before-audio" claim, on the
-        # IMPORTED collection -- every one of the 153 notes carries its
+        # IMPORTED collection -- every one of the 152 notes carries its
         # four predicted filenames, byte-for-byte identical to what
         # build_col had before export (`russian_to_audio`), and to what
         # `elevenlabs_tts.build_filename` predicts for the same (word,
@@ -1382,7 +1374,7 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
         # this machine -- the deck exports/imports cleanly on field-level
         # filename references alone.
         all_note_ids = fresh_col.find_notes(f'note:"{NEW_NOTE_TYPE_NAME}"')
-        assert len(all_note_ids) == 153
+        assert len(all_note_ids) == 152
         mismatches = []
         for note_id in all_note_ids:
             note = fresh_col.get_note(note_id)
@@ -1419,8 +1411,8 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
 # ---------------------------------------------------------------------------
 # Lane l8 -- builder-authored e2e: deterministic note GUIDs, verified against
 # the ACTUAL live defect (l8 dispatch): the user rebuilt the package from an
-# updated source document and re-imported it, expecting the 153 notes to be
-# updated in place. Instead Anki added 153 NEW notes (10,664 -> 10,817),
+# updated source document and re-imported it, expecting the 152 notes to be
+# updated in place. Instead Anki added 152 NEW notes (10,664 -> 10,817),
 # duplicating the entire deck -- because every note got a fresh random GUID
 # on every build, so Anki's GUID-based import matching never found an
 # existing note to update.
@@ -1428,7 +1420,7 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
 # NOT blind, NOT a contract test: written by the builder against the
 # DISPATCH'S acceptance criteria (never the l8 packet contract), after the
 # l8 packet (guid_for_row, WordRow.guid, build_deck_tree's note.guid wiring)
-# went green above. Works against the REAL 153-row source document, not a
+# went green above. Works against the REAL 152-row source document, not a
 # small synthetic fixture -- the l8 packet's own tests already prove the
 # GUID logic correct in isolation; this proves the defect the user actually
 # hit is gone, end to end.
@@ -1478,13 +1470,13 @@ def test_e2e_guid_determinism_real_document_full_set(
     """Dispatch verification bar, item 1: "build the package twice from the
     same source; every note's GUID is identical between builds. Assert on
     the full set, not a sample." Also covers item 3 (no collision) at real
-    scale: the two да notes (Conjunctions, Particles) get different GUIDs.
+    scale: every note's GUID is unique across the full 152-row set.
     """
     from anki_tools.immutable_words_plan import parse_word_list
 
     with open(SOURCE_DOC_PATH, encoding="utf-8") as fh:
         rows = parse_word_list(fh.read())
-    assert len(rows) == 153
+    assert len(rows) == 152
 
     _, guids_first = _build_real_package_with_guids(
         rows, collection_snapshot_copy, tmp_path, "determinism-a.apkg"
@@ -1493,21 +1485,19 @@ def test_e2e_guid_determinism_real_document_full_set(
         rows, collection_snapshot_copy, tmp_path, "determinism-b.apkg"
     )
 
-    # Full set, not a sample: same 153 (pos, russian) keys both times.
-    assert len(guids_first) == 153
+    # Full set, not a sample: same 152 (pos, russian) keys both times.
+    assert len(guids_first) == 152
     assert set(guids_first) == set(guids_second)
 
     mismatches = [key for key in guids_first if guids_first[key] != guids_second[key]]
     assert mismatches == [], (
-        f"{len(mismatches)} of 153 notes got a DIFFERENT guid on the "
+        f"{len(mismatches)} of 152 notes got a DIFFERENT guid on the "
         f"second build (should be impossible -- guid_for_row is a pure "
         f"function of (russian, pos)): {mismatches[:5]}"
     )
 
-    # Item 3: no collision between the two real да rows.
-    conjunctions_da_guid = guids_first[("Conjunctions", "да")]
-    particles_da_guid = guids_first[("Particles", "да")]
-    assert conjunctions_da_guid != particles_da_guid
+    # Item 3: no GUID collisions anywhere across the real, full 152-row set.
+    assert len(set(guids_first.values())) == len(guids_first)
 
 
 def test_e2e_rebuild_after_translation_edit_reimports_in_place_not_duplicated(
@@ -1516,10 +1506,10 @@ def test_e2e_rebuild_after_translation_edit_reimports_in_place_not_duplicated(
     """Dispatch verification bar, item 2 -- THE load-bearing evidence for
     this lane, reproducing then proving fixed the exact live defect:
 
-        fresh empty collection -> import package -> assert 153 notes
+        fresh empty collection -> import package -> assert 152 notes
         change a Translation in the source, rebuild
         import the *rebuilt* package into that *same* collection
-        assert still 153 notes (not 306), and the changed Translation is
+        assert still 152 notes (not 304), and the changed Translation is
         now updated on the existing note
 
     The edited row is a real Prepositions row ("в / во"); the new Translation
@@ -1545,7 +1535,7 @@ def test_e2e_rebuild_after_translation_edit_reimports_in_place_not_duplicated(
 
     with open(SOURCE_DOC_PATH, encoding="utf-8") as fh:
         rows_v1 = parse_word_list(fh.read())
-    assert len(rows_v1) == 153
+    assert len(rows_v1) == 152
 
     edited_index = next(
         i
@@ -1603,7 +1593,7 @@ def test_e2e_rebuild_after_translation_edit_reimports_in_place_not_duplicated(
         fresh_col.import_anki_package(
             ImportAnkiPackageRequest(package_path=out1, options=import_options)
         )
-        assert fresh_col.note_count() == 153
+        assert fresh_col.note_count() == 152
 
         # The exact live scenario: import the REBUILT package into the
         # SAME collection.
@@ -1611,12 +1601,12 @@ def test_e2e_rebuild_after_translation_edit_reimports_in_place_not_duplicated(
             ImportAnkiPackageRequest(package_path=out2, options=import_options)
         )
 
-        # The defect this lane fixes: must still be 153, never 306.
-        assert fresh_col.note_count() == 153, (
-            f"expected 153 notes after re-importing the rebuilt package, "
+        # The defect this lane fixes: must still be 152, never 304.
+        assert fresh_col.note_count() == 152, (
+            f"expected 152 notes after re-importing the rebuilt package, "
             f"got {fresh_col.note_count()} -- this is exactly the live "
             f"defect (10,664 -> 10,817) reproduced at this lane's own "
-            f"153-note scale"
+            f"152-note scale"
         )
 
         edited_row = rows_v2[edited_index]
@@ -1638,7 +1628,7 @@ def test_e2e_rebuild_after_translation_edit_reimports_in_place_not_duplicated(
 
         # Every OTHER note (unchanged rows) must be untouched and still
         # present -- the fix must not disturb notes it had no reason to.
-        assert fresh_col.note_count() == len(rows_v2) == 153
+        assert fresh_col.note_count() == len(rows_v2) == 152
     finally:
         fresh_col.close()
 
@@ -1684,7 +1674,7 @@ def test_e2e_real_media_is_marked_used_not_merely_present(
 ):
     """The lane's central claim, proven with Anki's own scanner.
 
-    Builds the real 153-note deck, attaches the real 608 mp3s via
+    Builds the real 152-note deck, attaches the real 608 mp3s via
     `attach_media`, and calls `build_col.media.check()` -- the exact API
     Tools -> Check Media uses -- BEFORE ever exporting. Asserts zero unused
     and zero missing.
@@ -1700,7 +1690,7 @@ def test_e2e_real_media_is_marked_used_not_merely_present(
 
     with open(SOURCE_DOC_PATH, encoding="utf-8") as fh:
         rows = parse_word_list(fh.read())
-    assert len(rows) == 153
+    assert len(rows) == 152
 
     build_col = Collection(os.path.join(str(tmp_path), "build.anki2"))
     source_col = Collection(collection_snapshot_copy)
@@ -1794,7 +1784,7 @@ def test_e2e_real_media_fresh_import_delivers_608_files_zero_missing(
 ):
     """The strongest evidence available: import the real package into a
     collection that never existed before, and assert entirely against what
-    THAT import produced -- 153 notes, 306 cards, 608 media files actually
+    THAT import produced -- 152 notes, 304 cards, 608 media files actually
     present in the new collection's OWN media directory, and every filename
     in every note's `Audio` field resolving on disk (zero
     referenced-but-missing). Also re-runs `media.check()` on the imported
@@ -1850,14 +1840,14 @@ def test_e2e_real_media_fresh_import_delivers_608_files_zero_missing(
             note_ids = {fresh_col.get_card(cid).nid for cid in card_ids}
             total_notes += len(note_ids)
             total_cards += len(card_ids)
-        assert total_notes == 153
-        assert total_cards == 306
+        assert total_notes == 152
+        assert total_cards == 304
 
         media_files_on_disk = set(os.listdir(fresh_col.media.dir()))
         assert len(media_files_on_disk) == 608
 
         all_note_ids = fresh_col.find_notes(f'note:"{NEW_NOTE_TYPE_NAME}"')
-        assert len(all_note_ids) == 153
+        assert len(all_note_ids) == 152
         missing_refs = []
         for note_id in all_note_ids:
             note = fresh_col.get_note(note_id)
@@ -2242,7 +2232,7 @@ def test_e2e_live_rebuild_translation_and_template_edit_update_in_place_default_
     re-import into the SAME collection using Anki's DEFAULT import
     options. Before this lane's fix, this reproduced the live defect
     exactly: a `<name>+`-suffixed duplicate note type with 0 notes, and
-    153 notes frozen on the old note type with neither their content nor
+    152 notes frozen on the old note type with neither their content nor
     their template ever updated (see .artifacts/contracts/l9.md's root
     cause analysis, read directly from rslib's importer).
 
@@ -2260,7 +2250,7 @@ def test_e2e_live_rebuild_translation_and_template_edit_update_in_place_default_
 
     with open(SOURCE_DOC_PATH, encoding="utf-8") as fh:
         rows_v1 = parse_word_list(fh.read())
-    assert len(rows_v1) == 153
+    assert len(rows_v1) == 152
 
     out1, _ = _build_real_package_with_guids(
         rows_v1, collection_snapshot_copy, tmp_path, "l9-e2e-v1.apkg"
@@ -2282,7 +2272,7 @@ def test_e2e_live_rebuild_translation_and_template_edit_update_in_place_default_
         fresh_col.import_anki_package(
             ImportAnkiPackageRequest(package_path=out1, options=default_options)
         )
-        assert fresh_col.note_count() == 153
+        assert fresh_col.note_count() == 152
 
         names_after_import1 = _immutable_words_notetype_names()
         assert names_after_import1 == [NEW_NOTE_TYPE_NAME], (
@@ -2336,12 +2326,12 @@ def test_e2e_live_rebuild_translation_and_template_edit_update_in_place_default_
         fresh_col.close()
         fresh_col = Collection(fresh_path)
 
-        # The defect this lane fixes: still 153, never 306, and still
+        # The defect this lane fixes: still 152, never 304, and still
         # exactly ONE note type -- no `+`-suffixed duplicate.
-        assert fresh_col.note_count() == 153, (
-            f"expected 153 notes after re-importing the rebuilt package "
+        assert fresh_col.note_count() == 152, (
+            f"expected 152 notes after re-importing the rebuilt package "
             f"under DEFAULT import options, got {fresh_col.note_count()} "
-            f"-- a jump to 306 means notes duplicated instead of updating"
+            f"-- a jump to 304 means notes duplicated instead of updating"
         )
         names_after_import2 = _immutable_words_notetype_names()
         assert names_after_import2 == [NEW_NOTE_TYPE_NAME], (
@@ -2349,7 +2339,7 @@ def test_e2e_live_rebuild_translation_and_template_edit_update_in_place_default_
             f"{NEW_NOTE_TYPE_NAME!r} with no '+'-suffixed duplicate after "
             f"the rebuild+reimport, got {names_after_import2!r} -- this is "
             f"precisely the live defect (a stray "
-            f"'{NEW_NOTE_TYPE_NAME}+' with 0 notes, 153 stuck on the old "
+            f"'{NEW_NOTE_TYPE_NAME}+' with 0 notes, 152 stuck on the old "
             f"note type) this lane exists to fix"
         )
 
@@ -2381,7 +2371,7 @@ def test_e2e_live_rebuild_translation_and_template_edit_update_in_place_default_
         assert "<br>" in updated_note["Translation"]
 
         # Every other note (unchanged rows) must be untouched and present.
-        assert fresh_col.note_count() == len(rows_v2) == 153
+        assert fresh_col.note_count() == len(rows_v2) == 152
     finally:
         fresh_col.close()
 
@@ -2391,7 +2381,7 @@ def test_e2e_two_builds_no_source_change_notetype_id_and_fields_byte_identical(
 ):
     """Verification bar item 4: build twice with no source change -> the
     exported note type id and full field list are byte-identical.
-    Exercised here at the real, full-153-row-document build level (not
+    Exercised here at the real, full-152-row-document build level (not
     just `clone_note_type` in isolation, which the packet contract already
     covers) for end-to-end confidence that nothing in `build_deck_tree` or
     `export_package` perturbs the note type afterward.
@@ -2417,3 +2407,113 @@ def test_e2e_two_builds_no_source_change_notetype_id_and_fields_byte_identical(
 
     assert note_type_1["id"] == note_type_2["id"] == NEW_NOTE_TYPE_ID
     assert note_type_1["flds"] == note_type_2["flds"]
+
+
+# Builder-authored e2e: proves round-trip fidelity against the document
+# itself, the sole translation authority -- no fixture outside the repo.
+
+
+def test_e2e_every_imported_translation_exactly_matches_source_document(
+    tmp_path, collection_snapshot_copy
+):
+    """Every imported note's `Translation` matches what `parse_word_list`
+    says that same row's document text is, byte-for-byte, all 152, plus
+    the да-dedup and с/со HTML checks.
+    """
+    from anki.import_export_pb2 import (
+        ImportAnkiPackageOptions,
+        ImportAnkiPackageRequest,
+    )
+
+    from anki_tools.immutable_words_plan import parse_word_list
+
+    with open(SOURCE_DOC_PATH, encoding="utf-8") as fh:
+        rows = parse_word_list(fh.read())
+    assert len(rows) == 152
+
+    expected_by_key = {
+        f"{row.russian}||{subdeck_name(row.pos).rsplit('::', 1)[-1]}": row.english
+        for row in rows
+    }
+    assert len(expected_by_key) == 152  # no (russian, deck) key collided
+
+    build_col = Collection(os.path.join(str(tmp_path), "build.anki2"))
+    source_col = Collection(collection_snapshot_copy)
+    try:
+        note_type = clone_note_type(source_col, build_col, NEW_NOTE_TYPE_NAME)
+    finally:
+        source_col.close()
+    build_deck_tree(build_col, rows, note_type)
+
+    out_path = os.path.join(str(tmp_path), "l1-e2e-doc-match.apkg")
+    export_package(build_col, DECK_ROOT, out_path)
+    build_col.close()
+
+    fresh_path = os.path.join(str(tmp_path), "l1-e2e-fresh.anki2")
+    assert not os.path.exists(fresh_path)
+    fresh_col = Collection(fresh_path)
+    try:
+        fresh_col.import_anki_package(
+            ImportAnkiPackageRequest(
+                package_path=out_path,
+                options=ImportAnkiPackageOptions(
+                    merge_notetypes=True,
+                    with_scheduling=False,
+                    with_deck_configs=False,
+                ),
+            )
+        )
+
+        all_note_ids = fresh_col.find_notes(f'note:"{NEW_NOTE_TYPE_NAME}"')
+        assert len(all_note_ids) == 152
+
+        seen_keys = set()
+        mismatches = []
+        for note_id in all_note_ids:
+            note = fresh_col.get_note(note_id)
+            card_ids = fresh_col.find_cards(f"nid:{note_id}")
+            deck_leaf = fresh_col.decks.name(
+                fresh_col.get_card(card_ids[0]).did
+            ).rsplit("::", 1)[-1]
+            key = f"{note['Russian']}||{deck_leaf}"
+            seen_keys.add(key)
+            expected = expected_by_key.get(key)
+            if expected is None:
+                mismatches.append((key, "no-document-row", note["Translation"]))
+            elif note["Translation"] != expected:
+                mismatches.append((key, expected, note["Translation"]))
+
+        assert not mismatches, (
+            f"{len(mismatches)} imported note(s) disagree with the source "
+            f"document: {mismatches[:10]}"
+        )
+        # Full set, not a sample.
+        assert seen_keys == set(expected_by_key.keys())
+
+        total_notes = 0
+        total_cards = 0
+        for name in all_subdeck_names():
+            card_ids = fresh_col.find_cards(f'deck:"{name}"')
+            note_ids = {fresh_col.get_card(cid).nid for cid in card_ids}
+            total_notes += len(note_ids)
+            total_cards += len(card_ids)
+        assert total_notes == 152
+        assert total_cards == 304
+
+        conjunctions_da = fresh_col.find_notes(
+            f'deck:"{subdeck_name("Conjunctions")}" Russian:да'
+        )
+        particles_da = fresh_col.find_notes(
+            f'deck:"{subdeck_name("Particles")}" Russian:да'
+        )
+        assert conjunctions_da == []
+        assert len(particles_da) == 1
+
+        so_note_ids = fresh_col.find_notes(
+            f'deck:"{subdeck_name("Prepositions")}" Russian:"с / со"'
+        )
+        assert len(so_note_ids) == 1
+        so_note = fresh_col.get_note(so_note_ids[0])
+        assert so_note["Translation"].endswith("<div>since (when)</div>")
+    finally:
+        fresh_col.close()

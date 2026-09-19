@@ -135,10 +135,8 @@ def guid_for_row(russian: str, pos: str) -> str:
     Derived from `russian` + `pos` ONLY -- never from `english`
     (Translation) or anything audio-related, both of which legitimately
     change on a rebuild and must UPDATE the existing note in place, not
-    mint a new one. `russian` alone is not enough: "да" is a legitimate
-    exact duplicate across Conjunctions and Particles (see `WordRow`'s
-    docstring / `ROW_SPLITS`), and the two notes must never collide onto
-    the same GUID. `pos` -- the section-heading identity
+    mint a new one. `russian` alone is not enough -- two different parts
+    of speech can share identical text, so `pos` -- the section-heading identity
     ("Prepositions", "Conjunctions", ...), not the full `::`-joined deck
     path from `subdeck_name` -- is what's hashed, so a GUID survives even
     if the user later renumbers the `2.`/`3.`/`4.` deck-root prefix
@@ -169,14 +167,10 @@ def guid_for_row(russian: str, pos: str) -> str:
 # replacement pairs -- one row in, N rows out, same `pos`.
 #
 # "словно / будто" -> ONE new row, "словно" alone. "будто" is NOT created
-# here: it already exists as its own row, Particles rank 28
-# ("| 28 | будто | as if |") -- creating a second "будто" row would be a
-# genuine duplicate card, not a legitimate да/да-style repeat. Its nuance
-# gloss is applied to that EXISTING row instead, via TRANSLATION_OVERRIDES
-# below.
+# here: it already exists as its own row, Particles rank 28.
 #
 # "тоже / также" -> TWO new rows: neither word appears anywhere else in
-# the source document (verified against the real 152-row list).
+# the source document (verified against the real 151-row raw list).
 ROW_SPLITS: dict[str, list[tuple[str, str]]] = {
     "словно / будто": [
         ("словно", "as if, like (literary — a poetic simile)"),
@@ -194,17 +188,9 @@ ROW_SPLITS: dict[str, list[tuple[str, str]]] = {
     ],
 }
 
-# Per-row English overrides, keyed by exact `.russian` text -- applied
-# instead of the source document's own gloss. Never edits the source
-# document; this is a pure code-side transform.
-TRANSLATION_OVERRIDES: dict[str, str] = {
-    "-то": (
-        'some- (indefinite: кто-то "someone", '
-        'где-то "somewhere"; contrast -нибудь = any-)'
-    ),
-    "-ка": 'go on, just (softens an imperative: скажи-ка "go on, tell me"; informal)',
-    "будто": "as if, as though (often implies doubt)",
-}
+# Per-row English overrides, keyed by `.russian` text. Empty: the document
+# is now sole authority; a value here must never disagree with it.
+TRANSLATION_OVERRIDES: dict[str, str] = {}
 
 
 def _apply_row_transforms(rows: list["WordRow"]) -> list["WordRow"]:

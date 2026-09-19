@@ -220,8 +220,8 @@ def attach_media(build_col: Collection, audio_dir: str) -> tuple[list[str], list
 
     Returns `(found, missing)`, both sorted lists of bare filenames, over
     the UNION of every referenced filename across every note in `build_col`
-    (not per-note), so a file shared by two notes (e.g. the `да`/`да` case)
-    is only copied once.
+    (not per-note), so a file shared by two notes (e.g. two rows whose
+    Russian text happens to be identical) is only copied once.
     """
     referenced: set[str] = set()
     for note_id in build_col.find_notes(""):
