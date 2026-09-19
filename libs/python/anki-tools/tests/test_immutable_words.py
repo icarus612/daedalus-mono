@@ -2409,12 +2409,8 @@ def test_e2e_two_builds_no_source_change_notetype_id_and_fields_byte_identical(
     assert note_type_1["flds"] == note_type_2["flds"]
 
 
-# Builder-authored e2e, closing the actual data-loss trap this lane fixes.
-# Proves round-trip fidelity against the document itself -- the document is
-# now the sole translation authority, so this needs no fixture outside the
-# repo (a prior version compared against a local capture of the live
-# collection; that comparison was a one-time migration check, run by hand
-# once, and cannot live on as a test -- see the coordinator's note).
+# Builder-authored e2e: proves round-trip fidelity against the document
+# itself, the sole translation authority -- no fixture outside the repo.
 
 
 def test_e2e_every_imported_translation_exactly_matches_source_document(
