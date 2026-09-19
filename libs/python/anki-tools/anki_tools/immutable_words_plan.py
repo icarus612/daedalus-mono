@@ -167,8 +167,7 @@ def guid_for_row(russian: str, pos: str) -> str:
 # replacement pairs -- one row in, N rows out, same `pos`.
 #
 # "словно / будто" -> ONE new row, "словно" alone. "будто" is NOT created
-# here: it already exists as its own row, Particles rank 28, which now
-# carries this nuance directly.
+# here: it already exists as its own row, Particles rank 28.
 #
 # "тоже / также" -> TWO new rows: neither word appears anywhere else in
 # the source document (verified against the real 151-row raw list).
@@ -190,8 +189,7 @@ ROW_SPLITS: dict[str, list[tuple[str, str]]] = {
 }
 
 # Per-row English overrides, keyed by `.russian` text. Empty: the document
-# is now the sole authority -- a value here disagreeing with it is exactly
-# the defect this table used to cause.
+# is now sole authority; a value here must never disagree with it.
 TRANSLATION_OVERRIDES: dict[str, str] = {}
 
 
