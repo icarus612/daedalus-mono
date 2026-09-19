@@ -1198,14 +1198,7 @@ def test_main_audio_dir_export_measurably_larger_than_without(
 # -> assert against the IMPORTED collection's own decks/notes/models, never
 # against this test's own in-memory rows/build_col state.
 #
-# Updated by lane 3 (integration, `.artifacts/contracts/l3.md`): the source
-# document still has 151 raw rows, but `parse_word_list` now applies a
-# table-driven split/override transform (see `ROW_SPLITS`/
-# `TRANSLATION_OVERRIDES` in `immutable_words_plan.py`) that yields 152
-# final rows (43/35/32/42 by section), and `build_deck_tree` -> `WordRow.
-# fields()` now populates every note's Audio field with four PREDICTED
-# filenames instead of leaving it empty -- lane 3's central "deck before
-# audio" claim.
+# Lane 3's transform turns 151 raw rows into 152 final rows (43/35/32/42).
 # ---------------------------------------------------------------------------
 
 SOURCE_DOC_PATH = (
@@ -1780,9 +1773,9 @@ def test_e2e_real_media_export_is_full_size_not_empty_manifest(
         names = set(zf.namelist())
     bookkeeping = {"meta", "media", "collection.anki2", "collection.anki21b"}
     media_entries = names - bookkeeping
-    assert len(media_entries) == 608, (
-        f"expected 608 media entries in the package, got {len(media_entries)}"
-    )
+    assert (
+        len(media_entries) == 608
+    ), f"expected 608 media entries in the package, got {len(media_entries)}"
 
 
 @pytest.mark.skipif(not _real_audio_dir_ready(), reason=_real_audio_missing_reason)
