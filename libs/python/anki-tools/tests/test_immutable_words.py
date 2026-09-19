@@ -292,13 +292,8 @@ def _template_sides(note_type):
 
 
 def _fixture_rows():
-    """7 WordRows across all 4 decks, uneven counts, including a case that
-    exercises the GENERAL mechanism this tool must support: two different
-    parts of speech legitimately sharing identical Russian text (one
-    Conjunctions row and one Particles row, both "да") must produce two
-    distinct notes/GUIDs, not a collision -- this is a synthetic fixture
-    testing the mechanism, not a mirror of the real document's current
-    contents (which, after this lane, has only one "да" row).
+    """7 WordRows across all 4 decks, uneven counts, including two rows
+    (one Conjunctions, one Particles) sharing identical Russian text "да".
     """
     return [
         WordRow(pos="Prepositions", rank=1, russian="в", english="in"),
@@ -612,10 +607,8 @@ def test_build_deck_tree_duplicate_russian_text_both_notes_exist_in_own_decks(
     particles_da = build_col.find_notes('deck:"%s" Russian:да' % particles_deck)
 
     # Both notes exist, one per deck, and they are not the same note --
-    # this exercises the general mechanism (two different parts of speech
-    # legitimately sharing identical Russian text): two intended notes,
-    # not a duplicate bug. (The real document itself has only one "да"
-    # row, under Particles, after this lane -- this fixture is synthetic.)
+    # two intended notes, not a duplicate bug (a synthetic fixture; the
+    # real document itself has only one "да" row now).
     assert len(conjunctions_da) == 1
     assert len(particles_da) == 1
     assert conjunctions_da[0] != particles_da[0]
@@ -2423,23 +2416,9 @@ def test_e2e_two_builds_no_source_change_notetype_id_and_fields_byte_identical(
     assert note_type_1["flds"] == note_type_2["flds"]
 
 
-# ---------------------------------------------------------------------------
-# Lane l1 -- builder-authored e2e: the actual data-loss trap this lane
-# closes. NOT blind, NOT a contract test: written by the builder against
-# the lane's own verification bar (never a packet contract), after both
-# Packet A (source-word-list.md corrected, TRANSLATION_OVERRIDES emptied)
-# and Packet B (stale test corrections) went green above.
-#
-# `live-translations.json` is a verbatim capture of the user's REAL
-# Anki collection (152 entries, keyed "<Russian>||<deck leaf>", valued with
-# the exact `Translation` field, including hand-written HTML) -- it is read
-# here as fixture data, the same way `SOURCE_DOC_PATH` is, never as part of
-# the implementation under test. This test proves the document now matches
-# that capture on every single entry, not a sample: this is precisely the
-# check that would have caught both prior silent-overwrite incidents before
-# a rebuild ever reached the user's real collection. As with every other
-# test in this file, no path under ~/.local/share/Anki2/ is ever opened.
-# ---------------------------------------------------------------------------
+# Builder-authored e2e (not blind, not a contract test): closes the actual
+# data-loss trap this lane fixes. `live-translations.json` is read as
+# fixture data only, exactly like `SOURCE_DOC_PATH`, never the real collection.
 
 LIVE_TRANSLATIONS_PATH = (
     Path(__file__).resolve().parents[4] / ".artifacts" / "live-translations.json"
@@ -2449,15 +2428,8 @@ LIVE_TRANSLATIONS_PATH = (
 def test_e2e_every_imported_translation_exactly_matches_live_collection_capture(
     tmp_path, collection_snapshot_copy
 ):
-    """Fresh empty collection, real 152-row package, every single imported
-    note's `Translation` field compared byte-for-byte against the user's
-    real collection capture -- all 152 entries, never a sample.
-
-    Also covers the lane's other two acceptance criteria end-to-end: the
-    duplicate `да` under Conjunctions is gone (zero notes) while the
-    legitimate Particles `да` survives (exactly one), and the `с / со`
-    note's hand-written `<div>since (when)</div>` suffix survives the
-    parse -> build -> export -> import round trip unchanged.
+    """Every imported note's `Translation` matches the live-collection
+    capture byte-for-byte, all 152, plus the да-dedup and с/со HTML checks.
     """
     import json
 
@@ -2526,9 +2498,7 @@ def test_e2e_every_imported_translation_exactly_matches_live_collection_capture(
             f"{len(mismatches)} imported note(s) disagree with the real "
             f"collection capture: {mismatches[:10]}"
         )
-        # Full set, not a sample: every live-translations.json key was
-        # actually seen on an imported note, and vice versa (already
-        # implied by the 152/152 count, asserted explicitly here too).
+        # Full set, not a sample.
         assert seen_keys == set(live_translations.keys())
 
         total_notes = 0

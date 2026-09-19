@@ -963,21 +963,10 @@ def _parse_raw_section_glosses(text):
 def test_translation_overrides_table_is_empty_and_no_row_is_overridden(
     real_source_text, real_rows
 ):
-    """Document is sole authority; TRANSLATION_OVERRIDES must stay empty or
-    stay in permanent agreement with the document -- never diverge from it.
-
-    After lane l1's A2/A3 edits, the -то/-ка/будто values that used to come
-    from TRANSLATION_OVERRIDES now live directly in the document's own
-    English column, and TRANSLATION_OVERRIDES itself is empty. So no row's
-    final `.english` should differ from what parse_word_list would have
-    produced pre-transform for the same `.russian` text. The two
-    ROW_SPLITS-created rows (словно, тоже, также) are excluded from this
-    count -- they have no pre-transform row sharing their exact `.russian`
-    text (their pre-image was the combined "словно / будто" / "тоже / также"
-    string, not their own text), so a pre/post comparison keyed on `.russian`
-    is not meaningful for them. This is the test that would catch a future
-    re-introduction of the exact defect this lane fixes (a value in both a
-    code override and the document, disagreeing).
+    """TRANSLATION_OVERRIDES must stay empty, and no row's `.english` may
+    diverge from the document's own raw gloss (the словно/тоже/также
+    ROW_SPLITS rows are excluded -- they have no pre-transform text to
+    compare against).
     """
     assert TRANSLATION_OVERRIDES == {}
 
