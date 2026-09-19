@@ -908,8 +908,6 @@ def test_original_combined_split_strings_no_longer_appear(real_rows):
 
 
 def test_budto_row_translation_not_bare_as_if(real_rows):
-    # The fuller gloss now lives directly in the document's own English
-    # column (no code-side override) -- see lane l1 contract sections A2/A3.
     matches = [
         row for row in real_rows if row.pos == "Particles" and row.russian == "будто"
     ]

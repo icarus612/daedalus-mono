@@ -1773,9 +1773,9 @@ def test_e2e_real_media_export_is_full_size_not_empty_manifest(
         names = set(zf.namelist())
     bookkeeping = {"meta", "media", "collection.anki2", "collection.anki21b"}
     media_entries = names - bookkeeping
-    assert (
-        len(media_entries) == 608
-    ), f"expected 608 media entries in the package, got {len(media_entries)}"
+    assert len(media_entries) == 608, (
+        f"expected 608 media entries in the package, got {len(media_entries)}"
+    )
 
 
 @pytest.mark.skipif(not _real_audio_dir_ready(), reason=_real_audio_missing_reason)
@@ -2409,9 +2409,8 @@ def test_e2e_two_builds_no_source_change_notetype_id_and_fields_byte_identical(
     assert note_type_1["flds"] == note_type_2["flds"]
 
 
-# Builder-authored e2e (not blind, not a contract test): closes the actual
-# data-loss trap this lane fixes. `live-translations.json` is read as
-# fixture data only, exactly like `SOURCE_DOC_PATH`, never the real collection.
+# Builder-authored e2e, closing the actual data-loss trap this lane fixes.
+# `live-translations.json` is fixture data only, like `SOURCE_DOC_PATH`.
 
 LIVE_TRANSLATIONS_PATH = (
     Path(__file__).resolve().parents[4] / ".artifacts" / "live-translations.json"
