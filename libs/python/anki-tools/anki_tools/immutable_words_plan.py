@@ -38,11 +38,17 @@ SUBDECK_LEAVES = {
     "Conjunctions": "Conjunctions",
     "Particles": "Particles",
     "Indeclinable Nouns": "Indeclinable Nouns",
+    "Base Adverbs": "Base Adverbs",
 }
 
 # Field order of the note type, cloned from the source note type. `Part of
 # Speech` is still populated (it is useful in the browser's search) but is no
 # longer rendered on either side of the card - the deck name carries it instead.
+# The three words that are genuinely two parts of speech at once -- `как`,
+# `когда`, `пока`, each of which has a Conjunctions note AND a Base Adverbs
+# note -- instead carry a parenthetical qualifier in their `Russian` text
+# ("как (conjunction)"), so the two cards are told apart on sight. See
+# `audio_naming.strip_qualifier` for why that suffix never reaches a filename.
 #
 # `AudioRefs` is the 7th and last field: the same four filenames as `Audio`,
 # but as concatenated `[sound:...]` tags. It exists SOLELY so Anki's
@@ -72,10 +78,29 @@ POS_FIELD_VALUE = {
     "Conjunctions": "conjunction",
     "Particles": "particle",
     "Indeclinable Nouns": "indeclinable noun",
+    "Base Adverbs": "adverb",
 }
 
-# A markdown table row: | rank | russian | english |
-_TABLE_ROW = re.compile(r"^\|\s*(\d+)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*$", re.M)
+# A markdown table row, in either of the two shapes the source document uses:
+# the original three-column `| rank | russian | english |`, and the
+# four-column `| rank | russian | english | info |` that the Base Adverbs
+# section adds. The fourth cell is optional at the REGEX level, not just by
+# convention, because the four existing sections are still written in the
+# three-column shape and must keep parsing byte-for-byte as they did before.
+# `([^|]*?)` (star, not plus) so a present-but-empty info cell matches too.
+_TABLE_ROW = re.compile(
+    r"^\|\s*(\d+)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|"
+    r"(?:\s*([^|]*?)\s*\|)?\s*$",
+    re.M,
+)
+
+# Info-cell values that mean "no additional info". A markdown table cell
+# cannot be left visually blank without the row looking broken, so the
+# document writes a dash -- and a dash must render as NOTHING on the card,
+# never as a literal "-" sitting next to the info icon. Covers the em dash
+# the document actually uses plus the en dash and ASCII hyphens, since all
+# four are things a human editing this table will plausibly type.
+_EMPTY_INFO = {"", "—", "–", "-", "--"}
 
 # A `### Heading` section break in the source document.
 _SECTION = re.compile(r"^###\s+(.+?)\s*$", re.M)
@@ -210,6 +235,11 @@ def _apply_row_transforms(rows: list["WordRow"]) -> list["WordRow"]:
                         rank=row.rank,
                         russian=split_russian,
                         english=split_english,
+                        # Both halves of a split row inherit the original
+                        # row's info cell -- the split separates two senses
+                        # of one entry, so whatever context the document
+                        # gave that entry applies to each half.
+                        info=row.info,
                     )
                 )
         elif row.russian in TRANSLATION_OVERRIDES:
@@ -219,6 +249,7 @@ def _apply_row_transforms(rows: list["WordRow"]) -> list["WordRow"]:
                     rank=row.rank,
                     russian=row.russian,
                     english=TRANSLATION_OVERRIDES[row.russian],
+                    info=row.info,
                 )
             )
         else:
@@ -234,6 +265,7 @@ def _apply_row_transforms(rows: list["WordRow"]) -> list["WordRow"]:
                 rank=counters[row.pos],
                 russian=row.russian,
                 english=row.english,
+                info=row.info,
             )
         )
     return renumbered
@@ -249,6 +281,11 @@ class WordRow:
     rank: int  # the source table's rank column, kept for stable ordering
     russian: str  # the Russian text, verbatim from the document
     english: str  # the English gloss, verbatim from the document
+    # The optional fourth column's text, verbatim from the document, already
+    # normalized so a dash-only cell (see `_EMPTY_INFO`) arrives here as "".
+    # Defaults to "" so the three-column sections -- and every caller that
+    # builds a WordRow without one -- keep working unchanged.
+    info: str = ""
 
     @property
     def deck(self) -> str:
@@ -263,7 +300,12 @@ class WordRow:
     def fields(self) -> list[str]:
         """The seven field values, in FIELD_NAMES order.
 
-        `Pronunciation` and `Additional Info` are left empty. `Audio` holds the
+        `Pronunciation` is left empty. `Additional Info` holds `self.info` --
+        the source document's optional fourth column -- which the note type's
+        templates already render on the answer side behind a grey info icon
+        (`addTitle("additional-info", "&#9432;")`), exactly as the coding
+        decks' note types do. Empty for every row whose section has no fourth
+        column, which is every section but Base Adverbs. `Audio` holds the
         four PREDICTED filenames (comma-separated, no spaces), derived from
         `self.russian` via the shared `audio_naming.build_filename` -- the same
         function `elevenlabs_tts.py` uses to name the files it actually writes,
@@ -281,7 +323,7 @@ class WordRow:
             "",
             POS_FIELD_VALUE[self.pos],
             ",".join(audio_names),
-            "",
+            self.info,
             audio_refs,
         ]
 
@@ -324,13 +366,18 @@ def parse_word_list(text: str) -> list[WordRow]:
         end = sections[i + 1].start() if i + 1 < len(sections) else len(text)
         body = text[match.end() : end]
         seen.add(heading)
-        for rank, russian, english in _TABLE_ROW.findall(body):
+        for rank, russian, english, info in _TABLE_ROW.findall(body):
+            # A three-column row yields "" for the optional group; a
+            # dash-only cell means the same thing. Both collapse to "" here
+            # so nothing downstream has to know which shape the row had.
+            info = info.strip()
             rows.append(
                 WordRow(
                     pos=heading,
                     rank=int(rank),
                     russian=russian.strip(),
                     english=english.strip(),
+                    info="" if info in _EMPTY_INFO else info,
                 )
             )
 

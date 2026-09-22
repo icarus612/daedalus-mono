@@ -40,6 +40,7 @@ import pytest
 from anki_tools.audio_naming import SLOTS
 from anki_tools.audio_naming import build_filename as shared_build_filename
 from anki_tools.immutable_words_plan import (
+    _EMPTY_INFO,
     DECK_ROOT,
     FIELD_NAMES,
     POS_FIELD_VALUE,
@@ -64,16 +65,22 @@ REAL_SOURCE_PATH = (
     / "source-word-list.md"
 )
 
-# The four sections in document order, with the exact counts the real
+# The five sections in document order, with the exact counts the real
 # document is known to contain AFTER the l3 split/transform pass (contract
 # l3.md section 3, "Acceptance numbers for this section"): raw parse is
-# 151 rows / 43-34-32-42, but parse_word_list applies _apply_row_transforms
-# before returning, so the counts below are the POST-transform ones.
+# 206 rows / 43-34-31-42-56, but parse_word_list applies
+# _apply_row_transforms before returning, so the counts below are the
+# POST-transform ones.
+#
+# Particles is 31, not the original 32, because `почти` moved out of it and
+# into Base Adverbs -- it is an adverb, and its Particles note had never
+# been reviewed, so the move cost no scheduling history.
 EXPECTED_SECTION_COUNTS = [
     ("Prepositions", 43),
     ("Conjunctions", 35),
-    ("Particles", 32),
+    ("Particles", 31),
     ("Indeclinable Nouns", 42),
+    ("Base Adverbs", 56),
 ]
 EXPECTED_TOTAL_ROWS = sum(count for _, count in EXPECTED_SECTION_COUNTS)
 
@@ -84,6 +91,7 @@ EXPECTED_SUBDECK_PATHS = {
     "Indeclinable Nouns": (
         "Languages::Russian::2. Immutable Words::d. Indeclinable Nouns"
     ),
+    "Base Adverbs": "Languages::Russian::2. Immutable Words::e. Base Adverbs",
 }
 
 # The 15 multi-form rows SURVIVING the l3 split/transform pass (contract
@@ -110,9 +118,9 @@ MULTI_FORM_ROWS = [
     ("Conjunctions", 28, "с тех пор, как"),
     ("Conjunctions", 29, "до того, как"),
     ("Conjunctions", 30, "перед тем, как"),
-    ("Particles", 16, "пусть / пускай"),
-    ("Particles", 24, "-то"),
-    ("Particles", 25, "-ка"),
+    ("Particles", 15, "пусть / пускай"),
+    ("Particles", 23, "-то"),
+    ("Particles", 24, "-ка"),
 ]
 
 
@@ -168,6 +176,7 @@ SMALL_FIXTURE_COUNTS = [
     ("Conjunctions", 1),
     ("Particles", 1),
     ("Indeclinable Nouns", 1),
+    ("Base Adverbs", 1),
 ]
 SMALL_FIXTURE = _build_fixture_doc(dict(SMALL_FIXTURE_COUNTS))
 
@@ -193,7 +202,7 @@ def _remove_section(text, heading_name):
 
 
 def test_parse_real_document_total_row_count(real_rows):
-    assert len(real_rows) == EXPECTED_TOTAL_ROWS == 152
+    assert len(real_rows) == EXPECTED_TOTAL_ROWS == 207
 
 
 def test_parse_real_document_section_order_counts_and_ranks(real_rows):
@@ -218,8 +227,8 @@ def test_parse_real_document_section_order_counts_and_ranks(real_rows):
 def test_parse_real_document_row_order_endpoints(real_rows):
     assert real_rows[0].pos == "Prepositions"
     assert real_rows[0].rank == 1
-    assert real_rows[-1].pos == "Indeclinable Nouns"
-    assert real_rows[-1].rank == 42
+    assert real_rows[-1].pos == "Base Adverbs"
+    assert real_rows[-1].rank == 56
 
 
 @pytest.mark.parametrize(
@@ -238,7 +247,7 @@ def test_parse_real_document_part_two_produces_no_spurious_rows(real_rows):
     AwesomeTTS / HyperTTS / add-on-install subsections) has no tables and
     must not contribute rows or raise.
     """
-    assert len(real_rows) == 152
+    assert len(real_rows) == 207
     assert all(row.pos in SUBDECK_LEAVES for row in real_rows)
 
 
@@ -284,6 +293,7 @@ def test_subdeck_leaves_order():
         "Conjunctions",
         "Particles",
         "Indeclinable Nouns",
+        "Base Adverbs",
     ]
 
 
@@ -304,6 +314,17 @@ def test_all_subdeck_names_order():
 
 
 def test_subdeck_name_unknown_pos_raises():
+    with pytest.raises(Exception):
+        subdeck_name("Verbs")
+
+
+def test_subdeck_name_rejects_a_near_miss_of_a_real_section():
+    """A real section's name minus a word is still not that section.
+
+    Guards the sloppy-lookup failure mode directly: `subdeck_name` keys off
+    the exact heading text, so "Adverbs" must be rejected even though
+    "Base Adverbs" exists.
+    """
     with pytest.raises(Exception):
         subdeck_name("Adverbs")
 
@@ -772,7 +793,7 @@ def test_rewrite_audio_playback_js_replay_button_wired_on_answer_side_reuse(
 # ---------------------------------------------------------------------------
 
 
-def test_counts_by_deck_includes_all_four_decks_even_zero():
+def test_counts_by_deck_includes_every_deck_even_zero():
     rows = (
         [
             WordRow(pos="Prepositions", rank=i, russian=f"р{i}", english=f"e{i}")
@@ -792,6 +813,7 @@ def test_counts_by_deck_includes_all_four_decks_even_zero():
         subdeck_name("Conjunctions"): 1,
         subdeck_name("Particles"): 2,
         subdeck_name("Indeclinable Nouns"): 0,
+        subdeck_name("Base Adverbs"): 0,
     }
 
 
@@ -935,13 +957,20 @@ def test_ka_row_overridden_translation(real_rows):
 
 def _parse_raw_section_glosses(text):
     """Independent oracle, built directly from the RAW markdown source (not
-    from parse_word_list), mapping pos -> {russian: english} using the same
-    "### <name> (...)" heading / pipe-table shape the real document uses.
-    Used only to compare pre-transform glosses against post-transform ones;
-    this function is test fixture logic, not a re-implementation of
-    anything under test.
+    from parse_word_list), mapping pos -> {russian: (english, info)} using
+    the same "### <name> (...)" heading / pipe-table shape the real document
+    uses. Used only to compare pre-transform cell values against
+    post-transform ones; this function is test fixture logic, not a
+    re-implementation of anything under test.
+
+    Splits each row on "|" rather than matching a regex with `(.+?)` groups.
+    A `.`-based group happily swallows a pipe, so against the four-column
+    Base Adverbs table the old two-group regex captured
+    "where (at) | Asking for a static location" as the English gloss and
+    reported all 56 adverbs as overridden. Splitting cannot make that
+    mistake, and handles the three- and four-column shapes with one code
+    path. `info` is "" for a three-column row.
     """
-    row_re = re.compile(r"^\| *\d+ *\| *(.+?) *\| *(.+?) *\|\s*$")
     section_re = re.compile(
         r"^### (.+?) \(.*?\)\n(.*?)(?=^### |\Z)", re.MULTILINE | re.DOTALL
     )
@@ -950,9 +979,16 @@ def _parse_raw_section_glosses(text):
         heading = heading.strip()
         glosses = {}
         for line in body.splitlines():
-            m = row_re.match(line)
-            if m:
-                glosses[m.group(1).strip()] = m.group(2).strip()
+            line = line.strip()
+            if not line.startswith("|") or not line.endswith("|"):
+                continue
+            cells = [c.strip() for c in line.strip("|").split("|")]
+            # Skips the header row ("Rank") and the "|---|" separator, both
+            # of which fail the leading-digit check.
+            if len(cells) < 3 or not cells[0].isdigit():
+                continue
+            info = cells[3] if len(cells) > 3 else ""
+            glosses[cells[1]] = (cells[2], info)
         if glosses:
             result[heading] = glosses
     return result
@@ -961,29 +997,79 @@ def _parse_raw_section_glosses(text):
 def test_translation_overrides_table_is_empty_and_no_row_is_overridden(
     real_source_text, real_rows
 ):
-    """TRANSLATION_OVERRIDES must stay empty, and no row's `.english` may
-    diverge from the document's own raw gloss (the словно/тоже/также
-    ROW_SPLITS rows are excluded -- they have no pre-transform text to
-    compare against).
+    """TRANSLATION_OVERRIDES must stay empty, and neither a row's
+    `.english` nor its `.info` may diverge from the document's own raw cell
+    (the словно/тоже/также ROW_SPLITS rows are excluded -- they have no
+    pre-transform text to compare against).
+
+    The `.info` half is the new guard, and it exists for the same reason the
+    `.english` half does: `Additional Info` is now populated from the
+    document's fourth column, and the moment any code holds a second copy of
+    that text the two can disagree silently. That is not hypothetical -- it
+    is exactly what TRANSLATION_OVERRIDES did to the English glosses before
+    it was emptied.
     """
     assert TRANSLATION_OVERRIDES == {}
 
-    raw_glosses = _parse_raw_section_glosses(real_source_text)
+    raw_cells = _parse_raw_section_glosses(real_source_text)
 
     split_created_russian = {"словно", "тоже", "также"}
     overridden = []
     for row in real_rows:
         if row.russian in split_created_russian:
             continue
-        raw_english = raw_glosses.get(row.pos, {}).get(row.russian)
-        assert raw_english is not None, (
+        raw = raw_cells.get(row.pos, {}).get(row.russian)
+        assert raw is not None, (
             f"expected {row.russian!r} (pos={row.pos!r}) to exist verbatim in "
             f"the raw source document"
         )
+        raw_english, raw_info = raw
         if row.english != raw_english:
-            overridden.append(row.russian)
+            overridden.append((row.russian, "english"))
+        # A dash-only cell is the document's way of writing "no info"; the
+        # parser normalizes it to "", so compare against that same rule
+        # rather than against the literal dash.
+        expected_info = "" if raw_info in _EMPTY_INFO else raw_info
+        if row.info != expected_info:
+            overridden.append((row.russian, "info"))
 
     assert overridden == []
+
+
+def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows):
+    """The fourth column's whole point: it must land in the field the card
+    actually renders, not merely be parsed.
+
+    Positive control built in -- asserts a non-trivial number of populated
+    cells, so the test cannot pass by finding nothing to check.
+    """
+    adverbs = [row for row in real_rows if row.pos == "Base Adverbs"]
+    assert len(adverbs) == 56
+
+    populated = 0
+    for row in adverbs:
+        additional_info = row.fields()[FIELD_NAMES.index("Additional Info")]
+        assert additional_info == row.info
+        if additional_info:
+            populated += 1
+
+    # 44 of the 56 rows carry info; the other 12 are the document's em-dash
+    # "no info" rows. Asserted exactly so that silently losing the column
+    # fails here rather than passing with 0.
+    assert populated == 44
+
+
+def test_no_section_but_base_adverbs_carries_info(real_rows):
+    """The four original sections are still three-column, so every one of
+    their rows must come back with an empty `.info` -- proof the optional
+    fourth group did not start capturing something it shouldn't.
+    """
+    stray = [
+        (row.pos, row.russian, row.info)
+        for row in real_rows
+        if row.pos != "Base Adverbs" and row.info
+    ]
+    assert stray == []
 
 
 @pytest.mark.parametrize(
@@ -1000,10 +1086,10 @@ def test_translation_overrides_table_is_empty_and_no_row_is_overridden(
 def test_untouched_rows_keep_original_document_gloss_verbatim(
     real_source_text, real_rows, pos, russian
 ):
-    raw_glosses = _parse_raw_section_glosses(real_source_text)
+    raw_cells = _parse_raw_section_glosses(real_source_text)
     matches = [row for row in real_rows if row.pos == pos and row.russian == russian]
     assert len(matches) == 1
-    assert matches[0].english == raw_glosses[pos][russian]
+    assert matches[0].english == raw_cells[pos][russian][0]
 
 
 # ---------------------------------------------------------------------------

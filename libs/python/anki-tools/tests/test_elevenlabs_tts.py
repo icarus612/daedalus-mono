@@ -35,6 +35,7 @@ from unittest.mock import MagicMock
 import pytest
 import requests
 
+from anki_tools.audio_naming import strip_qualifier
 from anki_tools.elevenlabs_tts import (
     ALL_VOICES,
     API_KEY_ENV_VAR,
@@ -268,7 +269,7 @@ def test_all_four_roster_voices_produce_distinct_filenames_for_the_same_word():
 # ---------------------------------------------------------------------------
 # THE hazard the coordinator asked to be checked, not assumed: dropping the
 # hash suffix must not silently reintroduce collisions across the REAL
-# 151-row raw source word list.
+# 206-row raw source word list.
 # ---------------------------------------------------------------------------
 
 # Computed relative to this test file, a committed repo fixture:
@@ -283,13 +284,21 @@ SOURCE_WORD_LIST_PATH = (
 
 
 def test_slug_collision_free_across_real_source_word_list():
-    """Prove, don't assume: run every word in the real 151-row raw source
-    list through `sanitize_word_slug` and assert the results are pairwise
-    unique -- there is no known exception any more. After this lane removed
-    the duplicate "да" row from the document (Conjunctions #20; "да" now
-    appears exactly once, under Particles), any repeated slug would mean two
-    DIFFERENT words silently overwriting each other's audio, which this
-    test must catch and report, never paper over by re-adding a hash.
+    """Prove, don't assume: run every word in the real 206-row raw source
+    list through `sanitize_word_slug` and assert that no two DIFFERENT words
+    land on the same slug.
+
+    "Pairwise unique" was the right assertion only while every word appeared
+    exactly once. Three words -- `как`, `когда`, `пока` -- are genuinely
+    both a conjunction and an adverb, so each has two rows, told apart by a
+    parenthetical qualifier ("как (conjunction)") that `strip_qualifier`
+    removes before a filename is built. Those two rows SHOULD share one
+    recording: it is one word with one pronunciation.
+
+    What must still fail loudly is the original hazard -- two different
+    words silently overwriting each other's audio -- which is why the
+    comparison below is on qualifier-stripped text rather than on the slug
+    count alone, and is never papered over by re-adding a hash.
     """
     row_re = re.compile(r"^\| *\d+ *\| *(.+?) *\| *.+? *\|\s*$")
     words = []
@@ -302,8 +311,8 @@ def test_slug_collision_free_across_real_source_word_list():
     # A positive control on the parse itself: a bare zero (or a suspiciously
     # low count from a regex that stopped matching) would make every
     # assertion below trivially true for the wrong reason.
-    assert len(words) == 151, (
-        f"expected 151 parsed rows from the source word list, got "
+    assert len(words) == 206, (
+        f"expected 206 parsed rows from the source word list, got "
         f"{len(words)} -- the parser regex may no longer match the table "
         f"format; investigate before trusting this test's result."
     )
@@ -311,17 +320,22 @@ def test_slug_collision_free_across_real_source_word_list():
     slugs = [sanitize_word_slug(w) for w in words]
     slug_to_words = {}
     for word, slug in zip(words, slugs):
-        slug_to_words.setdefault(slug, []).append(word)
-    collisions = {slug: ws for slug, ws in slug_to_words.items() if len(ws) > 1}
+        slug_to_words.setdefault(slug, set()).add(strip_qualifier(word))
+    collisions = {slug: sorted(ws) for slug, ws in slug_to_words.items() if len(ws) > 1}
 
     assert collisions == {}, (
-        f"expected zero repeated slugs after the duplicate 'да' row was "
-        f"removed from the source document; found instead: {collisions}"
+        f"expected no slug to be reached by two DIFFERENT words; found "
+        f"instead: {collisions}"
     )
 
-    # The headline number, asserted on the actual count -- 151 rows, zero
-    # duplicates, so 151 distinct slugs.
-    assert len(set(slugs)) == 151
+    # The headline numbers, asserted on the actual counts: 206 raw rows,
+    # 203 distinct slugs -- the three dual-class words each spend two rows
+    # on one slug, and nothing else repeats.
+    assert len(set(slugs)) == 203
+    repeated = [slug for slug in set(slugs) if slugs.count(slug) > 1]
+    assert sorted(repeated) == sorted(
+        sanitize_word_slug(w) for w in ("как", "когда", "пока")
+    )
 
     # The specific hazard named in the request: "/" cannot appear in a
     # filename at all, and must never survive sanitization.

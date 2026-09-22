@@ -64,11 +64,11 @@ Used to connect clauses, sentences, or concepts.
 | 2 | что | what, that |
 | 3 | а | but, and (when contrasting) |
 | 4 | но | but (direct contrast) |
-| 5 | как | how, like, as |
+| 5 | как (conjunction) | like, as (белый как снег) |
 | 6 | если | if |
 | 7 | или | or |
 | 8 | чтобы / чтоб | so that, in order to |
-| 9 | когда | when, while, as |
+| 9 | когда (conjunction) | when, while, as (Когда я пришёл, он спал) |
 | 10 | хотя | although |
 | 11 | потому что | because |
 | 12 | так как | since, as |
@@ -79,7 +79,7 @@ Used to connect clauses, sentences, or concepts.
 | 17 | зато | but on the other hand |
 | 18 | тоже / также | also, too |
 | 19 | либо | either / or |
-| 20 | пока | while, until |
+| 20 | пока (conjunction) | while, until |
 | 21 | чем | than |
 | 22 | ни... ни... | neither... nor... |
 | 23 | то... то... | now... now... (alternating) |
@@ -114,24 +114,23 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 12 | неужели | is it possible? (strong surprise) |
 | 13 | именно | exactly, precisely |
 | 14 | просто | simply, just |
-| 15 | почти | almost |
-| 16 | пусть / пускай | let (as in "let them") |
-| 17 | всё-таки | still, nevertheless |
-| 18 | вон | over there (pointing out) |
-| 19 | уж | really, indeed (emphatic) |
-| 20 | да | yes (can also act as emphasis) |
-| 21 | нет | no |
-| 22 | лишь | only, merely |
-| 23 | всё | still, constantly |
-| 24 | -то | some- (indefinite: кто-то "someone", где-то "somewhere"; contrast -нибудь = any-) |
-| 25 | -ка | go on, just (softens an imperative: скажи-ка "go on, tell me"; informal) |
-| 26 | таки | after all, nevertheless (often hyphenated: всё-таки) |
-| 27 | пожалуй | perhaps, I suppose |
-| 28 | будто | as if, as though (often implies doubt) |
-| 29 | мол | supposedly, "he said" (marks reported speech; colloquial) |
-| 30 | дескать | allegedly, "so they claim" (marks someone else's words; more formal than мол) |
-| 31 | во | wow, look at that |
-| 32 | ну и | what a... (emphasis, e.g., ну и день = what a day) |
+| 15 | пусть / пускай | let (as in "let them") |
+| 16 | всё-таки | still, nevertheless |
+| 17 | вон | over there (pointing out) |
+| 18 | уж | really, indeed (emphatic) |
+| 19 | да | yes (can also act as emphasis) |
+| 20 | нет | no |
+| 21 | лишь | only, merely |
+| 22 | всё | still, constantly |
+| 23 | -то | some- (indefinite: кто-то "someone", где-то "somewhere"; contrast -нибудь = any-) |
+| 24 | -ка | go on, just (softens an imperative: скажи-ка "go on, tell me"; informal) |
+| 25 | таки | after all, nevertheless (often hyphenated: всё-таки) |
+| 26 | пожалуй | perhaps, I suppose |
+| 27 | будто | as if, as though (often implies doubt) |
+| 28 | мол | supposedly, "he said" (marks reported speech; colloquial) |
+| 29 | дескать | allegedly, "so they claim" (marks someone else's words; more formal than мол) |
+| 30 | во | wow, look at that |
+| 31 | ну и | what a... (emphasis, e.g., ну и день = what a day) |
 
 ### Indeclinable Nouns (Несклоняемые существительные)
 Foreign loan words that are frozen in their base form.
@@ -180,6 +179,72 @@ Foreign loan words that are frozen in their base form.
 | 40 | хаки | khaki |
 | 41 | киви | kiwi |
 | 42 | манго | mango |
+
+### Base Adverbs (Наречия)
+Adverbs of place, direction, time, degree and manner. Invariable: they take no case, gender, number or tense endings.
+
+This section carries a fourth column, `Info`, which populates the note's
+`Additional Info` field -- rendered on the answer side behind a grey ⓘ.
+A lone em dash there means "no extra info" and renders as nothing.
+
+| Rank | Russian | English | Info |
+|---|---|---|---|
+| 1 | где | where (at) | Asking for a static location |
+| 2 | здесь | here | Static location |
+| 3 | тут | here (casual) | Interchangeable with здесь |
+| 4 | там | there | Static location |
+| 5 | везде | everywhere | Static location |
+| 6 | нигде | nowhere | Requires a negative verb (не) |
+| 7 | дома | at home | Static location |
+| 8 | куда | to where (destination) | Asking for motion towards a goal |
+| 9 | сюда | to here (destination) | Motion towards speaker |
+| 10 | туда | to there (destination) | Motion away from speaker |
+| 11 | домой | to home | Motion towards home |
+| 12 | откуда | from where | Asking for a starting point |
+| 13 | отсюда | from here | — |
+| 14 | оттуда | from there | — |
+| 15 | назад | backwards / ago | Motion backward, or time (2 days ago) |
+| 16 | вперёд | forwards | Motion forward |
+| 17 | когда (adverb) | when | Asking for a time |
+| 18 | тогда | then / in that case | Pointing to past/future, or conditional |
+| 19 | сейчас | now / right now | Current exact moment |
+| 20 | теперь | now / nowadays | Current reality contrasted with the past |
+| 21 | сегодня | today | — |
+| 22 | завтра | tomorrow | — |
+| 23 | вчера | yesterday | — |
+| 24 | потом | then / later | Sequencing events |
+| 25 | всегда | always | — |
+| 26 | иногда | sometimes | — |
+| 27 | никогда | never | Requires a negative verb (не) |
+| 28 | уже | already | Marks a completed status |
+| 29 | ещё | still / yet / more | Marks an ongoing status or asks for more |
+| 30 | пока (adverb) | for now, so far | Also used casually to say "bye" |
+| 31 | опять | again | An action repeating itself |
+| 32 | снова | again / anew | Repeating, often implying a fresh start |
+| 33 | вдруг | suddenly | — |
+| 34 | сразу | immediately / at once | Doing something without delay |
+| 35 | наконец | finally | Conclusion of a wait or sequence |
+| 36 | очень | very | Amplifies an adjective/adverb |
+| 37 | немного | a little bit / some | — |
+| 38 | слишком | too / too much | Exceeding a reasonable limit |
+| 39 | почти | almost | — |
+| 40 | совсем | completely / entirely | Often paired with не for "not at all" |
+| 41 | вовсе | at all | Used almost exclusively with не |
+| 42 | едва | barely | — |
+| 43 | чуть-чуть | a tiny bit | Highly conversational |
+| 44 | вместе | together | — |
+| 45 | почему | why (cause) | Asking for the reason |
+| 46 | зачем | what for / why (purpose) | Asking for the goal |
+| 47 | как (adverb) | how | Asking for the method |
+| 48 | так | like this / so | Demonstrating the method |
+| 49 | пешком | on foot | The method of travel (walking) |
+| 50 | зря | in vain / for nothing | Wasted effort |
+| 51 | наоборот | vice versa / backwards | The exact opposite of what was expected |
+| 52 | наверняка | for sure / certainly | High degree of confidence |
+| 53 | нарочно | on purpose | Intentional action |
+| 54 | вслух | out loud | Spoken so others can hear |
+| 55 | наизусть | by heart | Memorized perfectly |
+| 56 | вообще | in general / at all | Conversational filler word |
 
 
 ---

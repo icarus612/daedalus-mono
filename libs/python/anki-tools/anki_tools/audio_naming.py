@@ -37,6 +37,40 @@ SLOTS: tuple[str, ...] = ("f1", "f2", "m1", "m2")
 _UNSAFE_RUN = re.compile(r"[^\w\-]+", re.UNICODE)
 _MULTI_HYPHEN = re.compile(r"-{2,}")
 
+# A trailing "(...)" qualifier on a source row's Russian text, e.g.
+# "как (conjunction)". See `strip_qualifier`.
+_TRAILING_QUALIFIER = re.compile(r"\s*\([^()]*\)\s*$")
+
+
+def strip_qualifier(word: str) -> str:
+    """Drop a trailing parenthetical qualifier from a Russian source string.
+
+    Three words in the source document -- `как`, `когда`, `пока` -- are
+    genuinely two parts of speech at once, so each appears twice: once under
+    Conjunctions and once under Base Adverbs. Their `Russian` text carries a
+    qualifier ("как (conjunction)" / "как (adverb)") purely so the two cards
+    can be told apart at a glance while reviewing.
+
+    That qualifier is EDITORIAL, not part of the word. It must never reach:
+
+    - a filename, or the two senses would want `как-conjunction_f1.mp3` and
+      `как-adverb_f1.mp3` -- two copies of one identical recording, and
+      neither matching the `как_f1.mp3` that already exists in the media
+      folder with review history behind it; or
+    - the text sent to a TTS API, which would dutifully read the English
+      word "conjunction" out loud in the middle of a Russian recording.
+
+    Stripping it in both places means both senses share the one recording of
+    the one word, which is exactly right -- `sanitize_word_slug`'s docstring
+    already names two identical Russian strings under different parts of
+    speech as a legitimate shared file rather than a collision. This is the
+    same situation, reached by a different route.
+
+    Only a trailing parenthetical is stripped, and only a non-nested one.
+    Parentheses elsewhere in a row's text are left alone.
+    """
+    return _TRAILING_QUALIFIER.sub("", word.strip())
+
 
 def sanitize_word_slug(word: str) -> str:
     """Turn a Russian word/phrase into a filesystem-safe, readable slug.
@@ -56,7 +90,7 @@ def sanitize_word_slug(word: str) -> str:
     strings sanitizing to the same slug), that must be reported and
     resolved explicitly, never silently patched by re-adding a hash here.
     """
-    normalized = unicodedata.normalize("NFC", word.strip())
+    normalized = unicodedata.normalize("NFC", strip_qualifier(word))
     slug = _UNSAFE_RUN.sub("-", normalized)
     slug = _MULTI_HYPHEN.sub("-", slug).strip("-")
     if not slug:
@@ -104,8 +138,15 @@ def spoken_text_for(source_text: str) -> str:
     A separate, later transform from filename-building: this is applied
     only at the point of building the API payload, never at the point of
     building a filename. `build_filename` always uses the raw source text.
+
+    The one thing the two DO share is `strip_qualifier`: an editorial
+    "(conjunction)"/"(adverb)" suffix is not part of the word, so it is
+    absent from the filename and absent from what gets spoken. The override
+    table is keyed on the stripped text, so "как (conjunction)" and plain
+    "как" resolve through the same entry rather than needing one each.
     """
-    return SPOKEN_TEXT_OVERRIDES.get(source_text, source_text)
+    stripped = strip_qualifier(source_text)
+    return SPOKEN_TEXT_OVERRIDES.get(stripped, stripped)
 
 
 def parse_audio_filenames(value: str) -> list[str]:

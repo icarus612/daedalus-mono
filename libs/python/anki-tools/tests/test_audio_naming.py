@@ -33,6 +33,7 @@ from anki_tools.audio_naming import (
     parse_audio_filenames,
     sanitize_word_slug,
     spoken_text_for,
+    strip_qualifier,
 )
 from anki_tools.elevenlabs_tts import VOICES
 from anki_tools.elevenlabs_tts import build_filename as tts_build_filename
@@ -237,7 +238,7 @@ def real_rows(real_source_text):
 
 
 # ---------------------------------------------------------------------------
-# THE full 152x4 agreement test -- the single most important test in this
+# THE full 207x4 agreement test -- the single most important test in this
 # lane: the deck builder's predicted Audio field and the TTS tool's own
 # build_filename must agree byte-for-byte, for every row and every slot, on
 # the full real document, never a sample.
@@ -247,7 +248,7 @@ def real_rows(real_source_text):
 def test_deck_audio_field_agrees_with_tts_build_filename_for_every_row_and_slot(
     real_rows,
 ):
-    assert len(real_rows) == 152  # positive control: don't trivially pass on 0 rows
+    assert len(real_rows) == 207  # positive control: don't trivially pass on 0 rows
 
     audio_index = FIELD_NAMES.index("Audio")
     slot_to_voice = {voice.slot: voice for voice in VOICES}
@@ -273,7 +274,7 @@ def test_deck_audio_field_agrees_with_tts_build_filename_for_every_row_and_slot(
             )
             checked += 1
 
-    assert checked == 152 * 4 == 608
+    assert checked == 207 * 4 == 828
 
 
 # ---------------------------------------------------------------------------
@@ -281,31 +282,89 @@ def test_deck_audio_field_agrees_with_tts_build_filename_for_every_row_and_slot(
 # ---------------------------------------------------------------------------
 
 
-def test_152_rows_152_distinct_slugs_no_collisions(real_rows):
-    """After this lane removed the duplicate 'да' row (Conjunctions), the
-    real document has exactly one 'да' row (Particles) -- so the sanitized
-    slug set has zero repeats, not one legitimate 'да' duplicate.
+# The three words that are genuinely two parts of speech at once. Each has
+# a Conjunctions row AND a Base Adverbs row, distinguished for the reader by
+# a parenthetical qualifier -- "как (conjunction)" / "как (adverb)" -- which
+# `strip_qualifier` removes before a filename is built. They therefore SHARE
+# one recording per slot, deliberately: it is one word, pronounced one way.
+DUAL_CLASS_WORDS = {"как", "когда", "пока"}
+
+
+def test_real_document_slugs_no_collision_between_different_words(real_rows):
+    """The real invariant, stated precisely: two rows may share a slug ONLY
+    when they are the same word.
+
+    Not "all slugs are distinct" -- that was true only while no word
+    appeared under two parts of speech, and it stopped being the right
+    assertion the moment `как`/`когда`/`пока` gained Base Adverbs rows
+    alongside their Conjunctions rows. `sanitize_word_slug`'s docstring has
+    always named identical text under different parts of speech as a
+    legitimate shared file rather than a collision; this asserts exactly
+    that, and still fails loudly on a genuine collision (two DIFFERENT words
+    landing on one slug), which is the defect the hash-free naming scheme
+    has to stay clear of.
     """
-    assert len(real_rows) == 152
+    assert len(real_rows) == 207
 
-    slugs = [sanitize_word_slug(row.russian) for row in real_rows]
     slug_to_words = {}
-    for row, slug in zip(real_rows, slugs):
-        slug_to_words.setdefault(slug, []).append(row.russian)
-    collisions = {
-        slug: words for slug, words in slug_to_words.items() if len(words) > 1
-    }
+    for row in real_rows:
+        slug_to_words.setdefault(sanitize_word_slug(row.russian), set()).add(
+            strip_qualifier(row.russian)
+        )
 
+    # A genuine collision: one slug reached by two different words.
+    collisions = {
+        slug: sorted(words) for slug, words in slug_to_words.items() if len(words) > 1
+    }
     assert collisions == {}
 
-    assert len(set(slugs)) == 152
+    # 207 rows, 204 distinct slugs: the three dual-class words each
+    # contribute two rows and one slug.
+    assert len(slug_to_words) == 204
 
-    # The split rule was corrected specifically to avoid manufacturing a
-    # "будто" duplicate -- assert it explicitly is not one.
+    shared = {
+        slug
+        for slug, words in slug_to_words.items()
+        if sum(1 for row in real_rows if sanitize_word_slug(row.russian) == slug) > 1
+    }
+    assert shared == {sanitize_word_slug(w) for w in DUAL_CLASS_WORDS}
+
+
+def test_dual_class_rows_share_one_recording_per_slot(real_rows):
+    """Positive control for the rule above, at the filename level.
+
+    "как (conjunction)" and "как (adverb)" must predict the SAME four
+    filenames -- the ones that already exist in the media folder as
+    `как_f1.mp3` and friends. If the qualifier ever leaked into a filename
+    these would differ, and both would miss the existing recordings.
+    """
+    audio_index = FIELD_NAMES.index("Audio")
+    for word in sorted(DUAL_CLASS_WORDS):
+        rows = [row for row in real_rows if strip_qualifier(row.russian) == word]
+        assert len(rows) == 2, f"{word}: expected a Conjunctions and an adverb row"
+        assert {row.pos for row in rows} == {"Conjunctions", "Base Adverbs"}
+
+        audio_fields = {row.fields()[audio_index] for row in rows}
+        assert len(audio_fields) == 1, (
+            f"{word}: the two rows predict different Audio fields {audio_fields}"
+        )
+        assert audio_fields == {",".join(f"{word}_{slot}.mp3" for slot in SLOTS)}
+
+
+def test_budto_is_not_a_duplicate(real_rows):
+    """The split rule was corrected specifically to avoid manufacturing a
+    "будто" duplicate -- assert it explicitly is not one. Likewise 'да',
+    whose duplicate Conjunctions row was removed.
+    """
+    slug_to_rows = {}
+    for row in real_rows:
+        slug_to_rows.setdefault(sanitize_word_slug(row.russian), []).append(row)
+
     da_slug = sanitize_word_slug("да")
     budto_slug = sanitize_word_slug("будто")
     assert budto_slug != da_slug
-    assert len(slug_to_words.get(budto_slug, [])) == 1
+    assert len(slug_to_rows.get(budto_slug, [])) == 1
+    assert len(slug_to_rows.get(da_slug, [])) == 1
 
 
 # ---------------------------------------------------------------------------
