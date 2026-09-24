@@ -1059,17 +1059,51 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
     assert populated == 44
 
 
-def test_no_section_but_base_adverbs_carries_info(real_rows):
-    """The four original sections are still three-column, so every one of
-    their rows must come back with an empty `.info` -- proof the optional
-    fourth group did not start capturing something it shouldn't.
+# Populated info cells per section. Every section is four-column now:
+# prepositions carry the case they govern, indeclinable nouns their gender
+# (the one thing an indeclinable noun's form cannot tell you), and the
+# conjunction/particle rows that had no context in their gloss carry a
+# usage note. The rows left blank are the ones whose English gloss already
+# explains itself -- info that merely restates the gloss is noise.
+EXPECTED_INFO_COUNTS = {
+    "Prepositions": (43, 43),
+    "Conjunctions": (35, 21),
+    "Particles": (31, 13),
+    "Indeclinable Nouns": (42, 42),
+    "Base Adverbs": (56, 44),
+}
+
+
+@pytest.mark.parametrize("pos", list(EXPECTED_INFO_COUNTS))
+def test_info_coverage_per_section(real_rows, pos):
+    total, populated = EXPECTED_INFO_COUNTS[pos]
+    section = [row for row in real_rows if row.pos == pos]
+    assert len(section) == total
+    assert sum(1 for row in section if row.info) == populated
+
+
+def test_every_preposition_states_the_case_it_governs(real_rows):
+    """A preposition's gloss says which QUESTION it answers ("(where/what)"),
+    never which CASE it takes -- so the info cell is the only place the case
+    appears, and a blank one is a real gap rather than a style choice.
     """
-    stray = [
-        (row.pos, row.russian, row.info)
+    cases = ("Genitive", "Dative", "Accusative", "Instrumental", "Prepositional")
+    missing = [
+        row.russian
         for row in real_rows
-        if row.pos != "Base Adverbs" and row.info
+        if row.pos == "Prepositions" and not any(case in row.info for case in cases)
     ]
-    assert stray == []
+    assert missing == []
+
+
+def test_every_indeclinable_noun_states_its_gender(real_rows):
+    genders = ("Neuter", "Masculine", "Feminine")
+    missing = [
+        row.russian
+        for row in real_rows
+        if row.pos == "Indeclinable Nouns" and not any(g in row.info for g in genders)
+    ]
+    assert missing == []
 
 
 @pytest.mark.parametrize(
