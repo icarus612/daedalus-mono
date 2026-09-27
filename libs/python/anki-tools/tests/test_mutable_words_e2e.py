@@ -285,12 +285,11 @@ def test_real_source_predicted_audio_filenames_well_formed_and_number_2366():
 
 
 def test_audio_dry_run_over_real_media_dir_reports_exact_pending_count(
-    monkeypatch, capsys
+    monkeypatch, capsys, tmp_path
 ):
     real_media_dir = get_anki_media_dir()
     if not os.path.isdir(real_media_dir):
         pytest.skip("no real Anki media directory on this machine")
-    media_mtime_before = os.path.getmtime(real_media_dir)
 
     def _boom(*_args, **_kwargs):
         raise AssertionError("dry run must never issue a real HTTP request")
@@ -326,4 +325,36 @@ def test_audio_dry_run_over_real_media_dir_reports_exact_pending_count(
         lines[1]
         == "voices: Alisa - Natural Russian Female, Nester Surovy - Gravely yet Refined"
     )
-    assert os.path.getmtime(real_media_dir) == media_mtime_before
+
+    owned_media_dir = tmp_path / "media"
+    owned_media_dir.mkdir()
+    owned_mtime_before = os.path.getmtime(owned_media_dir)
+    owned_listing_before = sorted(os.listdir(owned_media_dir))
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "anki-mutable-words-audio",
+            "--dry-run",
+            "--anki-media-dir",
+            str(owned_media_dir),
+        ],
+    )
+    assert mutable_words_audio.main() == 0
+    capsys.readouterr()
+
+    # Stand-in for the old defect: something outside the code under test
+    # writes into a directory between the snapshot and the assertion. The
+    # snapshot is backdated so the comparison is deterministic regardless
+    # of filesystem mtime granularity.
+    concurrent_writer_dir = tmp_path / "concurrent-writer-stand-in"
+    concurrent_writer_dir.mkdir()
+    stand_in_mtime_before = time.time() - 5
+    os.utime(concurrent_writer_dir, (stand_in_mtime_before, stand_in_mtime_before))
+    (concurrent_writer_dir / "unrelated-write.tmp").write_bytes(b"")
+    with pytest.raises(AssertionError):
+        assert os.path.getmtime(concurrent_writer_dir) == stand_in_mtime_before
+
+    assert os.path.getmtime(owned_media_dir) == owned_mtime_before
+    assert sorted(os.listdir(owned_media_dir)) == owned_listing_before
