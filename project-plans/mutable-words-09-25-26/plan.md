@@ -10,9 +10,9 @@
   - [x] 2.2: Hoist the audio-picker block into a parameterized `card_audio.py`      (after: 2.1)
   - [x] 2.3: Add the `openpyxl` dependency and relock
 - [ ] Phase 3: Source of truth
-  - [ ] 3.1: `vocabulary_source.py` — workbook reader + TSV writer                  (lane 1, after: 2.3)
-  - [ ] 3.2: Commit the four TSVs and their provenance README                       (lane 1, after: 3.1)
-  - [ ] 3.3: `mutable_words_plan.py` — pure core                                    (lane 1, after: 2.2, 3.2)
+  - [x] 3.1: `vocabulary_source.py` — workbook reader + TSV writer                  (lane 1, after: 2.3)
+  - [x] 3.2: Commit the four TSVs and their provenance README                       (lane 1, after: 3.1)
+  - [x] 3.3: `mutable_words_plan.py` — pure core                                    (lane 1, after: 2.2, 3.2)
 - [ ] Phase 4: Deck package builder
   - [ ] 4.1: Four note types in a scratch collection                                (lane 2, after: 3.3)
   - [ ] 4.2: Deck tree, notes, media attach, `.apkg` export + CLI                   (lane 2, after: 4.1)
