@@ -1214,12 +1214,7 @@ def test_main_audio_dir_export_measurably_larger_than_without(
 # Lane 3's transform turns 151 raw rows into 152 final rows (43/35/32/42).
 # ---------------------------------------------------------------------------
 
-SOURCE_DOC_PATH = (
-    Path(__file__).resolve().parents[4]
-    / "project-plans"
-    / "russian-immutable-words-08-31-26"
-    / "source-word-list.md"
-)
+SOURCE_DOC_PATH = Path(__file__).resolve().parent / "data" / "source-word-list.md"
 
 
 def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
