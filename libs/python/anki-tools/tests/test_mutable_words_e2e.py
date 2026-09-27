@@ -344,10 +344,7 @@ def test_audio_dry_run_over_real_media_dir_reports_exact_pending_count(
     assert mutable_words_audio.main() == 0
     capsys.readouterr()
 
-    # Stand-in for the old defect: something outside the code under test
-    # writes into a directory between the snapshot and the assertion. The
-    # snapshot is backdated so the comparison is deterministic regardless
-    # of filesystem mtime granularity.
+    # Backdated snapshot makes the external-writer race deterministic.
     concurrent_writer_dir = tmp_path / "concurrent-writer-stand-in"
     concurrent_writer_dir.mkdir()
     stand_in_mtime_before = time.time() - 5
