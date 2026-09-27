@@ -123,11 +123,6 @@ def real_words():
     return load_base_words(str(DATA_DIR), SHEETS)
 
 
-# ---------------------------------------------------------------------------
-# 5.1 -- pure half
-# ---------------------------------------------------------------------------
-
-
 def test_load_base_words_matches_the_real_1183_word_set(real_words):
     assert len(real_words) == 1183
 
@@ -185,11 +180,6 @@ def test_pure_functions_never_touch_the_network(real_words, tmp_path):
     assert isinstance(plan, AudioWorkPlan)
     assert plan.total_pairs == 10
     assert plan.skipped == 0
-
-
-# ---------------------------------------------------------------------------
-# 5.2 -- driver + CLI
-# ---------------------------------------------------------------------------
 
 
 def test_main_dry_run_prints_the_real_environment_totals(capsys):
