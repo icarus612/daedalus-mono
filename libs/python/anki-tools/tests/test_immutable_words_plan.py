@@ -35,6 +35,7 @@ from pathlib import Path
 
 import pytest
 
+from anki_tools.anki_identity import base91 as _base91
 from anki_tools.audio_naming import SLOTS
 from anki_tools.audio_naming import build_filename as shared_build_filename
 from anki_tools.immutable_words_plan import (
@@ -46,7 +47,6 @@ from anki_tools.immutable_words_plan import (
     TRANSLATION_OVERRIDES,
     SourceDocumentError,
     WordRow,
-    _base91,
     all_subdeck_names,
     counts_by_deck,
     guid_for_row,
@@ -410,6 +410,14 @@ def test_rewrite_audio_playback_idempotent():
 def test_rewrite_audio_playback_noop_when_absent():
     result = rewrite_audio_playback(TEMPLATE_WITHOUT_AUDIO_DIV)
     assert result == TEMPLATE_WITHOUT_AUDIO_DIV
+
+
+def test_rewrite_audio_playback_byte_identical_to_pre_hoist_golden():
+    golden_path = (
+        Path(__file__).resolve().parent / "data" / "immutable_audio_block.html"
+    )
+    golden = golden_path.read_text(encoding="utf-8")
+    assert rewrite_audio_playback('<div id="audio">{{Audio}}</div>\n') == golden
 
 
 # --- New contract tests (lane l5): the "Show Answer plays a second, ---

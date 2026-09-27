@@ -10,6 +10,7 @@ authors = [
 dependencies = [
   "requests>=2.28.0",
   "anki",
+  "openpyxl>=3.1",
 ]
 
 [tool.uv]

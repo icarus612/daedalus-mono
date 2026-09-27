@@ -20,10 +20,11 @@ template side that renders that field so its own JavaScript does the picking
 and playing.
 """
 
-import hashlib
 import re
 from dataclasses import dataclass
 
+from anki_tools import card_audio
+from anki_tools.anki_identity import guid_for_row
 from anki_tools.audio_naming import SLOTS, build_filename
 
 # Deck the four part-of-speech subdecks hang off. The `2. ` prefix is the user's
@@ -120,71 +121,6 @@ _AUDIO_DIV = re.compile(
     r"^[ \t]*<div[^>]*\bid=[\"']audio[\"'][^>]*>\s*\{\{Audio\}\}\s*</div>[ \t]*\r?\n?",
     re.M | re.S,
 )
-
-# Anki's own `anki.utils.base91`/`guid64()` alphabet: `base62` (letters + digits)
-# plus these extra printable-ASCII characters (every printable character except
-# quotes, backslash, and Anki's own field/record separators). Reproduced here,
-# not imported from `anki.utils`, to keep this module's "no Anki imports"
-# invariant -- a deterministic GUID should still render in exactly the
-# alphabet a genuine Anki-minted GUID would.
-_GUID_ALPHABET = (
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-    "!#$%&()*+,-./:;<=>?@[]^_`{|}~"
-)
-
-
-def _base91(num: int) -> str:
-    """Encode a non-negative int in Anki's own guid64 alphabet.
-
-    Mirrors `anki.utils.base62`/`base91` exactly (same table, same
-    algorithm), including its one sharp edge: `num == 0` encodes as the
-    empty string in a naive port. Guarded explicitly here (returns the
-    alphabet's first character instead) because an empty GUID is a real
-    risk this function must not reproduce, however astronomically
-    unlikely a zero hash is.
-    """
-    if num == 0:
-        return _GUID_ALPHABET[0]
-
-    base = len(_GUID_ALPHABET)
-    digits: list[str] = []
-    while num > 0:
-        num, remainder = divmod(num, base)
-        digits.append(_GUID_ALPHABET[remainder])
-    return "".join(reversed(digits))
-
-
-def guid_for_row(russian: str, pos: str) -> str:
-    """Deterministic Anki note GUID for one source row.
-
-    Derived from `russian` + `pos` ONLY -- never from `english`
-    (Translation) or anything audio-related, both of which legitimately
-    change on a rebuild and must UPDATE the existing note in place, not
-    mint a new one. `russian` alone is not enough -- two different parts
-    of speech can share identical text, so `pos` -- the section-heading identity
-    ("Prepositions", "Conjunctions", ...), not the full `::`-joined deck
-    path from `subdeck_name` -- is what's hashed, so a GUID survives even
-    if the user later renumbers the `2.`/`3.`/`4.` deck-root prefix
-    (`DECK_ROOT` is user-renumbered territory; see the-ask.md decision 2).
-
-    Uses sha256 over a canonical `pos + "\\x1f" + russian` string (the
-    `\\x1f` separator matches `anki.utils.join_fields`'s own convention,
-    preventing e.g. `pos="AB", russian="C"` from colliding with
-    `pos="A", russian="BC"`), takes the first 8 bytes as a big-endian
-    unsigned int, and base91-encodes it -- never Python's built-in
-    `hash()`, which is salted per-process specifically to be
-    non-reproducible and would silently reintroduce this exact defect.
-
-    Same `(russian, pos)` -> the same 64-bit hash -> the same GUID string,
-    every time, on every machine, forever. This is what makes a rebuilt
-    `.apkg` re-importable in place instead of duplicating the deck --
-    see `immutable_words.py`'s `build_deck_tree`, the only caller.
-    """
-    canonical = f"{pos}\x1f{russian}".encode()
-    digest = hashlib.sha256(canonical).digest()
-    num = int.from_bytes(digest[:8], byteorder="big", signed=False)
-    return _base91(num)
-
 
 # Rows that combine two NON-interchangeable words into one source-document
 # row split into their own separate cards. Keyed by the exact `.russian`
@@ -463,79 +399,9 @@ def rewrite_audio_playback(template_html: str) -> str:
     if not _AUDIO_DIV.search(template_html):
         return template_html
 
-    replacement = """\
-<!-- Audio field holds a plain-text, comma/newline-separated list of
-     bare media filenames -- it is NOT wrapped in Anki's own sound-tag
-     syntax. Anki's backend autoplays every sound-tagged reference in
-     a field, in order, before any template JS runs, so three tagged
-     recordings would play back to back with no way for JS to
-     suppress or reorder that queue. Keeping the field as plain text
-     lets the script below pick and play just one.
-
-     The pick must survive unchanged from the question render to the
-     answer render of the SAME review: `afmt` always re-embeds the
-     question's rendered HTML via `{{FrontSide}}`, which re-runs this
-     very script a second time whenever a template places this div on
-     the question side -- without this logic that second run would
-     call Math.random() again and autoplay a DIFFERENT file than the
-     one just heard. The script defers its work with setTimeout(fn, 0)
-     because it runs at parse time, before the answer side's own
-     `#back` element has actually been inserted into the page --
-     checking for it synchronously would never see it. Once deferred,
-     document.getElementById("back") reliably tells a pure
-     question-side render (no #back anywhere yet) apart from any
-     answer-side render (#back always exists by then, whether this
-     particular audio div started life on the question side and got
-     duplicated in via FrontSide, or lives on the answer side alone).
-     window.__immutableWordsAudioChoice carries the chosen filename
-     across exactly one such question->answer duplication; every fresh
-     render -- every question-side render, or an answer-side render
-     whose stored choice doesn't belong to THIS note's own file list
-     (a template that only ever shows audio on the answer side, or a
-     global left over from a different note reviewed a moment ago) --
-     overwrites it with a new random pick, so a later review of the
-     same card rolls a fresh voice rather than repeating one forever.
-     The script also renders a <button> so the native R-key replay
-     isn't simply lost, on both sides, always pointing at whichever
-     file this render actually chose or reused. -->
-<div id="audio"><span id="audio-data" class="hidden">{{Audio}}</span>
-<span id="audio-controls"></span></div>
-<script>
-(function () {
-  var data = document.getElementById("audio-data");
-  if (!data) return;
-  var text = data.textContent.trim();
-  if (!text) return;
-  var files = text
-    .split(/[,\\n]+/)
-    .map(function (f) { return f.trim(); })
-    .filter(function (f) { return f.length > 0; });
-  if (files.length === 0) return;
-  setTimeout(function () {
-    var container = document.getElementById("audio");
-    if (!container) return;
-    var onAnswerSide = !!document.getElementById("back");
-    var previous = window.__immutableWordsAudioChoice;
-    var reusable = onAnswerSide && !!previous && files.indexOf(previous) !== -1;
-    var chosen = reusable
-      ? previous
-      : files[Math.floor(Math.random() * files.length)];
-    window.__immutableWordsAudioChoice = chosen;
-    var audio = document.createElement("audio");
-    audio.autoplay = !reusable;
-    audio.src = chosen;
-    var button = document.createElement("button");
-    button.textContent = "▶";
-    button.addEventListener("click", function () {
-      audio.currentTime = 0;
-      audio.play();
-    });
-    container.appendChild(audio);
-    container.appendChild(button);
-  }, 0);
-})();
-</script>
-"""
+    replacement = card_audio.audio_block(
+        "Audio", "audio", "__immutableWordsAudioChoice"
+    )
     # A plain string replacement (not a lambda) would have re.sub interpret the
     # JS source's own backslash escapes (\n, ▶, ...) as regex template
     # backreferences, so pass it through a callable instead.
