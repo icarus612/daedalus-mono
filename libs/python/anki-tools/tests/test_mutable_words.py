@@ -770,10 +770,8 @@ def test_export_package_unknown_root_deck_raises_value_error(build_col, tmp_path
         export_package(build_col, "Nowhere::At::All", out_path, force=False)
 
 
-# Re-import idempotence (4.2 acceptance: default ImportAnkiPackageOptions,
-# never merge_notetypes=True -- see test_immutable_words.py's l9 e2e section
-# for why the default is the only option set that reproduces the regression
-# an unstable notetype id would otherwise mask).
+# Default ImportAnkiPackageOptions, never merge_notetypes=True -- that flag
+# would mask an unstable notetype id instead of catching it.
 
 
 def test_reimport_default_options_updates_in_place_no_duplicate_notetypes(
