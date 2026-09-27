@@ -20,7 +20,7 @@
   - [ ] 5.1: Work-set computation and exact budget sizing                           (lane 3, after: 3.3)
   - [ ] 5.2: `mutable_words_audio.py` resumable driver + CLI                        (lane 3, after: 5.1)
 - [ ] Phase 6: Deck renumbering tooling
-  - [ ] 6.1: `renumber_russian_decks.py` — reverse-order rename, backup, revert     (lane 4, after: 1.2)
+  - [x] 6.1: `renumber_russian_decks.py` — reverse-order rename, backup, revert     (lane 4, after: 1.2)
 - [ ] Phase 7: Integration and dry-run verification
   - [ ] 7.1: Entry points — `package.json` bin + module guards                      (after: 4.2, 5.2, 6.1)
   - [ ] 7.2: End-to-end dry run over the real source, zero network, zero mutation   (after: 7.1)
