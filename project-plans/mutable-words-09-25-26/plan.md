@@ -6,9 +6,9 @@
   - [x] 1.1: Relocate `source-word-list.md` out of the plan dir into `tests/data/`
   - [x] 1.2: Reconcile the old plan's syllabus with what shipped, then archive it   (after: 1.1)
 - [ ] Phase 2: Shared foundation
-  - [ ] 2.1: Hoist deterministic Anki identity helpers into `anki_identity.py`      (after: 1.1)
-  - [ ] 2.2: Hoist the audio-picker block into a parameterized `card_audio.py`      (after: 2.1)
-  - [ ] 2.3: Add the `openpyxl` dependency and relock
+  - [x] 2.1: Hoist deterministic Anki identity helpers into `anki_identity.py`      (after: 1.1)
+  - [x] 2.2: Hoist the audio-picker block into a parameterized `card_audio.py`      (after: 2.1)
+  - [x] 2.3: Add the `openpyxl` dependency and relock
 - [ ] Phase 3: Source of truth
   - [ ] 3.1: `vocabulary_source.py` — workbook reader + TSV writer                  (lane 1, after: 2.3)
   - [ ] 3.2: Commit the four TSVs and their provenance README                       (lane 1, after: 3.1)
