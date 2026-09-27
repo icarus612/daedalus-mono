@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Read the "Russian Vocabulary" workbook and emit per-sheet TSV files.
 
 The only module in this package allowed to import `openpyxl`. Reads the

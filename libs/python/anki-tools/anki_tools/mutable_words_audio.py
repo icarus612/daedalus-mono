@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Resumable, budget-safe ElevenLabs audio generation for the mutable-words
 deck (Nouns, Verbs, Adjectives, Adverbs).
 
