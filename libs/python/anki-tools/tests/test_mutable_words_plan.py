@@ -10,6 +10,8 @@ from collections import Counter
 from pathlib import Path
 
 import pytest
+from anki.collection import Collection
+from anki.utils import to_json_bytes
 
 from anki_tools import mutable_words_plan
 from anki_tools.audio_naming import build_filename, sanitize_word_slug
@@ -268,3 +270,40 @@ def test_deck_header_script_markers_in_every_qfmt():
         assert 'id="deck-header"' in content, (sheet, card_index)
         assert 'deckName.split("::")' in content, (sheet, card_index)
         assert '.split(". ")[1]' in content, (sheet, card_index)
+
+
+def test_pairwise_distinct_qfmt_per_sheet():
+    for sheet, count in SHEET_CARD_COUNTS.items():
+        qfmts = [
+            mutable_words_plan.build_template(sheet, card_index)[0]
+            for card_index in range(count)
+        ]
+        for i in range(len(qfmts)):
+            for j in range(i + 1, len(qfmts)):
+                assert qfmts[i] != qfmts[j], (sheet, i, j)
+
+
+def _register_note_type(col, sheet):
+    note_type = col.models.new(mutable_words_plan.NOTE_TYPE_NAMES[sheet])
+    for name in mutable_words_plan.FIELD_NAMES[sheet]:
+        note_type["flds"].append(col.models.new_field(name))
+    for card_index in range(SHEET_CARD_COUNTS[sheet]):
+        qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
+        template = col.models.new_template(f"Card {card_index + 1}")
+        template["qfmt"] = qfmt
+        template["afmt"] = afmt
+        note_type["tmpls"].append(template)
+    return col._backend.add_or_update_notetype(
+        json=to_json_bytes(note_type),
+        preserve_usn_and_mtime=True,
+        skip_checks=False,
+    )
+
+
+@pytest.mark.parametrize("sheet", sorted(SHEET_CARD_COUNTS))
+def test_note_type_registers_without_card_type_error(tmp_path, sheet):
+    col = Collection(str(tmp_path / f"{sheet.lower()}.anki2"))
+    try:
+        _register_note_type(col, sheet)
+    finally:
+        col.close()

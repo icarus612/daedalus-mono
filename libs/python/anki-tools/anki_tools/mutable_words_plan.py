@@ -573,7 +573,16 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
             ["{{FrontSide}}", "<hr id=answer>", "{{Translation}}", details_block]
         )
     else:
-        qfmt = "\n".join([header, "{{Translation}}"])
+        if sheet == "Verbs":
+            qfmt = "\n".join(
+                [
+                    header,
+                    "{{Translation}}",
+                    f'<div class="detail-title">{primary_field}</div>',
+                ]
+            )
+        else:
+            qfmt = "\n".join([header, "{{Translation}}"])
         afmt = "\n".join(
             [
                 "{{FrontSide}}",
