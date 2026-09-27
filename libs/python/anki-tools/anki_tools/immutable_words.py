@@ -10,7 +10,6 @@ entry point (`anki-build-immutable-words` / `python -m anki_tools.immutable_word
 """
 
 import argparse
-import hashlib
 import os
 import shutil
 import tempfile
@@ -23,6 +22,7 @@ from anki.models import NotetypeDict
 from anki.utils import to_json_bytes
 
 from anki_tools import audio_naming
+from anki_tools.anki_identity import notetype_id_for_name as _notetype_id_for_name
 from anki_tools.audio_naming import get_anki_collection_path
 from anki_tools.immutable_words_plan import (
     DECK_ROOT,
@@ -41,31 +41,6 @@ from anki_tools.immutable_words_plan import (
 SOURCE_NOTETYPE_ID = 1698803891108
 # exact, no trailing space
 NEW_NOTE_TYPE_NAME = "Russian - Immutable Words (Ellis Version)"
-
-
-def _notetype_id_for_name(name: str) -> int:
-    """Deterministic Anki notetype id for `name`.
-
-    Mirrors `immutable_words_plan.guid_for_row`'s reasoning exactly,
-    transplanted from note identity to note-TYPE identity: Anki's import
-    merge logic (`rslib/src/import_export/package/apkg/import/notes.rs`,
-    `NoteContext::import_notetypes`) matches an incoming note type against
-    an existing one BY ID ALONE, never by name or content. If this id is
-    not stable across builds, a rebuilt `.apkg` is treated as a brand-new
-    note type on every re-import -- this is precisely the live defect
-    this module exists to fix (see module-level notes above `clone_note_type`
-    -- or the lane 9 contract this was written from).
-
-    Never Anki's own auto-assigned id (a real-time-based value from
-    `add_notetype_legacy`, different on every process/every build).
-    Derived via sha256 over `name`, first 8 bytes read as a big-endian
-    unsigned int, masked to 62 bits: Anki's `NotetypeId` is a signed
-    64-bit integer, and 62 bits keeps this comfortably positive and clear
-    of that boundary (the same caution `guid_for_row` takes, applied to a
-    plain integer instead of a base91 string).
-    """
-    digest = hashlib.sha256(name.encode("utf-8")).digest()
-    return int.from_bytes(digest[:8], "big") & ((1 << 62) - 1)
 
 
 # Fixed forever, for exactly the reason `_notetype_id_for_name`'s docstring
