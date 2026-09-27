@@ -482,6 +482,11 @@ def build_note_type_id(sheet: str) -> int:
     return notetype_id_for_name(NOTE_TYPE_NAMES[sheet])
 
 
+def build_template_id(sheet: str, card_index: int) -> int:
+    """Deterministic template id for `sheet`'s `card_index`-th card."""
+    return notetype_id_for_name(f"{NOTE_TYPE_NAMES[sheet]}\x1ftemplate\x1f{card_index}")
+
+
 _PRIMARY_FIELD = {
     "Nouns": "Russian",
     "Adjectives": "Russian (m)",

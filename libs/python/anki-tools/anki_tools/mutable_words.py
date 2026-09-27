@@ -76,6 +76,7 @@ def build_note_types(
             template["qfmt"] = qfmt
             template["afmt"] = afmt
             template["ord"] = card_index
+            template["id"] = mutable_words_plan.build_template_id(sheet, card_index)
             templates.append(template)
         cloned["tmpls"] = templates
 
