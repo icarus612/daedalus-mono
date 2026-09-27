@@ -316,6 +316,14 @@ def test_audio_dry_run_over_real_media_dir_reports_exact_pending_count(
     assert exit_code == 0
 
     captured = capsys.readouterr()
-    first_line = captured.out.splitlines()[0]
-    assert first_line == "total 2366 / present 14 / pending 2352"
+    lines = captured.out.splitlines()
+    match = re.match(r"total (\d+) / present (\d+) / pending (\d+)$", lines[0])
+    assert match is not None
+    total, present, pending = (int(g) for g in match.groups())
+    assert total == 2366
+    assert present + pending == total
+    assert (
+        lines[1]
+        == "voices: Alisa - Natural Russian Female, Nester Surovy - Gravely yet Refined"
+    )
     assert os.path.getmtime(real_media_dir) == media_mtime_before

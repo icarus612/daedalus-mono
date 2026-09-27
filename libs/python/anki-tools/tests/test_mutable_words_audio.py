@@ -182,13 +182,30 @@ def test_pure_functions_never_touch_the_network(real_words, tmp_path):
     assert plan.skipped == 0
 
 
-def test_main_dry_run_prints_the_real_environment_totals(capsys):
-    rc = main(["--dry-run"])
+def test_main_dry_run_prints_the_real_environment_totals(real_words, tmp_path, capsys):
+    present_pairs = [
+        (real_words[0], "f1"),
+        (real_words[1], "m2"),
+        (real_words[2], "f1"),
+    ]
+    for word, slot in present_pairs:
+        Path(build_filename(word, slot, dir_name=str(tmp_path))).touch()
+
+    rc = main(["--dry-run", "--anki-media-dir", str(tmp_path)])
 
     assert rc == 0
     out = capsys.readouterr().out
-    assert "total 2366 / present 14 / pending 2352" in out
-    assert "voices:" in out
+    total_pairs = len(real_words) * 2
+    present = len(present_pairs)
+    assert total_pairs == 2366
+    assert (
+        f"total {total_pairs} / present {present} / pending {total_pairs - present}"
+        in out
+    )
+    assert (
+        "voices: Alisa - Natural Russian Female, Nester Surovy - Gravely yet Refined"
+        in out
+    )
 
 
 def test_generate_dedupes_a_doubled_word_list_and_spends_exactly_the_pending_count(
