@@ -7,12 +7,14 @@ never read by this file's author.
 import re
 import subprocess
 import sys
+from pathlib import Path
 
 import pytest
 
 from anki_tools.card_audio import audio_block
 
 ID_RE = re.compile(r'id="([^"]*)"')
+_PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_field_reference_appears_exactly_once():
@@ -75,7 +77,8 @@ def test_two_calls_concatenated_have_no_duplicated_id_attribute_value():
 
 def test_module_imports_only_stdlib():
     script = (
-        "import sys; before = set(sys.modules); "
+        f"import sys; sys.path.insert(0, {str(_PACKAGE_ROOT)!r}); "
+        "before = set(sys.modules); "
         "import anki_tools.card_audio; "
         "after = set(sys.modules) - before; "
         "after.discard('anki_tools'); "
