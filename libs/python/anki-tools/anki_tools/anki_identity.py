@@ -4,9 +4,8 @@ only -- no Anki imports, no filesystem access, no collection access.
 
 import hashlib
 
-# Anki's own `anki.utils.base91`/`guid64()` alphabet: base62 (letters + digits)
-# plus these extra printable-ASCII characters. Reproduced here, not imported
-# from `anki.utils`, to keep this module's "no Anki imports" invariant.
+# Anki's own `anki.utils.base91`/`guid64()` alphabet, reproduced here (not
+# imported) to keep this module's "no Anki imports" invariant.
 GUID_ALPHABET = (
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     "!#$%&()*+,-./:;<=>?@[]^_`{|}~"
