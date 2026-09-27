@@ -2,18 +2,39 @@
 (subphases 3.1-3.3) end to end, across all three packets together. Not a
 packet contract test -- written directly against the plan, not against any
 packet's contract slice.
+
+Extended by lane l6 (subphase 7.2) with the full deck-package chain and the
+audio dry run, both over the real committed data -- the pre-spend gate for
+Phase 8.
 """
 
+import os
+import re
+import shutil
 import subprocess
 import sys
+import time
 from collections import Counter
 from pathlib import Path
 
 import pytest
+import requests
+from anki.collection import Collection
+from anki.import_export_pb2 import ImportAnkiPackageOptions, ImportAnkiPackageRequest
 
+from anki_tools import (
+    elevenlabs_tts,
+    mutable_words,
+    mutable_words_audio,
+    vocabulary_source,
+)
 from anki_tools import mutable_words_plan as plan
-from anki_tools import vocabulary_source
-from anki_tools.audio_naming import sanitize_word_slug
+from anki_tools.audio_naming import (
+    get_anki_collection_path,
+    get_anki_media_dir,
+    sanitize_word_slug,
+)
+from anki_tools.immutable_words import assert_unmodified
 
 _DATA_DIR = (
     Path(__file__).resolve().parents[1] / "anki_tools" / "data" / "russian-vocabulary"
@@ -29,6 +50,20 @@ _KNOWN_OVERLAP_SLUGS = {
     "просто",
     "согласно",
 }
+
+_PER_DECK_NOTES = {
+    "Nouns": 541,
+    "Verbs": 179,
+    "Adjectives": 152,
+    "Adverbs": 132,
+}
+_PER_DECK_CARDS = {
+    "Nouns": 1082,
+    "Verbs": 716,
+    "Adjectives": 304,
+    "Adverbs": 264,
+}
+_FILENAME_RE = re.compile(r"^[^/]+_(?:f1|m2)\.mp3$")
 
 
 def _parse_all_rows():
@@ -137,3 +172,150 @@ def test_module_purity_no_anki_requests_openpyxl():
         cwd=str(Path(__file__).resolve().parents[1]),
     )
     assert result.stdout.strip() == "[]"
+
+
+def _copy_real_collection(tmp_path):
+    real_path = get_anki_collection_path()
+    if not os.path.isfile(real_path):
+        pytest.skip("no real Anki collection on this machine")
+    copy_path = os.path.join(str(tmp_path), "source-snapshot.anki2")
+    shutil.copy2(real_path, copy_path)
+    return real_path, copy_path
+
+
+def _run_build(argv, monkeypatch):
+    monkeypatch.setattr(sys, "argv", ["anki-mutable-words", *argv])
+    try:
+        mutable_words.main()
+    except SystemExit as exc:
+        return exc.code
+    return 0  # pragma: no cover - main() always raises SystemExit
+
+
+def test_real_source_builds_the_exact_deck_and_card_counts_unmodified(
+    tmp_path, monkeypatch
+):
+    real_path, copy_path = _copy_real_collection(tmp_path)
+    mtime_before = os.path.getmtime(real_path)
+
+    out_path = os.path.join(str(tmp_path), "mutable-words.apkg")
+    exit_code = _run_build(["--collection", copy_path, "--out", out_path], monkeypatch)
+    assert exit_code == 0
+    assert_unmodified(real_path, mtime_before)
+
+    fresh_path = os.path.join(str(tmp_path), "fresh.anki2")
+    fresh_col = Collection(fresh_path)
+    try:
+        fresh_col.import_anki_package(
+            ImportAnkiPackageRequest(
+                package_path=out_path, options=ImportAnkiPackageOptions()
+            )
+        )
+        assert fresh_col.note_count() == 1004
+
+        for sheet, expected_notes in _PER_DECK_NOTES.items():
+            deck_name = plan.subdeck_name(sheet)
+            note_ids = fresh_col.find_notes(f'deck:"{deck_name}"')
+            card_ids = fresh_col.find_cards(f'deck:"{deck_name}"')
+            assert len(note_ids) == expected_notes
+            assert len(card_ids) == _PER_DECK_CARDS[sheet]
+
+        for sheet, name in plan.NOTE_TYPE_NAMES.items():
+            notetype = fresh_col.models.by_name(name)
+            assert notetype is not None
+            assert notetype["id"] == plan.build_note_type_id(sheet)
+    finally:
+        fresh_col.close()
+
+
+def test_real_source_reimport_is_idempotent_no_duplicate_notetypes(
+    tmp_path, monkeypatch
+):
+    _, copy_path = _copy_real_collection(tmp_path)
+
+    out1 = os.path.join(str(tmp_path), "build1.apkg")
+    assert _run_build(["--collection", copy_path, "--out", out1], monkeypatch) == 0
+
+    fresh_path = os.path.join(str(tmp_path), "fresh.anki2")
+    fresh_col = Collection(fresh_path)
+    options = ImportAnkiPackageOptions()
+    fresh_col.import_anki_package(
+        ImportAnkiPackageRequest(package_path=out1, options=options)
+    )
+    guids_after_first = {
+        fresh_col.get_note(nid).guid for nid in fresh_col.find_notes("")
+    }
+    fresh_col.close()
+
+    time.sleep(1.1)
+    out2 = os.path.join(str(tmp_path), "build2.apkg")
+    assert _run_build(["--collection", copy_path, "--out", out2], monkeypatch) == 0
+
+    fresh_col = Collection(fresh_path)
+    try:
+        fresh_col.import_anki_package(
+            ImportAnkiPackageRequest(package_path=out2, options=options)
+        )
+        assert fresh_col.note_count() == 1004
+        guids_after_second = {
+            fresh_col.get_note(nid).guid for nid in fresh_col.find_notes("")
+        }
+        assert guids_after_second == guids_after_first
+
+        notetype_names = [n.name for n in fresh_col.models.all_names_and_ids()]
+        for name in plan.NOTE_TYPE_NAMES.values():
+            assert notetype_names.count(name) == 1
+        duplicates = [n for n in notetype_names if n.startswith("Russian - Mutable")]
+        assert sorted(duplicates) == sorted(plan.NOTE_TYPE_NAMES.values())
+    finally:
+        fresh_col.close()
+
+
+def test_real_source_predicted_audio_filenames_well_formed_and_number_2366():
+    nouns, verbs, adjectives, adverbs = _parse_all_rows()
+
+    filenames: set[str] = set()
+    for row in (*nouns, *verbs, *adjectives, *adverbs):
+        for base_word in row.base_words:
+            filenames.update(plan.audio_names(base_word))
+
+    assert len(filenames) == 2366
+    malformed = [name for name in filenames if not _FILENAME_RE.match(name)]
+    assert malformed == []
+
+
+def test_audio_dry_run_over_real_media_dir_reports_exact_pending_count(
+    monkeypatch, capsys
+):
+    real_media_dir = get_anki_media_dir()
+    if not os.path.isdir(real_media_dir):
+        pytest.skip("no real Anki media directory on this machine")
+    media_mtime_before = os.path.getmtime(real_media_dir)
+
+    def _boom(*_args, **_kwargs):
+        raise AssertionError("dry run must never issue a real HTTP request")
+
+    def _boom_api_key():
+        raise AssertionError("dry run must never read the ElevenLabs API key")
+
+    monkeypatch.setattr(requests, "post", _boom)
+    monkeypatch.setattr(requests.Session, "post", _boom)
+    monkeypatch.setattr(elevenlabs_tts, "get_api_key", _boom_api_key)
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "anki-mutable-words-audio",
+            "--dry-run",
+            "--anki-media-dir",
+            real_media_dir,
+        ],
+    )
+    exit_code = mutable_words_audio.main()
+    assert exit_code == 0
+
+    captured = capsys.readouterr()
+    first_line = captured.out.splitlines()[0]
+    assert first_line == "total 2366 / present 14 / pending 2352"
+    assert os.path.getmtime(real_media_dir) == media_mtime_before
