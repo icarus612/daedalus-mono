@@ -1701,9 +1701,16 @@ def test_e2e_rebuild_after_translation_edit_reimports_in_place_not_duplicated(
 # opened here is either that copy or a from-scratch temp collection --
 # ~/.local/share/Anki2/User 1/collection.anki2 is never opened.
 # REAL_AUDIO_DIR doubles as elevenlabs_tts.DEFAULT_OUTPUT_DIR; keyed by filename.
+# The recordings themselves live in the Anki media dir, checked alongside it.
 # ---------------------------------------------------------------------------
 
 REAL_AUDIO_DIR = os.path.expanduser("~/Desktop/russian-audio")
+
+
+def _real_audio_source_dirs():
+    from anki_tools.audio_naming import get_anki_media_dir
+
+    return (REAL_AUDIO_DIR, get_anki_media_dir())
 
 
 def _required_real_audio_filenames():
@@ -1719,9 +1726,27 @@ def _required_real_audio_filenames():
 
 
 def _missing_real_audio_filenames(required):
-    if not os.path.isdir(REAL_AUDIO_DIR):
-        return set(required)
-    return required - set(os.listdir(REAL_AUDIO_DIR))
+    present = set()
+    for source_dir in _real_audio_source_dirs():
+        if os.path.isdir(source_dir):
+            present |= set(os.listdir(source_dir))
+    return required - present
+
+
+def _attach_real_media(build_col):
+    """Resolve every required filename by identity across both source dirs,
+    review dir first, falling back to the Anki media dir -- never a count,
+    never a scan of one directory alone. A name is genuinely missing only
+    when absent from both.
+    """
+    found_by_dir, missing_by_dir = [], []
+    for source_dir in _real_audio_source_dirs():
+        f, m = attach_media(build_col, source_dir)
+        found_by_dir.append(set(f))
+        missing_by_dir.append(set(m))
+    found = sorted(set.union(*found_by_dir))
+    missing = sorted(set.intersection(*missing_by_dir))
+    return found, missing
 
 
 _REQUIRED_REAL_AUDIO_FILENAMES = _required_real_audio_filenames()
@@ -1731,10 +1756,10 @@ _MISSING_REAL_AUDIO_FILENAMES = _missing_real_audio_filenames(
 
 _real_audio_missing_reason = (
     f"{len(_MISSING_REAL_AUDIO_FILENAMES)} of {len(_REQUIRED_REAL_AUDIO_FILENAMES)} "
-    f"required real audio files are missing under {REAL_AUDIO_DIR!r} (e.g. "
-    f"{', '.join(sorted(_MISSING_REAL_AUDIO_FILENAMES)[:10])}) -- this test "
-    "verifies the actual shipped audio, not a fixture, so it skips rather "
-    "than false-failing until every required file exists"
+    f"required real audio files are missing under {_real_audio_source_dirs()!r} "
+    f"(e.g. {', '.join(sorted(_MISSING_REAL_AUDIO_FILENAMES)[:10])}) -- this "
+    "test verifies the actual shipped audio, not a fixture, so it skips "
+    "rather than false-failing until every required file exists"
 )
 
 
@@ -1775,7 +1800,7 @@ def test_e2e_real_media_is_marked_used_not_merely_present(
 
     build_deck_tree(build_col, rows, note_type)
 
-    found, missing = attach_media(build_col, REAL_AUDIO_DIR)
+    found, missing = _attach_real_media(build_col)
     assert missing == [], f"real audio files not found on disk: {missing}"
     assert len(found) == 816
 
@@ -1830,7 +1855,7 @@ def test_e2e_real_media_export_is_full_size_not_empty_manifest(
         source_col.close()
 
     build_deck_tree(build_col, rows, note_type)
-    found, missing = attach_media(build_col, REAL_AUDIO_DIR)
+    found, missing = _attach_real_media(build_col)
     assert missing == []
 
     out_path = os.path.join(str(tmp_path), "immutable-words-with-media.apkg")
@@ -1884,7 +1909,7 @@ def test_e2e_real_media_fresh_import_delivers_816_files_zero_missing(
         source_col.close()
 
     build_deck_tree(build_col, rows, note_type)
-    found, missing = attach_media(build_col, REAL_AUDIO_DIR)
+    found, missing = _attach_real_media(build_col)
     assert missing == []
     assert len(found) == 816
 
