@@ -16,13 +16,11 @@ built against the same contract text; this file never touches Anki, the
 ``.anki2`` snapshot, or any note type at all -- it is the pure module's
 test file only.
 
-The real source document
-(``project-plans/russian-immutable-words-08-31-26/source-word-list.md``,
-a committed repo fixture copy of the original run dir file) is read
-directly by a repo-relative path below and used as fixture data for the
-parser tests; it is a plain input document, not part of the implementation
-under test, so reading it does not compromise the blindness this file is
-required to keep.
+The real source document (``tests/data/source-word-list.md``, a
+committed repo fixture copy) is read directly by a repo-relative path
+below and used as fixture data for the parser tests; it is a plain input
+document, not part of the implementation under test, so reading it does
+not compromise the blindness this file is required to keep.
 """
 
 import json
@@ -58,12 +56,7 @@ from anki_tools.immutable_words_plan import (
     subdeck_name,
 )
 
-REAL_SOURCE_PATH = (
-    Path(__file__).resolve().parents[4]
-    / "project-plans"
-    / "russian-immutable-words-08-31-26"
-    / "source-word-list.md"
-)
+REAL_SOURCE_PATH = Path(__file__).resolve().parent / "data" / "source-word-list.md"
 
 # The five sections in document order, with the exact counts the real
 # document is known to contain AFTER the l3 split/transform pass (contract

@@ -11,9 +11,8 @@ Written from the lane contract alone
 never read by this file's author -- every expectation below comes from the
 contract text, not from observed behaviour.
 
-The real source document
-(``project-plans/russian-immutable-words-08-31-26/source-word-list.md``,
-a committed repo fixture copy) is read directly by a repo-relative path
+The real source document (``tests/data/source-word-list.md``, a
+committed repo fixture copy) is read directly by a repo-relative path
 below and used as fixture data for the parser-agreement test; it is a plain
 input document, not part of the implementation under test, so reading it
 does not compromise the blindness this file is required to keep.
@@ -39,12 +38,7 @@ from anki_tools.elevenlabs_tts import VOICES
 from anki_tools.elevenlabs_tts import build_filename as tts_build_filename
 from anki_tools.immutable_words_plan import FIELD_NAMES, parse_word_list
 
-REAL_SOURCE_PATH = (
-    Path(__file__).resolve().parents[4]
-    / "project-plans"
-    / "russian-immutable-words-08-31-26"
-    / "source-word-list.md"
-)
+REAL_SOURCE_PATH = Path(__file__).resolve().parent / "data" / "source-word-list.md"
 
 
 # ---------------------------------------------------------------------------

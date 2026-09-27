@@ -272,15 +272,9 @@ def test_all_four_roster_voices_produce_distinct_filenames_for_the_same_word():
 # 206-row raw source word list.
 # ---------------------------------------------------------------------------
 
-# Computed relative to this test file, a committed repo fixture:
-# .../libs/python/anki-tools/tests/test_elevenlabs_tts.py -> up 4 levels ->
-# the repo root -> project-plans/russian-immutable-words-08-31-26/.
-SOURCE_WORD_LIST_PATH = (
-    Path(__file__).resolve().parents[4]
-    / "project-plans"
-    / "russian-immutable-words-08-31-26"
-    / "source-word-list.md"
-)
+# Computed relative to this test file, a committed repo fixture at
+# .../libs/python/anki-tools/tests/data/source-word-list.md.
+SOURCE_WORD_LIST_PATH = Path(__file__).resolve().parent / "data" / "source-word-list.md"
 
 
 def test_slug_collision_free_across_real_source_word_list():
