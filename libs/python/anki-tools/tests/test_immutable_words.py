@@ -1700,12 +1700,8 @@ def test_e2e_rebuild_after_translation_edit_reimports_in_place_not_duplicated(
 # snapshot collection, exactly like the rest of this file. Every collection
 # opened here is either that copy or a from-scratch temp collection --
 # ~/.local/share/Anki2/User 1/collection.anki2 is never opened.
-#
-# REAL_AUDIO_DIR is also elevenlabs_tts.DEFAULT_OUTPUT_DIR, so an unrelated
-# `mutable_words_audio` run can (and does) write thousands of other files
-# into this same directory. The readiness check below therefore keys on the
-# exact filenames these tests need, never on a directory-wide file count --
-# a count can be satisfied by files that have nothing to do with this deck.
+# REAL_AUDIO_DIR is also elevenlabs_tts.DEFAULT_OUTPUT_DIR, so the readiness
+# check below keys on exact filenames, never a directory-wide file count.
 # ---------------------------------------------------------------------------
 
 REAL_AUDIO_DIR = os.path.expanduser("~/Desktop/russian-audio")
