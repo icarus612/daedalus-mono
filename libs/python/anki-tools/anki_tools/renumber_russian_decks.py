@@ -68,14 +68,29 @@ def apply_plan(col, plan: tuple[tuple[str, str], ...]) -> list[tuple[str, str]]:
     return applied
 
 
-def verify_renumber(before: dict, after: dict) -> None:
+def _expected_after_name(name: str, plan: tuple[tuple[str, str], ...]) -> str:
+    for old, new in plan:
+        if name == old or name.startswith(old + "::"):
+            return name.replace(old, new, 1)
+    return name
+
+
+def verify_renumber(
+    before: dict, after: dict, plan: tuple[tuple[str, str], ...]
+) -> None:
     changed_ids = set(before) ^ set(after)
     if changed_ids:
         raise AssertionError(f"deck set changed: deck id {changed_ids.pop()}")
-    for deck_id, (_, before_count) in before.items():
-        _, after_count = after[deck_id]
+    for deck_id, (before_name, before_count) in before.items():
+        after_name, after_count = after[deck_id]
         if before_count != after_count:
             raise AssertionError(f"card count changed for deck id {deck_id}")
+        expected_name = _expected_after_name(before_name, plan)
+        if after_name != expected_name:
+            raise AssertionError(
+                f"deck id {deck_id} name mismatch: "
+                f"expected {expected_name!r}, got {after_name!r}"
+            )
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -183,7 +198,7 @@ def main() -> None:
         before = snapshot_russian_subtree(col)
         apply_plan(col, plan)
         after = snapshot_russian_subtree(col)
-        verify_renumber(before, after)
+        verify_renumber(before, after, plan)
         print(f"Renamed {len(plan)} deck(s).")
         raise SystemExit(0)
     finally:
