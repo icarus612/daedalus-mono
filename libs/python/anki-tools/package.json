@@ -18,6 +18,10 @@
     "anki-mp3-filename-update": "anki_tools/mp3_filename_update.py",
     "anki-rebalance-due": "anki_tools/rebalance_due.py",
     "anki-immutable-words": "anki_tools/immutable_words.py",
-    "anki-elevenlabs-tts": "anki_tools/elevenlabs_tts.py"
+    "anki-elevenlabs-tts": "anki_tools/elevenlabs_tts.py",
+    "anki-vocabulary-source": "anki_tools/vocabulary_source.py",
+    "anki-mutable-words": "anki_tools/mutable_words.py",
+    "anki-mutable-words-audio": "anki_tools/mutable_words_audio.py",
+    "anki-renumber-russian-decks": "anki_tools/renumber_russian_decks.py"
   }
 }

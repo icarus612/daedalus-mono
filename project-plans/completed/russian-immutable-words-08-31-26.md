@@ -11,22 +11,22 @@ is gone, and with it revision 1's decisions D1–D3 and its headline risk R-A.
 
 ## Phase syllabus
 
-- [ ] Phase 1: Pure core
-  - [ ] 1.1: Source-document parser and row model                            (lane 1)
-  - [ ] 1.2: Deck naming and part-of-speech template stripping               (lane 1)
-- [ ] Phase 2: Package builder
-  - [ ] 2.1: Clone the source note type, minus the rendered part of speech   (lane 1, after: 1.2)
-  - [ ] 2.2: Build the deck tree and notes into a scratch collection         (lane 1, after: 1.1, 2.1)
-  - [ ] 2.3: Export the `.apkg`, CLI surface, `--dry-run`                    (lane 1, after: 2.2)
-- [ ] Phase 3: Verification
-  - [ ] 3.1: Round-trip verification — import the package and assert the tree (lane 1, after: 2.3)
-- [ ] Phase 4: ElevenLabs audio
-  - [ ] 4.1: ElevenLabs text-to-speech client                                (lane 2)
-- [ ] Phase 5: Integration
-  - [ ] 5.1: `bin` entry points for both commands                            (after: 2.3, 4.1)
-  - [ ] 5.2: Audio attachment — fill the `Audio` field and repackage         (after: 3.1, 4.1)
-  - [ ] 5.3: Relocate the source word list into the plan directory
-  - [ ] 5.4: Document both commands in the docs root                         (after: 5.1, 5.2)
+- [x] Phase 1: Pure core
+  - [x] 1.1: Source-document parser and row model                            (lane 1)
+  - [x] 1.2: Deck naming and part-of-speech template stripping               (lane 1)
+- [x] Phase 2: Package builder
+  - [x] 2.1: Clone the source note type, minus the rendered part of speech   (lane 1, after: 1.2)
+  - [x] 2.2: Build the deck tree and notes into a scratch collection         (lane 1, after: 1.1, 2.1)
+  - [x] 2.3: Export the `.apkg`, CLI surface, `--dry-run`                    (lane 1, after: 2.2)
+- [x] Phase 3: Verification
+  - [x] 3.1: Round-trip verification — import the package and assert the tree (lane 1, after: 2.3)
+- [x] Phase 4: ElevenLabs audio
+  - [x] 4.1: ElevenLabs text-to-speech client                                (lane 2)
+- [x] Phase 5: Integration
+  - [x] 5.1: `bin` entry points for both commands                            (after: 2.3, 4.1)
+  - [x] 5.2: Audio attachment — fill the `Audio` field and repackage         (after: 3.1, 4.1)
+  - [x] 5.3: Relocate the source word list into the plan directory
+  - [dropped] 5.4: Document both commands in the docs root                         (after: 5.1, 5.2)
 
 **Lanes: two, by the user's instruction that each script gets its own builder.**
 
@@ -254,6 +254,9 @@ prefer `requests`, which is already declared.
   directory is gone. It is currently untracked in the main checkout and sits at a path
   `plan-format` does not permit.
 
+**Superseded by `mutable-words-09-25-26` subphase 1.1**, which relocates the file to
+`libs/python/anki-tools/tests/data/` because a plan directory is deleted at archive time.
+
 ### 5.4: Document both commands in the docs root
 
 - *Files:* `docs/libs/python/anki-tools/README.md` (exists — extend, do not replace).
@@ -261,6 +264,11 @@ prefer `requests`, which is already declared.
   section: flag table, what it does, what it refuses to do. Must state plainly that the builder
   **never writes to the user's collection**, and that the `.apkg` is imported by the user.
 - *Tests:* none; prose. `doc-format` governs placement.
+
+**[dropped] — never shipped.** `docs/libs/python/anki-tools/README.md` documents neither command
+(`grep -c immutable` / `grep -c elevenlabs` both 0; positive control `grep -c rebalance` = 14). This
+debt is absorbed by `mutable-words-09-25-26` subphase 9.2, which documents both commands alongside
+the four new ones.
 
 ## Risks, open questions, decision points
 

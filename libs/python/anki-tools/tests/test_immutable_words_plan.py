@@ -16,13 +16,11 @@ built against the same contract text; this file never touches Anki, the
 ``.anki2`` snapshot, or any note type at all -- it is the pure module's
 test file only.
 
-The real source document
-(``project-plans/russian-immutable-words-08-31-26/source-word-list.md``,
-a committed repo fixture copy of the original run dir file) is read
-directly by a repo-relative path below and used as fixture data for the
-parser tests; it is a plain input document, not part of the implementation
-under test, so reading it does not compromise the blindness this file is
-required to keep.
+The real source document (``tests/data/source-word-list.md``, a
+committed repo fixture copy) is read directly by a repo-relative path
+below and used as fixture data for the parser tests; it is a plain input
+document, not part of the implementation under test, so reading it does
+not compromise the blindness this file is required to keep.
 """
 
 import json
@@ -37,6 +35,7 @@ from pathlib import Path
 
 import pytest
 
+from anki_tools.anki_identity import base91 as _base91
 from anki_tools.audio_naming import SLOTS
 from anki_tools.audio_naming import build_filename as shared_build_filename
 from anki_tools.immutable_words_plan import (
@@ -48,7 +47,6 @@ from anki_tools.immutable_words_plan import (
     TRANSLATION_OVERRIDES,
     SourceDocumentError,
     WordRow,
-    _base91,
     all_subdeck_names,
     counts_by_deck,
     guid_for_row,
@@ -58,12 +56,7 @@ from anki_tools.immutable_words_plan import (
     subdeck_name,
 )
 
-REAL_SOURCE_PATH = (
-    Path(__file__).resolve().parents[4]
-    / "project-plans"
-    / "russian-immutable-words-08-31-26"
-    / "source-word-list.md"
-)
+REAL_SOURCE_PATH = Path(__file__).resolve().parent / "data" / "source-word-list.md"
 
 # The five sections in document order, with the exact counts the real
 # document is known to contain AFTER the l3 split/transform pass (contract
@@ -417,6 +410,14 @@ def test_rewrite_audio_playback_idempotent():
 def test_rewrite_audio_playback_noop_when_absent():
     result = rewrite_audio_playback(TEMPLATE_WITHOUT_AUDIO_DIV)
     assert result == TEMPLATE_WITHOUT_AUDIO_DIV
+
+
+def test_rewrite_audio_playback_byte_identical_to_pre_hoist_golden():
+    golden_path = (
+        Path(__file__).resolve().parent / "data" / "immutable_audio_block.html"
+    )
+    golden = golden_path.read_text(encoding="utf-8")
+    assert rewrite_audio_playback('<div id="audio">{{Audio}}</div>\n') == golden
 
 
 # --- New contract tests (lane l5): the "Show Answer plays a second, ---

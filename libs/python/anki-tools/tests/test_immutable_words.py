@@ -1214,12 +1214,7 @@ def test_main_audio_dir_export_measurably_larger_than_without(
 # Lane 3's transform turns 151 raw rows into 152 final rows (43/35/32/42).
 # ---------------------------------------------------------------------------
 
-SOURCE_DOC_PATH = (
-    Path(__file__).resolve().parents[4]
-    / "project-plans"
-    / "russian-immutable-words-08-31-26"
-    / "source-word-list.md"
-)
+SOURCE_DOC_PATH = Path(__file__).resolve().parent / "data" / "source-word-list.md"
 
 
 def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
@@ -1700,27 +1695,75 @@ def test_e2e_rebuild_after_translation_edit_reimports_in_place_not_duplicated(
 # merely present on disk -- by calling Anki's own `col.media.check()` API,
 # never by reasoning about what the scanner "should" do.
 #
-# Uses the REAL 608 mp3s at ~/Desktop/russian-audio/ (never regenerated, no
+# Uses the real .mp3s at ~/Desktop/russian-audio/ (never regenerated, no
 # ElevenLabs calls anywhere in this file) and a tmp_path COPY of the real
 # snapshot collection, exactly like the rest of this file. Every collection
 # opened here is either that copy or a from-scratch temp collection --
 # ~/.local/share/Anki2/User 1/collection.anki2 is never opened.
+# Recordings live in the media dir too, not just REAL_AUDIO_DIR; keyed by filename.
 # ---------------------------------------------------------------------------
 
 REAL_AUDIO_DIR = os.path.expanduser("~/Desktop/russian-audio")
 
+
+def _real_audio_source_dirs():
+    from anki_tools.audio_naming import get_anki_media_dir
+
+    return (REAL_AUDIO_DIR, get_anki_media_dir())
+
+
+def _required_real_audio_filenames():
+    """One `<slug>_<slot>.mp3` per (row, slot) in the real source document --
+    the same prediction `immutable_words_plan.WordRow.fields` makes.
+    """
+    from anki_tools.audio_naming import SLOTS, build_filename
+    from anki_tools.immutable_words_plan import parse_word_list
+
+    with open(SOURCE_DOC_PATH, encoding="utf-8") as fh:
+        rows = parse_word_list(fh.read())
+    return {build_filename(row.russian, slot) for row in rows for slot in SLOTS}
+
+
+def _missing_real_audio_filenames(required):
+    present = set()
+    for source_dir in _real_audio_source_dirs():
+        if os.path.isdir(source_dir):
+            present |= set(os.listdir(source_dir))
+    return required - present
+
+
+def _attach_real_media(build_col):
+    """Resolve every required filename by identity across both source dirs,
+    review dir first, falling back to the Anki media dir -- never a count,
+    never a scan of one directory alone. A name is genuinely missing only
+    when absent from both.
+    """
+    found_by_dir, missing_by_dir = [], []
+    for source_dir in _real_audio_source_dirs():
+        f, m = attach_media(build_col, source_dir)
+        found_by_dir.append(set(f))
+        missing_by_dir.append(set(m))
+    found = sorted(set.union(*found_by_dir))
+    missing = sorted(set.intersection(*missing_by_dir))
+    return found, missing
+
+
+_REQUIRED_REAL_AUDIO_FILENAMES = _required_real_audio_filenames()
+_MISSING_REAL_AUDIO_FILENAMES = _missing_real_audio_filenames(
+    _REQUIRED_REAL_AUDIO_FILENAMES
+)
+
 _real_audio_missing_reason = (
-    f"real audio directory not found or incomplete: {REAL_AUDIO_DIR!r} "
-    "(expects the 608 real .mp3 files generated for this run; this test "
-    "verifies the actual shipped audio, not a fixture, so it skips rather "
-    "than false-failing on a machine that never had them)"
+    f"{len(_MISSING_REAL_AUDIO_FILENAMES)} of {len(_REQUIRED_REAL_AUDIO_FILENAMES)} "
+    f"required real audio files are missing under {_real_audio_source_dirs()!r} "
+    f"(e.g. {', '.join(sorted(_MISSING_REAL_AUDIO_FILENAMES)[:10])}) -- this "
+    "test verifies the actual shipped audio, not a fixture, so it skips "
+    "rather than false-failing until every required file exists"
 )
 
 
 def _real_audio_dir_ready():
-    if not os.path.isdir(REAL_AUDIO_DIR):
-        return False
-    return len([f for f in os.listdir(REAL_AUDIO_DIR) if f.endswith(".mp3")]) >= 608
+    return not _MISSING_REAL_AUDIO_FILENAMES
 
 
 @pytest.mark.skipif(not _real_audio_dir_ready(), reason=_real_audio_missing_reason)
@@ -1729,7 +1772,7 @@ def test_e2e_real_media_is_marked_used_not_merely_present(
 ):
     """The lane's central claim, proven with Anki's own scanner.
 
-    Builds the real 152-note deck, attaches the real 608 mp3s via
+    Builds the real 207-note deck, attaches the real 816 mp3s via
     `attach_media`, and calls `build_col.media.check()` -- the exact API
     Tools -> Check Media uses -- BEFORE ever exporting. Asserts zero unused
     and zero missing.
@@ -1756,9 +1799,9 @@ def test_e2e_real_media_is_marked_used_not_merely_present(
 
     build_deck_tree(build_col, rows, note_type)
 
-    found, missing = attach_media(build_col, REAL_AUDIO_DIR)
+    found, missing = _attach_real_media(build_col)
     assert missing == [], f"real audio files not found on disk: {missing}"
-    assert len(found) == 608
+    assert len(found) == 816
 
     check = build_col.media.check()
     assert list(check.missing) == []
@@ -1776,9 +1819,9 @@ def test_e2e_real_media_is_marked_used_not_merely_present(
         build_col.update_note(note)
 
     control_check = build_col.media.check()
-    assert len(control_check.unused) == 608, (
+    assert len(control_check.unused) == 816, (
         "control failed: blanking AudioRefs should reproduce the original "
-        "defect (all 608 real files reported unused) -- if it doesn't, "
+        "defect (all 816 real files reported unused) -- if it doesn't, "
         "this test's '0 unused' result above is not proof of anything"
     )
 
@@ -1789,11 +1832,11 @@ def test_e2e_real_media_is_marked_used_not_merely_present(
 def test_e2e_real_media_export_is_full_size_not_empty_manifest(
     tmp_path, collection_snapshot_copy
 ):
-    """The exported `.apkg` actually carries the 608 files' bytes.
+    """The exported `.apkg` actually carries the 816 files' bytes.
 
     Asserts real size (~8+ MB, not the ~76 KB / 9-byte-manifest shape of the
     original defect) AND inspects the zip directly (never trusting size
-    alone) for 608 media entries distinct from the package's own
+    alone) for 816 media entries distinct from the package's own
     `meta`/`media`/`collection.anki2*` bookkeeping entries.
     """
     import zipfile
@@ -1811,7 +1854,7 @@ def test_e2e_real_media_export_is_full_size_not_empty_manifest(
         source_col.close()
 
     build_deck_tree(build_col, rows, note_type)
-    found, missing = attach_media(build_col, REAL_AUDIO_DIR)
+    found, missing = _attach_real_media(build_col)
     assert missing == []
 
     out_path = os.path.join(str(tmp_path), "immutable-words-with-media.apkg")
@@ -1828,18 +1871,18 @@ def test_e2e_real_media_export_is_full_size_not_empty_manifest(
         names = set(zf.namelist())
     bookkeeping = {"meta", "media", "collection.anki2", "collection.anki21b"}
     media_entries = names - bookkeeping
-    assert len(media_entries) == 608, (
-        f"expected 608 media entries in the package, got {len(media_entries)}"
+    assert len(media_entries) == 816, (
+        f"expected 816 media entries in the package, got {len(media_entries)}"
     )
 
 
 @pytest.mark.skipif(not _real_audio_dir_ready(), reason=_real_audio_missing_reason)
-def test_e2e_real_media_fresh_import_delivers_608_files_zero_missing(
+def test_e2e_real_media_fresh_import_delivers_816_files_zero_missing(
     tmp_path, collection_snapshot_copy
 ):
     """The strongest evidence available: import the real package into a
     collection that never existed before, and assert entirely against what
-    THAT import produced -- 152 notes, 304 cards, 608 media files actually
+    THAT import produced -- 207 notes, 414 cards, 816 media files actually
     present in the new collection's OWN media directory, and every filename
     in every note's `Audio` field resolving on disk (zero
     referenced-but-missing). Also re-runs `media.check()` on the imported
@@ -1865,9 +1908,9 @@ def test_e2e_real_media_fresh_import_delivers_608_files_zero_missing(
         source_col.close()
 
     build_deck_tree(build_col, rows, note_type)
-    found, missing = attach_media(build_col, REAL_AUDIO_DIR)
+    found, missing = _attach_real_media(build_col)
     assert missing == []
-    assert len(found) == 608
+    assert len(found) == 816
 
     out_path = os.path.join(str(tmp_path), "immutable-words.apkg")
     export_package(build_col, DECK_ROOT, out_path)
@@ -1899,7 +1942,7 @@ def test_e2e_real_media_fresh_import_delivers_608_files_zero_missing(
         assert total_cards == 414
 
         media_files_on_disk = set(os.listdir(fresh_col.media.dir()))
-        assert len(media_files_on_disk) == 608
+        assert len(media_files_on_disk) == 816
 
         all_note_ids = fresh_col.find_notes(f'note:"{NEW_NOTE_TYPE_NAME}"')
         assert len(all_note_ids) == 207
