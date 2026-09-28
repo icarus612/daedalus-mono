@@ -839,7 +839,7 @@ verbatim from the source note type, as this subphase requires, leaving the heade
 1004 live notes. Fixed (lane `l12`, merged): the constants now hold the literal markup/script read
 from the real source note type, pinned by a test that reads the real collection. See
 [`mutable-words.md`](../../docs/libs/python/anki-tools/mutable-words.md#discrepancies-found-during-the-run)
-and [`mutable-words-runbook.md`](../../docs/libs/python/anki-tools/mutable-words-runbook.md#post-execution-fix-the-deck-header-and-a-pending-re-import).
+and [`mutable-words-runbook.md`](../../docs/libs/python/anki-tools/mutable-words-runbook.md#post-execution-fix-the-deck-header-re-imported).
 
 **Test approach**: `new contract tests`, reading the committed TSVs from 3.2 as fixtures.
 

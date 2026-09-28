@@ -91,7 +91,7 @@ as a gap.**
 5. Independently re-verified read-only at Record (documenter agent) against the live
    `collection.anki2`, matching every figure above.
 
-## Post-execution fix: the deck header, and a pending re-import
+## Post-execution fix: the deck header, re-imported
 
 The code-review gate (round 1) found that the note types imported above rendered an unstyled,
 incorrect deck header (`#deck-header` with no matching CSS rule, missing the `"Russian - "` prefix
@@ -101,23 +101,28 @@ discrepancy. Lane `l12` fixed the constants to match the real note type byte-for
 against the live collection's own template text) — see
 [`mutable-words.md`](mutable-words.md#discrepancies-found-during-the-run).
 
-**The 1004 notes above were imported once with the defective header.** The fix has not yet been
-pushed onto the live collection: doing so needs one more `anki-mutable-words` build (with the
-corrected constants) followed by one more import, which is safe in place — reimport idempotence is
-proven and tested (4.2, 7.2) and will update the existing notes under their stable GUIDs rather than
-duplicate them. That re-import is not yet reflected in this runbook because it had not been performed
-as of this writing.
+**The 1004 notes were imported once with the defective header, then re-imported after the fix** —
+which is why a fourth backup exists. A fourth backup was taken (`backup-2026-09-27-22.25.26.colpkg`),
+the `.apkg` was rebuilt with `--force` (1004 notes / 2366 cards, 2366 media attached, 0 missing), and
+re-imported: **0 new / 1004 updated / 0 duplicate / 0 conflicting** — updated in place under the
+notes' stable GUIDs, exactly as the reimport-idempotence property (4.2, 7.2) predicts. Verified live,
+independently, at Record: all four Mutable Words note types now carry `id="path"`/`id="deck"`, the
+`"Russian - "` prefix, no `#deck-header`, and CSS matching the source note type; all four subdecks'
+card counts are unchanged (1082/716/304/264).
 
 ## Reversal, in reverse order
 
-1. **Undo the import** — delete the four `Languages::Russian::3. Mutable Words` subdecks and their
+1. **Undo the header re-import** — restore `backup-2026-09-27-22.25.26.colpkg` (taken immediately
+   before the header-fix rebuild and re-import), or re-import the pre-fix `.apkg` if it's still on
+   disk (the notes update back in place under their stable GUIDs either way).
+2. **Undo the import** — delete the four `Languages::Russian::3. Mutable Words` subdecks and their
    four note types (`Russian - Mutable {Nouns,Verbs,Adjectives,Adverbs} (Ellis Version)`), or restore
    `backup-2026-09-27-21.29.21.colpkg` (taken immediately before the import).
-2. **Undo the renumber** — `anki-renumber-russian-decks --revert` (applies the inverse renaming in
+3. **Undo the renumber** — `anki-renumber-russian-decks --revert` (applies the inverse renaming in
    forward order: `6.`→`5.`, `5.`→`4.`, `4.`→`3.`), or restore `backup-2026-09-27-21.28.58.colpkg`
    (taken immediately before the renumber).
-3. **`backup-2026-09-27-21.13.51.colpkg`** — taken automatically by lane `l7`'s earlier
-   `--dry-run` invocation, before the harness's permission refusal; predates both mutations and is
+4. **`backup-2026-09-27-21.13.51.colpkg`** — taken automatically by lane `l7`'s earlier
+   `--dry-run` invocation, before the harness's permission refusal; predates all four mutations and is
    the furthest-back restore point from this run.
-4. **The generated `.mp3` files are additive and need no reversal** — they only ever fill previously
+5. **The generated `.mp3` files are additive and need no reversal** — they only ever fill previously
    missing slots in `~/Desktop/russian-audio` and the Anki media directory.

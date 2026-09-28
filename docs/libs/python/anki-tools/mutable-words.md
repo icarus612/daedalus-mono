@@ -203,8 +203,8 @@ involved, all fixed in the tooling rather than papered over:
   `_DECK_HEADER_HTML`/`_DECK_HEADER_SCRIPT` are now byte-for-byte what note type `1698803891108`
   actually carries, pinned by a test that reads the real collection (skipping cleanly when absent)
   and a second test asserting every id the header markup references has a matching CSS rule. The 1004
-  already-imported notes still carry the old, unstyled header until the next package rebuild + import
-  — see [`mutable-words-runbook.md`](mutable-words-runbook.md#post-execution-fix-the-deck-header-and-a-pending-re-import).
+  already-imported notes were rebuilt and re-imported with the corrected header — see
+  [`mutable-words-runbook.md`](mutable-words-runbook.md#post-execution-fix-the-deck-header-re-imported).
 - **`verify_renumber` checked only the deck-id set and per-deck card counts, never names.** A rename
   that silently no-op'd (same id, same card count, unchanged name) would have passed undetected —
   caught by the code-review gate (round 1, blocking) even though the real run's renumber happened to
