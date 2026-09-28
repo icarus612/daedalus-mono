@@ -20,6 +20,7 @@ from anki_tools.renumber_russian_decks import (
     full_deck_name,
     main,
     precheck,
+    verify_renumber,
 )
 
 MODULE_PATH = os.path.join(
@@ -235,6 +236,95 @@ def test_e2e_revert_apply_issues_renames_in_reverse_pairs_order(tmp_path, monkey
 
     assert _run_cli(["--revert", "--yes", "--collection", col_path], monkeypatch) == 0
     assert calls == [full_deck_name(old) for old, _ in reversed(RENAMES)]
+
+
+def _plan_snapshot(names_and_counts):
+    return {
+        did: (full_deck_name(name), count)
+        for did, (name, count) in enumerate(names_and_counts, start=1)
+    }
+
+
+def test_verify_renumber_passes_when_names_counts_and_ids_match_the_plan():
+    plan = build_plan(revert=False)
+    before = _plan_snapshot(
+        [
+            ("3. Sentences (lingo llama)", 4),
+            ("4. 100 Words & Phrases", 7),
+            ("5. Master Russian 300+", 8),
+        ]
+    )
+    after = _plan_snapshot(
+        [
+            ("4. Sentences (lingo llama)", 4),
+            ("5. 100 Words & Phrases", 7),
+            ("6. Master Russian 300+", 8),
+        ]
+    )
+    verify_renumber(before, after, plan)
+
+
+def test_verify_renumber_passes_when_a_child_deck_name_carries_the_new_prefix():
+    plan = build_plan(revert=False)
+    before = {
+        1: (full_deck_name("3. Sentences (lingo llama)"), 4),
+        2: (full_deck_name("3. Sentences (lingo llama)") + "::a. Listening", 5),
+    }
+    after = {
+        1: (full_deck_name("4. Sentences (lingo llama)"), 4),
+        2: (full_deck_name("4. Sentences (lingo llama)") + "::a. Listening", 5),
+    }
+    verify_renumber(before, after, plan)
+
+
+def test_verify_renumber_raises_when_a_rename_silently_did_not_take():
+    plan = build_plan(revert=False)
+    before = _plan_snapshot(
+        [
+            ("3. Sentences (lingo llama)", 4),
+            ("4. 100 Words & Phrases", 7),
+            ("5. Master Russian 300+", 8),
+        ]
+    )
+    after = _plan_snapshot(
+        [
+            ("3. Sentences (lingo llama)", 4),
+            ("5. 100 Words & Phrases", 7),
+            ("6. Master Russian 300+", 8),
+        ]
+    )
+    with pytest.raises(AssertionError, match=r"deck id 1"):
+        verify_renumber(before, after, plan)
+
+
+def test_verify_renumber_raises_when_a_child_deck_rename_did_not_take():
+    plan = build_plan(revert=False)
+    before = {
+        1: (full_deck_name("3. Sentences (lingo llama)"), 4),
+        2: (full_deck_name("3. Sentences (lingo llama)") + "::a. Listening", 5),
+    }
+    after = {
+        1: (full_deck_name("4. Sentences (lingo llama)"), 4),
+        2: (full_deck_name("3. Sentences (lingo llama)") + "::a. Listening", 5),
+    }
+    with pytest.raises(AssertionError, match=r"deck id 2"):
+        verify_renumber(before, after, plan)
+
+
+def test_verify_renumber_still_raises_on_deck_set_change():
+    plan = build_plan(revert=False)
+    before = {1: (full_deck_name("3. Sentences (lingo llama)"), 4)}
+    after = {2: (full_deck_name("4. Sentences (lingo llama)"), 4)}
+    with pytest.raises(AssertionError, match=r"deck set changed"):
+        verify_renumber(before, after, plan)
+
+
+def test_verify_renumber_still_raises_on_card_count_change():
+    plan = build_plan(revert=False)
+    before = {1: (full_deck_name("3. Sentences (lingo llama)"), 4)}
+    after = {1: (full_deck_name("4. Sentences (lingo llama)"), 3)}
+    with pytest.raises(AssertionError, match=r"card count changed"):
+        verify_renumber(before, after, plan)
 
 
 def test_apply_plan_returns_the_applied_pairs(collection):
