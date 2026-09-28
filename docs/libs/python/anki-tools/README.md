@@ -9,6 +9,8 @@ A grab-bag of small standalone scripts for working with the Anki spaced-repetiti
 
 - Python `>=3.11`, managed with [uv](https://docs.astral.sh/uv/) and built with hatchling (`pyproject.toml`, PEP 621 `[project]`). Dependencies resolve from the workspace-root `uv.lock`; there is no per-package lockfile.
 - Runtime dependency: `anki`, unpinned — the resolved version comes from the root `uv.lock`. The tool is not tied to a specific Anki release; the suite is verified against whatever version the lock resolves.
+- Runtime dependency: `requests` (`>=2.28.0`), for `elevenlabs_tts.py`'s HTTP calls.
+- Runtime dependency: `openpyxl` (`>=3.1`, resolved to `3.1.5`), for `vocabulary_source.py` — the only module in this package allowed to import it. In `[project] dependencies`, not the dev group, because it's a shipped CLI module's module-level import, not a test-only concern.
 - Dev dependency: `pytest`, declared in this package's `[dependency-groups] dev`. Declaring it there is load-bearing — without it the runner falls through to an ambient interpreter's pytest. Wired to `pnpm test` via `package.json`'s `"test": "py-test"`.
 
 ## Structure / entry points
@@ -20,8 +22,14 @@ A grab-bag of small standalone scripts for working with the Anki spaced-repetiti
 - `anki_tools/due_plan.py` — pure due-date rebalancing algorithm and feasibility analysis, zero Anki imports, fully unit-testable. See below.
 - `anki_tools/rebalance_due.py` — CLI that resolves a deck against a real Anki collection and applies `due_plan`'s result. See below.
 - `anki_tools/due_stats.py` — read-only CLI that reports `due_plan`'s feasibility/shape analysis for a deck without planning or writing anything. See below.
-- `package.json` `bin` entries: `anki-build-deck`, `anki-get-deck-info`, `anki-mp3-filename-update`, `anki-rebalance-due`, `anki-due-stats`.
-- `tests/test_due_plan.py`, `tests/test_rebalance_due.py`, `tests/test_due_stats.py`, `tests/test_followup_fixes.py` — pytest suites, 192 tests total.
+- `anki_tools/immutable_words_plan.py` / `anki_tools/immutable_words.py` — pure core + CLI for the `Languages::Russian::2. Immutable Words` deck package. See [`anki-immutable-words`](#anki-immutable-words) below.
+- `anki_tools/elevenlabs_tts.py` — standalone ElevenLabs text-to-speech CLI, Anki-agnostic. See [`anki-elevenlabs-tts`](#anki-elevenlabs-tts) below.
+- `anki_tools/audio_naming.py` — shared filename/spoken-text conventions (`build_filename`, `spoken_text_for`, `get_anki_media_dir`) used by both the immutable and mutable audio pipelines.
+- `anki_tools/anki_identity.py` — pure, `hashlib`-only deterministic Anki GUID/notetype-id helpers (`base91`, `guid_for_row`, `notetype_id_for_name`), hoisted out of `immutable_words*.py` so both the immutable and mutable decks share one implementation.
+- `anki_tools/card_audio.py` — pure, parameterized random-audio-picker template block (`audio_block`), hoisted out of `immutable_words_plan.py` for the same reason.
+- `anki_tools/vocabulary_source.py`, `anki_tools/mutable_words_plan.py`, `anki_tools/mutable_words.py`, `anki_tools/mutable_words_audio.py`, `anki_tools/renumber_russian_decks.py` — the `Languages::Russian::3. Mutable Words` deck package pipeline (workbook → TSV → deck build → audio → live renumber/import). See [`mutable-words.md`](mutable-words.md) for the full design and [`mutable-words-runbook.md`](mutable-words-runbook.md) for its live-collection execution record.
+- `package.json` `bin` entries: `anki-build-deck`, `anki-get-deck-info`, `anki-mp3-filename-update`, `anki-rebalance-due`, `anki-due-stats`, `anki-immutable-words`, `anki-elevenlabs-tts`, `anki-vocabulary-source`, `anki-mutable-words`, `anki-mutable-words-audio`, `anki-renumber-russian-decks`.
+- `tests/test_due_plan.py`, `tests/test_rebalance_due.py`, `tests/test_due_stats.py`, `tests/test_followup_fixes.py` — pytest suites, 192 tests total. See [`mutable-words.md`](mutable-words.md#testing) for the mutable/immutable-words test suites.
 
 ## `anki-rebalance-due`
 
@@ -122,6 +130,71 @@ Example — check whether `--min 8 --max 16 --sliding` would need a larger `--ma
 ```
 anki-due-stats programming::coding --min 8 --max 16 --sliding
 ```
+
+## `anki-immutable-words`
+
+Builds the `Languages::Russian::2. Immutable Words` `.apkg` package (five subdecks — Prepositions,
+Conjunctions, Particles, Indeclinable Nouns, Base Adverbs — one note type,
+`Russian - Immutable Words (Ellis Version)`) from a source word-list markdown document, without ever
+touching the live Anki collection.
+
+```
+anki-immutable-words --source PATH [--out PATH] [--collection PATH] [--audio-dir DIR]
+                      [--dry-run] [--force]
+```
+
+| Flag | Default | Meaning |
+|---|---|---|
+| `--source` | — required | Path to the source word-list markdown document. No baked-in default — the document's permanent repo location is a separate concern from this CLI. |
+| `--out` | — | Where to write the `.apkg`. Required unless `--dry-run`. |
+| `--collection` | auto-detected | Override the collection path used only to read the source note-type CSS — never written. |
+| `--audio-dir` | none | Directory of already-generated `<word>_<slot>.mp3` files (see `anki-elevenlabs-tts` below) to attach as real media. Omitted: exports with `AudioRefs` `[sound:…]` tags marking the names as used but no bytes attached. |
+| `--dry-run` | off | Parse the source and print per-deck counts; open no collection, write nothing. |
+| `--force` | off | Allow `--out` to overwrite an existing file. |
+
+The source note type is looked up by id (`1698803891108`), never by name — its real name carries a
+trailing space typo (`"Russian - Common Words (Ellis Version) "`). The audio-picker template block
+this deck's cards use lives in `anki_tools/card_audio.py` (shared with the Mutable Words deck); the
+GUID/notetype-id derivation lives in `anki_tools/anki_identity.py` (same).
+
+## `anki-elevenlabs-tts`
+
+Standalone ElevenLabs text-to-speech CLI — Anki-agnostic, no deck/note/`.apkg` knowledge. Given a
+Russian word or word list, produces one `.mp3` per configured voice.
+
+```
+anki-elevenlabs-tts (--word WORD | --file PATH) [--all | --count N] [--all-voices]
+                     [--stability F] [--similarity-boost F] [--output-dir DIR]
+                     [--model-id ID] [--replace] [--anki-media-dir DIR] [--yes]
+```
+
+**The default run produces exactly one `.mp3`** — one word, one voice (`f1`, Alisa) — and stops.
+`--all`/`--count` widen the word axis (every word in `--file`, or an explicit count); `--all-voices`
+widens the voice axis (all four roster voices instead of one). Neither implies the other; combine
+them explicitly to widen both.
+
+| Flag | Default | Meaning |
+|---|---|---|
+| `--word` / `-w` | — | A single word/phrase (mutually exclusive with `--file`). |
+| `--file` / `-f` | — | A word list: plain text (one per line, `#`-comments allowed) or a JSON list of strings. |
+| `--all` | off | Process every word in `--file`, not just the first. Spends real credits per word. |
+| `--count N` / `-n` | none | Process exactly N words from `--file`. Mutually exclusive with `--all`. |
+| `--all-voices` | off | Synthesize each selected word in all four roster voices instead of just `f1`. |
+| `--stability` | `DEFAULT_STABILITY` | ElevenLabs `voice_settings.stability`, 0.0–1.0. Out-of-range values are rejected, never clamped. |
+| `--similarity-boost` | `DEFAULT_SIMILARITY_BOOST` | Same, for `similarity_boost`. |
+| `--output-dir` / `-o` | `DEFAULT_OUTPUT_DIR` | Directory to write `.mp3` files into. |
+| `--model-id` | `DEFAULT_MODEL_ID` | ElevenLabs model id (the documented multilingual model, needed for Russian). |
+| `--replace` | off | Regenerate and overwrite files that already exist. Default: skip. Never applies to the Anki media directory — an existing file there is always left alone and reported as a collision. |
+| `--anki-media-dir` | auto-detected | Override the Anki media directory. |
+| `--yes` / `-y` | off | Skip the confirmation prompt before a run of more than one word. |
+
+The account roster is four voices, one per slot (`f1` Alisa, `f2` Elena Gromova, `m1` Mishka
+Yaponcik, `m2` Nester Surovy) out of five verified Russian voices on the account; a fifth
+character voice (Elen Kuragina) stays defined but is never included in the default roster. Every
+request goes through `fetch_tts_audio_metered`, which requires a `RequestBudget` — new callers
+construct one sized to their own computed work set rather than bypassing the choke point.
+`ELEVENLABS_API_KEY` is read from the environment only (`get_api_key()`), never a flag, never
+printed.
 
 ## `due_plan.py` — the pure rebalancing core
 

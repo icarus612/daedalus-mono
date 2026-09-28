@@ -2,36 +2,36 @@
 
 ## Phase syllabus
 
-- [ ] Phase 1: Fixture relocation and old-plan closeout
+- [x] Phase 1: Fixture relocation and old-plan closeout
   - [x] 1.1: Relocate `source-word-list.md` out of the plan dir into `tests/data/`
   - [x] 1.2: Reconcile the old plan's syllabus with what shipped, then archive it   (after: 1.1)
-- [ ] Phase 2: Shared foundation
+- [x] Phase 2: Shared foundation
   - [x] 2.1: Hoist deterministic Anki identity helpers into `anki_identity.py`      (after: 1.1)
   - [x] 2.2: Hoist the audio-picker block into a parameterized `card_audio.py`      (after: 2.1)
   - [x] 2.3: Add the `openpyxl` dependency and relock
-- [ ] Phase 3: Source of truth
+- [x] Phase 3: Source of truth
   - [x] 3.1: `vocabulary_source.py` — workbook reader + TSV writer                  (lane 1, after: 2.3)
   - [x] 3.2: Commit the four TSVs and their provenance README                       (lane 1, after: 3.1)
   - [x] 3.3: `mutable_words_plan.py` — pure core                                    (lane 1, after: 2.2, 3.2)
-- [ ] Phase 4: Deck package builder
-  - [ ] 4.1: Four note types in a scratch collection                                (lane 2, after: 3.3)
-  - [ ] 4.2: Deck tree, notes, media attach, `.apkg` export + CLI                   (lane 2, after: 4.1)
-- [ ] Phase 5: Audio generation tooling
-  - [ ] 5.1: Work-set computation and exact budget sizing                           (lane 3, after: 3.3)
-  - [ ] 5.2: `mutable_words_audio.py` resumable driver + CLI                        (lane 3, after: 5.1)
-- [ ] Phase 6: Deck renumbering tooling
+- [x] Phase 4: Deck package builder
+  - [x] 4.1: Four note types in a scratch collection                                (lane 2, after: 3.3)
+  - [x] 4.2: Deck tree, notes, media attach, `.apkg` export + CLI                   (lane 2, after: 4.1)
+- [x] Phase 5: Audio generation tooling
+  - [x] 5.1: Work-set computation and exact budget sizing                           (lane 3, after: 3.3)
+  - [x] 5.2: `mutable_words_audio.py` resumable driver + CLI                        (lane 3, after: 5.1)
+- [x] Phase 6: Deck renumbering tooling
   - [x] 6.1: `renumber_russian_decks.py` — reverse-order rename, backup, revert     (lane 4, after: 1.2)
-- [ ] Phase 7: Integration and dry-run verification
-  - [ ] 7.1: Entry points — `package.json` bin + module guards                      (after: 4.2, 5.2, 6.1)
-  - [ ] 7.2: End-to-end dry run over the real source, zero network, zero mutation   (after: 7.1)
-- [ ] Phase 8: Execution against the real world
-  - [ ] 8.1: Generate the 2352 recordings                                           (after: 7.2)
-  - [ ] 8.2: Build and verify the real `.apkg` with media attached                   (after: 8.1)
-  - [ ] 8.3: Back up and renumber the live collection                                (after: 8.2)
-  - [ ] 8.4: Import into the live collection and verify                              (after: 8.3)
-- [ ] Phase 9: Records
-  - [ ] 9.1: Runbook — what was executed, and how to reverse each step              (after: 8.4)
-  - [ ] 9.2: Docs                                                                   (after: 9.1)
+- [x] Phase 7: Integration and dry-run verification
+  - [x] 7.1: Entry points — `package.json` bin + module guards                      (after: 4.2, 5.2, 6.1)
+  - [done] 7.2: End-to-end dry run over the real source, zero network, zero mutation   (after: 7.1)
+- [x] Phase 8: Execution against the real world
+  - [x] 8.1: Generate the 2352 recordings                                           (after: 7.2)
+  - [x] 8.2: Build and verify the real `.apkg` with media attached                   (after: 8.1)
+  - [x] 8.3: Back up and renumber the live collection                                (after: 8.2)
+  - [x] 8.4: Import into the live collection and verify                              (after: 8.3)
+- [x] Phase 9: Records
+  - [x] 9.1: Runbook — what was executed, and how to reverse each step              (after: 8.4)
+  - [x] 9.2: Docs                                                                   (after: 9.1)
 
 ---
 
@@ -329,9 +329,14 @@ the fixture relocation must precede the archive that would otherwise delete the 
 - EDIT `libs/python/anki-tools/tests/test_immutable_words_plan.py` (same)
 - EDIT `libs/python/anki-tools/tests/test_immutable_words.py` (same)
 - EDIT `libs/python/anki-tools/tests/test_elevenlabs_tts.py` (same)
-- EDIT `libs/python/anki-tools/anki_tools/elevenlabs_tts.py` (prose only, line 57)
-- EDIT `libs/python/anki-tools/anki_tools/audio_naming.py` (prose only, line 80)
-- EDIT `libs/python/anki-tools/anki_tools/immutable_words_plan.py` (prose only, line 198)
+
+**Shipped record**: this plan originally also listed `anki_tools/elevenlabs_tts.py:57`,
+`anki_tools/audio_naming.py:80`, and `anki_tools/immutable_words_plan.py:198` as needing the same
+prose path correction. Lane l0 re-verified this against the real files before touching anything
+(`grep -n "russian-immutable-words-08-31-26\|project-plans"` over all three, positive-controlled
+against a file known to contain the string) and found none of the three lines named the old path at
+all — each reads "the real 151-row source word list" / "the real 151-row raw list", an accurate,
+unrelated fact. **All three were left untouched**; only the four test files above needed the edit.
 
 **Why, verified.** This file is **not stray debris — it is a live, actively-maintained test
 fixture**. Four test files build a hard path to it with **no skip guard**, all four via
@@ -465,12 +470,16 @@ Public surface:
 ```
 GUID_ALPHABET: str
 base91(num: int) -> str
-guid_for_row(discriminator: str, text: str) -> str      # sha256 over f"{discriminator}\x1f{text}"
+guid_for_row(russian: str, pos: str) -> str             # sha256 over f"{pos}\x1f{russian}"
 notetype_id_for_name(name: str) -> int                  # sha256(name)[:8] big-endian & (1<<62)-1
 ```
-Parameters are renamed from `(russian, pos)` to `(discriminator, text)` because the mutable side
-hashes a sheet name plus a Russian string — **the canonical byte string and the argument order are
-unchanged**, so every existing GUID is preserved.
+
+**Shipped record**: `guid_for_row` kept its original `(russian, pos)` signature. This plan's
+illustrative rename to `(discriminator, text)` was never applied — `tests/test_anki_identity.py`
+pins the frozen `(russian, pos)` parameter order as part of its golden-oracle contract, and renaming
+would have broken that test rather than preserved it. The canonical byte string and the argument
+order at every call site are unchanged either way, so every existing GUID is preserved regardless of
+which parameter names the function carries.
 
 **This is a move, not a rewrite.** The old definitions are DELETED from their current homes; no
 re-export shim, no alias. `immutable_words_plan.guid_for_row` becomes an import, so existing callers
@@ -732,7 +741,7 @@ Verbs   (15): Imperfective, Perfective, Translation, Stress, Conjugation, я (1s
               Audio Imperfective, Audio Perfective, AudioRefs
 Adjectives (14): Russian (m), Translation, Stress, Feminine, Neuter, Plural, Short Form,
               Comparative, Opposite, Stem Type, Additional Info, Rank, Audio, AudioRefs
-Adverbs (11): Adverb, Translation, Stress, From Adjective, Formation, Comparative,
+Adverbs (10): Adverb, Translation, Stress, From Adjective, Formation, Comparative,
               Additional Info, Rank, Audio, AudioRefs
 ```
 `AudioRefs` is last in every set and is **never referenced by a template** (convention 8). It holds
@@ -742,8 +751,10 @@ reads field text directly — bundles the bytes on export.
 **Rows and identity**
 - One frozen dataclass per sheet (`NounRow`, `VerbRow`, `AdjectiveRow`, `AdverbRow`), each with
   `sheet`, `rank`, the sheet's columns, and `guid` / `deck` / `fields()`.
-- `guid = anki_identity.guid_for_row(sheet, base_word)` where `base_word` is the sheet's base-word
-  column (`Imperfective` for verbs). Derived from sheet + Russian text ONLY — never from the English
+- `guid = anki_identity.guid_for_row(base_word, sheet)` where `base_word` is the sheet's base-word
+  column (`Imperfective` for verbs) — this plan originally stated the call with the arguments
+  reversed (`guid_for_row(sheet, base_word)`); the shipped call matches `guid_for_row`'s real
+  `(russian, pos)` signature. Derived from sheet + Russian text ONLY — never from the English
   gloss, the stress form, or anything audio-related, all of which legitimately change on a rebuild
   and must UPDATE the existing note rather than mint a new one.
 - **The Adverbs placeholder filter lives here**, in `parse_adverbs`, and nowhere else: a row is
@@ -821,6 +832,14 @@ word contains a slash, so no new override entry is needed — assert that, rathe
 - Dash-only cells survive into field values unchanged (e.g. a noun whose `Plural` is `—` renders
   `—`, not `""`).
 - The module imports no `anki`, no `requests`, no `openpyxl` (subprocess import check).
+
+**Shipped record — post-Record rework.** The code-review gate (round 1) found the shared deck header
+constants (`_DECK_HEADER_HTML`/`_DECK_HEADER_SCRIPT`) had been built from spec rather than copied
+verbatim from the source note type, as this subphase requires, leaving the header unstyled on all
+1004 live notes. Fixed (lane `l12`, merged): the constants now hold the literal markup/script read
+from the real source note type, pinned by a test that reads the real collection. See
+[`mutable-words.md`](../../docs/libs/python/anki-tools/mutable-words.md#discrepancies-found-during-the-run)
+and [`mutable-words-runbook.md`](../../docs/libs/python/anki-tools/mutable-words-runbook.md#post-execution-fix-the-deck-header-and-a-pending-re-import).
 
 **Test approach**: `new contract tests`, reading the committed TSVs from 3.2 as fixtures.
 
@@ -1075,6 +1094,14 @@ carries `::a. Listening` / `::b. Recall` along.
   matching `immutable_words.main`'s existing message.
 - No test opens or copies the user's real collection.
 
+**Shipped record — post-Record rework.** The code-review gate (round 1) found `verify_renumber`
+checked only the deck-id set and per-deck card counts, never post-apply names, so a rename that
+silently no-op'd would pass undetected — the real run happened to succeed correctly, but the safety
+net this subphase specifies shipped incomplete. Fixed (lane `l13`, merged): `verify_renumber` now
+takes the applied rename plan and asserts every post-apply name against it via a new
+`_expected_after_name()` helper, raising and naming the offending deck id on mismatch. See
+[`mutable-words.md`](../../docs/libs/python/anki-tools/mutable-words.md#discrepancies-found-during-the-run).
+
 **Test approach**: `new contract tests`, against scratch `Collection` instances in `tmp_path` seeded
 with the real deck names and a few cards per deck, plus a recording double over `col.decks.rename`
 for the ordering assertions.
@@ -1105,7 +1132,11 @@ subprocess, asserting exit 0 and no network/collection access.
 ### 7.2 — End-to-end dry run over the real source, zero network, zero mutation
 
 **File scope**
-- NEW `libs/python/anki-tools/tests/test_mutable_words_e2e.py`
+- EDIT `libs/python/anki-tools/tests/test_mutable_words_e2e.py`
+
+**Shipped record**: this plan originally listed the file as NEW. Lane l1's builder had already
+created it as its own Phase-3 e2e tail before this subphase ran; lane l6 EDITED and EXTENDED that
+file instead, preserving every existing test unchanged and adding the Phase-7 coverage alongside it.
 
 **Pattern to follow**: `tests/test_min_separation_e2e.py` and `tests/test_separation_repair_e2e.py` —
 end-to-end over real data, in a scratch collection, asserting the whole pipeline's shape.
@@ -1186,6 +1217,15 @@ verifies the real-world result against the counts above.
 
 `anki-mutable-words --out ~/Desktop/mutable-words.apkg --audio-dir ~/Desktop/russian-audio`.
 
+**Discrepancy found and fixed, not amended around.** As literally written, this command cannot meet
+its own "0 missing" criterion: the 7 shared pre-existing words' recordings (`кафе`, `кино`, `кофе`,
+`метро`, `пальто`, `просто`, `согласно`, 14 files) live only in the Anki media directory — 8.1
+correctly skipped regenerating them, by design — and never land in `--audio-dir`. Lane l7 hit this as
+a hard stop; lane l11 fixed the underlying tool rather than the directory: `attach_media` now
+resolves each predicted filename across `--audio-dir` first, then falls back automatically to the
+real Anki media directory, with a `--no-media-dir-fallback` flag to opt out. The command above,
+unchanged, now reports **0 missing**.
+
 **Acceptance criteria**
 - The printed deck table reads 541/179/152/132 notes and 1082/716/304/264 cards, total 1004 / 2366.
 - `attach_media` reports **0 missing** files — every predicted filename was found. A non-zero missing
@@ -1202,6 +1242,18 @@ verifies the real-world result against the counts above.
 **File scope**: no repo files. Mutates `~/.local/share/Anki2/User 1/collection.anki2`.
 
 `anki-renumber-russian-decks --dry-run`, then for real with `--yes`.
+
+**Shipped differently — an authorization layer the plan didn't anticipate.** D6 authorized an agent
+to run this command, but lane l7's `--yes` invocation was refused by the harness's own Auto Mode
+safety classifier before it reached the collection — a permission-layer denial separate from, and
+outside, this plan's own D6 authorization model. l7 correctly treated this as a hard stop and made no
+workaround attempt. The user then explicitly granted the withheld permission, and **the orchestrator
+executed 8.3 and 8.4 directly** rather than re-dispatching a builder lane — justified by Phase 8
+touching no repo files, so there was no ownership ledger to falsify. Verified independently against
+the live collection (read-only, by the documenter at Record): deck ids and every per-deck card count
+are unchanged, and the three siblings now read `4. Sentences (lingo llama)` / `5. 100 Words & Phrases`
+/ `6. Master Russian 300+`, exactly as this subphase specifies below. Full provenance and backup
+filenames: [`mutable-words-runbook.md`](../../docs/libs/python/anki-tools/mutable-words-runbook.md#34-backup-renumber-and-import--true-provenance).
 
 **Acceptance criteria**
 - Anki is confirmed not running before the command is issued.
