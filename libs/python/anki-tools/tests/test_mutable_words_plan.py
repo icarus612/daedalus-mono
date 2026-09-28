@@ -3,7 +3,9 @@ packet contract text alone. The implementation module is never read by
 this file's author.
 """
 
+import os
 import re
+import shutil
 import subprocess
 import sys
 from collections import Counter
@@ -14,7 +16,12 @@ from anki.collection import Collection
 from anki.utils import to_json_bytes
 
 from anki_tools import mutable_words_plan
-from anki_tools.audio_naming import build_filename, sanitize_word_slug
+from anki_tools.audio_naming import (
+    build_filename,
+    get_anki_collection_path,
+    sanitize_word_slug,
+)
+from anki_tools.mutable_words import SOURCE_NOTETYPE_ID
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = PACKAGE_ROOT / "anki_tools" / "data" / "russian-vocabulary"
@@ -267,9 +274,71 @@ def test_deck_header_script_markers_in_every_qfmt():
     for sheet, card_index, side_name, content in _all_sides():
         if side_name != "qfmt":
             continue
-        assert 'id="deck-header"' in content, (sheet, card_index)
-        assert 'deckName.split("::")' in content, (sheet, card_index)
+        assert 'id="path"' in content, (sheet, card_index)
+        assert 'id="deck"' in content, (sheet, card_index)
+        assert "Russian - " in content, (sheet, card_index)
+        assert '.split("::")' in content, (sheet, card_index)
         assert '.split(". ")[1]' in content, (sheet, card_index)
+        assert '.join(" > ")' in content, (sheet, card_index)
+
+
+def _copy_real_collection(tmp_path):
+    real_path = get_anki_collection_path()
+    if not os.path.isfile(real_path):
+        pytest.skip("no real Anki collection on this machine")
+    copy_path = os.path.join(str(tmp_path), "source-snapshot.anki2")
+    shutil.copy2(real_path, copy_path)
+    return real_path, copy_path
+
+
+def _real_source_qfmt_and_css(tmp_path):
+    real_path, copy_path = _copy_real_collection(tmp_path)
+    mtime_before = os.path.getmtime(real_path)
+    col = Collection(copy_path)
+    try:
+        notetype = col.models.get(SOURCE_NOTETYPE_ID)
+        qfmt = notetype["tmpls"][0]["qfmt"]
+        css = notetype["css"]
+    finally:
+        col.close()
+    assert os.path.getmtime(real_path) == mtime_before
+    return qfmt, css
+
+
+def _extract_header_and_script(qfmt):
+    header_match = re.search(
+        r'<div id="path">.*?<div id="deck">.*?</div>', qfmt, re.DOTALL
+    )
+    script_match = re.search(r"<script>.*?</script>", qfmt, re.DOTALL)
+    assert header_match, "no #path/#deck header found in real qfmt"
+    assert script_match, "no <script> block found in real qfmt"
+    return header_match.group(0), script_match.group(0)
+
+
+def _normalize_fragment(text):
+    lines = [line.strip() for line in text.splitlines()]
+    return "\n".join(line for line in lines if line)
+
+
+def test_deck_header_matches_real_note_type_verbatim(tmp_path):
+    qfmt, _css = _real_source_qfmt_and_css(tmp_path)
+    real_header, real_script = _extract_header_and_script(qfmt)
+
+    assert _normalize_fragment(real_header) == _normalize_fragment(
+        mutable_words_plan._DECK_HEADER_HTML
+    )
+    assert _normalize_fragment(real_script) == _normalize_fragment(
+        mutable_words_plan._DECK_HEADER_SCRIPT
+    )
+
+
+def test_deck_header_ids_all_have_css_rules(tmp_path):
+    _qfmt, css = _real_source_qfmt_and_css(tmp_path)
+
+    css_ids = re.findall(r"#([A-Za-z][\w-]*)", css)
+    markup_ids = re.findall(r'id="([^"]+)"', mutable_words_plan._DECK_HEADER_HTML)
+
+    assert set(markup_ids) - set(css_ids) == set()
 
 
 def test_pairwise_distinct_qfmt_per_sheet():

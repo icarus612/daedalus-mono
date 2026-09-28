@@ -106,16 +106,13 @@ ROW_SPLITS: dict[str, tuple[tuple[str, str, str], tuple[str, str, str]]] = {
     ),
 }
 
-_DECK_HEADER_HTML = '<div id="deck-header"></div>'
+_DECK_HEADER_HTML = '<div id="path"></div>\n<div id="deck">{{Deck}}</div>'
 
 _DECK_HEADER_SCRIPT = """<script>
-(function () {
-  var deckName = "{{Deck}}";
-  var leaf = deckName.split("::").pop();
-  var header = leaf.split(". ")[1] || leaf;
-  var el = document.getElementById("deck-header");
-  if (el) { el.textContent = header; }
-})();
+deck = document.getElementById("deck");
+dName = deck.innerText.split("::")
+deck.innerHTML = "Russian - " + dName[dName.length-1].split(". ")[1];
+document.getElementById("path").innerHTML = dName.join(" > ")
 </script>"""
 
 _ADD_TITLE_SCRIPT = """<script>
