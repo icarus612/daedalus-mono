@@ -115,13 +115,25 @@ deck.innerHTML = "Russian - " + dName[dName.length-1].split(". ")[1];
 document.getElementById("path").innerHTML = dName.join(" > ")
 </script>"""
 
-_ADD_TITLE_SCRIPT = """<script>
-function addTitle(fieldId, icon) {
-  var el = document.getElementById(fieldId);
-  if (!el || !el.textContent.trim()) return;
-  el.insertAdjacentHTML("beforebegin", '<div class="detail-title">' + icon + '</div>');
-}
-</script>"""
+# Verbatim port of the reference note type's own `addTitle` (wraps a
+# populated field in `.title`/`.body` divs; no-ops when empty).
+_ADD_TITLE_FUNCTION = """function addTitle(id=false, title="") {
+	let el = document.getElementById(id);
+	if (el.innerText) {
+		let t = document.createElement("div");
+		t.classList.add("title");
+		t.innerHTML = title;
+
+		let b = document.createElement("div");
+		b.classList.add("body");
+		b.innerHTML = el.innerHTML;
+
+		while(el.firstChild) {
+			el.removeChild(el.firstChild);
+		}
+		el.append(t, b);
+	}
+}"""
 
 
 @dataclass(frozen=True)
@@ -528,30 +540,139 @@ def _slug_for_field_name(field_name: str) -> str:
     return slug.strip("-")
 
 
-def _details_block(sheet: str, primary_field: str) -> str:
+def _detail_fields(sheet: str, primary_field: str) -> list[str]:
+    """`FIELD_NAMES[sheet]` entries that become titled detail sections, in
+    field order -- everything but the primary word, its translation, Stress
+    (never shown on the card), the audio fields, and `Rank`/`AudioRefs`.
+    """
     excluded = {
         "Audio",
         "Audio Imperfective",
         "Audio Perfective",
         "AudioRefs",
         "Rank",
+        "Stress",
         primary_field,
         "Translation",
     }
-    lines = [_ADD_TITLE_SCRIPT]
-    for field_name in FIELD_NAMES[sheet]:
-        if field_name in excluded:
-            continue
-        slug = _slug_for_field_name(field_name)
-        lines.append(f'<div id="{slug}">{{{{{field_name}}}}}</div>')
-        lines.append(f'<script>addTitle("{slug}", "&#9432;");</script>')
-    return "\n".join(lines)
+    return [name for name in FIELD_NAMES[sheet] if name not in excluded]
+
+
+def _detail_block(sheet: str, primary_field: str) -> tuple[str, str]:
+    """(divs, script) for `sheet`'s detail sections.
+
+    Mirrors how the reference note type treats its own single "Additional
+    Info" field: each populated field becomes a `.title`/`.body` pair via
+    `addTitle`, itself a verbatim port of the reference's own function.
+    "Additional Info" keeps the reference's own id and icon, reusing the
+    shared CSS's `#additional-info` rule unchanged; every other field gets
+    its own id, grouped into `EXTRA_CSS`'s selector list under the same
+    layout rule, since the reference note type has no field of its own to
+    model them on.
+    """
+    divs = []
+    calls = []
+    for field_name in _detail_fields(sheet, primary_field):
+        if field_name == "Additional Info":
+            slug, title = "additional-info", "&#9432;"
+        else:
+            slug, title = _slug_for_field_name(field_name), field_name
+        divs.append(f'<div id="{slug}">{{{{{field_name}}}}}</div>')
+        calls.append(f'addTitle("{slug}", "{title}");')
+    script = "\n".join(["<script>", _ADD_TITLE_FUNCTION, *calls, "</script>"])
+    return "\n".join(divs), script
+
+
+def _all_primary_fields(sheet: str) -> list[str]:
+    """Every field name that plays the primary-word role for `sheet`, across
+    all of its cards -- one for a single-primary sheet, two (Imperfective,
+    Perfective) for Verbs.
+    """
+    if sheet == "Verbs":
+        seen: list[str] = []
+        for config in _VERB_CARD_CONFIGS:
+            if config[0] not in seen:
+                seen.append(config[0])
+        return seen
+    return [_PRIMARY_FIELD[sheet]]
+
+
+def _all_detail_slugs() -> list[str]:
+    """Every slug `_detail_block` can emit for any sheet/card, excluding
+    "Additional Info" (styled via the reference's own `#additional-info`
+    rule, not this one). Drives `EXTRA_CSS`'s selector lists so every id
+    `_detail_block` emits has a rule covering it.
+    """
+    slugs: list[str] = []
+    seen: set[str] = set()
+    for sheet in FIELD_NAMES:
+        for primary_field in _all_primary_fields(sheet):
+            for field_name in _detail_fields(sheet, primary_field):
+                if field_name == "Additional Info":
+                    continue
+                slug = _slug_for_field_name(field_name)
+                if slug not in seen:
+                    seen.add(slug)
+                    slugs.append(slug)
+    return slugs
+
+
+def _build_extra_css() -> str:
+    """CSS appended to the cloned source note type's CSS (never rewritten in
+    place -- see `mutable_words.build_note_types`). Generalizes the
+    reference's own `#additional-info` layout to every other detail-section
+    id `_detail_block` can emit, since the reference note type has no field
+    to model them on; `#audio-imperfective`/`#audio-perfective` close the
+    same coverage gap for the Verbs sheet's two audio containers, mirroring
+    `#audio`.
+    """
+    slugs = _all_detail_slugs()
+    ids = ", ".join(f"#{slug}" for slug in slugs)
+    titles = ", ".join(f"#{slug} .title" for slug in slugs)
+    bodies = ", ".join(f"#{slug} .body" for slug in slugs)
+    return (
+        f"{ids} {{\n"
+        "\tpadding: 5px 0;\n"
+        "\tdisplay: inline-flex;\n"
+        "\ttext-align: left;\n"
+        "\twidth: 100%;\n"
+        "\tword-break: break-word;\n"
+        "\thyphens: auto;\n"
+        "\talign-items: start;\n"
+        "}\n\n"
+        f"{titles} {{\n"
+        "\tfont-size: 1.2rem;\n"
+        "\tdisplay: inline-flex;\n"
+        "\tcolor: #656565;\n"
+        "}\n\n"
+        f"{bodies} {{\n"
+        "\tfont-size: 1.2rem;\n"
+        "\tcolor: #656565;\n"
+        "\tpadding-top: 2px;\n"
+        "}\n\n"
+        "#audio-imperfective, #audio-perfective {\n"
+        "\ttext-align: center;\n"
+        "\tpadding-top: .3rem;\n"
+        "}"
+    )
+
+
+EXTRA_CSS = _build_extra_css()
+
+
+def _wrap(element_id: str, *parts: str) -> str:
+    return "\n".join([f'<div id="{element_id}">', *parts, "</div>"])
 
 
 def build_template(sheet: str, card_index: int) -> tuple[str, str]:
-    """The (qfmt, afmt) pair for `sheet`'s `card_index`-th card (0-based)."""
-    header = _DECK_HEADER_HTML + _DECK_HEADER_SCRIPT
+    """The (qfmt, afmt) pair for `sheet`'s `card_index`-th card (0-based).
 
+    Mirrors the reference note type's own structure -- front content in
+    `#front`, back content in `#back`, the primary word in `#russian`,
+    `{{Translation}}` in `#translation` -- so the CSS cloned from that same
+    note type actually applies, instead of the stock `<hr id=answer>` shell
+    the templates used to emit.
+    """
     if sheet == "Verbs":
         if card_index not in range(4):
             raise ValueError(f"Verbs card_index out of range: {card_index!r}")
@@ -567,32 +688,22 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
         raise ValueError(f"unknown sheet: {sheet!r}")
 
     audio_html = card_audio.audio_block(audio_field, dom_id, state_key)
-    details_block = _details_block(sheet, primary_field)
+    detail_divs, detail_script = _detail_block(sheet, primary_field)
+    russian_div = f'<div id="russian">{{{{{primary_field}}}}}</div>'
+    translation_div = '<div id="translation">{{Translation}}</div>'
 
     if audio_side:
-        qfmt = "\n".join([header, audio_html, f"{{{{{primary_field}}}}}"])
-        afmt = "\n".join(
-            ["{{FrontSide}}", "<hr id=answer>", "{{Translation}}", details_block]
-        )
+        front = _wrap("front", _DECK_HEADER_HTML, audio_html, russian_div)
+        qfmt = front + _DECK_HEADER_SCRIPT
+        back = _wrap("back", translation_div, detail_divs)
+        afmt = "\n".join(["{{FrontSide}}", back, detail_script])
     else:
+        front_parts = [_DECK_HEADER_HTML, translation_div]
         if sheet == "Verbs":
-            qfmt = "\n".join(
-                [
-                    header,
-                    "{{Translation}}",
-                    f'<div class="detail-title">{primary_field}</div>',
-                ]
-            )
-        else:
-            qfmt = "\n".join([header, "{{Translation}}"])
-        afmt = "\n".join(
-            [
-                "{{FrontSide}}",
-                "<hr id=answer>",
-                audio_html,
-                f"{{{{{primary_field}}}}}",
-                details_block,
-            ]
-        )
+            front_parts.append(f'<div class="title">{primary_field}</div>')
+        front = _wrap("front", *front_parts)
+        qfmt = front + _DECK_HEADER_SCRIPT
+        back = _wrap("back", audio_html, russian_div, detail_divs)
+        afmt = "\n".join(["{{FrontSide}}", back, detail_script])
 
     return qfmt, afmt

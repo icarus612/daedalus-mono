@@ -61,6 +61,7 @@ def build_note_types(
     for sheet, name in mutable_words_plan.NOTE_TYPE_NAMES.items():
         cloned = source_col.models.copy(source_note_type, add=False)
         cloned["name"] = name
+        cloned["css"] = cloned["css"] + "\n\n" + mutable_words_plan.EXTRA_CSS
 
         fields = []
         for ord_, field_name in enumerate(mutable_words_plan.FIELD_NAMES[sheet]):

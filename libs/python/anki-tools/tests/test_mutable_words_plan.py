@@ -341,6 +341,79 @@ def test_deck_header_ids_all_have_css_rules(tmp_path):
     assert set(markup_ids) - set(css_ids) == set()
 
 
+# card_audio.py's own bookkeeping ids; the reference's own such ids
+# carry no CSS rule either.
+_AUDIO_BOOKKEEPING_SUFFIXES = ("-data", "-controls")
+
+
+def _ids_and_classes(html):
+    ids = set(re.findall(r'id="([^"]+)"', html))
+    ids = {i for i in ids if not i.endswith(_AUDIO_BOOKKEEPING_SUFFIXES)}
+    classes: set[str] = set()
+    for value in re.findall(r'class="([^"]+)"', html):
+        classes.update(value.split())
+    return ids | classes
+
+
+def _css_selector_tokens(css):
+    ids = re.findall(r"#([^\W\d][\w-]*)", css)
+    classes = re.findall(r"\.([^\W\d][\w-]*)", css)
+    return set(ids) | set(classes)
+
+
+def test_every_template_id_and_class_has_a_css_rule(tmp_path):
+    """The defect this module was rewritten to fix: CSS cloned from the
+    reference note type is inert unless the templates actually emit the
+    ids/classes it styles. Proves the set difference is empty for every
+    side of every sheet/card, over the CSS the built note types will
+    actually ship (`source_css + EXTRA_CSS`).
+    """
+    _qfmt, source_css = _real_source_qfmt_and_css(tmp_path)
+    css_tokens = _css_selector_tokens(
+        source_css + "\n\n" + mutable_words_plan.EXTRA_CSS
+    )
+
+    for sheet, card_index, side_name, content in _all_sides():
+        missing = _ids_and_classes(content) - css_tokens
+        assert not missing, (sheet, card_index, side_name, missing)
+
+
+def _real_source_afmt(tmp_path):
+    real_path, copy_path = _copy_real_collection(tmp_path)
+    mtime_before = os.path.getmtime(real_path)
+    col = Collection(copy_path)
+    try:
+        afmt = col.models.get(SOURCE_NOTETYPE_ID)["tmpls"][0]["afmt"]
+    finally:
+        col.close()
+    assert os.path.getmtime(real_path) == mtime_before
+    return afmt
+
+
+def test_structure_mirrors_reference_wrapper_divs_and_addtitle(tmp_path):
+    """Structural comparison against the reference: same `#front`/`#back`
+    wrapper idiom, same `addTitle` mechanism, same ordering (wrapper divs
+    close, THEN the `<script>` with the function and its calls).
+    """
+    real_afmt = _real_source_afmt(tmp_path)
+    assert re.search(r'<div id="back">.*?</div>\s*<script>', real_afmt, re.S)
+    assert 'classList.add("title")' in real_afmt
+    assert 'classList.add("body")' in real_afmt
+
+    assert 'classList.add("title")' in mutable_words_plan._ADD_TITLE_FUNCTION
+    assert 'classList.add("body")' in mutable_words_plan._ADD_TITLE_FUNCTION
+
+    for sheet, card_index, side_name, content in _all_sides():
+        if side_name == "qfmt":
+            assert content.startswith('<div id="front">'), (sheet, card_index)
+        else:
+            assert re.search(r'<div id="back">.*?</div>\s*<script>', content, re.S), (
+                sheet,
+                card_index,
+            )
+            assert content.count("function addTitle") == 1, (sheet, card_index)
+
+
 def test_pairwise_distinct_qfmt_per_sheet():
     for sheet, count in SHEET_CARD_COUNTS.items():
         qfmts = [

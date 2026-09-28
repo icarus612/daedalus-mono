@@ -16,6 +16,7 @@ import pytest
 from anki.collection import Collection
 from anki.import_export_pb2 import ImportAnkiPackageOptions, ImportAnkiPackageRequest
 
+from anki_tools import mutable_words_plan
 from anki_tools.audio_naming import get_anki_media_dir, parse_audio_filenames
 from anki_tools.immutable_words import assert_unmodified
 from anki_tools.mutable_words import (
@@ -470,11 +471,11 @@ def test_build_note_types_verbs_have_four_templates(cloned_note_types):
     assert len(note_types["Verbs"]["tmpls"]) == 4
 
 
-def test_build_note_types_css_byte_identical_to_source(cloned_note_types):
+def test_build_note_types_css_extends_source_with_extra_css(cloned_note_types):
     note_types, source_css = cloned_note_types
     assert source_css
     for note_type in note_types.values():
-        assert note_type["css"] == source_css
+        assert note_type["css"] == source_css + "\n\n" + mutable_words_plan.EXTRA_CSS
 
 
 def test_build_note_types_new_note_succeeds_for_every_note_type(
