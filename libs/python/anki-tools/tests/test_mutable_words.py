@@ -16,7 +16,7 @@ import pytest
 from anki.collection import Collection
 from anki.import_export_pb2 import ImportAnkiPackageOptions, ImportAnkiPackageRequest
 
-from anki_tools.audio_naming import parse_audio_filenames
+from anki_tools.audio_naming import get_anki_media_dir, parse_audio_filenames
 from anki_tools.immutable_words import assert_unmodified
 from anki_tools.mutable_words import (
     SOURCE_NOTETYPE_ID,
@@ -125,6 +125,16 @@ def _referenced_filenames(build_col):
         for field_name in note.keys():
             if field_name.startswith("Audio") and field_name != "AudioRefs":
                 names.update(parse_audio_filenames(note[field_name]))
+    return names
+
+
+def _single_noun_referenced_names(cloned_note_types, build_col):
+    """Build one noun row and return its two predicted filenames, sorted."""
+    note_types, _ = cloned_note_types
+    rows = _small_rows_by_sheet(nouns=1, verbs=0, adjectives=0, adverbs=0)
+    build_deck_tree(build_col, rows, note_types)
+    names = sorted(_referenced_filenames(build_col))
+    assert len(names) == 2
     return names
 
 
@@ -723,6 +733,111 @@ def test_attach_media_missing_files_reported_never_raised(
     assert missing != []
 
 
+def test_attach_media_extra_dirs_resolves_name_absent_from_audio_dir(
+    cloned_note_types, build_col, tmp_path
+):
+    target, other = _single_noun_referenced_names(cloned_note_types, build_col)
+
+    audio_dir = os.path.join(str(tmp_path), "audio")
+    extra_dir = os.path.join(str(tmp_path), "extra")
+    os.makedirs(audio_dir)
+    os.makedirs(extra_dir)
+    _write_fake_mp3(audio_dir, other, b"audio-dir bytes")
+    extra_content = b"extra-dir bytes"
+    _write_fake_mp3(extra_dir, target, extra_content)
+
+    found, missing = attach_media(build_col, audio_dir, extra_dirs=(extra_dir,))
+
+    assert found == [target, other]
+    assert missing == []
+    with open(os.path.join(build_col.media.dir(), target), "rb") as fh:
+        assert fh.read() == extra_content
+
+
+def test_attach_media_audio_dir_wins_over_extra_dirs_on_name_collision(
+    cloned_note_types, build_col, tmp_path
+):
+    target, _other = _single_noun_referenced_names(cloned_note_types, build_col)
+
+    audio_dir = os.path.join(str(tmp_path), "audio")
+    extra_dir = os.path.join(str(tmp_path), "extra")
+    os.makedirs(audio_dir)
+    os.makedirs(extra_dir)
+    audio_content = b"audio-dir bytes"
+    _write_fake_mp3(audio_dir, target, audio_content)
+    _write_fake_mp3(extra_dir, target, b"extra-dir bytes")
+
+    found, missing = attach_media(build_col, audio_dir, extra_dirs=(extra_dir,))
+
+    assert target in found
+    with open(os.path.join(build_col.media.dir(), target), "rb") as fh:
+        assert fh.read() == audio_content
+
+
+def test_attach_media_multiple_extra_dirs_walked_in_order(
+    cloned_note_types, build_col, tmp_path
+):
+    target, _other = _single_noun_referenced_names(cloned_note_types, build_col)
+
+    audio_dir = os.path.join(str(tmp_path), "audio")
+    extra_dir_1 = os.path.join(str(tmp_path), "extra1")
+    extra_dir_2 = os.path.join(str(tmp_path), "extra2")
+    for directory in (audio_dir, extra_dir_1, extra_dir_2):
+        os.makedirs(directory)
+    second_content = b"second extra dir bytes"
+    _write_fake_mp3(extra_dir_2, target, second_content)
+
+    found, missing = attach_media(
+        build_col, audio_dir, extra_dirs=(extra_dir_1, extra_dir_2)
+    )
+
+    assert target in found
+    assert target not in missing
+    with open(os.path.join(build_col.media.dir(), target), "rb") as fh:
+        assert fh.read() == second_content
+
+
+def test_attach_media_multi_dir_still_reports_genuine_absence(
+    cloned_note_types, build_col, tmp_path
+):
+    target, _other = _single_noun_referenced_names(cloned_note_types, build_col)
+
+    audio_dir = os.path.join(str(tmp_path), "audio")
+    extra_dir_1 = os.path.join(str(tmp_path), "extra1")
+    extra_dir_2 = os.path.join(str(tmp_path), "extra2")
+    for directory in (audio_dir, extra_dir_1, extra_dir_2):
+        os.makedirs(directory)
+
+    found, missing = attach_media(
+        build_col, audio_dir, extra_dirs=(extra_dir_1, extra_dir_2)
+    )
+
+    assert target in missing
+    assert target not in found
+
+
+def test_attach_media_extra_dirs_omitted_matches_single_dir_behavior(
+    cloned_note_types, build_col, tmp_path
+):
+    note_types, _ = cloned_note_types
+    rows = _small_rows_by_sheet()
+    build_deck_tree(build_col, rows, note_types)
+
+    all_names = sorted(_referenced_filenames(build_col))
+    half = len(all_names) // 2
+    present_names, absent_names = all_names[:half], all_names[half:]
+
+    audio_dir = os.path.join(str(tmp_path), "audio")
+    os.makedirs(audio_dir)
+    for name in present_names:
+        _write_fake_mp3(audio_dir, name)
+
+    found, missing = attach_media(build_col, audio_dir)
+
+    assert found == present_names
+    assert missing == absent_names
+
+
 # export_package
 
 
@@ -990,3 +1105,90 @@ def test_main_cli_wiring_source_dir_out_audio_dir_collection_force(
 
     assert exc_info.value.code == 0
     assert os.path.getsize(out_path) > 0
+
+
+def test_main_default_fallback_passes_anki_media_dir_as_extra_dirs(
+    tmp_path, monkeypatch, collection_snapshot_copy
+):
+    source_dir = _write_source_dir(tmp_path, _small_rows_by_sheet())
+    out_path = os.path.join(str(tmp_path), "out.apkg")
+    audio_dir = os.path.join(str(tmp_path), "audio")
+    os.makedirs(audio_dir)
+
+    captured_calls = []
+
+    def _capturing_attach_media(build_col, audio_dir_arg, extra_dirs=()):
+        captured_calls.append((build_col, audio_dir_arg, extra_dirs))
+        return [], []
+
+    monkeypatch.setattr(
+        "anki_tools.mutable_words.attach_media", _capturing_attach_media
+    )
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "mutable-words",
+            "--source-dir",
+            source_dir,
+            "--out",
+            out_path,
+            "--collection",
+            collection_snapshot_copy,
+            "--audio-dir",
+            audio_dir,
+        ],
+    )
+
+    with pytest.raises(SystemExit) as exc_info:
+        main()
+
+    assert exc_info.value.code == 0
+    assert len(captured_calls) == 1
+    _build_col_arg, captured_audio_dir, captured_extra_dirs = captured_calls[0]
+    assert captured_audio_dir == audio_dir
+    assert captured_extra_dirs == (get_anki_media_dir(collection_snapshot_copy),)
+
+
+def test_main_no_media_dir_fallback_flag_disables_extra_dirs(
+    tmp_path, monkeypatch, collection_snapshot_copy
+):
+    source_dir = _write_source_dir(tmp_path, _small_rows_by_sheet())
+    out_path = os.path.join(str(tmp_path), "out.apkg")
+    audio_dir = os.path.join(str(tmp_path), "audio")
+    os.makedirs(audio_dir)
+
+    captured_calls = []
+
+    def _capturing_attach_media(build_col, audio_dir_arg, extra_dirs=()):
+        captured_calls.append((build_col, audio_dir_arg, extra_dirs))
+        return [], []
+
+    monkeypatch.setattr(
+        "anki_tools.mutable_words.attach_media", _capturing_attach_media
+    )
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "mutable-words",
+            "--source-dir",
+            source_dir,
+            "--out",
+            out_path,
+            "--collection",
+            collection_snapshot_copy,
+            "--audio-dir",
+            audio_dir,
+            "--no-media-dir-fallback",
+        ],
+    )
+
+    with pytest.raises(SystemExit) as exc_info:
+        main()
+
+    assert exc_info.value.code == 0
+    assert len(captured_calls) == 1
+    _build_col_arg, captured_audio_dir, captured_extra_dirs = captured_calls[0]
+    assert captured_audio_dir == audio_dir
+    assert captured_extra_dirs == ()
