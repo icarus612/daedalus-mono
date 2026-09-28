@@ -14,6 +14,7 @@ import os
 import shutil
 import tempfile
 import time
+from collections.abc import Sequence
 
 from anki.collection import Collection, DeckIdLimit
 from anki.errors import AnkiException, DBError
@@ -119,15 +120,26 @@ def build_deck_tree(
     return counts
 
 
-def attach_media(build_col: Collection, audio_dir: str) -> tuple[list[str], list[str]]:
-    """Copy every filename referenced by any note's audio field(s) from
-    `audio_dir` into `build_col`'s media folder.
+def attach_media(
+    build_col: Collection,
+    audio_dir: str,
+    extra_dirs: Sequence[str] = (),
+) -> tuple[list[str], list[str]]:
+    """Copy every filename referenced by any note's audio field(s) into
+    `build_col`'s media folder, searching `audio_dir` first and then each
+    of `extra_dirs` in order.
 
     Checks each note's own `keys()` rather than assuming a single audio
     field name, since Verbs notes carry two ("Audio Imperfective"/
-    "Audio Perfective") while the other sheets carry one ("Audio"). Never
-    raises on a missing source file. Returns `(found, missing)`, both
-    sorted, over the union of referenced filenames across every note.
+    "Audio Perfective") while the other sheets carry one ("Audio"). For
+    each referenced filename, the first directory in `[audio_dir,
+    *extra_dirs]` that contains it wins -- `audio_dir` always has
+    priority, so a freshly generated file is preferred over a same-named
+    stale copy elsewhere. Never lists a directory's contents; only tests
+    the specific predicted filenames. Never raises on a missing source
+    file. Returns `(found, missing)`, both sorted, over the union of
+    referenced filenames across every note; a name is `missing` only when
+    it was not found in `audio_dir` or any `extra_dirs` entry.
     """
     referenced: set[str] = set()
     for note_id in build_col.find_notes(""):
@@ -136,11 +148,17 @@ def attach_media(build_col: Collection, audio_dir: str) -> tuple[list[str], list
             if field_name in note:
                 referenced.update(audio_naming.parse_audio_filenames(note[field_name]))
 
+    search_dirs = (audio_dir, *extra_dirs)
     found: list[str] = []
     missing: list[str] = []
     for name in sorted(referenced):
-        source_path = os.path.join(audio_dir, name)
-        if not os.path.isfile(source_path):
+        source_path = None
+        for directory in search_dirs:
+            candidate = os.path.join(directory, name)
+            if os.path.isfile(candidate):
+                source_path = candidate
+                break
+        if source_path is None:
             missing.append(name)
             continue
         added_name = build_col.media.add_file(source_path)
@@ -252,6 +270,17 @@ def build_parser() -> argparse.ArgumentParser:
         help="Override the auto-detected collection path.",
     )
     parser.add_argument(
+        "--no-media-dir-fallback",
+        dest="no_media_dir_fallback",
+        action="store_true",
+        default=False,
+        help=(
+            "Disable the automatic fallback to the real Anki collection's "
+            "media directory when a referenced audio file isn't found in "
+            "--audio-dir."
+        ),
+    )
+    parser.add_argument(
         "--dry-run",
         dest="dry_run",
         action="store_true",
@@ -340,7 +369,12 @@ def main() -> None:
         print_deck_table(deck_counts, cards_per_note)
 
         if args.audio_dir:
-            found, missing = attach_media(build_col, args.audio_dir)
+            extra_dirs = ()
+            if not args.no_media_dir_fallback:
+                extra_dirs = (audio_naming.get_anki_media_dir(collection_path),)
+            found, missing = attach_media(
+                build_col, args.audio_dir, extra_dirs=extra_dirs
+            )
             print(f"Attached {len(found)} media file(s) from {args.audio_dir!r}.")
             if missing:
                 print(f"WARNING: {len(missing)} referenced audio file(s) not found:")
