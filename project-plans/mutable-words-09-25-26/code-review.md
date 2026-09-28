@@ -114,3 +114,64 @@ direct re-verification of the two blocking items.
   MISSING RECORD of how it got there. Please confirm who/what performed the final `--yes` invocations, and
   make sure Phase 9.1's runbook (not yet written, correctly sequenced after this gate) states the true sequence
   of events rather than the plan's projected one.
+
+## Round 2 — 09-27-26
+
+```
+verdict: ready
+next: proceed
+blocking: 0
+non-blocking: 1
+```
+
+### Scope of this review
+
+Solo `rigor: low` re-review, cold context, of the two round-1 blocking fixes (commits `088c62c` deck
+header, `8ea341e` verify_renumber) plus the docs/plan reconciliation commit (`50f5f47`), all merged
+onto `feature/mutable-words` (still unpushed/unmerged into `main`). Verified independently rather than
+trusting the dispatch note: read both fix diffs directly; ran the affected test files and the full
+suite (`808 passed, 0 failed, 0 skipped` — matches the claim exactly); ran `ruff format --check` /
+`ruff check` (clean) and `check-diff-hygiene.sh --base main` (clean, no attribution, no comment-budget
+violations) over the whole branch diff; ran `plan-lifecycle.sh check` (`OK`). Built independent
+positive controls for both fixes rather than trusting the report of them: reconstructed the pre-fix
+`verify_renumber` and confirmed it silently passes a hand-built no-op-rename case with no exception;
+reconstructed the pre-fix `_DECK_HEADER_HTML`/`_DECK_HEADER_SCRIPT` and confirmed both fail the new
+tests against a fresh read of the real note type `1698803891108`, including the CSS-coverage check
+correctly flagging `#deck-header` as uncovered. Because the dispatch note claimed the header fix is
+now live on the user's real collection, opened that collection read-only myself (copy-then-open,
+mtime-verified unchanged before/after) to independently confirm all four Mutable Words note types now
+carry `id="path"`/`id="deck"`, the `"Russian - "` prefix, no `#deck-header`, and CSS identical to the
+source note type, and that all four subdeck card counts are unchanged (1082/716/304/264, 2366 total
+cards / 1004 notes). Also confirmed a fourth backup (`backup-2026-09-27-22.25.26.colpkg`) exists,
+dated after the docs commit, consistent with the claimed re-import. Confirmed both fix commits are
+genuinely merged onto `feature/mutable-words` (`git branch --contains` both) and confirmed `main`'s
+own recent history independently supports the new root `CLAUDE.md`'s claim (squash-merged PRs
+`#18`-`#22` by number, followed by two `feat(anki-tools)` commits with no PR number going straight to
+`main`; `CLAUDE_BASE_BRANCH=main` in both `.claude/settings.json` and `.agents/settings.json`) — the
+file is accurate and minimal (10 lines). Re-checked all six round-1 non-blocking findings against the
+current diff: none of the files they concern (`card_audio.py`, `plan.md`'s Stack table,
+`vocabulary_source.py`, `rebalance_due.py`/`immutable_words.py`, `mutable_words_audio.py`,
+`mutable_words_plan.py`'s aspect-hint div) were touched by round 2's commits, so all six stand exactly
+as before — none has become blocking.
+
+### Findings
+
+- [non-blocking] **The committed docs (`docs/libs/python/anki-tools/mutable-words.md` and
+  `mutable-words-runbook.md`, both from commit `50f5f47`, 22:23:29) now read as stale on one material
+  fact.** Both explicitly state the header fix has "not yet been pushed onto the live collection" and
+  that the re-import "had not been performed as of this writing." That was true when written, but the
+  actual re-import ran ~2 minutes later (the fourth backup is timestamped 22:25:26) and is correctly
+  recorded in `progress-log.md`'s later entry — I independently confirmed the fix is in fact live (see
+  Scope above). Since this branch has no PR gate after this review (lands by direct merge per the new
+  `CLAUDE.md`), the two docs pages will land on `main` still saying the fix is pending when it isn't.
+  No code or data risk — the run's own progress log already has the true, later state, and I verified
+  the live collection directly rather than trusting either document — but worth a short addendum to
+  both pages (a one-paragraph "Update" noting the fourth backup and the `0 new / 1004 updated`
+  re-import) before or shortly after the push to `main`, so a future reader of the shipped record isn't
+  misled. Trivial, doc-only, does not warrant a third review round.
+
+### Open questions
+
+None. Round 1's open question (the missing audit-trail record of who ran 8.3/8.4) is now answered by
+the docs commit's runbook section 3–4, which I independently spot-checked against `progress-log.md`
+and found consistent.
