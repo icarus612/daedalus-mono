@@ -21,7 +21,7 @@ from anki.import_export_pb2 import ExportAnkiPackageOptions
 from anki.models import NotetypeDict
 from anki.utils import to_json_bytes
 
-from anki_tools import audio_naming
+from anki_tools import audio_naming, card_audio
 from anki_tools.anki_identity import notetype_id_for_name as _notetype_id_for_name
 from anki_tools.audio_naming import get_anki_collection_path
 from anki_tools.immutable_words_plan import (
@@ -92,6 +92,8 @@ def clone_note_type(
         template["afmt"] = rewrite_audio_playback(
             strip_part_of_speech(template["afmt"])
         )
+
+    cloned["css"] = cloned["css"] + "\n\n" + card_audio.AUDIO_BUTTON_CSS
 
     audio_refs_field = build_col.models.new_field("AudioRefs")
     # `new_field()` hands back a field dict with a real, randomly-chosen id

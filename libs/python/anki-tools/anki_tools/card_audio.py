@@ -3,6 +3,33 @@
 Pure module -- standard library only, no `anki` imports.
 """
 
+# Shared by every caller so the button's class and its CSS never drift apart.
+BUTTON_CLASS = "audio-play"
+
+AUDIO_BUTTON_CSS = (
+    f".{BUTTON_CLASS} {{\n"
+    "\tdisplay: inline-flex;\n"
+    "\talign-items: center;\n"
+    "\tjustify-content: center;\n"
+    "\twidth: 3rem;\n"
+    "\theight: 3rem;\n"
+    "\tpadding: 0;\n"
+    "\tborder: none;\n"
+    "\tborder-radius: 50%;\n"
+    "\tbackground-color: #605C8B;\n"
+    "\tcolor: white;\n"
+    "\tfont-size: 1.4rem;\n"
+    "\tline-height: 1;\n"
+    "\tcursor: pointer;\n"
+    "}\n\n"
+    f".{BUTTON_CLASS}:hover {{\n"
+    "\topacity: .85;\n"
+    "}\n\n"
+    f".{BUTTON_CLASS}:active {{\n"
+    "\topacity: .7;\n"
+    "}"
+)
+
 _TEMPLATE = r"""<!-- Audio field holds a plain-text, comma/newline-separated list of
      bare media filenames -- it is NOT wrapped in Anki's own sound-tag
      syntax. Anki's backend autoplays every sound-tagged reference in
@@ -64,6 +91,7 @@ _TEMPLATE = r"""<!-- Audio field holds a plain-text, comma/newline-separated lis
     audio.autoplay = !reusable;
     audio.src = chosen;
     var button = document.createElement("button");
+    button.className = "@@BUTTON_CLASS@@";
     button.textContent = "▶";
     button.addEventListener("click", function () {
       audio.currentTime = 0;
@@ -83,4 +111,5 @@ def audio_block(field: str, dom_id: str, state_key: str) -> str:
         _TEMPLATE.replace("@@FIELD@@", field)
         .replace("@@DOM_ID@@", dom_id)
         .replace("@@STATE_KEY@@", state_key)
+        .replace("@@BUTTON_CLASS@@", BUTTON_CLASS)
     )

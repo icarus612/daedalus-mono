@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from anki_tools.card_audio import audio_block
+from anki_tools.card_audio import AUDIO_BUTTON_CSS, BUTTON_CLASS, audio_block
 
 ID_RE = re.compile(r'id="([^"]*)"')
 _PACKAGE_ROOT = Path(__file__).resolve().parents[1]
@@ -111,3 +111,28 @@ def test_result_is_non_empty_string(field, dom_id, state_key):
     result = audio_block(field, dom_id, state_key)
     assert isinstance(result, str)
     assert result != ""
+
+
+def test_button_carries_stable_class():
+    result = audio_block("Audio", "audio", "__x")
+    assert f'button.className = "{BUTTON_CLASS}";' in result
+
+
+def test_button_text_and_click_handler_unchanged():
+    result = audio_block("Audio", "audio", "__x")
+    assert 'button.textContent = "▶";' in result
+    assert "audio.currentTime = 0;" in result
+    assert "audio.play();" in result
+
+
+def test_button_appended_after_audio_element():
+    result = audio_block("Audio", "audio", "__x")
+    audio_index = result.index("container.appendChild(audio);")
+    button_index = result.index("container.appendChild(button);")
+    assert audio_index < button_index
+
+
+def test_audio_button_css_targets_button_class():
+    assert f".{BUTTON_CLASS} {{" in AUDIO_BUTTON_CSS
+    assert f".{BUTTON_CLASS}:hover" in AUDIO_BUTTON_CSS
+    assert f".{BUTTON_CLASS}:active" in AUDIO_BUTTON_CSS

@@ -22,7 +22,7 @@ from anki.import_export_pb2 import ExportAnkiPackageOptions
 from anki.models import NotetypeDict
 from anki.utils import to_json_bytes
 
-from anki_tools import audio_naming, mutable_words_plan
+from anki_tools import audio_naming, card_audio, mutable_words_plan
 from anki_tools.audio_naming import get_anki_collection_path
 from anki_tools.immutable_words import assert_unmodified
 
@@ -61,7 +61,13 @@ def build_note_types(
     for sheet, name in mutable_words_plan.NOTE_TYPE_NAMES.items():
         cloned = source_col.models.copy(source_note_type, add=False)
         cloned["name"] = name
-        cloned["css"] = cloned["css"] + "\n\n" + mutable_words_plan.EXTRA_CSS
+        cloned["css"] = (
+            cloned["css"]
+            + "\n\n"
+            + card_audio.AUDIO_BUTTON_CSS
+            + "\n\n"
+            + mutable_words_plan.EXTRA_CSS
+        )
 
         fields = []
         for ord_, field_name in enumerate(mutable_words_plan.FIELD_NAMES[sheet]):

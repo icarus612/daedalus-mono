@@ -59,6 +59,7 @@
     audio.autoplay = !reusable;
     audio.src = chosen;
     var button = document.createElement("button");
+    button.className = "audio-play";
     button.textContent = "▶";
     button.addEventListener("click", function () {
       audio.currentTime = 0;

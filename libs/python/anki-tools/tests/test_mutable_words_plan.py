@@ -15,7 +15,7 @@ import pytest
 from anki.collection import Collection
 from anki.utils import to_json_bytes
 
-from anki_tools import mutable_words_plan
+from anki_tools import card_audio, mutable_words_plan
 from anki_tools.audio_naming import (
     build_filename,
     get_anki_collection_path,
@@ -352,6 +352,11 @@ def _ids_and_classes(html):
     classes: set[str] = set()
     for value in re.findall(r'class="([^"]+)"', html):
         classes.update(value.split())
+    # The replay button sets its class from JS, not static markup.
+    for value in re.findall(r'\.className\s*=\s*"([^"]+)"', html):
+        classes.update(value.split())
+    for value in re.findall(r"\.classList\.add\(([^)]*)\)", html):
+        classes.update(re.findall(r'"([^"]+)"', value))
     return ids | classes
 
 
@@ -370,7 +375,11 @@ def test_every_template_id_and_class_has_a_css_rule(tmp_path):
     """
     _qfmt, source_css = _real_source_qfmt_and_css(tmp_path)
     css_tokens = _css_selector_tokens(
-        source_css + "\n\n" + mutable_words_plan.EXTRA_CSS
+        source_css
+        + "\n\n"
+        + card_audio.AUDIO_BUTTON_CSS
+        + "\n\n"
+        + mutable_words_plan.EXTRA_CSS
     )
 
     for sheet, card_index, side_name, content in _all_sides():

@@ -35,6 +35,13 @@ that genuinely cannot be expressed synthetically: proving Anki's own
 media-usage scanner against real bytes is the entire point of those
 three tests) -- and no network access anywhere in this file.
 
+One further `skipif`-guarded exception:
+`test_clone_note_type_every_id_and_class_has_css_rule_against_real_source`
+opens a mtime-verified copy of the real collection (never mutated, never
+required to exist) for the same reason the media tests do -- proving CSS
+coverage against a synthetic fixture's deliberately minimal CSS would
+prove nothing about the real note type this tool actually ships against.
+
 Subphase 3.1 (builder-owned, out of this packet's scope) appends a full
 build -> export -> import round-trip end-to-end test to this same file after
 this packet goes green; nothing here should be removed or altered to
@@ -55,6 +62,7 @@ from pathlib import Path
 import pytest
 from anki.collection import Collection
 
+from anki_tools import card_audio, mutable_words, mutable_words_plan
 from anki_tools.immutable_words import (
     NEW_NOTE_TYPE_ID,
     NEW_NOTE_TYPE_NAME,
@@ -498,9 +506,109 @@ def test_clone_note_type_field_list_matches_field_names_in_order(cloned):
         assert "{{AudioRefs}}" not in side
 
 
-def test_clone_note_type_css_byte_identical_to_source(cloned):
+def test_clone_note_type_css_extends_source_with_audio_button_css(cloned):
     note_type, source_css = cloned
-    assert note_type["css"] == source_css
+    assert note_type["css"] == source_css + "\n\n" + card_audio.AUDIO_BUTTON_CSS
+
+
+_AUDIO_BOOKKEEPING_SUFFIXES = ("-data", "-controls")
+
+
+def _ids_and_classes(html):
+    ids = set(re.findall(r'id="([^"]+)"', html))
+    ids = {i for i in ids if not i.endswith(_AUDIO_BOOKKEEPING_SUFFIXES)}
+    classes: set[str] = set()
+    for value in re.findall(r'class="([^"]+)"', html):
+        classes.update(value.split())
+    for value in re.findall(r'\.className\s*=\s*"([^"]+)"', html):
+        classes.update(value.split())
+    for value in re.findall(r"\.classList\.add\(([^)]*)\)", html):
+        classes.update(re.findall(r'"([^"]+)"', value))
+    return ids | classes
+
+
+def _css_selector_tokens(css):
+    ids = re.findall(r"#([^\W\d][\w-]*)", css)
+    classes = re.findall(r"\.([^\W\d][\w-]*)", css)
+    return set(ids) | set(classes)
+
+
+def test_clone_note_type_every_id_and_class_has_css_rule_against_real_source(tmp_path):
+    """Real-collection proof (skipped if unavailable): the same defect class
+    `test_mutable_words_plan.test_every_template_id_and_class_has_a_css_rule`
+    guards against, here for the note type that ships from the REAL source
+    (the synthetic `cloned` fixture's CSS is deliberately minimal and would
+    prove nothing about real coverage).
+    """
+    real_path = get_anki_collection_path()
+    if not os.path.isfile(real_path):
+        pytest.skip("no real Anki collection on this machine")
+    mtime_before = os.path.getmtime(real_path)
+    copy_path = os.path.join(str(tmp_path), "real-source-snapshot.anki2")
+    shutil.copy2(real_path, copy_path)
+
+    build_col = Collection(os.path.join(str(tmp_path), "real-build.anki2"))
+    try:
+        source_col = Collection(copy_path)
+        try:
+            note_type = clone_note_type(source_col, build_col, NEW_NOTE_TYPE_NAME)
+        finally:
+            source_col.close()
+    finally:
+        build_col.close()
+
+    assert os.path.getmtime(real_path) == mtime_before
+
+    css_tokens = _css_selector_tokens(note_type["css"])
+    for side in _template_sides(note_type):
+        missing = _ids_and_classes(side) - css_tokens
+        assert not missing, missing
+
+
+def test_immutable_and_mutable_css_share_identical_base_rules(tmp_path):
+    """Consistency proof against reality (skipped if unavailable): Mutable's
+    final CSS must be exactly Immutable's final CSS plus `EXTRA_CSS` -- the
+    only legitimate divergence is Mutable's own per-sheet detail-field
+    selectors. Any other difference means the two families drifted.
+    """
+    real_path = get_anki_collection_path()
+    if not os.path.isfile(real_path):
+        pytest.skip("no real Anki collection on this machine")
+    mtime_before = os.path.getmtime(real_path)
+    copy_path = os.path.join(str(tmp_path), "real-source-snapshot.anki2")
+    shutil.copy2(real_path, copy_path)
+
+    immutable_build_col = Collection(os.path.join(str(tmp_path), "imm-build.anki2"))
+    try:
+        source_col = Collection(copy_path)
+        try:
+            immutable_note_type = clone_note_type(
+                source_col, immutable_build_col, NEW_NOTE_TYPE_NAME
+            )
+        finally:
+            source_col.close()
+    finally:
+        immutable_build_col.close()
+
+    mutable_build_col = Collection(os.path.join(str(tmp_path), "mut-build.anki2"))
+    try:
+        source_col = Collection(copy_path)
+        try:
+            mutable_note_types = mutable_words.build_note_types(
+                source_col, mutable_build_col
+            )
+        finally:
+            source_col.close()
+    finally:
+        mutable_build_col.close()
+
+    assert os.path.getmtime(real_path) == mtime_before
+
+    expected_mutable_css = (
+        immutable_note_type["css"] + "\n\n" + mutable_words_plan.EXTRA_CSS
+    )
+    for sheet, note_type in mutable_note_types.items():
+        assert note_type["css"] == expected_mutable_css, sheet
 
 
 def test_clone_note_type_strips_part_of_speech_from_every_template_side(cloned):
@@ -2266,10 +2374,10 @@ def test_clone_note_type_deck_header_script_survives_alongside_id_change(cloned)
     `#deck-header` script block copied verbatim from the source's Card 1
     question side (l9.md: "Keep every existing statement in the docstring
     accurate ... this changes what happens to the returned dict's id/mod,
-    not the note type's shape"). CSS-byte-identical, Part-of-Speech-
-    stripped, and Russian/Translation/audio-marker survival are already
-    covered by the existing `cloned`-fixture tests above; this adds the one
-    piece of 2.1's original acceptance set they don't already exercise.
+    not the note type's shape"). CSS-extension, Part-of-Speech-stripped,
+    and Russian/Translation/audio-marker survival are already covered by
+    the existing `cloned`-fixture tests above; this adds the one piece of
+    2.1's original acceptance set they don't already exercise.
     """
     note_type, _ = cloned
     sides = _template_sides(note_type)
