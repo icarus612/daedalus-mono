@@ -54,6 +54,7 @@ Prepositions never change themselves, though they dictate the case of the noun t
 | 41 | посреди | in the middle of (what/where) | Genitive |
 | 42 | поверх | over, on top of (what/where) | Genitive |
 | 43 | ввиду | in view of (what) | Genitive |
+| 44 | для | for; for the sake of (whom/what) | Genitive — always |
 
 ### Conjunctions (Союзы)
 Used to connect clauses, sentences, or concepts.
@@ -131,6 +132,17 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 29 | дескать | allegedly, "so they claim" (marks someone else's words; more formal than мол) | — |
 | 30 | во | wow, look at that | Very colloquial exclamation |
 | 31 | ну и | what a... (emphasis, e.g., ну и день = what a day) | — |
+| 32 | здравствуйте | hello (formal) | Formal/plural greeting; lit. imperative "be healthy" |
+| 33 | спасибо | thank you | Lit. "save [you] God" (spasi Bog), now a fixed word |
+| 34 | пожалуйста | please / you're welcome | Also used to mean "here you go" when handing something over |
+| 35 | извините | excuse me, sorry (formal) | Imperative pl./formal of извинить; use when you are at fault |
+| 36 | простите | excuse me, forgive me (formal) | Imperative pl./formal of простить; also used to get attention |
+| 37 | привет | hi (informal) | Informal only; do not use with strangers or superiors |
+| 38 | конечно | of course, certainly | Written with ч but pronounced [ш]: конешно |
+| 39 | ладно | OK, all right, fine | Signals agreement or resignation ("fine, whatever") |
+| 40 | ничего | nothing; it's OK, no problem | Also a stand-alone reassuring reply |
+| 41 | поздравляю | congratulations! | 1st-person present of поздравлять; often + с + instrumental (с днём рождения!) |
+| 42 | помогите | help! | Imperative pl./formal of помочь; shouted in an emergency |
 
 ### Indeclinable Nouns (Несклоняемые существительные)
 Foreign loan words that are frozen in their base form.
@@ -245,6 +257,16 @@ A lone em dash there means "no extra info" and renders as nothing.
 | 54 | вслух | out loud | Spoken so others can hear |
 | 55 | наизусть | by heart | Memorized perfectly |
 | 56 | вообще | in general / at all | Conversational filler word |
+| 57 | вроде | like, kind of, sort of | Colloquial hedge; also a loose preposition (вроде того) |
+| 58 | затем | then, after that | Sequencing adverb, close synonym of потом |
+| 59 | иначе | otherwise, differently | Also used to mean "or else" (a conditional warning) |
+| 60 | мало | little, few | Takes genitive: мало времени |
+| 61 | много | many, much, a lot | Takes genitive: много людей |
+| 62 | можно | one may, it is possible/allowed to | Impersonal predicate word, not a true adverb of manner |
+| 63 | надо | it is necessary, one must/needs to | Impersonal predicate word; synonym нужно |
+| 64 | однажды | once, one day | Introduces a narrative event, like English "once upon a time" |
+| 65 | сколько | how much, how many | Also used in exclamations: сколько людей! |
+| 66 | сначала | at first, at the beginning | Contrast with снова ("again") — do not confuse |
 
 
 ---

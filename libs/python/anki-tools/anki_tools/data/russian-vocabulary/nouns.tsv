@@ -540,3 +540,16 @@
 539	группа	group	гру́ппа	f	гру́ппы			No	Groups & Quantity		New
 540	большинство	majority	большинство́	n	—			No	Groups & Quantity		New
 541	меньшинство	minority	меньшинство́	n	меньши́нства			No	Groups & Quantity		New
+542	банкомат	ATM (cash machine)	банкома́т	m	банкома́ты			No	Money & Economy		New
+543	бронь	reservation (for a hotel or restaurant)	бронь	f	—			No	Transport & Travel	colloquial; formal = бронирование	New
+544	имя	name	и́мя	n	имена́	и́мени	имён	No	People	irregular -мя noun: и́мени, и́менем (like вре́мя)	New
+545	москва	Moscow	москва́	f	—			No	City & Places		New
+546	полиция	police	поли́ция	f	—			No	Society & Politics		New
+547	прибытие	arrival	прибы́тие	n	—			No	Transport & Travel		New
+548	россия	Russia	росси́я	f	—			No	Society & Politics		New
+549	рубль	ruble	рубль	m	рубли́			No	Money & Economy	after 2-4: рубля́ (gen. sg.); after 5+: рубле́й (gen. pl.)	New
+550	ряд	row, line	ряд	m	ряды́			No	Shapes & Measures		New
+551	старик	old man	стари́к	m	старики́			Yes	People		New
+552	сторона	side	сторона́	f	сто́роны		сто́рон	No	Space & Parts	stress shifts in plural: сто́роны (cf. singular сторона́); gen. pl. сто́рон has no vowel -- verify before relying on this pair	New
+553	чувство	feeling	чу́вство	n	чу́вства			No	Beliefs & Emotions		New
+554	раз	time, occasion (as in "once, twice...")	раз	m	—		раз	No	Time	counting noun: ра́за (gen. sg., after 2-4); пять раз (gen. pl. = nom. sg. after 5+; no -ов)	New

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Build the `anki-mutable-words` `.apkg` package.
 
-Clones the source note type's CSS/shell into four fresh note types (one per
-sheet: Nouns, Verbs, Adjectives, Adverbs) inside a scratch collection, builds
-the four-deck tree from the parsed `russian-vocabulary` TSVs, and exports the
-result as a standalone `.apkg` -- all without ever mutating the real Anki
-collection. Doubles as its own CLI entry point
+Clones the source note type's CSS/shell into fresh note types (one per sheet:
+Nouns, Verbs, Adjectives, Adverbs, Pronouns, Numerals) inside a scratch
+collection, builds the subdeck tree from the parsed `russian-vocabulary`
+TSVs, and exports the result as a standalone `.apkg` -- all without ever
+mutating the real Anki collection. Doubles as its own CLI entry point
 (`anki-build-mutable-words` / `python -m anki_tools.mutable_words`).
 """
 
@@ -35,6 +35,8 @@ TEMPLATE_COUNTS_BY_SHEET: dict[str, int] = {
     "Verbs": 4,
     "Adjectives": 2,
     "Adverbs": 2,
+    "Pronouns": 2,
+    "Numerals": 2,
 }
 
 _AUDIO_FIELD_NAMES = ("Audio", "Audio Imperfective", "Audio Perfective")
@@ -248,7 +250,10 @@ def build_parser() -> argparse.ArgumentParser:
         dest="source_dir",
         type=str,
         default=default_source_dir,
-        help="Directory holding nouns.tsv, verbs.tsv, adjectives.tsv, adverbs.tsv.",
+        help=(
+            "Directory holding nouns.tsv, verbs.tsv, adjectives.tsv, "
+            "adverbs.tsv, pronouns.tsv, numerals.tsv."
+        ),
     )
     parser.add_argument(
         "--out",
@@ -323,6 +328,12 @@ def main() -> None:
         ),
         "Adverbs": mutable_words_plan.parse_adverbs(
             os.path.join(args.source_dir, "adverbs.tsv")
+        ),
+        "Pronouns": mutable_words_plan.parse_pronouns(
+            os.path.join(args.source_dir, "pronouns.tsv")
+        ),
+        "Numerals": mutable_words_plan.parse_numerals(
+            os.path.join(args.source_dir, "numerals.tsv")
         ),
     }
 

@@ -37,6 +37,8 @@ from anki_tools.mutable_words_plan import (
     AdjectiveRow,
     AdverbRow,
     NounRow,
+    NumeralRow,
+    PronounRow,
     VerbRow,
     all_subdeck_names,
     audio_names,
@@ -132,14 +134,18 @@ def _referenced_filenames(build_col):
 def _single_noun_referenced_names(cloned_note_types, build_col):
     """Build one noun row and return its two predicted filenames, sorted."""
     note_types, _ = cloned_note_types
-    rows = _small_rows_by_sheet(nouns=1, verbs=0, adjectives=0, adverbs=0)
+    rows = _small_rows_by_sheet(
+        nouns=1, verbs=0, adjectives=0, adverbs=0, pronouns=0, numerals=0
+    )
     build_deck_tree(build_col, rows, note_types)
     names = sorted(_referenced_filenames(build_col))
     assert len(names) == 2
     return names
 
 
-def _small_rows_by_sheet(nouns=3, verbs=2, adjectives=2, adverbs=2):
+def _small_rows_by_sheet(
+    nouns=3, verbs=2, adjectives=2, adverbs=2, pronouns=2, numerals=2
+):
     noun_rows = [
         NounRow(
             rank=i + 1,
@@ -203,11 +209,40 @@ def _small_rows_by_sheet(nouns=3, verbs=2, adjectives=2, adverbs=2):
         )
         for i in range(adverbs)
     ]
+    pronoun_rows = [
+        PronounRow(
+            rank=i + 1,
+            russian=f"он{i}",
+            translation=f"pronoun{i}",
+            stress="",
+            pronoun_type="",
+            gender_forms="",
+            oblique_forms="",
+            additional_info="",
+        )
+        for i in range(pronouns)
+    ]
+    numeral_rows = [
+        NumeralRow(
+            rank=i + 1,
+            russian=f"пять{i}",
+            translation=f"numeral{i}",
+            stress="",
+            numeral_type="",
+            case_governed="",
+            gender_forms="",
+            genitive="",
+            additional_info="",
+        )
+        for i in range(numerals)
+    ]
     return {
         "Nouns": noun_rows,
         "Verbs": verb_rows,
         "Adjectives": adjective_rows,
         "Adverbs": adverb_rows,
+        "Pronouns": pronoun_rows,
+        "Numerals": numeral_rows,
     }
 
 
@@ -350,6 +385,62 @@ def _write_adverbs_tsv(path, rows):
     _write_tsv(path, header, data)
 
 
+def _write_pronouns_tsv(path, rows):
+    header = [
+        "#",
+        "Russian",
+        "English",
+        "Stress",
+        "Pronoun Type",
+        "Gender Forms",
+        "Oblique Forms",
+        "Additional Info",
+    ]
+    data = [
+        [
+            r.rank,
+            r.russian,
+            r.translation,
+            r.stress,
+            r.pronoun_type,
+            r.gender_forms,
+            r.oblique_forms,
+            r.additional_info,
+        ]
+        for r in rows
+    ]
+    _write_tsv(path, header, data)
+
+
+def _write_numerals_tsv(path, rows):
+    header = [
+        "#",
+        "Russian",
+        "English",
+        "Stress",
+        "Numeral Type",
+        "Case Governed",
+        "Gender Forms",
+        "Genitive",
+        "Additional Info",
+    ]
+    data = [
+        [
+            r.rank,
+            r.russian,
+            r.translation,
+            r.stress,
+            r.numeral_type,
+            r.case_governed,
+            r.gender_forms,
+            r.genitive,
+            r.additional_info,
+        ]
+        for r in rows
+    ]
+    _write_tsv(path, header, data)
+
+
 def _write_source_dir(tmp_path, rows_by_sheet):
     source_dir = os.path.join(str(tmp_path), "source")
     os.makedirs(source_dir)
@@ -360,6 +451,12 @@ def _write_source_dir(tmp_path, rows_by_sheet):
     )
     _write_adverbs_tsv(
         os.path.join(source_dir, "adverbs.tsv"), rows_by_sheet["Adverbs"]
+    )
+    _write_pronouns_tsv(
+        os.path.join(source_dir, "pronouns.tsv"), rows_by_sheet["Pronouns"]
+    )
+    _write_numerals_tsv(
+        os.path.join(source_dir, "numerals.tsv"), rows_by_sheet["Numerals"]
     )
     return source_dir
 
@@ -416,9 +513,16 @@ def cloned_note_types(collection_snapshot_copy, build_col):
 # build_note_types
 
 
-def test_build_note_types_returns_all_four_sheets(cloned_note_types):
+def test_build_note_types_returns_all_sheets(cloned_note_types):
     note_types, _ = cloned_note_types
-    assert set(note_types) == {"Nouns", "Verbs", "Adjectives", "Adverbs"}
+    assert set(note_types) == {
+        "Nouns",
+        "Verbs",
+        "Adjectives",
+        "Adverbs",
+        "Pronouns",
+        "Numerals",
+    }
 
 
 def test_build_note_types_ids_match_deterministic_notetype_id(cloned_note_types):
@@ -525,7 +629,9 @@ def test_build_note_types_missing_source_notetype_raises_value_error(tmp_path):
 
 def test_build_deck_tree_note_counts_all_decks_present(cloned_note_types, build_col):
     note_types, _ = cloned_note_types
-    rows = _small_rows_by_sheet(nouns=3, verbs=2, adjectives=1, adverbs=0)
+    rows = _small_rows_by_sheet(
+        nouns=3, verbs=2, adjectives=1, adverbs=0, pronouns=1, numerals=4
+    )
 
     counts = build_deck_tree(build_col, rows, note_types)
 
@@ -534,10 +640,12 @@ def test_build_deck_tree_note_counts_all_decks_present(cloned_note_types, build_
         subdeck_name("Verbs"): 2,
         subdeck_name("Adjectives"): 1,
         subdeck_name("Adverbs"): 0,
+        subdeck_name("Pronouns"): 1,
+        subdeck_name("Numerals"): 4,
     }
     assert counts == expected
     assert list(counts.keys()) == all_subdeck_names()
-    assert sum(counts.values()) == 6
+    assert sum(counts.values()) == 11
 
 
 def test_build_deck_tree_card_counts_use_real_template_counts_not_fixed_ratio(

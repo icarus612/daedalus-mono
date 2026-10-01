@@ -29,8 +29,17 @@ NOUNS_TSV = DATA_DIR / "nouns.tsv"
 VERBS_TSV = DATA_DIR / "verbs.tsv"
 ADJECTIVES_TSV = DATA_DIR / "adjectives.tsv"
 ADVERBS_TSV = DATA_DIR / "adverbs.tsv"
+PRONOUNS_TSV = DATA_DIR / "pronouns.tsv"
+NUMERALS_TSV = DATA_DIR / "numerals.tsv"
 
-SHEET_CARD_COUNTS = {"Nouns": 2, "Verbs": 4, "Adjectives": 2, "Adverbs": 2}
+SHEET_CARD_COUNTS = {
+    "Nouns": 2,
+    "Verbs": 4,
+    "Adjectives": 2,
+    "Adverbs": 2,
+    "Pronouns": 2,
+    "Numerals": 2,
+}
 
 
 @pytest.fixture(scope="session")
@@ -53,6 +62,16 @@ def adverbs():
     return mutable_words_plan.parse_adverbs(str(ADVERBS_TSV))
 
 
+@pytest.fixture(scope="session")
+def pronouns():
+    return mutable_words_plan.parse_pronouns(str(PRONOUNS_TSV))
+
+
+@pytest.fixture(scope="session")
+def numerals():
+    return mutable_words_plan.parse_numerals(str(NUMERALS_TSV))
+
+
 def _all_sides():
     sides = []
     for sheet, count in SHEET_CARD_COUNTS.items():
@@ -69,11 +88,13 @@ def _joined_audio_names(word):
     )
 
 
-def test_row_counts(nouns, verbs, adjectives, adverbs):
-    assert len(nouns) == 541
-    assert len(verbs) == 179
-    assert len(adjectives) == 152
+def test_row_counts(nouns, verbs, adjectives, adverbs, pronouns, numerals):
+    assert len(nouns) == 554
+    assert len(verbs) == 195
+    assert len(adjectives) == 163
     assert len(adverbs) == 132
+    assert len(pronouns) == 21
+    assert len(numerals) == 55
 
 
 def test_placeholder_disagreement_raises(tmp_path):
@@ -121,17 +142,29 @@ def test_no_slash_in_base_words(nouns, verbs, adjectives, adverbs):
                 assert "/" not in word
 
 
-def test_card_count_derivation(nouns, verbs, adjectives, adverbs):
+def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, numerals):
     nouns_cards = len(nouns) * 2
     verbs_cards = len(verbs) * 4
     adjectives_cards = len(adjectives) * 2
     adverbs_cards = len(adverbs) * 2
+    pronouns_cards = len(pronouns) * 2
+    numerals_cards = len(numerals) * 2
 
-    assert nouns_cards == 1082
-    assert verbs_cards == 716
-    assert adjectives_cards == 304
+    assert nouns_cards == 1108
+    assert verbs_cards == 780
+    assert adjectives_cards == 326
     assert adverbs_cards == 264
-    assert nouns_cards + verbs_cards + adjectives_cards + adverbs_cards == 2366
+    assert pronouns_cards == 42
+    assert numerals_cards == 110
+    assert (
+        nouns_cards
+        + verbs_cards
+        + adjectives_cards
+        + adverbs_cards
+        + pronouns_cards
+        + numerals_cards
+        == 2630
+    )
 
 
 def test_all_subdeck_names():
@@ -141,6 +174,8 @@ def test_all_subdeck_names():
         "Languages::Russian::3. Mutable Words::b. Verbs",
         "Languages::Russian::3. Mutable Words::c. Adjectives",
         "Languages::Russian::3. Mutable Words::d. Adverbs",
+        "Languages::Russian::3. Mutable Words::e. Pronouns",
+        "Languages::Russian::3. Mutable Words::f. Numerals",
     ]
     for name in names:
         assert ". " in name
@@ -159,7 +194,7 @@ def test_field_name_legality():
 
 def test_no_audio_refs_placeholder_in_any_template():
     sides = _all_sides()
-    assert len(sides) == 20
+    assert len(sides) == 28
     for _sheet, _card_index, _side_name, content in sides:
         assert "{{AudioRefs}}" not in content
 
@@ -172,20 +207,28 @@ def test_no_duplicate_ids_or_addtitle_per_side():
         assert content.count("function addTitle") <= 1
 
 
-def test_no_slug_collisions_across_all_base_words(nouns, verbs, adjectives, adverbs):
+# Legitimate shared-audio slugs: same real word reused across rows/decks,
+# not a collision. See each row's Additional Info for why.
+_EXPECTED_DUPLICATE_SLUGS = {"побежать", "поехать", "значить", "иметь", "первый"}
+
+
+def test_no_slug_collisions_across_all_base_words(
+    nouns, verbs, adjectives, adverbs, pronouns, numerals
+):
     all_words = (
         [w for row in nouns for w in row.base_words]
         + [w for row in verbs for w in row.base_words]
         + [w for row in adjectives for w in row.base_words]
         + [w for row in adverbs for w in row.base_words]
+        + [w for row in pronouns for w in row.base_words]
+        + [w for row in numerals for w in row.base_words]
     )
-    assert len(all_words) == 1183
+    assert len(all_words) == 1315
 
     slugs = [sanitize_word_slug(w) for w in all_words]
-    if len(set(slugs)) != len(slugs):
-        dupes = {slug: c for slug, c in Counter(slugs).items() if c > 1}
-        pytest.fail(f"duplicate slugs across base words: {dupes}")
-    assert len(set(slugs)) == len(slugs) == 1183
+    dupes = {slug: c for slug, c in Counter(slugs).items() if c > 1}
+    assert set(dupes) == _EXPECTED_DUPLICATE_SLUGS, dupes
+    assert len(set(slugs)) == 1310
 
 
 def test_named_media_overlap_slugs_present(nouns, verbs, adjectives, adverbs):
@@ -243,7 +286,7 @@ def test_predicted_audio_matches_build_filename(nouns, verbs, adjectives, adverb
 
 def test_dash_only_plural_survives_into_fields(nouns):
     dash_rows = [row for row in nouns if row.plural == "—"]
-    assert len(dash_rows) == 107
+    assert len(dash_rows) == 113
 
     plural_idx = mutable_words_plan.FIELD_NAMES["Nouns"].index("Plural")
     assert dash_rows[0].fields()[plural_idx] == "—"

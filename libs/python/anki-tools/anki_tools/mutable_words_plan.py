@@ -21,6 +21,8 @@ SUBDECK_LEAVES = {
     "Verbs": "Verbs",
     "Adjectives": "Adjectives",
     "Adverbs": "Adverbs",
+    "Pronouns": "Pronouns",
+    "Numerals": "Numerals",
 }
 
 VOICE_SLOTS: tuple[str, ...] = ("f1", "m2")
@@ -30,6 +32,8 @@ NOTE_TYPE_NAMES = {
     "Verbs": "Russian - Mutable Verbs (Ellis Version)",
     "Adjectives": "Russian - Mutable Adjectives (Ellis Version)",
     "Adverbs": "Russian - Mutable Adverbs (Ellis Version)",
+    "Pronouns": "Russian - Mutable Pronouns (Ellis Version)",
+    "Numerals": "Russian - Mutable Numerals (Ellis Version)",
 }
 
 FIELD_NAMES: dict[str, tuple[str, ...]] = {
@@ -88,6 +92,31 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "From Adjective",
         "Formation",
         "Comparative",
+        "Additional Info",
+        "Rank",
+        "Audio",
+        "AudioRefs",
+    ),
+    "Pronouns": (
+        "Russian",
+        "Translation",
+        "Stress",
+        "Pronoun Type",
+        "Gender Forms",
+        "Oblique Forms",
+        "Additional Info",
+        "Rank",
+        "Audio",
+        "AudioRefs",
+    ),
+    "Numerals": (
+        "Russian",
+        "Translation",
+        "Stress",
+        "Numeral Type",
+        "Case Governed",
+        "Gender Forms",
+        "Genitive",
         "Additional Info",
         "Rank",
         "Audio",
@@ -330,6 +359,92 @@ class AdverbRow:
         ]
 
 
+@dataclass(frozen=True)
+class PronounRow:
+    rank: int
+    russian: str
+    translation: str
+    stress: str
+    pronoun_type: str
+    gender_forms: str
+    oblique_forms: str
+    additional_info: str
+
+    SHEET: ClassVar[str] = "Pronouns"
+
+    @property
+    def base_words(self) -> tuple[str, ...]:
+        return (self.russian,)
+
+    @property
+    def guid(self) -> str:
+        return guid_for_row(self.base_words[0], self.SHEET)
+
+    @property
+    def deck(self) -> str:
+        return subdeck_name(self.SHEET)
+
+    def fields(self) -> list[str]:
+        names = audio_names(self.russian)
+        audio_refs = "".join(f"[sound:{name}]" for name in names)
+        return [
+            self.russian,
+            self.translation,
+            self.stress,
+            self.pronoun_type,
+            self.gender_forms,
+            self.oblique_forms,
+            self.additional_info,
+            str(self.rank),
+            ",".join(names),
+            audio_refs,
+        ]
+
+
+@dataclass(frozen=True)
+class NumeralRow:
+    rank: int
+    russian: str
+    translation: str
+    stress: str
+    numeral_type: str
+    case_governed: str
+    gender_forms: str
+    genitive: str
+    additional_info: str
+
+    SHEET: ClassVar[str] = "Numerals"
+
+    @property
+    def base_words(self) -> tuple[str, ...]:
+        return (self.russian,)
+
+    @property
+    def guid(self) -> str:
+        return guid_for_row(self.base_words[0], self.SHEET)
+
+    @property
+    def deck(self) -> str:
+        return subdeck_name(self.SHEET)
+
+    def fields(self) -> list[str]:
+        names = audio_names(self.russian)
+        audio_refs = "".join(f"[sound:{name}]" for name in names)
+        return [
+            self.russian,
+            self.translation,
+            self.stress,
+            self.numeral_type,
+            self.case_governed,
+            self.gender_forms,
+            self.genitive,
+            self.additional_info,
+            str(self.rank),
+            ",".join(names),
+            audio_refs,
+        ]
+
+
 def subdeck_name(sheet: str, root: str = DECK_ROOT) -> str:
     """Full deck path for `sheet`, e.g. `{root}::a. Nouns`."""
     if sheet not in SUBDECK_LEAVES:
@@ -486,6 +601,47 @@ def parse_adverbs(tsv_path: str) -> list[AdverbRow]:
     ]
 
 
+def parse_pronouns(tsv_path: str) -> list[PronounRow]:
+    """Parse `pronouns.tsv` into `PronounRow`s, in file order."""
+    rows: list[PronounRow] = []
+    with open(tsv_path, newline="", encoding="utf-8") as handle:
+        for row in csv.DictReader(handle, delimiter="\t"):
+            rows.append(
+                PronounRow(
+                    rank=int(row["#"]),
+                    russian=row["Russian"],
+                    translation=row["English"],
+                    stress=row["Stress"],
+                    pronoun_type=row["Pronoun Type"],
+                    gender_forms=row["Gender Forms"],
+                    oblique_forms=row["Oblique Forms"],
+                    additional_info=row["Additional Info"],
+                )
+            )
+    return rows
+
+
+def parse_numerals(tsv_path: str) -> list[NumeralRow]:
+    """Parse `numerals.tsv` into `NumeralRow`s, in file order."""
+    rows: list[NumeralRow] = []
+    with open(tsv_path, newline="", encoding="utf-8") as handle:
+        for row in csv.DictReader(handle, delimiter="\t"):
+            rows.append(
+                NumeralRow(
+                    rank=int(row["#"]),
+                    russian=row["Russian"],
+                    translation=row["English"],
+                    stress=row["Stress"],
+                    numeral_type=row["Numeral Type"],
+                    case_governed=row["Case Governed"],
+                    gender_forms=row["Gender Forms"],
+                    genitive=row["Genitive"],
+                    additional_info=row["Additional Info"],
+                )
+            )
+    return rows
+
+
 def build_note_type_id(sheet: str) -> int:
     """Deterministic notetype id for `sheet`'s note type name."""
     return notetype_id_for_name(NOTE_TYPE_NAMES[sheet])
@@ -500,6 +656,8 @@ _PRIMARY_FIELD = {
     "Nouns": "Russian",
     "Adjectives": "Russian (m)",
     "Adverbs": "Adverb",
+    "Pronouns": "Russian",
+    "Numerals": "Russian",
 }
 
 _VERB_CARD_CONFIGS: tuple[tuple[str, str, str, str], ...] = (

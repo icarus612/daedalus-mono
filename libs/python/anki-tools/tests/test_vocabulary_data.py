@@ -66,22 +66,56 @@ EXPECTED_HEADERS = {
         "Additional Info",
         "Status",
     ],
+    "pronouns.tsv": [
+        "#",
+        "Russian",
+        "English",
+        "Stress",
+        "Pronoun Type",
+        "Gender Forms",
+        "Oblique Forms",
+        "Additional Info",
+        "Status",
+    ],
+    "numerals.tsv": [
+        "#",
+        "Russian",
+        "English",
+        "Stress",
+        "Numeral Type",
+        "Case Governed",
+        "Gender Forms",
+        "Genitive",
+        "Additional Info",
+        "Status",
+    ],
 }
 
 EXPECTED_LINE_COUNTS = {
-    "nouns.tsv": 542,
-    "verbs.tsv": 180,
-    "adjectives.tsv": 153,
+    "nouns.tsv": 555,
+    "verbs.tsv": 196,
+    "adjectives.tsv": 164,
     "adverbs.tsv": 153,
+    "pronouns.tsv": 22,
+    "numerals.tsv": 56,
 }
 
 DASH_VALUES = {"—", "–", "-", "--"}
 
 EXPECTED_DASH_COUNTS = {
-    ("nouns.tsv", "Plural"): 107,
+    ("nouns.tsv", "Plural"): 113,
+    ("verbs.tsv", "я (1sg)"): 2,
+    ("verbs.tsv", "ты (2sg)"): 2,
+    ("verbs.tsv", "они (3pl)"): 2,
+    ("verbs.tsv", "Past (m / f)"): 2,
+    ("adjectives.tsv", "Short Form"): 7,
+    ("adjectives.tsv", "Comparative"): 9,
+    ("adjectives.tsv", "Opposite"): 6,
     ("adverbs.tsv", "Comparative"): 36,
     ("adverbs.tsv", "Adverb"): 22,
     ("adverbs.tsv", "Stress"): 22,
+    ("pronouns.tsv", "Gender Forms"): 7,
+    ("numerals.tsv", "Gender Forms"): 44,
 }
 
 FILENAMES = list(EXPECTED_HEADERS)

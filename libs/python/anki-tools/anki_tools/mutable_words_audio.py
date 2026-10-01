@@ -33,16 +33,27 @@ from anki_tools.mutable_words_plan import (
     parse_adjectives,
     parse_adverbs,
     parse_nouns,
+    parse_numerals,
+    parse_pronouns,
     parse_verbs,
 )
 
-SHEETS: tuple[str, ...] = ("Nouns", "Verbs", "Adjectives", "Adverbs")
+SHEETS: tuple[str, ...] = (
+    "Nouns",
+    "Verbs",
+    "Adjectives",
+    "Adverbs",
+    "Pronouns",
+    "Numerals",
+)
 
 _PARSERS = {
     "Nouns": parse_nouns,
     "Verbs": parse_verbs,
     "Adjectives": parse_adjectives,
     "Adverbs": parse_adverbs,
+    "Pronouns": parse_pronouns,
+    "Numerals": parse_numerals,
 }
 
 _TSV_FILENAMES = {
@@ -50,6 +61,8 @@ _TSV_FILENAMES = {
     "Verbs": "verbs.tsv",
     "Adjectives": "adjectives.tsv",
     "Adverbs": "adverbs.tsv",
+    "Pronouns": "pronouns.tsv",
+    "Numerals": "numerals.tsv",
 }
 
 

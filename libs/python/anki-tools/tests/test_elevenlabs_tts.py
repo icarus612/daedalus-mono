@@ -305,8 +305,8 @@ def test_slug_collision_free_across_real_source_word_list():
     # A positive control on the parse itself: a bare zero (or a suspiciously
     # low count from a regex that stopped matching) would make every
     # assertion below trivially true for the wrong reason.
-    assert len(words) == 206, (
-        f"expected 206 parsed rows from the source word list, got "
+    assert len(words) == 228, (
+        f"expected 228 parsed rows from the source word list, got "
         f"{len(words)} -- the parser regex may no longer match the table "
         f"format; investigate before trusting this test's result."
     )
@@ -322,10 +322,10 @@ def test_slug_collision_free_across_real_source_word_list():
         f"instead: {collisions}"
     )
 
-    # The headline numbers, asserted on the actual counts: 206 raw rows,
-    # 203 distinct slugs -- the three dual-class words each spend two rows
+    # The headline numbers, asserted on the actual counts: 228 raw rows,
+    # 225 distinct slugs -- the three dual-class words each spend two rows
     # on one slug, and nothing else repeats.
-    assert len(set(slugs)) == 203
+    assert len(set(slugs)) == 225
     repeated = [slug for slug in set(slugs) if slugs.count(slug) > 1]
     assert sorted(repeated) == sorted(
         sanitize_word_slug(w) for w in ("как", "когда", "пока")

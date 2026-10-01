@@ -59,21 +59,13 @@ from anki_tools.immutable_words_plan import (
 REAL_SOURCE_PATH = Path(__file__).resolve().parent / "data" / "source-word-list.md"
 
 # The five sections in document order, with the exact counts the real
-# document is known to contain AFTER the l3 split/transform pass (contract
-# l3.md section 3, "Acceptance numbers for this section"): raw parse is
-# 206 rows / 43-34-31-42-56, but parse_word_list applies
-# _apply_row_transforms before returning, so the counts below are the
-# POST-transform ones.
-#
-# Particles is 31, not the original 32, because `почти` moved out of it and
-# into Base Adverbs -- it is an adverb, and its Particles note had never
-# been reviewed, so the move cost no scheduling history.
+# document contains after the l3 split/transform pass and lane l14's additions.
 EXPECTED_SECTION_COUNTS = [
-    ("Prepositions", 43),
+    ("Prepositions", 44),
     ("Conjunctions", 35),
-    ("Particles", 31),
+    ("Particles", 42),
     ("Indeclinable Nouns", 42),
-    ("Base Adverbs", 56),
+    ("Base Adverbs", 66),
 ]
 EXPECTED_TOTAL_ROWS = sum(count for _, count in EXPECTED_SECTION_COUNTS)
 
@@ -195,7 +187,7 @@ def _remove_section(text, heading_name):
 
 
 def test_parse_real_document_total_row_count(real_rows):
-    assert len(real_rows) == EXPECTED_TOTAL_ROWS == 207
+    assert len(real_rows) == EXPECTED_TOTAL_ROWS == 229
 
 
 def test_parse_real_document_section_order_counts_and_ranks(real_rows):
@@ -221,7 +213,7 @@ def test_parse_real_document_row_order_endpoints(real_rows):
     assert real_rows[0].pos == "Prepositions"
     assert real_rows[0].rank == 1
     assert real_rows[-1].pos == "Base Adverbs"
-    assert real_rows[-1].rank == 56
+    assert real_rows[-1].rank == 66
 
 
 @pytest.mark.parametrize(
@@ -240,7 +232,7 @@ def test_parse_real_document_part_two_produces_no_spurious_rows(real_rows):
     AwesomeTTS / HyperTTS / add-on-install subsections) has no tables and
     must not contribute rows or raise.
     """
-    assert len(real_rows) == 207
+    assert len(real_rows) == 229
     assert all(row.pos in SUBDECK_LEAVES for row in real_rows)
 
 
@@ -1045,7 +1037,7 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
     cells, so the test cannot pass by finding nothing to check.
     """
     adverbs = [row for row in real_rows if row.pos == "Base Adverbs"]
-    assert len(adverbs) == 56
+    assert len(adverbs) == 66
 
     populated = 0
     for row in adverbs:
@@ -1054,10 +1046,10 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
         if additional_info:
             populated += 1
 
-    # 44 of the 56 rows carry info; the other 12 are the document's em-dash
+    # 54 of the 66 rows carry info; the other 12 are the document's em-dash
     # "no info" rows. Asserted exactly so that silently losing the column
     # fails here rather than passing with 0.
-    assert populated == 44
+    assert populated == 54
 
 
 # Populated info cells per section. Every section is four-column now:
@@ -1067,11 +1059,11 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
 # usage note. The rows left blank are the ones whose English gloss already
 # explains itself -- info that merely restates the gloss is noise.
 EXPECTED_INFO_COUNTS = {
-    "Prepositions": (43, 43),
+    "Prepositions": (44, 44),
     "Conjunctions": (35, 21),
-    "Particles": (31, 13),
+    "Particles": (42, 24),
     "Indeclinable Nouns": (42, 42),
-    "Base Adverbs": (56, 44),
+    "Base Adverbs": (66, 54),
 }
 
 
