@@ -94,7 +94,7 @@ EXPECTED_HEADERS = {
 EXPECTED_LINE_COUNTS = {
     "nouns.tsv": 555,
     "verbs.tsv": 196,
-    "adjectives.tsv": 164,
+    "adjectives.tsv": 166,
     "adverbs.tsv": 153,
     "pronouns.tsv": 22,
     "numerals.tsv": 56,
@@ -110,7 +110,7 @@ EXPECTED_DASH_COUNTS = {
     ("verbs.tsv", "Past (m / f)"): 2,
     ("adjectives.tsv", "Short Form"): 7,
     ("adjectives.tsv", "Comparative"): 9,
-    ("adjectives.tsv", "Opposite"): 6,
+    ("adjectives.tsv", "Opposite"): 8,
     ("adverbs.tsv", "Comparative"): 36,
     ("adverbs.tsv", "Adverb"): 22,
     ("adverbs.tsv", "Stress"): 22,

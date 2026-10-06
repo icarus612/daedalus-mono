@@ -54,7 +54,7 @@ _KNOWN_OVERLAP_SLUGS = {
 _PER_DECK_NOTES = {
     "Nouns": 554,
     "Verbs": 195,
-    "Adjectives": 163,
+    "Adjectives": 165,
     "Adverbs": 132,
     "Pronouns": 21,
     "Numerals": 55,
@@ -62,7 +62,7 @@ _PER_DECK_NOTES = {
 _PER_DECK_CARDS = {
     "Nouns": 1108,
     "Verbs": 780,
-    "Adjectives": 326,
+    "Adjectives": 330,
     "Adverbs": 264,
     "Pronouns": 42,
     "Numerals": 110,
@@ -77,6 +77,11 @@ _ORIGINAL_ROW_COUNTS = {
     "Adjectives": 152,
 }
 
+# Adjective rows whose empty Short Form cell was filled by hand after the
+# workbook export; everything else on these rows must still match it.
+_HAND_FILLED_SHORT_FORM_WORDS = {"готовый", "занятой", "закрытый"}
+_ADJECTIVE_SHORT_FORM_COLUMN = 7
+
 # See test_mutable_words_plan.py's identically-named table for why these
 # are legitimate shared audio, not collisions.
 _EXPECTED_DUPLICATE_SLUGS = {"побежать", "поехать", "значить", "иметь", "первый"}
@@ -90,6 +95,16 @@ def _parse_all_rows():
     pronouns = plan.parse_pronouns(str(_DATA_DIR / "pronouns.tsv"))
     numerals = plan.parse_numerals(str(_DATA_DIR / "numerals.tsv"))
     return nouns, verbs, adjectives, adverbs, pronouns, numerals
+
+
+def _blank_hand_filled_short_forms(lines):
+    blanked = []
+    for line in lines:
+        cells = line.decode("utf-8").split("\t")
+        if cells[1] in _HAND_FILLED_SHORT_FORM_WORDS:
+            cells[_ADJECTIVE_SHORT_FORM_COLUMN] = ""
+        blanked.append("\t".join(cells).encode("utf-8"))
+    return blanked
 
 
 def test_full_pipeline_regenerates_byte_identical_tsvs(tmp_path):
@@ -115,7 +130,10 @@ def test_full_pipeline_regenerates_byte_identical_tsvs(tmp_path):
         if sheet in _ORIGINAL_ROW_COUNTS:
             original_line_count = _ORIGINAL_ROW_COUNTS[sheet] + 1  # header + rows
             assert len(regenerated_lines) == original_line_count
-            assert regenerated_lines == committed_lines[:original_line_count]
+            committed_prefix = committed_lines[:original_line_count]
+            if sheet == "Adjectives":
+                committed_prefix = _blank_hand_filled_short_forms(committed_prefix)
+            assert regenerated_lines == committed_prefix
         else:
             assert regenerated_lines == committed_lines
 
@@ -125,7 +143,7 @@ def test_full_pipeline_note_and_card_totals():
 
     assert len(nouns) == 554
     assert len(verbs) == 195
-    assert len(adjectives) == 163
+    assert len(adjectives) == 165
     assert len(adverbs) == 132
     assert len(pronouns) == 21
     assert len(numerals) == 55
@@ -138,7 +156,7 @@ def test_full_pipeline_note_and_card_totals():
         + len(pronouns)
         + len(numerals)
     )
-    assert total_notes == 1120
+    assert total_notes == 1122
 
     cards_by_sheet = {
         "Nouns": len(nouns) * 2,
@@ -149,7 +167,7 @@ def test_full_pipeline_note_and_card_totals():
         "Numerals": len(numerals) * 2,
     }
     assert cards_by_sheet == _PER_DECK_CARDS
-    assert sum(cards_by_sheet.values()) == 2630
+    assert sum(cards_by_sheet.values()) == 2634
 
 
 def test_full_pipeline_base_word_and_slug_totals():
@@ -159,12 +177,12 @@ def test_full_pipeline_base_word_and_slug_totals():
     for row in (*nouns, *verbs, *adjectives, *adverbs, *pronouns, *numerals):
         all_base_words.extend(row.base_words)
 
-    assert len(all_base_words) == 1315
+    assert len(all_base_words) == 1317
 
     slugs = [sanitize_word_slug(word) for word in all_base_words]
     dupes = {s: c for s, c in Counter(slugs).items() if c > 1}
     assert set(dupes) == _EXPECTED_DUPLICATE_SLUGS, dupes
-    assert len(set(slugs)) == 1310
+    assert len(set(slugs)) == 1312
 
     assert _KNOWN_OVERLAP_SLUGS <= set(slugs)
 
@@ -253,7 +271,7 @@ def test_real_source_builds_the_exact_deck_and_card_counts_unmodified(
                 package_path=out_path, options=ImportAnkiPackageOptions()
             )
         )
-        assert fresh_col.note_count() == 1120
+        assert fresh_col.note_count() == 1122
 
         for sheet, expected_notes in _PER_DECK_NOTES.items():
             deck_name = plan.subdeck_name(sheet)
@@ -298,7 +316,7 @@ def test_real_source_reimport_is_idempotent_no_duplicate_notetypes(
         fresh_col.import_anki_package(
             ImportAnkiPackageRequest(package_path=out2, options=options)
         )
-        assert fresh_col.note_count() == 1120
+        assert fresh_col.note_count() == 1122
         guids_after_second = {
             fresh_col.get_note(nid).guid for nid in fresh_col.find_notes("")
         }
@@ -313,7 +331,7 @@ def test_real_source_reimport_is_idempotent_no_duplicate_notetypes(
         fresh_col.close()
 
 
-def test_real_source_predicted_audio_filenames_well_formed_and_number_2620():
+def test_real_source_predicted_audio_filenames_well_formed_and_number_2624():
     nouns, verbs, adjectives, adverbs, pronouns, numerals = _parse_all_rows()
 
     filenames: set[str] = set()
@@ -321,7 +339,7 @@ def test_real_source_predicted_audio_filenames_well_formed_and_number_2620():
         for base_word in row.base_words:
             filenames.update(plan.audio_names(base_word))
 
-    assert len(filenames) == 2620
+    assert len(filenames) == 2624
     malformed = [name for name in filenames if not _FILENAME_RE.match(name)]
     assert malformed == []
 
@@ -361,7 +379,7 @@ def test_audio_dry_run_over_real_media_dir_reports_exact_pending_count(
     match = re.match(r"total (\d+) / present (\d+) / pending (\d+)$", lines[0])
     assert match is not None
     total, present, pending = (int(g) for g in match.groups())
-    assert total == 2630
+    assert total == 2634
     assert present + pending == total
     assert (
         lines[1]

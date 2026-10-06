@@ -91,7 +91,7 @@ def _joined_audio_names(word):
 def test_row_counts(nouns, verbs, adjectives, adverbs, pronouns, numerals):
     assert len(nouns) == 554
     assert len(verbs) == 195
-    assert len(adjectives) == 163
+    assert len(adjectives) == 165
     assert len(adverbs) == 132
     assert len(pronouns) == 21
     assert len(numerals) == 55
@@ -152,7 +152,7 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
 
     assert nouns_cards == 1108
     assert verbs_cards == 780
-    assert adjectives_cards == 326
+    assert adjectives_cards == 330
     assert adverbs_cards == 264
     assert pronouns_cards == 42
     assert numerals_cards == 110
@@ -163,7 +163,7 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
         + adverbs_cards
         + pronouns_cards
         + numerals_cards
-        == 2630
+        == 2634
     )
 
 
@@ -223,12 +223,12 @@ def test_no_slug_collisions_across_all_base_words(
         + [w for row in pronouns for w in row.base_words]
         + [w for row in numerals for w in row.base_words]
     )
-    assert len(all_words) == 1315
+    assert len(all_words) == 1317
 
     slugs = [sanitize_word_slug(w) for w in all_words]
     dupes = {slug: c for slug, c in Counter(slugs).items() if c > 1}
     assert set(dupes) == _EXPECTED_DUPLICATE_SLUGS, dupes
-    assert len(set(slugs)) == 1310
+    assert len(set(slugs)) == 1312
 
 
 def test_named_media_overlap_slugs_present(nouns, verbs, adjectives, adverbs):
