@@ -1910,7 +1910,7 @@ def test_e2e_real_media_is_marked_used_not_merely_present(
 
     found, missing = _attach_real_media(build_col)
     assert missing == [], f"real audio files not found on disk: {missing}"
-    assert len(found) == 816
+    assert set(found) == _REQUIRED_REAL_AUDIO_FILENAMES
 
     check = build_col.media.check()
     assert list(check.missing) == []
@@ -1928,9 +1928,9 @@ def test_e2e_real_media_is_marked_used_not_merely_present(
         build_col.update_note(note)
 
     control_check = build_col.media.check()
-    assert len(control_check.unused) == 816, (
+    assert len(control_check.unused) == len(_REQUIRED_REAL_AUDIO_FILENAMES), (
         "control failed: blanking AudioRefs should reproduce the original "
-        "defect (all 816 real files reported unused) -- if it doesn't, "
+        "defect (every real file reported unused) -- if it doesn't, "
         "this test's '0 unused' result above is not proof of anything"
     )
 
@@ -1941,12 +1941,12 @@ def test_e2e_real_media_is_marked_used_not_merely_present(
 def test_e2e_real_media_export_is_full_size_not_empty_manifest(
     tmp_path, collection_snapshot_copy
 ):
-    """The exported `.apkg` actually carries the 816 files' bytes.
+    """The exported `.apkg` actually carries every required file's bytes.
 
     Asserts real size (~8+ MB, not the ~76 KB / 9-byte-manifest shape of the
     original defect) AND inspects the zip directly (never trusting size
-    alone) for 816 media entries distinct from the package's own
-    `meta`/`media`/`collection.anki2*` bookkeeping entries.
+    alone) for one media entry per distinct required file, distinct from the
+    package's own `meta`/`media`/`collection.anki2*` bookkeeping entries.
     """
     import zipfile
 
@@ -1980,13 +1980,14 @@ def test_e2e_real_media_export_is_full_size_not_empty_manifest(
         names = set(zf.namelist())
     bookkeeping = {"meta", "media", "collection.anki2", "collection.anki21b"}
     media_entries = names - bookkeeping
-    assert len(media_entries) == 816, (
-        f"expected 816 media entries in the package, got {len(media_entries)}"
+    assert len(media_entries) == len(_REQUIRED_REAL_AUDIO_FILENAMES), (
+        f"expected {len(_REQUIRED_REAL_AUDIO_FILENAMES)} media entries in the "
+        f"package, got {len(media_entries)}"
     )
 
 
 @pytest.mark.skipif(not _real_audio_dir_ready(), reason=_real_audio_missing_reason)
-def test_e2e_real_media_fresh_import_delivers_816_files_zero_missing(
+def test_e2e_real_media_fresh_import_delivers_every_file_zero_missing(
     tmp_path, collection_snapshot_copy
 ):
     """The strongest evidence available: import the real package into a
@@ -2019,7 +2020,7 @@ def test_e2e_real_media_fresh_import_delivers_816_files_zero_missing(
     build_deck_tree(build_col, rows, note_type)
     found, missing = _attach_real_media(build_col)
     assert missing == []
-    assert len(found) == 816
+    assert set(found) == _REQUIRED_REAL_AUDIO_FILENAMES
 
     out_path = os.path.join(str(tmp_path), "immutable-words.apkg")
     export_package(build_col, DECK_ROOT, out_path)
@@ -2051,7 +2052,7 @@ def test_e2e_real_media_fresh_import_delivers_816_files_zero_missing(
         assert total_cards == 458
 
         media_files_on_disk = set(os.listdir(fresh_col.media.dir()))
-        assert len(media_files_on_disk) == 816
+        assert len(media_files_on_disk) == len(_REQUIRED_REAL_AUDIO_FILENAMES)
 
         all_note_ids = fresh_col.find_notes(f'note:"{NEW_NOTE_TYPE_NAME}"')
         assert len(all_note_ids) == 229
