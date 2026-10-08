@@ -875,16 +875,16 @@ def test_word_row_deck_property_matches_subdeck_name(pos):
 # The exact override texts from l3.md section 3a's TRANSLATION_OVERRIDES /
 # ROW_SPLITS tables (transcribed verbatim from the contract, not read from
 # any implementation).
-SLOVNO_TRANSLATION = "as if, like (literary — a poetic simile)"
-TOZHE_TRANSLATION = 'also, too (same action, different subject — "me too")'
-TAKZHE_TRANSLATION = "also, in addition (same subject, an extra thing; more formal)"
-BUDTO_TRANSLATION = "as if, as though (often implies doubt)"
+SLOVNO_TRANSLATION = "as if / like (literary — a poetic simile)"
+TOZHE_TRANSLATION = 'also / too (same action, different subject — "me too")'
+TAKZHE_TRANSLATION = "also / in addition (same subject, an extra thing; more formal)"
+BUDTO_TRANSLATION = "as if / as though (often implies doubt)"
 
 # The exact override texts for -то and -ка from lane l1's contract table
 # (transcribed verbatim from the contract, not from any implementation).
 TO_TRANSLATION = "some- (indefinite)"
 TO_INFO = 'кто-то "someone", где-то "somewhere"; contrast -нибудь = any-'
-KA_TRANSLATION = "go on, just (informal)"
+KA_TRANSLATION = "go on / just (informal)"
 KA_INFO = 'softens an imperative: скажи-ка "go on, tell me"'
 
 

@@ -3,8 +3,10 @@
 
 The only module in this package allowed to import `openpyxl`. Reads the
 `Nouns`, `Verbs`, `Adjectives` and `Adverbs` sheets (never `Key`), validates
-each sheet's header row against `EXPECTED_HEADERS`, and normalizes cell
-values into plain strings suitable for a tab-delimited export.
+each sheet's header row against `EXPECTED_HEADERS`, normalizes cell
+values into plain strings suitable for a tab-delimited export, and puts the
+`English` column's gloss separators through `gloss_separators.normalize_gloss`
+so a regeneration cannot revert them to the workbook's mixed `;`/`,`.
 """
 
 import argparse
@@ -13,6 +15,8 @@ import unicodedata
 from pathlib import Path
 
 import openpyxl
+
+from anki_tools.gloss_separators import normalize_gloss
 
 SHEETS: tuple[str, ...] = ("Nouns", "Verbs", "Adjectives", "Adverbs")
 
@@ -142,7 +146,9 @@ def read_sheet(workbook_path: str, sheet: str) -> list[dict[str, str]]:
                         "newline character"
                     )
 
-            results.append(dict(zip(expected, normalized)))
+            row = dict(zip(expected, normalized))
+            row["English"] = normalize_gloss(row["English"])
+            results.append(row)
 
         return results
     finally:

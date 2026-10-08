@@ -156,7 +156,7 @@ def test_mutable_standalone_examples_moved_and_glossed_russian_kept():
     assert "Всё хорошо́ = everything's fine" in adverbs["хорошо"].additional_info
     adjectives = {r.russian_m: r for r in _mutable_rows()["Adjectives"]}
     assert adjectives["иной"].additional_info == "more literary than другой"
-    assert adjectives["иной"].translation == "different, other"
+    assert adjectives["иной"].translation == "different / other"
 
 
 @pytest.mark.parametrize("sheet", list(mutable_words_plan.FIELD_NAMES))
