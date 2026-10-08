@@ -107,6 +107,37 @@ def _blank_hand_filled_short_forms(lines):
     return blanked
 
 
+# Workbook-backed rows hand-edited when examples moved to the Examples column.
+_EXAMPLES_MIGRATED_ROWS = {
+    ("Adjectives", "155"),
+    ("Adjectives", "156"),
+    ("Adjectives", "158"),
+    ("Adverbs", "26"),
+    ("Verbs", "131"),
+    ("Verbs", "135"),
+}
+
+
+def _comparable_to_workbook(lines, sheet):
+    """Drop the hand-authored Examples column and blank the English /
+    Additional Info cells of rows migrated into it, so the remainder can be
+    compared byte-for-byte with a workbook regeneration.
+    """
+    header = lines[0].decode("utf-8").rstrip("\n").split("\t")
+    examples_index = header.index("Examples") if "Examples" in header else None
+    english_index = header.index("English")
+    info_index = header.index("Additional Info")
+    normalized = []
+    for line in lines:
+        cells = line.decode("utf-8").rstrip("\n").split("\t")
+        if (sheet, cells[0]) in _EXAMPLES_MIGRATED_ROWS:
+            cells[english_index] = cells[info_index] = ""
+        if examples_index is not None:
+            del cells[examples_index]
+        normalized.append(("\t".join(cells) + "\n").encode("utf-8"))
+    return normalized
+
+
 def test_full_pipeline_regenerates_byte_identical_tsvs(tmp_path):
     """Pronouns/Numerals are hand-authored (not workbook sheets, see the
     data dir's README) so this only covers the four workbook-backed sheets,
@@ -123,9 +154,12 @@ def test_full_pipeline_regenerates_byte_identical_tsvs(tmp_path):
         vocabulary_source.write_tsv(
             rows, vocabulary_source.EXPECTED_HEADERS[sheet], str(out_path)
         )
-        regenerated_lines = out_path.read_bytes().splitlines(keepends=True)
-        committed_lines = (
-            (_DATA_DIR / f"{sheet.lower()}.tsv").read_bytes().splitlines(keepends=True)
+        regenerated_lines = _comparable_to_workbook(
+            out_path.read_bytes().splitlines(keepends=True), sheet
+        )
+        committed_lines = _comparable_to_workbook(
+            (_DATA_DIR / f"{sheet.lower()}.tsv").read_bytes().splitlines(keepends=True),
+            sheet,
         )
         if sheet in _ORIGINAL_ROW_COUNTS:
             original_line_count = _ORIGINAL_ROW_COUNTS[sheet] + 1  # header + rows

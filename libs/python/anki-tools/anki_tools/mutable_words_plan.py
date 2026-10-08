@@ -13,6 +13,7 @@ from typing import ClassVar
 from anki_tools import card_audio
 from anki_tools.anki_identity import guid_for_row, notetype_id_for_name
 from anki_tools.audio_naming import build_filename
+from anki_tools.examples_field import EXAMPLES_FIELD
 
 DECK_ROOT = "Languages::Russian::3. Mutable Words"
 
@@ -48,6 +49,7 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Animate",
         "Category",
         "Additional Info",
+        "Examples",
         "Rank",
         "Audio",
         "AudioRefs",
@@ -64,6 +66,7 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Past (m / f)",
         "Case / Preposition",
         "Additional Info",
+        "Examples",
         "Rank",
         "Audio Imperfective",
         "Audio Perfective",
@@ -81,6 +84,7 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Opposite",
         "Stem Type",
         "Additional Info",
+        "Examples",
         "Rank",
         "Audio",
         "AudioRefs",
@@ -93,6 +97,7 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Formation",
         "Comparative",
         "Additional Info",
+        "Examples",
         "Rank",
         "Audio",
         "AudioRefs",
@@ -105,6 +110,7 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Gender Forms",
         "Oblique Forms",
         "Additional Info",
+        "Examples",
         "Rank",
         "Audio",
         "AudioRefs",
@@ -118,6 +124,7 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Gender Forms",
         "Genitive",
         "Additional Info",
+        "Examples",
         "Rank",
         "Audio",
         "AudioRefs",
@@ -178,6 +185,7 @@ class NounRow:
     animate: str
     category: str
     additional_info: str
+    examples: str
 
     SHEET: ClassVar[str] = "Nouns"
 
@@ -207,6 +215,7 @@ class NounRow:
             self.animate,
             self.category,
             self.additional_info,
+            self.examples,
             str(self.rank),
             ",".join(names),
             audio_refs,
@@ -227,6 +236,7 @@ class VerbRow:
     past_m_f: str
     case_preposition: str
     additional_info: str
+    examples: str
 
     SHEET: ClassVar[str] = "Verbs"
 
@@ -260,6 +270,7 @@ class VerbRow:
             self.past_m_f,
             self.case_preposition,
             self.additional_info,
+            self.examples,
             str(self.rank),
             ",".join(imperfective_names),
             ",".join(perfective_names),
@@ -281,6 +292,7 @@ class AdjectiveRow:
     opposite: str
     stem_type: str
     additional_info: str
+    examples: str
 
     SHEET: ClassVar[str] = "Adjectives"
 
@@ -311,6 +323,7 @@ class AdjectiveRow:
             self.opposite,
             self.stem_type,
             self.additional_info,
+            self.examples,
             str(self.rank),
             ",".join(names),
             audio_refs,
@@ -327,6 +340,7 @@ class AdverbRow:
     formation: str
     comparative: str
     additional_info: str
+    examples: str
 
     SHEET: ClassVar[str] = "Adverbs"
 
@@ -353,6 +367,7 @@ class AdverbRow:
             self.formation,
             self.comparative,
             self.additional_info,
+            self.examples,
             str(self.rank),
             ",".join(names),
             audio_refs,
@@ -369,6 +384,7 @@ class PronounRow:
     gender_forms: str
     oblique_forms: str
     additional_info: str
+    examples: str
 
     SHEET: ClassVar[str] = "Pronouns"
 
@@ -395,6 +411,7 @@ class PronounRow:
             self.gender_forms,
             self.oblique_forms,
             self.additional_info,
+            self.examples,
             str(self.rank),
             ",".join(names),
             audio_refs,
@@ -412,6 +429,7 @@ class NumeralRow:
     gender_forms: str
     genitive: str
     additional_info: str
+    examples: str
 
     SHEET: ClassVar[str] = "Numerals"
 
@@ -439,6 +457,7 @@ class NumeralRow:
             self.gender_forms,
             self.genitive,
             self.additional_info,
+            self.examples,
             str(self.rank),
             ",".join(names),
             audio_refs,
@@ -481,6 +500,7 @@ def parse_nouns(tsv_path: str) -> list[NounRow]:
                     animate=row["Animate"],
                     category=row["Category"],
                     additional_info=row["Additional Info"],
+                    examples=row["Examples"],
                 )
             )
     return rows
@@ -505,6 +525,7 @@ def parse_verbs(tsv_path: str) -> list[VerbRow]:
                     past_m_f=row["Past (m / f)"],
                     case_preposition=row["Case / Preposition"],
                     additional_info=row["Additional Info"],
+                    examples=row["Examples"],
                 )
             )
     return rows
@@ -529,6 +550,7 @@ def parse_adjectives(tsv_path: str) -> list[AdjectiveRow]:
                     opposite=row["Opposite"],
                     stem_type=row["Stem Type"],
                     additional_info=row["Additional Info"],
+                    examples=row["Examples"],
                 )
             )
     return rows
@@ -554,6 +576,7 @@ def parse_adverbs(tsv_path: str) -> list[AdverbRow]:
                             formation=row["Formation"],
                             comparative=row["Comparative"],
                             additional_info=row["Additional Info"],
+                            examples=row["Examples"],
                         )
                     )
                 continue
@@ -583,6 +606,7 @@ def parse_adverbs(tsv_path: str) -> list[AdverbRow]:
                     formation=row["Formation"],
                     comparative=row["Comparative"],
                     additional_info=row["Additional Info"],
+                    examples=row["Examples"],
                 )
             )
 
@@ -596,6 +620,7 @@ def parse_adverbs(tsv_path: str) -> list[AdverbRow]:
             formation=row.formation,
             comparative=row.comparative,
             additional_info=row.additional_info,
+            examples=row.examples,
         )
         for rank, row in enumerate(parsed, start=1)
     ]
@@ -616,6 +641,7 @@ def parse_pronouns(tsv_path: str) -> list[PronounRow]:
                     gender_forms=row["Gender Forms"],
                     oblique_forms=row["Oblique Forms"],
                     additional_info=row["Additional Info"],
+                    examples=row["Examples"],
                 )
             )
     return rows
@@ -637,6 +663,7 @@ def parse_numerals(tsv_path: str) -> list[NumeralRow]:
                     gender_forms=row["Gender Forms"],
                     genitive=row["Genitive"],
                     additional_info=row["Additional Info"],
+                    examples=row["Examples"],
                 )
             )
     return rows
@@ -758,7 +785,8 @@ def _all_primary_fields(sheet: str) -> list[str]:
 def _all_detail_slugs() -> list[str]:
     """Every slug `_detail_block` can emit for any sheet/card, excluding
     "Additional Info" (styled via the reference's own `#additional-info`
-    rule, not this one). Drives `EXTRA_CSS`'s selector lists so every id
+    rule) and "Examples" (styled by `examples_field.EXAMPLES_CSS`), neither
+    of which this rule covers. Drives `EXTRA_CSS`'s selector lists so every id
     `_detail_block` emits has a rule covering it.
     """
     slugs: list[str] = []
@@ -766,7 +794,7 @@ def _all_detail_slugs() -> list[str]:
     for sheet in FIELD_NAMES:
         for primary_field in _all_primary_fields(sheet):
             for field_name in _detail_fields(sheet, primary_field):
-                if field_name == "Additional Info":
+                if field_name in ("Additional Info", EXAMPLES_FIELD):
                     continue
                 slug = _slug_for_field_name(field_name)
                 if slug not in seen:

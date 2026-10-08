@@ -91,6 +91,7 @@ NOUN_TSV_HEADER = "\t".join(
         "Animate",
         "Category",
         "Additional Info",
+        "Examples",
     ]
 )
 
@@ -111,6 +112,7 @@ def _write_nouns_tsv(path, words):
                     "-",
                     "no",
                     "misc",
+                    "",
                     "",
                 ]
             )

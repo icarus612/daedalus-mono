@@ -23,6 +23,7 @@ EXPECTED_HEADERS = {
         "Animate",
         "Category",
         "Additional Info",
+        "Examples",
         "Status",
     ],
     "verbs.tsv": [
@@ -38,6 +39,7 @@ EXPECTED_HEADERS = {
         "Past (m / f)",
         "Case / Preposition",
         "Additional Info",
+        "Examples",
         "Status",
     ],
     "adjectives.tsv": [
@@ -53,6 +55,7 @@ EXPECTED_HEADERS = {
         "Opposite",
         "Stem Type",
         "Additional Info",
+        "Examples",
         "Status",
     ],
     "adverbs.tsv": [
@@ -64,6 +67,7 @@ EXPECTED_HEADERS = {
         "Formation",
         "Comparative",
         "Additional Info",
+        "Examples",
         "Status",
     ],
     "pronouns.tsv": [
@@ -75,6 +79,7 @@ EXPECTED_HEADERS = {
         "Gender Forms",
         "Oblique Forms",
         "Additional Info",
+        "Examples",
         "Status",
     ],
     "numerals.tsv": [
@@ -87,6 +92,7 @@ EXPECTED_HEADERS = {
         "Gender Forms",
         "Genitive",
         "Additional Info",
+        "Examples",
         "Status",
     ],
 }

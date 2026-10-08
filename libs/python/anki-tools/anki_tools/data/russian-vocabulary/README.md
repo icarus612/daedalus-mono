@@ -50,6 +50,15 @@ forms, and the genitive), rather than reusing the Nouns/Adjectives field
 shapes. See `mutable_words_plan.py`'s `FIELD_NAMES["Pronouns"]` /
 `FIELD_NAMES["Numerals"]` for the exact columns.
 
+## The Examples column is hand-authored too
+
+Every TSV carries an `Examples` column between `Additional Info` and `Status`,
+holding standalone Russian usage phrases that used to sit in `English` or
+`Additional Info`. The workbook has no such column, and
+`vocabulary_source.py` neither reads nor writes it, so regenerating a TSV from
+the workbook discards both the column and the edits that moved text out of
+`English` / `Additional Info`. Re-apply them by hand after any regeneration.
+
 ## Build input
 
 These six TSV files are the build input for everything downstream in this

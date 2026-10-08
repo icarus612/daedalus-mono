@@ -21,7 +21,7 @@ from anki.import_export_pb2 import ExportAnkiPackageOptions
 from anki.models import NotetypeDict
 from anki.utils import to_json_bytes
 
-from anki_tools import audio_naming, card_audio
+from anki_tools import audio_naming, card_audio, examples_field
 from anki_tools.anki_identity import notetype_id_for_name as _notetype_id_for_name
 from anki_tools.audio_naming import get_anki_collection_path
 from anki_tools.immutable_words_plan import (
@@ -59,11 +59,12 @@ def clone_note_type(
 
     Read-only on `source_col`: calls only `.models.get(...)` and
     `.models.copy(nt, add=False)` on it, nothing else, ever. Applies
-    `strip_part_of_speech` then `rewrite_audio_playback` (in that order) to
-    every template's `qfmt` and `afmt` -- 4 sides total across the note
-    type's 2 templates. Appends a 7th field, `AudioRefs`, invented here (not
-    copied from the source) via `build_col.models.new_field`, so the
-    registered note type has 7 fields total, matching
+    `strip_part_of_speech`, `rewrite_audio_playback` then `add_examples_block`
+    (in that order) to every template's `qfmt` and `afmt` -- 4 sides total
+    across the note type's 2 templates. Appends a 7th field, `Examples`, and an
+    8th, `AudioRefs`, invented here (not copied from the source) via
+    `build_col.models.new_field`, so the registered note type has 8 fields
+    total, matching
     `immutable_words_plan.FIELD_NAMES`. No template side ever references
     `{{AudioRefs}}` -- see `FIELD_NAMES`'s comment for why.
 
@@ -86,28 +87,35 @@ def clone_note_type(
     cloned["name"] = new_name
 
     for template in cloned["tmpls"]:
-        template["qfmt"] = rewrite_audio_playback(
-            strip_part_of_speech(template["qfmt"])
+        template["qfmt"] = examples_field.add_examples_block(
+            rewrite_audio_playback(strip_part_of_speech(template["qfmt"]))
         )
-        template["afmt"] = rewrite_audio_playback(
-            strip_part_of_speech(template["afmt"])
+        template["afmt"] = examples_field.add_examples_block(
+            rewrite_audio_playback(strip_part_of_speech(template["afmt"]))
         )
 
-    cloned["css"] = cloned["css"] + "\n\n" + card_audio.AUDIO_BUTTON_CSS
+    cloned["css"] = (
+        cloned["css"]
+        + "\n\n"
+        + card_audio.AUDIO_BUTTON_CSS
+        + "\n\n"
+        + examples_field.EXAMPLES_CSS
+    )
 
-    audio_refs_field = build_col.models.new_field("AudioRefs")
     # `new_field()` hands back a field dict with a real, randomly-chosen id
     # already set (confirmed: two calls in two fresh collections returned
-    # different non-None ids). Pin it to None so this field falls back to
+    # different non-None ids). Pin it to None so each appended field falls back to
     # NAME-based matching on import, exactly like five of the source note
     # type's own six fields already do (only `Pronunciation` carries a real
     # persisted id) -- see `NoteField::is_match` in rslib's
     # `notetype/merge.rs`: both ids present and non-None -> compare by id;
     # otherwise -> compare by name. Leaving new_field()'s random id in
-    # place would make this field never match itself across builds.
-    audio_refs_field["id"] = None
-    audio_refs_field["ord"] = len(cloned["flds"])
-    cloned["flds"].append(audio_refs_field)
+    # place would make these fields never match themselves across builds.
+    for appended_name in (examples_field.EXAMPLES_FIELD, "AudioRefs"):
+        appended_field = build_col.models.new_field(appended_name)
+        appended_field["id"] = None
+        appended_field["ord"] = len(cloned["flds"])
+        cloned["flds"].append(appended_field)
 
     cloned["id"] = NEW_NOTE_TYPE_ID
     # Bump the modification time to "now" on every build. Anki's own

@@ -69,6 +69,7 @@ FIELD_NAMES = (
     "Part of Speech",
     "Audio",
     "Additional Info",
+    "Examples",
     "AudioRefs",
 )
 
@@ -82,16 +83,11 @@ POS_FIELD_VALUE = {
     "Base Adverbs": "adverb",
 }
 
-# A markdown table row, in either of the two shapes the source document uses:
-# the original three-column `| rank | russian | english |`, and the
-# four-column `| rank | russian | english | info |` that the Base Adverbs
-# section adds. The fourth cell is optional at the REGEX level, not just by
-# convention, because the four existing sections are still written in the
-# three-column shape and must keep parsing byte-for-byte as they did before.
-# `([^|]*?)` (star, not plus) so a present-but-empty info cell matches too.
+# `| rank | russian | english |` plus optional info and examples cells; `*?`
+# so a present-but-empty cell matches.
 _TABLE_ROW = re.compile(
     r"^\|\s*(\d+)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|"
-    r"(?:\s*([^|]*?)\s*\|)?\s*$",
+    r"(?:\s*([^|]*?)\s*\|)?(?:\s*([^|]*?)\s*\|)?\s*$",
     re.M,
 )
 
@@ -125,26 +121,28 @@ _AUDIO_DIV = re.compile(
 # Rows that combine two NON-interchangeable words into one source-document
 # row split into their own separate cards. Keyed by the exact `.russian`
 # text of the raw parsed row. Each entry is a list of (russian, english)
-# replacement pairs -- one row in, N rows out, same `pos`.
+# replacement (russian, english, examples) triples -- one row in, N rows out,
+# same `pos`.
 #
 # "словно / будто" -> ONE new row, "словно" alone. "будто" is NOT created
 # here: it already exists as its own row, Particles rank 28.
 #
 # "тоже / также" -> TWO new rows: neither word appears anywhere else in
 # the source document (verified against the real 151-row raw list).
-ROW_SPLITS: dict[str, list[tuple[str, str]]] = {
+ROW_SPLITS: dict[str, list[tuple[str, str, str]]] = {
     "словно / будто": [
-        ("словно", "as if, like (literary — a poetic simile)"),
+        ("словно", "as if, like (literary — a poetic simile)", ""),
     ],
     "тоже / также": [
         (
             "тоже",
-            'also, too (same action, different subject — "me too": Я тоже иду)',
+            'also, too (same action, different subject — "me too")',
+            "Я тоже иду",
         ),
         (
             "также",
-            "also, in addition (same subject, an extra thing — "
-            "Я также купил хлеб; more formal)",
+            "also, in addition (same subject, an extra thing; more formal)",
+            "Я также купил хлеб",
         ),
     ],
 }
@@ -164,7 +162,7 @@ def _apply_row_transforms(rows: list["WordRow"]) -> list["WordRow"]:
     expanded: list[WordRow] = []
     for row in rows:
         if row.russian in ROW_SPLITS:
-            for split_russian, split_english in ROW_SPLITS[row.russian]:
+            for split_russian, split_english, split_examples in ROW_SPLITS[row.russian]:
                 expanded.append(
                     WordRow(
                         pos=row.pos,
@@ -176,6 +174,7 @@ def _apply_row_transforms(rows: list["WordRow"]) -> list["WordRow"]:
                         # of one entry, so whatever context the document
                         # gave that entry applies to each half.
                         info=row.info,
+                        examples=split_examples or row.examples,
                     )
                 )
         elif row.russian in TRANSLATION_OVERRIDES:
@@ -186,6 +185,7 @@ def _apply_row_transforms(rows: list["WordRow"]) -> list["WordRow"]:
                     russian=row.russian,
                     english=TRANSLATION_OVERRIDES[row.russian],
                     info=row.info,
+                    examples=row.examples,
                 )
             )
         else:
@@ -202,6 +202,7 @@ def _apply_row_transforms(rows: list["WordRow"]) -> list["WordRow"]:
                 russian=row.russian,
                 english=row.english,
                 info=row.info,
+                examples=row.examples,
             )
         )
     return renumbered
@@ -222,6 +223,9 @@ class WordRow:
     # Defaults to "" so the three-column sections -- and every caller that
     # builds a WordRow without one -- keep working unchanged.
     info: str = ""
+    # The optional fifth column: standalone Russian usage examples, kept out of
+    # `english` and `info`. A dash-only cell arrives here as "".
+    examples: str = ""
 
     @property
     def deck(self) -> str:
@@ -234,13 +238,14 @@ class WordRow:
         return guid_for_row(self.russian, self.pos)
 
     def fields(self) -> list[str]:
-        """The seven field values, in FIELD_NAMES order.
+        """The eight field values, in FIELD_NAMES order.
 
         `Pronunciation` is left empty. `Additional Info` holds `self.info` --
         the source document's optional fourth column -- which the note type's
         templates already render on the answer side behind a grey info icon
         (`addTitle("additional-info", "&#9432;")`), exactly as the coding
-        decks' note types do. Empty for every row whose section has no fourth
+        decks' note types do. `Examples` holds `self.examples`, rendered the same
+        way beneath it. Empty for every row whose section has no fourth
         column, which is every section but Base Adverbs. `Audio` holds the
         four PREDICTED filenames (comma-separated, no spaces), derived from
         `self.russian` via the shared `audio_naming.build_filename` -- the same
@@ -260,6 +265,7 @@ class WordRow:
             POS_FIELD_VALUE[self.pos],
             ",".join(audio_names),
             self.info,
+            self.examples,
             audio_refs,
         ]
 
@@ -302,11 +308,12 @@ def parse_word_list(text: str) -> list[WordRow]:
         end = sections[i + 1].start() if i + 1 < len(sections) else len(text)
         body = text[match.end() : end]
         seen.add(heading)
-        for rank, russian, english, info in _TABLE_ROW.findall(body):
+        for rank, russian, english, info, examples in _TABLE_ROW.findall(body):
             # A three-column row yields "" for the optional group; a
             # dash-only cell means the same thing. Both collapse to "" here
             # so nothing downstream has to know which shape the row had.
             info = info.strip()
+            examples = examples.strip()
             rows.append(
                 WordRow(
                     pos=heading,
@@ -314,6 +321,7 @@ def parse_word_list(text: str) -> list[WordRow]:
                     russian=russian.strip(),
                     english=english.strip(),
                     info="" if info in _EMPTY_INFO else info,
+                    examples="" if examples in _EMPTY_INFO else examples,
                 )
             )
 

@@ -825,6 +825,7 @@ def test_field_names_constant():
         "Part of Speech",
         "Audio",
         "Additional Info",
+        "Examples",
         "AudioRefs",
     )
 
@@ -842,7 +843,7 @@ def test_word_row_fields_shape_and_values(pos):
 
     fields = row.fields()
 
-    assert len(fields) == len(FIELD_NAMES) == 7
+    assert len(fields) == len(FIELD_NAMES) == 8
     assert fields[0] == "русский текст"  # Russian
     assert fields[1] == "english text"  # Translation
     assert fields[2] == ""  # Pronunciation
@@ -851,7 +852,8 @@ def test_word_row_fields_shape_and_values(pos):
         shared_build_filename("русский текст", slot) for slot in SLOTS
     )  # Audio -- four predicted filenames, comma-joined
     assert fields[5] == ""  # Additional Info
-    assert fields[6] == "".join(
+    assert fields[6] == ""  # Examples
+    assert fields[7] == "".join(
         f"[sound:{shared_build_filename('русский текст', slot)}]" for slot in SLOTS
     )  # AudioRefs -- same four filenames, as concatenated [sound:...] tags
 
@@ -874,20 +876,16 @@ def test_word_row_deck_property_matches_subdeck_name(pos):
 # ROW_SPLITS tables (transcribed verbatim from the contract, not read from
 # any implementation).
 SLOVNO_TRANSLATION = "as if, like (literary — a poetic simile)"
-TOZHE_TRANSLATION = 'also, too (same action, different subject — "me too": Я тоже иду)'
-TAKZHE_TRANSLATION = (
-    "also, in addition (same subject, an extra thing — Я также купил хлеб; more formal)"
-)
+TOZHE_TRANSLATION = 'also, too (same action, different subject — "me too")'
+TAKZHE_TRANSLATION = "also, in addition (same subject, an extra thing; more formal)"
 BUDTO_TRANSLATION = "as if, as though (often implies doubt)"
 
 # The exact override texts for -то and -ка from lane l1's contract table
 # (transcribed verbatim from the contract, not from any implementation).
-TO_TRANSLATION = (
-    'some- (indefinite: кто-то "someone", где-то "somewhere"; contrast -нибудь = any-)'
-)
-KA_TRANSLATION = (
-    'go on, just (softens an imperative: скажи-ка "go on, tell me"; informal)'
-)
+TO_TRANSLATION = "some- (indefinite)"
+TO_INFO = 'кто-то "someone", где-то "somewhere"; contrast -нибудь = any-'
+KA_TRANSLATION = "go on, just (informal)"
+KA_INFO = 'softens an imperative: скажи-ка "go on, tell me"'
 
 
 def test_slovno_row_present_standalone_with_literal_simile_translation(real_rows):
@@ -906,6 +904,7 @@ def test_tozhe_row_present_standalone(real_rows):
     ]
     assert len(matches) == 1
     assert matches[0].english == TOZHE_TRANSLATION
+    assert matches[0].examples == "Я тоже иду"
 
 
 def test_takzhe_row_present_standalone(real_rows):
@@ -914,6 +913,7 @@ def test_takzhe_row_present_standalone(real_rows):
     ]
     assert len(matches) == 1
     assert matches[0].english == TAKZHE_TRANSLATION
+    assert matches[0].examples == "Я также купил хлеб"
 
 
 def test_original_combined_split_strings_no_longer_appear(real_rows):
@@ -938,6 +938,7 @@ def test_to_row_overridden_translation(real_rows):
     ]
     assert len(matches) == 1
     assert matches[0].english == TO_TRANSLATION
+    assert matches[0].info == TO_INFO
 
 
 def test_ka_row_overridden_translation(real_rows):
@@ -946,6 +947,7 @@ def test_ka_row_overridden_translation(real_rows):
     ]
     assert len(matches) == 1
     assert matches[0].english == KA_TRANSLATION
+    assert matches[0].info == KA_INFO
 
 
 def _parse_raw_section_glosses(text):
@@ -1061,7 +1063,7 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
 EXPECTED_INFO_COUNTS = {
     "Prepositions": (44, 44),
     "Conjunctions": (35, 21),
-    "Particles": (42, 24),
+    "Particles": (42, 29),
     "Indeclinable Nouns": (42, 42),
     "Base Adverbs": (66, 54),
 }
@@ -1466,3 +1468,39 @@ def test_word_row_guid_differs_when_russian_or_pos_differ():
 
     assert different_russian.guid != base.guid
     assert different_pos.guid != base.guid
+
+
+EXPECTED_EXAMPLES_COUNTS = {
+    "Prepositions": 0,
+    "Conjunctions": 4,
+    "Particles": 0,
+    "Indeclinable Nouns": 40,
+    "Base Adverbs": 3,
+}
+
+
+@pytest.mark.parametrize("pos", list(EXPECTED_EXAMPLES_COUNTS))
+def test_examples_coverage_per_section(real_rows, pos):
+    section = [row for row in real_rows if row.pos == pos]
+    assert sum(1 for row in section if row.examples) == EXPECTED_EXAMPLES_COUNTS[pos]
+
+
+def test_examples_reach_the_examples_field(real_rows):
+    index = FIELD_NAMES.index("Examples")
+    for row in real_rows:
+        assert row.fields()[index] == row.examples
+
+
+def test_parse_word_list_reads_optional_fifth_examples_cell():
+    stub = "| Rank | R | E | I | X |\n|---|---|---|---|---|\n| 1 | а | a | — | — |\n"
+    text = "\n".join(
+        f"### {heading} (x)\n{stub}"
+        for heading in SUBDECK_LEAVES
+        if heading != "Prepositions"
+    ) + (
+        "\n### Prepositions (x)\n| Rank | R | E | I | X |\n|---|---|---|---|---|\n"
+        "| 1 | в | in | Prepositional | в доме |\n"
+        "| 2 | на | on | — | — |\n"
+    )
+    rows = [row for row in parse_word_list(text) if row.pos == "Prepositions"]
+    assert [row.examples for row in rows] == ["в доме", ""]

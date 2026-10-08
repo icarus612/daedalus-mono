@@ -16,7 +16,7 @@ import pytest
 from anki.collection import Collection
 from anki.import_export_pb2 import ImportAnkiPackageOptions, ImportAnkiPackageRequest
 
-from anki_tools import card_audio, mutable_words_plan
+from anki_tools import card_audio, examples_field, mutable_words_plan
 from anki_tools.audio_naming import get_anki_media_dir, parse_audio_filenames
 from anki_tools.immutable_words import assert_unmodified
 from anki_tools.mutable_words import (
@@ -159,6 +159,7 @@ def _small_rows_by_sheet(
             animate="inan",
             category="",
             additional_info="",
+            examples="",
         )
         for i in range(nouns)
     ]
@@ -176,6 +177,7 @@ def _small_rows_by_sheet(
             past_m_f="",
             case_preposition="",
             additional_info="",
+            examples="",
         )
         for i in range(verbs)
     ]
@@ -193,6 +195,7 @@ def _small_rows_by_sheet(
             opposite="",
             stem_type="",
             additional_info="",
+            examples="",
         )
         for i in range(adjectives)
     ]
@@ -206,6 +209,7 @@ def _small_rows_by_sheet(
             formation="",
             comparative="",
             additional_info="",
+            examples="",
         )
         for i in range(adverbs)
     ]
@@ -219,6 +223,7 @@ def _small_rows_by_sheet(
             gender_forms="",
             oblique_forms="",
             additional_info="",
+            examples="",
         )
         for i in range(pronouns)
     ]
@@ -233,6 +238,7 @@ def _small_rows_by_sheet(
             gender_forms="",
             genitive="",
             additional_info="",
+            examples="",
         )
         for i in range(numerals)
     ]
@@ -266,6 +272,7 @@ def _write_nouns_tsv(path, rows):
         "Animate",
         "Category",
         "Additional Info",
+        "Examples",
     ]
     data = [
         [
@@ -280,6 +287,7 @@ def _write_nouns_tsv(path, rows):
             r.animate,
             r.category,
             r.additional_info,
+            r.examples,
         ]
         for r in rows
     ]
@@ -300,6 +308,7 @@ def _write_verbs_tsv(path, rows):
         "Past (m / f)",
         "Case / Preposition",
         "Additional Info",
+        "Examples",
     ]
     data = [
         [
@@ -315,6 +324,7 @@ def _write_verbs_tsv(path, rows):
             r.past_m_f,
             r.case_preposition,
             r.additional_info,
+            r.examples,
         ]
         for r in rows
     ]
@@ -335,6 +345,7 @@ def _write_adjectives_tsv(path, rows):
         "Opposite",
         "Stem Type",
         "Additional Info",
+        "Examples",
     ]
     data = [
         [
@@ -350,6 +361,7 @@ def _write_adjectives_tsv(path, rows):
             r.opposite,
             r.stem_type,
             r.additional_info,
+            r.examples,
         ]
         for r in rows
     ]
@@ -366,6 +378,7 @@ def _write_adverbs_tsv(path, rows):
         "Formation",
         "Comparative",
         "Additional Info",
+        "Examples",
         "Status",
     ]
     data = [
@@ -378,6 +391,7 @@ def _write_adverbs_tsv(path, rows):
             r.formation,
             r.comparative,
             r.additional_info,
+            r.examples,
             "confirmed",
         ]
         for r in rows
@@ -395,6 +409,7 @@ def _write_pronouns_tsv(path, rows):
         "Gender Forms",
         "Oblique Forms",
         "Additional Info",
+        "Examples",
     ]
     data = [
         [
@@ -406,6 +421,7 @@ def _write_pronouns_tsv(path, rows):
             r.gender_forms,
             r.oblique_forms,
             r.additional_info,
+            r.examples,
         ]
         for r in rows
     ]
@@ -423,6 +439,7 @@ def _write_numerals_tsv(path, rows):
         "Gender Forms",
         "Genitive",
         "Additional Info",
+        "Examples",
     ]
     data = [
         [
@@ -435,6 +452,7 @@ def _write_numerals_tsv(path, rows):
             r.gender_forms,
             r.genitive,
             r.additional_info,
+            r.examples,
         ]
         for r in rows
     ]
@@ -582,6 +600,8 @@ def test_build_note_types_css_extends_source_with_extra_css(cloned_note_types):
         source_css
         + "\n\n"
         + card_audio.AUDIO_BUTTON_CSS
+        + "\n\n"
+        + examples_field.EXAMPLES_CSS
         + "\n\n"
         + mutable_words_plan.EXTRA_CSS
     )

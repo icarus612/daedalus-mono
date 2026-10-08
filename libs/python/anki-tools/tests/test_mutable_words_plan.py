@@ -15,7 +15,7 @@ import pytest
 from anki.collection import Collection
 from anki.utils import to_json_bytes
 
-from anki_tools import card_audio, mutable_words_plan
+from anki_tools import card_audio, examples_field, mutable_words_plan
 from anki_tools.audio_naming import (
     build_filename,
     get_anki_collection_path,
@@ -421,6 +421,8 @@ def test_every_template_id_and_class_has_a_css_rule(tmp_path):
         source_css
         + "\n\n"
         + card_audio.AUDIO_BUTTON_CSS
+        + "\n\n"
+        + examples_field.EXAMPLES_CSS
         + "\n\n"
         + mutable_words_plan.EXTRA_CSS
     )

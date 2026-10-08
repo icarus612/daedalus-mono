@@ -62,7 +62,7 @@ from pathlib import Path
 import pytest
 from anki.collection import Collection
 
-from anki_tools import card_audio, mutable_words, mutable_words_plan
+from anki_tools import card_audio, examples_field, mutable_words, mutable_words_plan
 from anki_tools.immutable_words import (
     NEW_NOTE_TYPE_ID,
     NEW_NOTE_TYPE_NAME,
@@ -155,7 +155,10 @@ _CARD2_AFMT = """{{FrontSide}}
 
 <div id="part-of-speech">{{Part of Speech}}</div>
 {{Russian}}
-{{Additional Info}}"""
+<div id="additional-info">{{Additional Info}}</div>
+<script>
+addTitle("additional-info", "&#9432;");
+</script>"""
 
 
 def _register_unicase_collation(conn):
@@ -495,6 +498,7 @@ def test_clone_note_type_field_list_matches_field_names_in_order(cloned):
         "Part of Speech",
         "Audio",
         "Additional Info",
+        "Examples",
         "AudioRefs",
     ]
 
@@ -508,7 +512,13 @@ def test_clone_note_type_field_list_matches_field_names_in_order(cloned):
 
 def test_clone_note_type_css_extends_source_with_audio_button_css(cloned):
     note_type, source_css = cloned
-    assert note_type["css"] == source_css + "\n\n" + card_audio.AUDIO_BUTTON_CSS
+    assert note_type["css"] == (
+        source_css
+        + "\n\n"
+        + card_audio.AUDIO_BUTTON_CSS
+        + "\n\n"
+        + examples_field.EXAMPLES_CSS
+    )
 
 
 _AUDIO_BOOKKEEPING_SUFFIXES = ("-data", "-controls")
@@ -1505,16 +1515,17 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
         to_note_ids = fresh_col.find_notes(f'deck:"{particles_deck}" Russian:"-то"')
         assert len(to_note_ids) == 1
         to_note = fresh_col.get_note(to_note_ids[0])
-        assert to_note["Translation"] == (
-            'some- (indefinite: кто-то "someone", где-то "somewhere"; '
-            "contrast -нибудь = any-)"
+        assert to_note["Translation"] == "some- (indefinite)"
+        assert to_note["Additional Info"] == (
+            'кто-то "someone", где-то "somewhere"; contrast -нибудь = any-'
         )
 
         ka_note_ids = fresh_col.find_notes(f'deck:"{particles_deck}" Russian:"-ка"')
         assert len(ka_note_ids) == 1
         ka_note = fresh_col.get_note(ka_note_ids[0])
-        assert ka_note["Translation"] == (
-            'go on, just (softens an imperative: скажи-ка "go on, tell me"; informal)'
+        assert ka_note["Translation"] == "go on, just (informal)"
+        assert ka_note["Additional Info"] == (
+            'softens an imperative: скажи-ка "go on, tell me"'
         )
 
         budto_note_ids = fresh_col.find_notes(
@@ -2309,8 +2320,11 @@ def test_clone_note_type_two_fresh_builds_pin_identical_id_and_fields(
         assert note_type_a["flds"] == note_type_b["flds"]
 
         for note_type in (note_type_a, note_type_b):
-            assert len(note_type["flds"]) == 7
-            audio_refs_field = note_type["flds"][6]
+            assert len(note_type["flds"]) == 8
+            examples_fld = note_type["flds"][6]
+            assert examples_fld["name"] == "Examples"
+            assert examples_fld["id"] is None
+            audio_refs_field = note_type["flds"][7]
             assert audio_refs_field["name"] == "AudioRefs"
             assert audio_refs_field["id"] is None
 
@@ -2725,3 +2739,55 @@ def test_e2e_every_imported_translation_exactly_matches_source_document(
         assert so_note["Translation"].endswith("<div>since (when)</div>")
     finally:
         fresh_col.close()
+
+
+def test_clone_note_type_adds_examples_block_after_additional_info(cloned):
+    note_type, _ = cloned
+    afmt_sides = [tmpl["afmt"] for tmpl in note_type["tmpls"]]
+    with_info = [side for side in afmt_sides if 'id="additional-info"' in side]
+    assert with_info
+    for side in with_info:
+        assert side.index('id="additional-info"') < side.index('id="examples"')
+        assert side.count("{{Examples}}") == 1
+        assert side.count('addTitle("examples", "Examples");') == 1
+    for side in _template_sides(note_type):
+        if 'id="additional-info"' not in side:
+            assert "{{Examples}}" not in side
+
+
+def test_examples_field_renders_nothing_when_empty_and_text_when_set(cloned, build_col):
+    note_type, _ = cloned
+    deck_id = build_col.decks.id("Examples render check", create=True)
+
+    plain = build_col.new_note(note_type)
+    plain["Russian"] = "кино"
+    plain["Translation"] = "cinema"
+    plain["Additional Info"] = "Neuter"
+    build_col.add_note(plain, deck_id)
+
+    with_examples = build_col.new_note(note_type)
+    with_examples["Russian"] = "кофе"
+    with_examples["Translation"] = "coffee"
+    with_examples["Additional Info"] = "Masculine"
+    with_examples["Examples"] = "чёрный кофе"
+    build_col.add_note(with_examples, deck_id)
+
+    def answers(note):
+        return [card.render_output().answer_text for card in note.cards()]
+
+    assert any('<div id="examples"></div>' in html for html in answers(plain))
+    assert not any("чёрный кофе" in html for html in answers(plain))
+    assert any(
+        '<div id="examples">чёрный кофе</div>' in html
+        for html in answers(with_examples)
+    )
+
+
+def test_examples_field_add_block_is_idempotent_and_skips_sides_without_info():
+    side = (
+        '<div id="additional-info">{{Additional Info}}</div>\n'
+        '\taddTitle("additional-info", "&#9432;");'
+    )
+    once = examples_field.add_examples_block(side)
+    assert examples_field.add_examples_block(once) == once
+    assert examples_field.add_examples_block("{{Russian}}") == "{{Russian}}"
