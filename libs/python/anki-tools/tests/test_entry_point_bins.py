@@ -1,4 +1,4 @@
-"""Contract tests for the four `anki_tools` CLI entry points, written from
+"""Contract tests for the `anki_tools` CLI entry points, written from
 the packet contract text alone. The implementation modules are never read
 by this file's author.
 """
@@ -17,6 +17,7 @@ ENTRY_POINTS = [
     ("anki-mutable-words", "mutable_words"),
     ("anki-mutable-words-audio", "mutable_words_audio"),
     ("anki-renumber-russian-decks", "renumber_russian_decks"),
+    ("anki-word-audio", "word_audio"),
 ]
 
 

@@ -479,6 +479,21 @@ def test_pairwise_distinct_qfmt_per_sheet():
                 assert qfmts[i] != qfmts[j], (sheet, i, j)
 
 
+def test_verbs_reverse_front_carries_inline_aspect_qualifier():
+    for card_index, aspect in ((1, "imperfective"), (3, "perfective")):
+        qfmt = mutable_words_plan.build_template("Verbs", card_index)[0]
+        expected = (
+            '<div id="translation">{{Translation}}'
+            f' <span class="aspect">({aspect})</span></div>'
+        )
+        assert expected in qfmt, (card_index, qfmt)
+
+
+def test_no_standalone_title_div_in_any_template():
+    for sheet, card_index, side_name, content in _all_sides():
+        assert '<div class="title">' not in content, (sheet, card_index, side_name)
+
+
 def _register_note_type(col, sheet):
     note_type = col.models.new(mutable_words_plan.NOTE_TYPE_NAMES[sheet])
     for name in mutable_words_plan.FIELD_NAMES[sheet]:

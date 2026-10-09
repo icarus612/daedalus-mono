@@ -810,7 +810,8 @@ def _build_extra_css() -> str:
     id `_detail_block` can emit, since the reference note type has no field
     to model them on; `#audio-imperfective`/`#audio-perfective` close the
     same coverage gap for the Verbs sheet's two audio containers, mirroring
-    `#audio`.
+    `#audio`; `.aspect` styles the Verbs reverse fronts' inline aspect
+    qualifier.
     """
     slugs = _all_detail_slugs()
     ids = ", ".join(f"#{slug}" for slug in slugs)
@@ -839,6 +840,11 @@ def _build_extra_css() -> str:
         "#audio-imperfective, #audio-perfective {\n"
         "\ttext-align: center;\n"
         "\tpadding-top: .3rem;\n"
+        "}\n\n"
+        ".aspect {\n"
+        "\tfont-size: 0.85em;\n"
+        "\tcolor: #656565;\n"
+        "\twhite-space: nowrap;\n"
         "}"
     )
 
@@ -884,10 +890,13 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
         back = _wrap("back", translation_div, detail_divs)
         afmt = "\n".join(["{{FrontSide}}", back, detail_script])
     else:
-        front_parts = [_DECK_HEADER_HTML, translation_div]
+        prompt_div = translation_div
         if sheet == "Verbs":
-            front_parts.append(f'<div class="title">{primary_field}</div>')
-        front = _wrap("front", *front_parts)
+            prompt_div = (
+                '<div id="translation">{{Translation}}'
+                f' <span class="aspect">({primary_field.lower()})</span></div>'
+            )
+        front = _wrap("front", _DECK_HEADER_HTML, prompt_div)
         qfmt = front + _DECK_HEADER_SCRIPT
         back = _wrap("back", audio_html, russian_div, detail_divs)
         afmt = "\n".join(["{{FrontSide}}", back, detail_script])

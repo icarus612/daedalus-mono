@@ -22,6 +22,7 @@
     "anki-vocabulary-source": "anki_tools/vocabulary_source.py",
     "anki-mutable-words": "anki_tools/mutable_words.py",
     "anki-mutable-words-audio": "anki_tools/mutable_words_audio.py",
-    "anki-renumber-russian-decks": "anki_tools/renumber_russian_decks.py"
+    "anki-renumber-russian-decks": "anki_tools/renumber_russian_decks.py",
+    "anki-word-audio": "anki_tools/word_audio.py"
   }
 }
