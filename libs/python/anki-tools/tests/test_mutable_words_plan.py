@@ -484,9 +484,30 @@ def test_verbs_reverse_front_carries_inline_aspect_qualifier():
         qfmt = mutable_words_plan.build_template("Verbs", card_index)[0]
         expected = (
             '<div id="translation">{{Translation}}'
-            f' <span class="aspect">({aspect})</span></div>'
+            f' <span class="aspect aspect-{aspect}">({aspect})</span></div>'
         )
         assert expected in qfmt, (card_index, qfmt)
+
+
+def test_reverse_verb_fronts_carry_distinct_aspect_colour_classes():
+    classes = {}
+    for card_index, aspect in ((1, "imperfective"), (3, "perfective")):
+        qfmt = mutable_words_plan.build_template("Verbs", card_index)[0]
+        assert f'class="aspect aspect-{aspect}"' in qfmt, (card_index, qfmt)
+        classes[aspect] = mutable_words_plan.ASPECT_COLOURS[aspect]
+    assert classes["imperfective"] != classes["perfective"]
+
+
+def test_aspect_colours_override_the_grey_detail_rule():
+    css = mutable_words_plan.EXTRA_CSS
+    grey = css.index("#additional-info") if "#additional-info" in css else 0
+    for aspect, colour in mutable_words_plan.ASPECT_COLOURS.items():
+        rule = f"#{aspect} .title, #{aspect} .body, .aspect-{aspect} {{"
+        assert rule in css, aspect
+        assert css.index(rule) > grey
+        assert colour in css
+        # the generic grey rule must come first, or the colour never wins
+        assert css.index(rule) > css.index(".aspect {")
 
 
 def test_no_standalone_title_div_in_any_template():

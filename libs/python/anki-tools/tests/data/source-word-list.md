@@ -267,6 +267,7 @@ A lone em dash there means "no extra info" and renders as nothing.
 | 64 | однажды | once / one day | Introduces a narrative event, like English "once upon a time" | — |
 | 65 | сколько | how much / how many | Also used in exclamations | сколько людей! |
 | 66 | сначала | at first / at the beginning | Contrast with снова ("again") — do not confuse | — |
+| 67 | правда (adverb) | really / indeed / actually | Asserts the truth of the whole clause, not the manner of the verb; also a noun (правда = truth) | Он правда пришёл |
 
 
 ---

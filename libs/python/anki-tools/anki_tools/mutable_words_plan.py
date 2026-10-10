@@ -803,6 +803,18 @@ def _all_detail_slugs() -> list[str]:
     return slugs
 
 
+# Blue/red rather than the intuitive green for perfective: red-green is the
+# one pair the common colour-vision deficiencies collapse.
+ASPECT_COLOURS = {"imperfective": "#1565c0", "perfective": "#c62828"}
+
+_ASPECT_COLOUR_CSS = "\n\n".join(
+    f"#{aspect} .title, #{aspect} .body, .aspect-{aspect} {{\n"
+    f"\tcolor: {colour};\n"
+    "}"
+    for aspect, colour in ASPECT_COLOURS.items()
+)
+
+
 def _build_extra_css() -> str:
     """CSS appended to the cloned source note type's CSS (never rewritten in
     place -- see `mutable_words.build_note_types`). Generalizes the
@@ -845,7 +857,8 @@ def _build_extra_css() -> str:
         "\tfont-size: 0.85em;\n"
         "\tcolor: #656565;\n"
         "\twhite-space: nowrap;\n"
-        "}"
+        "}\n\n"
+        f"{_ASPECT_COLOUR_CSS}"
     )
 
 
@@ -892,9 +905,11 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
     else:
         prompt_div = translation_div
         if sheet == "Verbs":
+            aspect_slug = _slug_for_field_name(primary_field)
             prompt_div = (
                 '<div id="translation">{{Translation}}'
-                f' <span class="aspect">({primary_field.lower()})</span></div>'
+                f' <span class="aspect aspect-{aspect_slug}">'
+                f'({primary_field.lower()})</span></div>'
             )
         front = _wrap("front", _DECK_HEADER_HTML, prompt_div)
         qfmt = front + _DECK_HEADER_SCRIPT

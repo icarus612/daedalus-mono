@@ -65,7 +65,7 @@ EXPECTED_SECTION_COUNTS = [
     ("Conjunctions", 35),
     ("Particles", 42),
     ("Indeclinable Nouns", 42),
-    ("Base Adverbs", 66),
+    ("Base Adverbs", 67),
 ]
 EXPECTED_TOTAL_ROWS = sum(count for _, count in EXPECTED_SECTION_COUNTS)
 
@@ -187,7 +187,7 @@ def _remove_section(text, heading_name):
 
 
 def test_parse_real_document_total_row_count(real_rows):
-    assert len(real_rows) == EXPECTED_TOTAL_ROWS == 229
+    assert len(real_rows) == EXPECTED_TOTAL_ROWS == 230
 
 
 def test_parse_real_document_section_order_counts_and_ranks(real_rows):
@@ -213,7 +213,7 @@ def test_parse_real_document_row_order_endpoints(real_rows):
     assert real_rows[0].pos == "Prepositions"
     assert real_rows[0].rank == 1
     assert real_rows[-1].pos == "Base Adverbs"
-    assert real_rows[-1].rank == 66
+    assert real_rows[-1].rank == 67
 
 
 @pytest.mark.parametrize(
@@ -232,7 +232,7 @@ def test_parse_real_document_part_two_produces_no_spurious_rows(real_rows):
     AwesomeTTS / HyperTTS / add-on-install subsections) has no tables and
     must not contribute rows or raise.
     """
-    assert len(real_rows) == 229
+    assert len(real_rows) == 230
     assert all(row.pos in SUBDECK_LEAVES for row in real_rows)
 
 
@@ -1039,7 +1039,7 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
     cells, so the test cannot pass by finding nothing to check.
     """
     adverbs = [row for row in real_rows if row.pos == "Base Adverbs"]
-    assert len(adverbs) == 66
+    assert len(adverbs) == 67
 
     populated = 0
     for row in adverbs:
@@ -1048,10 +1048,10 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
         if additional_info:
             populated += 1
 
-    # 54 of the 66 rows carry info; the other 12 are the document's em-dash
+    # 55 of the 67 rows carry info; the other 12 are the document's em-dash
     # "no info" rows. Asserted exactly so that silently losing the column
     # fails here rather than passing with 0.
-    assert populated == 54
+    assert populated == 55
 
 
 # Populated info cells per section. Every section is four-column now:
@@ -1065,7 +1065,7 @@ EXPECTED_INFO_COUNTS = {
     "Conjunctions": (35, 21),
     "Particles": (42, 29),
     "Indeclinable Nouns": (42, 42),
-    "Base Adverbs": (66, 54),
+    "Base Adverbs": (67, 55),
 }
 
 
@@ -1475,7 +1475,7 @@ EXPECTED_EXAMPLES_COUNTS = {
     "Conjunctions": 4,
     "Particles": 0,
     "Indeclinable Nouns": 40,
-    "Base Adverbs": 3,
+    "Base Adverbs": 4,
 }
 
 
