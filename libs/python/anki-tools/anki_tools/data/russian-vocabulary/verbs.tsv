@@ -15,9 +15,9 @@
 14	брать	взять	take	брать / взять							suppletive pair; беру́, берёшь / возьму́, возьмёшь		New
 15	писать	написать	write	писа́ть / написа́ть									New
 16	читать	прочитать	read	чита́ть / прочита́ть									New
-17	работать	поработать	work	рабо́тать / порабо́тать							по- perfective = do for a little while		New
-18	любить	полюбить	love / like	люби́ть / полюби́ть									New
-19	отвечать	ответить	answer	отвеча́ть / отве́тить									New
+17	работать	поработать	work (verb)	рабо́тать / порабо́тать							по- perfective = do for a little while		New
+18	любить	полюбить	love / like (verb)	люби́ть / полюби́ть									New
+19	отвечать	ответить	answer (verb)	отвеча́ть / отве́тить									New
 20	помнить	вспомнить	remember / recall	по́мнить / вспо́мнить							вспомнить = recall (not a strict pair)		New
 21	ждать	подождать	wait	ждать / подожда́ть									New
 22	лежать	полежать	lie (be lying down)	лежа́ть / полежа́ть							по- perfective = do for a little while		New
@@ -27,14 +27,14 @@
 26	уходить	уйти	leave (on foot)	уходи́ть / уйти́									New
 27	находить	найти	find	находи́ть / найти́									New
 28	выходить	выйти	go out / exit	выходи́ть / вы́йти									New
-29	начинать	начать	begin / start	начина́ть / нача́ть									New
-30	заканчивать	закончить	finish / end	зака́нчивать / зако́нчить									New
-31	открывать	открыть	open	открыва́ть / откры́ть									New
+29	начинать	начать	begin / start (verb)	начина́ть / нача́ть									New
+30	заканчивать	закончить	finish / end (verb)	зака́нчивать / зако́нчить									New
+31	открывать	открыть	open (verb)	открыва́ть / откры́ть									New
 32	закрывать	закрыть	close	закрыва́ть / закры́ть									New
 33	забывать	забыть	forget	забыва́ть / забы́ть									New
-34	помогать	помочь	help	помога́ть / помо́чь							+ dative (помогать кому)		New
+34	помогать	помочь	help (verb)	помога́ть / помо́чь							+ dative (помогать кому)		New
 35	играть	сыграть	play	игра́ть / сыгра́ть									New
-36	спать	поспать	sleep	спать / поспа́ть									New
+36	спать	поспать	sleep (verb)	спать / поспа́ть									New
 37	есть	съесть	eat	есть / съесть							irregular: ем, ешь, ест, еди́м, еди́те, едя́т		New
 38	пить	выпить	drink	пить / вы́пить							пью, пьёшь		New
 39	покупать	купить	buy	покупа́ть / купи́ть									New
@@ -48,8 +48,8 @@
 47	верить	поверить	believe	ве́рить / пове́рить									New
 48	просить	попросить	ask (for) / request	проси́ть / попроси́ть									New
 49	объяснять	объяснить	explain	объясня́ть / объясни́ть									New
-50	надеяться	понадеяться	hope / rely on	наде́яться / понаде́яться									New
-51	улыбаться	улыбнуться	smile	улыба́ться / улыбну́ться									New
+50	надеяться	понадеяться	hope / rely on (verb)	наде́яться / понаде́яться									New
+51	улыбаться	улыбнуться	smile (verb)	улыба́ться / улыбну́ться									New
 52	смеяться	засмеяться	laugh / burst out laughing	смея́ться / засмея́ться							за- perfective = start doing		New
 53	плакать	заплакать	cry / start crying	пла́кать / запла́кать							за- perfective = start doing; пла́чу, пла́чешь		New
 54	бояться	испугаться	be afraid / get scared	боя́ться / испуга́ться							+ genitive; not a strict pair (испугаться = get scared)		New
@@ -67,7 +67,7 @@
 66	ломать	сломать	break	лома́ть / слома́ть									New
 67	петь	спеть	sing	петь / спеть							пою́, поёшь		New
 68	танцевать	потанцевать	dance	танцева́ть / потанцева́ть									New
-69	летать	полететь	fly	лета́ть / полете́ть							motion verb: multidirectional impf.; pf. is по- + unidirectional (лететь)		New
+69	летать	полететь	fly (verb)	лета́ть / полете́ть							motion verb: multidirectional impf.; pf. is по- + unidirectional (лететь)		New
 70	бегать	побежать	run	бе́гать / побежа́ть							motion verb: multidirectional impf.; pf. is по- + unidirectional (бежать)		New
 71	плавать	поплыть	swim / sail	пла́вать / поплы́ть							motion verb: multidirectional impf.; pf. is по- + unidirectional (плыть)		New
 72	ездить	поехать	go (by vehicle) / ride	е́здить / пое́хать							motion verb: multidirectional impf.; pf. is по- + unidirectional (ехать)		New
@@ -79,7 +79,7 @@
 78	мыть	помыть	wash	мыть / помы́ть							мо́ю, мо́ешь		New
 79	стирать	постирать	do laundry / wash clothes	стира́ть / постира́ть									New
 80	убирать	убрать	clean up / tidy / put away	убира́ть / убра́ть									New
-81	чистить	почистить	clean / brush / peel	чи́стить / почи́стить									New
+81	чистить	почистить	clean / brush / peel (verb)	чи́стить / почи́стить									New
 82	резать	порезать	cut / slice	ре́зать / поре́зать									New
 83	варить	сварить	boil / cook (by boiling)	вари́ть / свари́ть									New
 84	жарить	пожарить	fry / roast	жа́рить / пожа́рить									New
@@ -94,20 +94,20 @@
 93	растить	вырастить	raise / grow (bring up, cultivate)	расти́ть / вы́растить									New
 94	болеть	заболеть	be ill / fall ill	боле́ть / заболе́ть									New
 95	лечить	вылечить	treat / cure (medically)	лечи́ть / вы́лечить									New
-96	отдыхать	отдохнуть	rest / relax	отдыха́ть / отдохну́ть									New
+96	отдыхать	отдохнуть	rest / relax (verb)	отдыха́ть / отдохну́ть									New
 97	уставать	устать	get tired	устава́ть / уста́ть							устаю́, устаёшь		New
 98	просыпаться	проснуться	wake up	просыпа́ться / просну́ться									New
 99	засыпать	заснуть	fall asleep	засыпа́ть / засну́ть							усну́ть is an equally common perfective alongside засну́ть		New
-100	мечтать	помечтать	dream	мечта́ть / помечта́ть									New
-101	желать	пожелать	wish	жела́ть / пожела́ть									New
-102	приказывать	приказать	order / command	прика́зывать / приказа́ть									New
+100	мечтать	помечтать	dream (verb)	мечта́ть / помечта́ть									New
+101	желать	пожелать	wish (verb)	жела́ть / пожела́ть									New
+102	приказывать	приказать	order / command (verb)	прика́зывать / приказа́ть									New
 103	запрещать	запретить	forbid	запреща́ть / запрети́ть									New
 104	разрешать	разрешить	allow / permit	разреша́ть / разреши́ть									New
 105	обещать	пообещать	promise	обеща́ть / пообеща́ть									New
 106	обманывать	обмануть	deceive / cheat	обма́нывать / обману́ть									New
 107	доверять	доверить	trust / entrust	доверя́ть / дове́рить									New
 108	требовать	потребовать	demand	тре́бовать / потре́бовать									New
-109	показывать	показать	show	пока́зывать / показа́ть									New
+109	показывать	показать	show (verb)	пока́зывать / показа́ть									New
 110	казаться	показаться	seem / appear	каза́ться / показа́ться							мне ка́жется = it seems to me		New
 111	оставаться	остаться	stay / remain	остава́ться / оста́ться									New
 112	возвращаться	вернуться	return / come back	возвраща́ться / верну́ться									New
@@ -147,9 +147,9 @@
 146	удивляться	удивиться	be surprised	удивля́ться / удиви́ться									New
 147	радоваться	обрадоваться	be glad / become glad	ра́доваться / обра́доваться									New
 148	гордиться	возгордиться	be proud / become arrogant	горди́ться / возгорди́ться							+ instrumental; возгордиться is not a strict pair		New
-149	нападать	напасть	attack	напада́ть / напа́сть									New
+149	нападать	напасть	attack (verb)	напада́ть / напа́сть									New
 150	защищать	защитить	defend / protect	защища́ть / защити́ть									New
-151	спасать	спасти	save / rescue	спаса́ть / спасти́									New
+151	спасать	спасти	save / rescue (verb)	спаса́ть / спасти́									New
 152	красть	украсть	steal	красть / укра́сть							краду́, крадёшь		New
 153	лгать	солгать	lie (tell lies)	лгать / солга́ть							лгу, лжёшь		New
 154	шутить	пошутить	joke	шути́ть / пошути́ть									New
@@ -157,7 +157,7 @@
 156	прощать	простить	forgive / excuse	проща́ть / прости́ть									New
 157	ценить	оценить	value / evaluate	цени́ть / оцени́ть									New
 158	проверять	проверить	check / verify	проверя́ть / прове́рить									New
-159	спорить	поспорить	argue / bet	спо́рить / поспо́рить							поспорить also = make a bet		New
+159	спорить	поспорить	argue / bet (verb)	спо́рить / поспо́рить							поспорить also = make a bet		New
 160	сравнивать	сравнить	compare	сра́внивать / сравни́ть									New
 161	приглашать	пригласить	invite	приглаша́ть / пригласи́ть									New
 162	поздравлять	поздравить	congratulate	поздравля́ть / поздра́вить									New
@@ -169,7 +169,7 @@
 168	надоедать	надоесть	bore / annoy	надоеда́ть / надое́сть							often impersonal: мне надое́ло = I'm sick of it		New
 169	мешать	помешать	bother / hinder	меша́ть / помеша́ть							+ dative		New
 170	звонить	позвонить	call (phone) / ring	звони́ть / позвони́ть							+ dative (звонить кому)		New
-171	двигаться	двинуться	move	дви́гаться / дви́нуться									New
+171	двигаться	двинуться	move (verb)	дви́гаться / дви́нуться									New
 172	дышать	подышать	breathe	дыша́ть / подыша́ть									New
 173	вешать	повесить	hang	ве́шать / пове́сить									New
 174	останавливать	остановить	stop (something/someone)	остана́вливать / останови́ть									New
@@ -201,10 +201,10 @@
 200	задавать	задать	ask (a question) / set	задава́ть / зада́ть	1st (-ешь)	задаю́	задаёшь	задаю́т	задава́л / задава́ла	+ accusative, + dative of the person	зада́ть вопро́с = to ask a question		New
 201	вызывать	вызвать	call out / summon / cause (summon, or bring about)	вызыва́ть / вы́звать	1st (-ешь)	вызыва́ю	вызыва́ешь	вызыва́ют	вызыва́л / вызыва́ла	+ accusative	вы́звать врача́ = to call a doctor out		New
 202	рассказывать	рассказать	tell / narrate (recount)	расска́зывать / рассказа́ть	1st (-ешь)	расска́зываю	расска́зываешь	расска́зывают	расска́зывал / расска́зывала	+ dative of the person, о + prepositional of the topic			New
-203	стоить	—	cost / be worth	сто́ить	2nd (-ишь)	сто́ю	сто́ишь	сто́ят	сто́ил / сто́ила	+ accusative (the price)	imperfective only; impersonal сто́ит + infinitive = it is worth doing		New
+203	стоить	—	cost / be worth (verb)	сто́ить	2nd (-ишь)	сто́ю	сто́ишь	сто́ят	сто́ил / сто́ила	+ accusative (the price)	imperfective only; impersonal сто́ит + infinitive = it is worth doing		New
 204	следовать	последовать	follow	сле́довать / после́довать	1st (-ешь)	сле́дую	сле́дуешь	сле́дуют	сле́довал / сле́довала	+ dative; за + instrumental to follow physically	impersonal сле́дует + infinitive = one ought to		New
 205	знакомиться	познакомиться	get acquainted / meet (for the first time)	знако́миться / познако́миться	2nd (-ишь)	знако́млюсь	знако́мишься	знако́мятся	знако́мился / знако́милась	с + instrumental	-ся verb; м→мл in the 1sg		New
 206	ходить	—	go (on foot, regularly or there and back)	ходи́ть	2nd (-ишь)	хожу́	хо́дишь	хо́дят	ходи́л / ходи́ла	в/на + accusative	multidirectional partner of идти́: repeated or round trips		New
 207	встречаться	встретиться	meet (one another)	встреча́ться / встре́титься	1st (-ешь)	встреча́юсь	встреча́ешься	встреча́ются	встреча́лся / встреча́лась	с + instrumental	-ся verb; also = to be dating someone		New
-208	подозревать	заподозрить	suspect	подозрева́ть / заподо́зрить	1st (-ешь)	подозрева́ю	подозрева́ешь	подозрева́ют	подозрева́л / подозрева́ла	+ accusative; в + prepositional of the offence	imperfective only		New
+208	подозревать	заподозрить	suspect (verb)	подозрева́ть / заподо́зрить	1st (-ешь)	подозрева́ю	подозрева́ешь	подозрева́ют	подозрева́л / подозрева́ла	+ accusative; в + prepositional of the offence	imperfective only		New
 209	игнорировать	проигнорировать	ignore	игнори́ровать / проигнори́ровать	1st (-ешь)	игнори́рую	игнори́руешь	игнори́руют	игнори́ровал / игнори́ровала	+ accusative	bi-aspectual: the same form serves both aspects		New

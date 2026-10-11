@@ -1,7 +1,7 @@
 #	Adverb	English	Stress	From Adjective	Formation	Comparative	Additional Info	Examples	Status
 1	по-новому	in a new way	по-но́вому	новый	по-...-ому	—	за́ново = anew		New
 2	по-старому	the old way / as before	по-ста́рому	старый	по-...-ому	—	всё по-ста́рому = nothing's changed		New
-3	хорошо	well	хорошо́	хороший	-о	лу́чше	Всё хорошо́ = everything's fine		New
+3	хорошо	well (adverb)	хорошо́	хороший	-о	лу́чше	Всё хорошо́ = everything's fine		New
 4	плохо	badly	пло́хо	плохой	-о	ху́же	мне пло́хо = I feel bad / unwell		New
 5	—		—	большой	none		no adverb; use мно́го (a lot) or о́чень (very)		
 6	—		—	маленький	none		no adverb; use ма́ло (a little, not much)		
@@ -16,7 +16,7 @@
 15	быстро	quickly	бы́стро	быстрый	-о	быстре́е			New
 16	медленно	slowly	ме́дленно	медленный	-о	ме́дленнее			New
 17	трудно	with difficulty (it is hard to do)	тру́дно	трудный	-о	трудне́е	мне тру́дно = it's hard for me		New
-18	просто (adverb)	simply / just	про́сто	простой	-о	про́ще	also 'just': я про́сто уста́л = I'm just tired		New
+18	просто (adverb)	simply / just (adverb)	про́сто	простой	-о	про́ще	also 'just': я про́сто уста́л = I'm just tired		New
 19	сложно	in a complicated way	сло́жно	сложный	-о	сложне́е	э́то сло́жно = it's complicated		New
 20	чисто	cleanly / purely	чи́сто	чистый	-о	чи́ще			New
 21	грязно	dirtily	гря́зно	грязный	-о	грязне́е	здесь гря́зно = it's dirty here		New
@@ -60,7 +60,7 @@
 59	нежно	tenderly / gently (with tenderness)	не́жно	нежный	-о	нежне́е			New
 60	спокойно	calmly	споко́йно	спокойный	-о	споко́йнее			New
 61	нервно	nervously	не́рвно	нервный	-о				New
-62	нормально	normally / fine	норма́льно	нормальный	-о	норма́льнее	Как дела́? — Норма́льно. = How are you? — Fine.		New
+62	нормально	normally / fine (adverb)	норма́льно	нормальный	-о	норма́льнее	Как дела́? — Норма́льно. = How are you? — Fine.		New
 63	лениво	lazily	лени́во	ленивый	-о	лени́вее			New
 64	интересно	interestingly	интере́сно	интересный	-о	интере́снее	интере́сно, ... = I wonder ...		New
 65	скучно	boringly	ску́чно	скучный	-о	скучне́е	мне ску́чно = I'm bored		New
@@ -78,8 +78,8 @@
 77	—		—	последний	none		no adverb; use в после́дний раз (last time), в после́днее вре́мя (lately)		
 78	—		—	следующий	none		no adverb; use сле́дующим о́бразом (as follows)		
 79	—		—	предыдущий	none		no adverb; use ра́нее / до э́того (previously)		
-80	рано	early	ра́но	ранний	-о	ра́ньше			New
-81	поздно	late	по́здно	поздний	-о	по́зже			New
+80	рано	early (adverb)	ра́но	ранний	-о	ра́ньше			New
+81	поздно	late (adverb)	по́здно	поздний	-о	по́зже			New
 82	утром	in the morning	у́тром	утренний	from noun	—	instrumental of у́тро		New
 83	вечером	in the evening	ве́чером	вечерний	from noun	—	instrumental of ве́чер		New
 84	ночью	at night	но́чью	ночной	from noun	—	instrumental of ночь		New
@@ -97,14 +97,14 @@
 96	одинаково	equally / the same way	одина́ково	одинаковый	-о	—			New
 97	похоже	similarly	похо́же	похожий	-е	—	похо́же, ... = it seems ...; -е after ж		New
 98	полностью	completely / fully (in full)	по́лностью	полный	irregular	—	formed from the noun по́лность		New
-99	пусто	empty	пу́сто	пустой	-о	пусте́е	здесь пу́сто = it's empty here		New
+99	пусто	empty (adverb)	пу́сто	пустой	-о	пусте́е	здесь пу́сто = it's empty here		New
 100	свободно	freely / fluently	свобо́дно	свободный	-о	свобо́днее	свобо́дно говори́ть = to speak fluently		New
 101	—		—	занятой	none		занятой has no adverb; за́нято (from за́нятый) = occupied / line busy		
 102	открыто	openly	откры́то	открытый	-о	—	Откры́то = Open (sign)		New
-103	закрыто	closed	закры́то	закрытый	-о	—	Закры́то = Closed (sign)		New
+103	закрыто	closed (adverb)	закры́то	закрытый	-о	—	Закры́то = Closed (sign)		New
 104	направо / справа	to the right / on the right	напра́во / спра́ва	правый	irregular	—			New
 105	налево / слева	to the left / on the left	нале́во / сле́ва	левый	irregular	—			New
-106	прямо	straight / directly	пря́мо	прямой	-о	пряме́е	иди́те пря́мо = go straight ahead		New
+106	прямо	straight / directly (adverb)	пря́мо	прямой	-о	пряме́е	иди́те пря́мо = go straight ahead		New
 107	остро	sharply / acutely	о́стро	острый	-о	остре́е			New
 108	тупо	bluntly / dully	ту́по	тупой	-о	тупе́е	colloquial: mindlessly		New
 109	твёрдо	firmly	твёрдо	твёрдый	-о	твёрже			New
@@ -116,9 +116,9 @@
 115	вкусно	tastily	вку́сно	вкусный	-о	вкусне́е	О́чень вку́сно! = It's delicious!		New
 116	свежо	freshly	свежо́	свежий	-о	свеже́е	на у́лице свежо́ = it's chilly outside		New
 117	сухо	dryly	су́хо	сухой	-о	су́ше			New
-118	мокро	wet	мо́кро	мокрый	-о	мокре́е	на у́лице мо́кро = it's wet outside		New
-119	влажно	humid	вла́жно	влажный	-о	влажне́е			New
-120	живо	vividly / lively	жи́во	живой	-о	живе́е			New
+118	мокро	wet (adverb)	мо́кро	мокрый	-о	мокре́е	на у́лице мо́кро = it's wet outside		New
+119	влажно	humid (adverb)	вла́жно	влажный	-о	влажне́е			New
+120	живо	vividly / lively (adverb)	жи́во	живой	-о	живе́е			New
 121	мёртво	deathly / lifelessly	мёртво	мёртвый	-о	—	rare / literary		New
 122	целиком	entirely / whole (as a single whole)	це́ликом	целый	irregular	—			New
 123	глубоко	deeply	глубоко́	глубокий	-о	глу́бже			New
@@ -131,7 +131,7 @@
 130	известно	it is known	изве́стно	известный	-о	—	как изве́стно = as is well known		New
 131	популярно	accessibly / in plain terms	популя́рно	популярный	-о	популя́рнее			New
 132	важно	importantly	ва́жно	важный	-о	важне́е	э́то ва́жно = it's important		New
-133	нужно	necessary	ну́жно	нужный	-о	—	мне ну́жно + infinitive = I need to		New
+133	нужно	necessary (adverb)	ну́жно	нужный	-о	—	мне ну́жно + infinitive = I need to		New
 134	—		—	лишний	none		no adverb		
 135	—		—	готовый	none		no adverb; short form гото́во = it's ready		
 136	согласно (adverb)	according to	согла́сно	согласный	-о	—	a preposition: согла́сно + dative		New
@@ -142,9 +142,9 @@
 141	отлично	excellently	отли́чно	отличный	-о	—	Отли́чно! = Excellent!		New
 142	обычно	usually	обы́чно	обычный	-о	—			New
 143	необычно	unusually	необы́чно	необычный	-о	необы́чнее			New
-144	возможно	possibly / perhaps	возмо́жно	возможный	-о	—			New
+144	возможно	possibly / perhaps (adverb)	возмо́жно	возможный	-о	—			New
 145	невозможно	impossibly	невозмо́жно	невозможный	-о	—	э́то невозмо́жно = it's impossible		New
-146	знакомо	familiar	знако́мо	знакомый	-о	—	звучи́т знако́мо = sounds familiar		New
+146	знакомо	familiar (adverb)	знако́мо	знакомый	-о	—	звучи́т знако́мо = sounds familiar		New
 147	—		—	любимый	none		no adverb		
 148	понятно	clearly	поня́тно	понятный	-о	поня́тнее	Поня́тно. = Got it / I see.		New
 149	полезно	usefully	поле́зно	полезный	-о	поле́знее	э́то поле́зно = it's good for you		New
