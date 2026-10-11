@@ -48,7 +48,7 @@ Prepositions never change themselves, though they dictate the case of the noun t
 | 35 | из-под | from under (what/where) | Genitive | — |
 | 36 | вопреки | despite / contrary to (what/whom) | Dative — one of the few Genitive-looking ones that takes Dative | — |
 | 37 | благодаря | thanks to (whom/what) | Dative | — |
-| 38 | согласно | according to (what/whom) | Dative | — |
+| 38 | согласно (preposition) | according to (what/whom) | Dative | — |
 | 39 | навстречу | towards (whom/what) | Dative | — |
 | 40 | позади | behind (whom/what/where) | Genitive | — |
 | 41 | посреди | in the middle of (what/where) | Genitive | — |
@@ -69,24 +69,24 @@ Used to connect clauses, sentences, or concepts.
 | 6 | если | if | Subordinating — often paired with то: если..., то... | — |
 | 7 | или | or | Coordinating — comma only when repeated: или..., или... | — |
 | 8 | чтобы / чтоб | so that / in order to | The verb after it takes the PAST form; infinitive if the subject does not change | — |
-| 9 | когда (conjunction) | when / while / as | — | Когда я пришёл, он спал |
+| 9 | когда (conjunction) | when / while / as (at the time that) | — | Когда я пришёл, он спал |
 | 10 | хотя | although | Subordinating — comma before it | — |
 | 11 | потому что | because | States the cause after the result | — |
-| 12 | так как | since / as | States the cause first; more formal than потому что | — |
+| 12 | так как | since / as (because) | States the cause first; more formal than потому что | — |
 | 13 | то есть | that is (i.e.) | — | — |
 | 14 | однако | however | Contrast, like "however" — often sentence-initial | — |
 | 15 | поэтому | therefore | Introduces the result — "that's why" | — |
 | 16 | словно / будто | as if / like | — | — |
 | 17 | зато | but on the other hand | Compensating contrast — "but on the plus side" | — |
 | 18 | тоже / также | also / too | — | — |
-| 19 | либо | either / or | Bookish alternative to или | — |
-| 20 | пока (conjunction) | while / until | пока не means "until" | — |
+| 19 | либо | either / or (one or the other) | Bookish alternative to или | — |
+| 20 | пока (conjunction) | while / until (for as long as) | пока не means "until" | — |
 | 21 | чем | than | Comparative — comma before it | — |
 | 22 | ни... ни... | neither... nor... | Needs a negated verb in the same clause | — |
 | 23 | то... то... | now... now... (alternating) | — | — |
 | 24 | как только | as soon as | "The moment that" — comma before it | — |
 | 25 | несмотря на то, что | despite the fact that | Formal; comma before что | — |
-| 26 | для того, чтобы | in order to | Emphatic чтобы — same past-form rule | — |
+| 26 | для того, чтобы | in order to (the emphatic, two-part form) | Emphatic чтобы — same past-form rule | — |
 | 27 | с тех пор, как | since (the time that) | — | — |
 | 28 | до того, как | before (doing something) | — | — |
 | 29 | перед тем, как | just before (doing something) | — | — |
@@ -114,7 +114,7 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 11 | разве | really? (implies doubt) | — | — |
 | 12 | неужели | is it possible? (strong surprise) | — | — |
 | 13 | именно | exactly / precisely | Pinpoints exactly which one | — |
-| 14 | просто | simply / just | Plays it down — "it's just that..." | — |
+| 14 | просто (particle) | simply / just | Plays it down — "it's just that..." | — |
 | 15 | пусть / пускай | let (as in "let them") | — | — |
 | 16 | всё-таки | still / nevertheless (all the same) | Concessive — "all the same, after all" | — |
 | 17 | вон | over there (pointing out) | — | — |
@@ -174,7 +174,7 @@ Foreign loan words that are frozen in their base form.
 | 22 | эссе | essay | Neuter | короткое эссе |
 | 23 | какао | cocoa | Neuter | горячее какао |
 | 24 | турне | tour | Neuter | мировое турне |
-| 25 | бюро | bureau / office | Neuter | справочное бюро |
+| 25 | бюро | bureau / office (a bureau) | Neuter | справочное бюро |
 | 26 | купе | train compartment | Neuter | свободное купе |
 | 27 | пари | bet / wager | Neuter | глупое пари |
 | 28 | алиби | alibi | Neuter | железное алиби |
@@ -186,7 +186,7 @@ Foreign loan words that are frozen in their base form.
 | 34 | соло | solo | Neuter | гитарное соло |
 | 35 | табло | scoreboard / display board | Neuter | электронное табло |
 | 36 | фортепиано | piano (the instrument in general) | Neuter | старинное фортепиано |
-| 37 | бра | wall sconce / lamp | Neuter | настенное бра |
+| 37 | бра | wall sconce / lamp (wall-mounted) | Neuter | настенное бра |
 | 38 | регби | rugby | Neuter | любимое регби |
 | 39 | цунами | tsunami | Neuter | разрушительное цунами |
 | 40 | хаки | khaki | Neuter as a noun; also an invariable colour adjective | — |
@@ -216,16 +216,16 @@ A lone em dash there means "no extra info" and renders as nothing.
 | 12 | откуда | from where | Asking for a starting point | — |
 | 13 | отсюда | from here | — | — |
 | 14 | оттуда | from there | — | — |
-| 15 | назад | backwards / ago | Motion backward, or time (2 days ago) | — |
+| 15 | назад | backwards / ago (direction, or time past) | Motion backward, or time (2 days ago) | — |
 | 16 | вперёд | forwards | Motion forward | — |
 | 17 | когда (adverb) | when | Asking for a time | — |
-| 18 | тогда | then / in that case | Pointing to past/future, or conditional | — |
+| 18 | тогда | then / in that case (at that time) | Pointing to past/future, or conditional | — |
 | 19 | сейчас | now / right now (this exact moment) | Current exact moment | — |
 | 20 | теперь | now / nowadays (as opposed to before) | Current reality contrasted with the past | — |
 | 21 | сегодня | today | — | — |
 | 22 | завтра | tomorrow | — | — |
 | 23 | вчера | yesterday | — | — |
-| 24 | потом | then / later | Sequencing events | — |
+| 24 | потом | then / later (afterwards) | Sequencing events | — |
 | 25 | всегда | always | — | — |
 | 26 | иногда | sometimes | — | — |
 | 27 | никогда | never | Requires a negative verb (не) | — |
@@ -241,8 +241,8 @@ A lone em dash there means "no extra info" and renders as nothing.
 | 37 | немного | a little bit / some | — | — |
 | 38 | слишком | too / too much | Exceeding a reasonable limit | — |
 | 39 | почти | almost | — | — |
-| 40 | совсем | completely / entirely | Often paired with не for "not at all" | — |
-| 41 | вовсе | at all | Used almost exclusively with не | — |
+| 40 | совсем | completely / entirely (utterly) | Often paired with не for "not at all" | — |
+| 41 | вовсе | at all (only with a negative: not at all) | Used almost exclusively with не | — |
 | 42 | едва | barely | — | — |
 | 43 | чуть-чуть | a tiny bit | Highly conversational | — |
 | 44 | вместе | together | — | — |
@@ -252,17 +252,17 @@ A lone em dash there means "no extra info" and renders as nothing.
 | 48 | так | like this / so | Demonstrating the method | — |
 | 49 | пешком | on foot | The method of travel (walking) | — |
 | 50 | зря | in vain / for nothing | Wasted effort | — |
-| 51 | наоборот | vice versa / backwards | The exact opposite of what was expected | — |
+| 51 | наоборот | vice versa / backwards (the other way round) | The exact opposite of what was expected | — |
 | 52 | наверняка | for sure / certainly | High degree of confidence | — |
 | 53 | нарочно | on purpose | Intentional action | — |
 | 54 | вслух | out loud | Spoken so others can hear | — |
 | 55 | наизусть | by heart | Memorized perfectly | — |
-| 56 | вообще | in general / at all | Conversational filler word | — |
+| 56 | вообще | in general / at all (generally speaking) | Conversational filler word | — |
 | 57 | вроде | like / kind of / sort of | Colloquial hedge; also a loose preposition (вроде того) | — |
-| 58 | затем | then / after that | Sequencing adverb, close synonym of потом | — |
-| 59 | иначе | otherwise / differently | Also used to mean "or else" (a conditional warning) | — |
+| 58 | затем | then / after that (next in sequence) | Sequencing adverb, close synonym of потом | — |
+| 59 | иначе | otherwise / differently (or else) | Also used to mean "or else" (a conditional warning) | — |
 | 60 | мало | little / few | Takes genitive | мало времени |
-| 61 | много | many / much / a lot | Takes genitive | много людей |
+| 61 | много | many / much / a lot (quantity) | Takes genitive | много людей |
 | 62 | можно | one may / it is possible/allowed to | Impersonal predicate word, not a true adverb of manner | — |
 | 63 | надо | it is necessary / one must/needs to | Impersonal predicate word; synonym нужно | — |
 | 64 | однажды | once / one day | Introduces a narrative event, like English "once upon a time" | — |

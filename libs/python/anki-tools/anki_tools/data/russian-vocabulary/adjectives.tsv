@@ -4,15 +4,15 @@
 3	хороший	good	хоро́ший	хорошая	хорошее	хорошие			плохой	sibilant stem (-жий/-ший/-чий/-щий)	irregular comparative: лучше		New
 4	плохой	bad	плохо́й	плохая	плохое	плохие			хороший	stressed ending (-ой)	irregular comparative: хуже		New
 5	большой	big / large	большо́й	большая	большое	большие			маленький	stressed ending (-ой)	comparative: больше; stressed ending		New
-6	маленький	small / little	ма́ленький	маленькая	маленькое	маленькие			большой	velar stem (-кий/-гий/-хий)	comparative: меньше		New
+6	маленький	small / little (not big)	ма́ленький	маленькая	маленькое	маленькие			большой	velar stem (-кий/-гий/-хий)	comparative: меньше		New
 7	высокий	tall / high	высо́кий	высокая	высокое	высокие			низкий	velar stem (-кий/-гий/-хий)			New
-8	низкий	low / short	ни́зкий	низкая	низкое	низкие			высокий	velar stem (-кий/-гий/-хий)			New
+8	низкий	low / short (not tall)	ни́зкий	низкая	низкое	низкие			высокий	velar stem (-кий/-гий/-хий)			New
 9	сильный	strong	си́льный	сильная	сильное	сильные			слабый	hard			New
 10	слабый	weak	сла́бый	слабая	слабое	слабые			сильный	hard			New
-11	тяжёлый	heavy / hard	тяжёлый	тяжёлая	тяжёлое	тяжёлые			лёгкий	hard	heavy or hard/difficult		New
+11	тяжёлый	heavy / hard (weighty, or difficult)	тяжёлый	тяжёлая	тяжёлое	тяжёлые			лёгкий	hard	heavy or hard/difficult		New
 12	лёгкий	light / easy	лёгкий	лёгкая	лёгкое	лёгкие			тяжёлый	velar stem (-кий/-гий/-хий)	light (weight) or easy		New
 13	длинный	long	дли́нный	длинная	длинное	длинные			короткий	hard			New
-14	короткий	short	коро́ткий	короткая	короткое	короткие			длинный	velar stem (-кий/-гий/-хий)			New
+14	короткий	short (not long)	коро́ткий	короткая	короткое	короткие			длинный	velar stem (-кий/-гий/-хий)			New
 15	быстрый	fast / quick	бы́стрый	быстрая	быстрое	быстрые			медленный	hard			New
 16	медленный	slow	ме́дленный	медленная	медленное	медленные			быстрый	hard			New
 17	трудный	difficult	тру́дный	трудная	трудное	трудные			лёгкий	hard			New
@@ -22,9 +22,9 @@
 21	грязный	dirty	гря́зный	грязная	грязное	грязные			чистый	hard			New
 22	дорогой	expensive / dear	дорого́й	дорогая	дорогое	дорогие			дешёвый	stressed ending (-ой)	also 'dear' as a term of address		New
 23	дешёвый	cheap	дешёвый	дешёвая	дешёвое	дешёвые			дорогой	hard			New
-24	красивый	beautiful / handsome	краси́вый	красивая	красивое	красивые			уродливый	hard			New
+24	красивый	beautiful / handsome (good-looking)	краси́вый	красивая	красивое	красивые			уродливый	hard			New
 25	уродливый	ugly	уро́дливый	уродливая	уродливое	уродливые			красивый	hard			New
-26	ужасный	terrible / awful	ужа́сный	ужасная	ужасное	ужасные				hard			New
+26	ужасный	terrible / awful (dreadful)	ужа́сный	ужасная	ужасное	ужасные				hard			New
 27	правильный	correct / right	пра́вильный	правильная	правильное	правильные			неправильный	hard			New
 28	неправильный	incorrect / wrong	непра́вильный	неправильная	неправильное	неправильные			правильный	hard			New
 29	серьёзный	serious	серьёзный	серьёзная	серьёзное	серьёзные				hard			New
@@ -74,7 +74,7 @@
 73	серый	gray	се́рый	серая	серое	серые				hard			New
 74	коричневый	brown	кори́чневый	коричневая	коричневое	коричневые				hard			New
 75	главный	main / chief	гла́вный	главная	главное	главные				hard			New
-76	первый	first	пе́рвый	первая	первое	первые			последний	hard			New
+76	первый (adjective)	first	пе́рвый	первая	первое	первые			последний	hard			New
 77	последний	last	после́дний	последняя	последнее	последние			первый	soft	soft-stem adjective		New
 78	следующий	next / following	сле́дующий	следующая	следующее	следующие			предыдущий	sibilant stem (-жий/-ший/-чий/-щий)			New
 79	предыдущий	previous	преды́дущий	предыдущая	предыдущее	предыдущие			следующий	sibilant stem (-жий/-ший/-чий/-щий)			New
@@ -93,7 +93,7 @@
 92	будущий	future	бу́дущий	будущая	будущее	будущие			прошлый	sibilant stem (-жий/-ший/-чий/-щий)	в будущем году = next year		New
 93	современный	modern	совреме́нный	современная	современное	современные				hard			New
 94	русский	Russian	ру́сский	русская	русское	русские				velar stem (-кий/-гий/-хий)	lowercase in Russian; also a noun: 'a Russian (person)'		New
-95	разный	different / various	ра́зный	разная	разное	разные			одинаковый	hard			New
+95	разный	different / various (various, assorted)	ра́зный	разная	разное	разные			одинаковый	hard			New
 96	одинаковый	identical / the same	одина́ковый	одинаковая	одинаковое	одинаковые			разный	hard			New
 97	похожий	similar	похо́жий	похожая	похожее	похожие				sibilant stem (-жий/-ший/-чий/-щий)	похож на + accusative		New
 98	полный	full	по́лный	полная	полное	полные			пустой	hard			New
@@ -107,7 +107,7 @@
 106	прямой	straight / direct	прямо́й	прямая	прямое	прямые				stressed ending (-ой)			New
 107	острый	sharp / spicy	о́стрый	острая	острое	острые			тупой	hard			New
 108	тупой	blunt / dumb	тупо́й	тупая	тупое	тупые			острый	stressed ending (-ой)			New
-109	твёрдый	hard / firm	твёрдый	твёрдая	твёрдое	твёрдые			мягкий	hard			New
+109	твёрдый	hard / firm (solid, not soft)	твёрдый	твёрдая	твёрдое	твёрдые			мягкий	hard			New
 110	мягкий	soft	мя́гкий	мягкая	мягкое	мягкие			твёрдый	velar stem (-кий/-гий/-хий)			New
 111	сладкий	sweet	сла́дкий	сладкая	сладкое	сладкие			горький	velar stem (-кий/-гий/-хий)			New
 112	горький	bitter	го́рький	горькая	горькое	горькие			сладкий	velar stem (-кий/-гий/-хий)			New
@@ -122,7 +122,7 @@
 121	мёртвый	dead	мёртвый	мёртвая	мёртвое	мёртвые			живой	hard			New
 122	целый	whole / entire	це́лый	целая	целое	целые				hard			New
 123	глубокий	deep	глубо́кий	глубокая	глубокое	глубокие			мелкий	velar stem (-кий/-гий/-хий)			New
-124	мелкий	shallow / small	ме́лкий	мелкая	мелкое	мелкие			глубокий	velar stem (-кий/-гий/-хий)	shallow (water) or small/fine (grains, change)		New
+124	мелкий	shallow / small (petty, fine-grained)	ме́лкий	мелкая	мелкое	мелкие			глубокий	velar stem (-кий/-гий/-хий)	shallow (water) or small/fine (grains, change)		New
 125	широкий	wide	широ́кий	широкая	широкое	широкие			узкий	velar stem (-кий/-гий/-хий)			New
 126	узкий	narrow	у́зкий	узкая	узкое	узкие			широкий	velar stem (-кий/-гий/-хий)			New
 127	толстый	thick / fat	то́лстый	толстая	толстое	толстые			тонкий	hard			New
@@ -138,7 +138,7 @@
 137	уверенный	confident / sure	уве́ренный	уверенная	уверенное	уверенные				hard	often short form: я уве́рен / уве́рена		New
 138	опасный	dangerous	опа́сный	опасная	опасное	опасные			безопасный	hard			New
 139	безопасный	safe	безопа́сный	безопасная	безопасное	безопасные			опасный	hard			New
-140	прекрасный	wonderful / beautiful	прекра́сный	прекрасная	прекрасное	прекрасные				hard			New
+140	прекрасный	wonderful / beautiful (splendid)	прекра́сный	прекрасная	прекрасное	прекрасные				hard			New
 141	отличный	excellent	отли́чный	отличная	отличное	отличные				hard			New
 142	обычный	usual / ordinary	обы́чный	обычная	обычное	обычные			необычный	hard			New
 143	необычный	unusual	необы́чный	необычная	необычное	необычные			обычный	hard			New
@@ -151,9 +151,9 @@
 150	вредный	harmful	вре́дный	вредная	вредное	вредные			полезный	hard			New
 151	удобный	comfortable / convenient	удо́бный	удобная	удобное	удобные				hard			New
 152	виноватый	guilty	винова́тый	виноватая	виноватое	виноватые				hard	often short form: я винова́т / винова́та		New
-153	другой	other / different	друго́й	другая	другое	другие	—	—	—	stressed ending (-ой)			New
+153	другой	other / different (another one)	друго́й	другая	другое	другие	—	—	—	stressed ending (-ой)			New
 154	единственный	only / sole	еди́нственный	единственная	единственное	единственные	еди́нствен, еди́нственна, еди́нственно, еди́нственны	—	—	hard			New
-155	иной	different / other	ино́й	иная	иное	иные	—	—	—	stressed ending (-ой)	more literary than другой		New
+155	иной	different / other (of another kind)	ино́й	иная	иное	иные	—	—	—	stressed ending (-ой)	more literary than другой		New
 156	каждый	each / every	ка́ждый	каждая	каждое	каждые	—	—	—	hard	plural каждые is real, used with numerals	каждые пять минут	New
 157	личный	personal / private	ли́чный	личная	личное	личные	ли́чен, ли́чна, ли́чно, ли́чны	—	общий	hard			New
 158	лучший	better / best (attributive comparative/superlative)	лу́чший	лучшая	лучшее	лучшие	—	—	худший	sibilant stem (-жий/-ший/-чий/-щий)	comparative/superlative of хороший, used attributively; cf. predicate лучше (already noted on the хороший row)		New
@@ -161,9 +161,9 @@
 160	огромный	huge / enormous	огро́мный	огромная	огромное	огромные	огро́мен, огро́мна, огро́мно, огро́мны	огро́мнее	кро́шечный	hard			New
 161	остальной	remaining / the rest of	остально́й	остальная	остальное	остальные	—	—	—	stressed ending (-ой)	usually used in the plural: остальны́е = the others		New
 162	советский	Soviet	сове́тский	советская	советское	советские	—	—	—	velar stem (-кий/-гий/-хий)	relational adjective: no short form or comparative		New
-163	страшный	terrible / frightful / scary	стра́шный	страшная	страшное	страшные	стра́шен, страшна́, стра́шно, стра́шны	стра́шнее	безопа́сный	hard	short-form stress is mobile like нужен/нужна́/ну́жно/нужны́ -- moderate confidence, verify		New
-164	замечательный	wonderful	замеча́тельный	замечательная	замечательное	замечательные	замеча́телен, замеча́тельна, замеча́тельно, замеча́тельны	замеча́тельнее	—	hard			New
-165	знаменитый	famous	знамени́тый	знаменитая	знаменитое	знаменитые	знамени́т, знамени́та, знамени́то, знамени́ты	знамени́тее	—	hard			New
+163	страшный	terrible / frightful / scary (frightening)	стра́шный	страшная	страшное	страшные	стра́шен, страшна́, стра́шно, стра́шны	стра́шнее	безопа́сный	hard	short-form stress is mobile like нужен/нужна́/ну́жно/нужны́ -- moderate confidence, verify		New
+164	замечательный	wonderful (remarkable)	замеча́тельный	замечательная	замечательное	замечательные	замеча́телен, замеча́тельна, замеча́тельно, замеча́тельны	замеча́тельнее	—	hard			New
+165	знаменитый	famous (celebrated)	знамени́тый	знаменитая	знаменитое	знаменитые	знамени́т, знамени́та, знамени́то, знамени́ты	знамени́тее	—	hard			New
 166	должен	must / have to / obliged to	до́лжен	должна́	должно́	должны́	до́лжен, должна́, должно́, должны́			short-form only	exists ONLY in the short form; takes an infinitive (я до́лжен идти́) and agrees with the subject		New
 167	рад	glad / pleased	рад	ра́да	ра́до	ра́ды	рад, ра́да, ра́до, ра́ды			short-form only	exists ONLY in the short form; рад + infinitive or + dative		New
 168	классический	classical	класси́ческий	класси́ческая	класси́ческое	класси́ческие				velar stem (-кий/-гий/-хий)			New

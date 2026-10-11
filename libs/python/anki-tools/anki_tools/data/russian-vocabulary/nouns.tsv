@@ -10,7 +10,7 @@
 9	утро	morning	у́тро	n	у́тра			No	Time			New
 10	вечер	evening	ве́чер	m	вечера́			No	Time			New
 11	ночь	night	ночь	f	но́чи			No	Time			New
-12	век	century / age	век	m	века́			No	Time			New
+12	век	century / age (an era)	век	m	века́			No	Time			New
 13	прошлое	the past	про́шлое	n	—			No	Time	declines like an adjective		New
 14	настоящее	the present	настоя́щее	n	—			No	Time	declines like an adjective		New
 15	будущее	the future	бу́дущее	n	—			No	Time	declines like an adjective		New
@@ -22,7 +22,7 @@
 21	часть	part	часть	f	ча́сти			No	Space & Parts			New
 22	половина	half	полови́на	f	полови́ны			No	Space & Parts			New
 23	человек	person	челове́к	m	лю́ди			Yes	People	irregular plural: люди (5 человек after numbers)		New
-24	люди	people	лю́ди	pl form	—			Yes	People	plural of человек		New
+24	люди	people (persons, individuals)	лю́ди	pl form	—			Yes	People	plural of человек		New
 25	друг	friend (m)	друг	m	друзья́			Yes	People	irregular plural: друзья		New
 26	подруга	friend (f)	подру́га	f	подру́ги			Yes	People			New
 27	мужчина	man	мужчи́на	m	мужчи́ны			Yes	People	masculine despite -а ending		New
@@ -111,7 +111,7 @@
 110	озеро	lake	о́зеро	n	озёра			No	Nature & Weather			New
 111	море	sea	мо́ре	n	моря́			No	Nature & Weather			New
 112	океан	ocean	океа́н	m	океа́ны			No	Nature & Weather			New
-113	берег	shore / bank	бе́рег	m	берега́			No	Nature & Weather	на берегу́ (prep. -у́)		New
+113	берег	shore / bank (of a river)	бе́рег	m	берега́			No	Nature & Weather	на берегу́ (prep. -у́)		New
 114	поле	field	по́ле	n	поля́			No	Nature & Weather			New
 115	остров	island	о́стров	m	острова́			No	Nature & Weather			New
 116	пыль	dust	пыль	f	—			No	Nature & Weather			New
@@ -157,7 +157,7 @@
 156	шкаф	wardrobe / cupboard	шкаф	m	шкафы́			No	Home & Household			New
 157	зеркало	mirror	зе́ркало	n	зеркала́			No	Home & Household			New
 158	картина	picture / painting	карти́на	f	карти́ны			No	Home & Household			New
-159	лампа	lamp	ла́мпа	f	ла́мпы			No	Home & Household			New
+159	лампа	lamp (a free-standing lamp)	ла́мпа	f	ла́мпы			No	Home & Household			New
 160	мыло	soap	мы́ло	n	—			No	Home & Household			New
 161	полотенце	towel	полоте́нце	n	полоте́нца			No	Home & Household			New
 162	посуда	dishes	посу́да	f	—			No	Home & Household	collective noun; no plural		New
@@ -235,7 +235,7 @@
 234	бар	bar	бар	m	ба́ры			No	City & Places			New
 235	гостиница	hotel (the ordinary Russian word)	гости́ница	f	гости́ницы			No	City & Places			New
 236	отель	hotel (borrowed term, usually upscale/international)	оте́ль	m	оте́ли			No	City & Places			New
-237	банк	bank	банк	m	ба́нки			No	City & Places			New
+237	банк	bank (the financial one)	банк	m	ба́нки			No	City & Places			New
 238	почта	post office / mail	по́чта	f	—			No	City & Places	на почте (на + prep.)		New
 239	центр	center	центр	m	це́нтры			No	City & Places			New
 240	станция	station	ста́нция	f	ста́нции			No	City & Places	на станции (на + prep.)		New
@@ -302,13 +302,13 @@
 301	ученик	pupil	учени́к	m	ученики́			Yes	Jobs & Roles			New
 302	директор	director / principal	дире́ктор	m	директора́			Yes	Jobs & Roles			New
 303	начальник	boss	нача́льник	m	нача́льники			Yes	Jobs & Roles			New
-304	менеджер	manager	ме́неджер	m	ме́неджеры			Yes	Jobs & Roles			New
+304	менеджер	manager (a business manager)	ме́неджер	m	ме́неджеры			Yes	Jobs & Roles			New
 305	рабочий	worker	рабо́чий	m	рабо́чие			Yes	Jobs & Roles	declines like an adjective		New
 306	инженер	engineer	инжене́р	m	инжене́ры			Yes	Jobs & Roles			New
 307	программист	programmer	программи́ст	m	программи́сты			Yes	Jobs & Roles			New
 308	строитель	builder	строи́тель	m	строи́тели			Yes	Jobs & Roles			New
-309	водитель	driver	води́тель	m	води́тели			Yes	Jobs & Roles			New
-310	шофёр	chauffeur / driver	шофёр	m	шофёры			Yes	Jobs & Roles			New
+309	водитель	driver (the one driving)	води́тель	m	води́тели			Yes	Jobs & Roles			New
+310	шофёр	chauffeur / driver (a hired driver)	шофёр	m	шофёры			Yes	Jobs & Roles			New
 311	пилот	pilot	пило́т	m	пило́ты			Yes	Jobs & Roles			New
 312	продавец	salesperson	продаве́ц	m	продавцы́			Yes	Jobs & Roles			New
 313	повар	cook / chef	по́вар	m	повара́			Yes	Jobs & Roles			New
@@ -327,12 +327,12 @@
 326	спортсмен	athlete	спортсме́н	m	спортсме́ны			Yes	Jobs & Roles			New
 327	жизнь	life	жизнь	f	жи́зни			No	Life & Mind			New
 328	смерть	death	смерть	f	сме́рти			No	Life & Mind			New
-329	возраст	age	во́зраст	m	—			No	Life & Mind			New
+329	возраст	age (how old someone is)	во́зраст	m	—			No	Life & Mind			New
 330	молодость	youth	мо́лодость	f	—			No	Life & Mind			New
 331	старость	old age	ста́рость	f	—			No	Life & Mind			New
 332	детство	childhood	де́тство	n	—			No	Life & Mind			New
 333	ум	mind / intellect	ум	m	умы́			No	Life & Mind			New
-334	разум	reason	ра́зум	m	—			No	Life & Mind			New
+334	разум	reason (the faculty of reason)	ра́зум	m	—			No	Life & Mind			New
 335	мысль	thought	мысль	f	мы́сли			No	Life & Mind			New
 336	идея	idea	иде́я	f	иде́и			No	Life & Mind			New
 337	слово	word	сло́во	n	слова́			No	Life & Mind			New
@@ -350,9 +350,9 @@
 349	правда (noun)	truth / justice	пра́вда	f	—			No	Life & Mind			New
 350	ложь	lie	ложь	f	—			No	Life & Mind			New
 351	ошибка	mistake	оши́бка	f	оши́бки			No	Life & Mind			New
-352	секрет	secret	секре́т	m	секре́ты			No	Life & Mind			New
-353	тайна	mystery / secret	та́йна	f	та́йны			No	Life & Mind			New
-354	дело	matter / affair / business	де́ло	n	дела́			No	Work, Law & Rules			New
+352	секрет	secret (a kept secret)	секре́т	m	секре́ты			No	Life & Mind			New
+353	тайна	mystery / secret (a mystery)	та́йна	f	та́йны			No	Life & Mind			New
+354	дело	matter / affair / business (an affair)	де́ло	n	дела́			No	Work, Law & Rules			New
 355	работа	work / job	рабо́та	f	рабо́ты			No	Work, Law & Rules	на работе (на + prep.)		New
 356	труд	labor	труд	m	труды́			No	Work, Law & Rules			New
 357	отдых	rest / vacation	о́тдых	m	—			No	Work, Law & Rules			New
@@ -398,8 +398,8 @@
 397	ненависть	hatred	не́нависть	f	—			No	Beliefs & Emotions			New
 398	страх	fear	страх	m	стра́хи			No	Beliefs & Emotions			New
 399	ужас	horror	у́жас	m	—			No	Beliefs & Emotions			New
-400	гнев	anger / wrath	гнев	m	—			No	Beliefs & Emotions			New
-401	злость	anger / spite	злость	f	—			No	Beliefs & Emotions			New
+400	гнев	anger / wrath (fury)	гнев	m	—			No	Beliefs & Emotions			New
+401	злость	anger / spite (malice)	злость	f	—			No	Beliefs & Emotions			New
 402	радость	joy	ра́дость	f	ра́дости			No	Beliefs & Emotions			New
 403	счастье	happiness	сча́стье	n	—			No	Beliefs & Emotions			New
 404	горе	grief	го́ре	n	—			No	Beliefs & Emotions			New
@@ -413,13 +413,13 @@
 412	болезнь	illness	боле́знь	f	боле́зни			No	Health			New
 413	проблема	problem	пробле́ма	f	пробле́мы			No	Concepts			New
 414	решение	decision / solution	реше́ние	n	реше́ния			No	Concepts			New
-415	причина	cause / reason	причи́на	f	причи́ны			No	Concepts			New
+415	причина	cause / reason (the why)	причи́на	f	причи́ны			No	Concepts			New
 416	следствие	consequence / investigation	сле́дствие	n	сле́дствия			No	Concepts			New
-417	смысл	meaning / sense	смысл	m	—			No	Concepts			New
-418	значение	meaning / significance	значе́ние	n	значе́ния			No	Concepts			New
+417	смысл	meaning / sense (the point of it)	смысл	m	—			No	Concepts			New
+418	значение	meaning / significance (what it signifies)	значе́ние	n	значе́ния			No	Concepts			New
 419	качество	quality	ка́чество	n	ка́чества			No	Concepts			New
 420	количество	quantity	коли́чество	n	—			No	Concepts			New
-421	число	number / date	число́	n	чи́сла			No	Concepts			New
+421	число	number / date (a numeral, or a calendar day)	число́	n	чи́сла			No	Concepts			New
 422	цифра	digit / figure	ци́фра	f	ци́фры			No	Concepts			New
 423	размер	size	разме́р	m	разме́ры			No	Concepts			New
 424	форма	shape / form / uniform	фо́рма	f	фо́рмы			No	Concepts			New
@@ -428,7 +428,7 @@
 427	вкус	taste	вкус	m	вку́сы			No	Concepts			New
 428	вес	weight	вес	m	—			No	Concepts			New
 429	рост	height / growth	рост	m	—			No	Concepts			New
-430	вид	view / kind / appearance	вид	m	ви́ды			No	Concepts			New
+430	вид	view / kind / appearance (what something looks like)	вид	m	ви́ды			No	Concepts			New
 431	образ	image / manner	о́браз	m	о́бразы			No	Concepts			New
 432	роль	role	роль	f	ро́ли			No	Concepts			New
 433	условие	condition	усло́вие	n	усло́вия			No	Concepts			New
@@ -440,15 +440,15 @@
 439	факт	fact	факт	m	фа́кты			No	Concepts			New
 440	цель	goal / target	цель	f	це́ли			No	Concepts			New
 441	средство	means / remedy	сре́дство	n	сре́дства			No	Concepts			New
-442	способ	way / method	спо́соб	m	спо́собы			No	Concepts			New
-443	метод	method	ме́тод	m	ме́тоды			No	Concepts			New
+442	способ	way / method (a way of doing something)	спо́соб	m	спо́собы			No	Concepts			New
+443	метод	method (a formal method)	ме́тод	m	ме́тоды			No	Concepts			New
 444	система	system	систе́ма	f	систе́мы			No	Concepts			New
 445	процесс	process	проце́сс	m	проце́ссы			No	Concepts			New
 446	программа	program	програ́мма	f	програ́ммы			No	Concepts			New
 447	план	plan	план	m	пла́ны			No	Concepts			New
 448	проект	project	прое́кт	m	прое́кты			No	Concepts			New
-449	договор	agreement / contract	догово́р	m	догово́ры			No	Concepts			New
-450	контракт	contract	контра́кт	m	контра́кты			No	Concepts			New
+449	договор	agreement / contract (a treaty or accord)	догово́р	m	догово́ры			No	Concepts			New
+450	контракт	contract (the formal document)	контра́кт	m	контра́кты			No	Concepts			New
 451	документ	document	докуме́нт	m	докуме́нты			No	Concepts			New
 452	деньги	money	де́ньги	pl-only	—			No	Money & Economy	plural-only noun		New
 453	цена	price	цена́	f	це́ны			No	Money & Economy			New
@@ -458,15 +458,15 @@
 457	зарплата	salary	зарпла́та	f	зарпла́ты			No	Money & Economy			New
 458	богатство	wealth	бога́тство	n	—			No	Money & Economy			New
 459	бедность	poverty	бе́дность	f	—			No	Money & Economy			New
-460	бизнес	business	би́знес	m	—			No	Money & Economy			New
+460	бизнес	business (commerce)	би́знес	m	—			No	Money & Economy			New
 461	компания	company	компа́ния	f	компа́нии			No	Money & Economy			New
 462	фирма	firm	фи́рма	f	фи́рмы			No	Money & Economy			New
 463	организация	organization	организа́ция	f	организа́ции			No	Money & Economy			New
 464	общество	society	о́бщество	n	о́бщества			No	Society & Politics			New
 465	государство	state	госуда́рство	n	госуда́рства			No	Society & Politics			New
 466	страна	country	страна́	f	стра́ны			No	Society & Politics			New
-467	народ	people / nation	наро́д	m	наро́ды			No	Society & Politics			New
-468	нация	nation	на́ция	f	на́ции			No	Society & Politics			New
+467	народ	people / nation (a people)	наро́д	m	наро́ды			No	Society & Politics			New
+468	нация	nation (a nation state)	на́ция	f	на́ции			No	Society & Politics			New
 469	республика	republic	респу́блика	f	респу́блики			No	Society & Politics			New
 470	партия	party (political) / batch	па́ртия	f	па́ртии			No	Society & Politics			New
 471	власть	power / authority	власть	f	вла́сти (= the authorities)			No	Society & Politics			New
@@ -481,7 +481,7 @@
 480	движение	movement / traffic	движе́ние	n	движе́ния			No	Force & Motion			New
 481	скорость	speed	ско́рость	f	ско́рости			No	Force & Motion			New
 482	ход	move / course	ход	m	ходы́			No	Force & Motion			New
-483	взгляд	look / glance / view	взгляд	m	взгля́ды			No	Force & Motion			New
+483	взгляд	look / glance / view (a gaze, or an opinion)	взгляд	m	взгля́ды			No	Force & Motion			New
 484	внимание	attention	внима́ние	n	—			No	Character & Values			New
 485	память	memory	па́мять	f	—			No	Character & Values			New
 486	характер	character / personality	хара́ктер	m	хара́ктеры			No	Character & Values			New
@@ -505,7 +505,7 @@
 504	попытка	attempt	попы́тка	f	попы́тки			No	Concepts			New
 505	возможность	opportunity / possibility	возмо́жность	f	возмо́жности			No	Concepts			New
 506	необходимость	necessity	необходи́мость	f	—			No	Concepts			New
-507	случайность	chance / accident	случа́йность	f	случа́йности			No	Concepts			New
+507	случайность	chance / accident (a coincidence)	случа́йность	f	случа́йности			No	Concepts			New
 508	закономерность	pattern / regularity	закономе́рность	f	закономе́рности			No	Concepts			New
 509	судьба	fate	судьба́	f	су́дьбы			No	Concepts			New
 510	инструмент	tool / instrument	инструме́нт	m	инструме́нты			No	Weapons & Hazards			New
@@ -523,7 +523,7 @@
 522	пятно	stain / spot	пятно́	n	пя́тна			No	Weapons & Hazards			New
 523	луч	ray / beam	луч	m	лучи́			No	Shapes & Measures			New
 524	волна	wave	волна́	f	во́лны			No	Shapes & Measures			New
-525	линия	line	ли́ния	f	ли́нии			No	Shapes & Measures			New
+525	линия	line (a geometric line)	ли́ния	f	ли́нии			No	Shapes & Measures			New
 526	круг	circle	круг	m	круги́			No	Shapes & Measures			New
 527	угол	corner / angle	у́гол	m	углы́			No	Shapes & Measures	в углу́ / на углу́		New
 528	уровень	level	у́ровень	m	у́ровни			No	Shapes & Measures			New
@@ -534,7 +534,7 @@
 533	срок	term / deadline	срок	m	сро́ки			No	Shapes & Measures			New
 534	период	period	пери́од	m	пери́оды			No	Shapes & Measures			New
 535	этап	stage	эта́п	m	эта́пы			No	Shapes & Measures			New
-536	очередь	line / queue / turn	о́чередь	f	о́череди			No	Groups & Quantity			New
+536	очередь	line / queue / turn (people waiting)	о́чередь	f	о́череди			No	Groups & Quantity			New
 537	пара	pair / couple	па́ра	f	па́ры			No	Groups & Quantity			New
 538	толпа	crowd	толпа́	f	то́лпы			No	Groups & Quantity			New
 539	группа	group	гру́ппа	f	гру́ппы			No	Groups & Quantity			New
@@ -548,28 +548,28 @@
 547	прибытие	arrival	прибы́тие	n	—			No	Transport & Travel			New
 548	россия	Russia	росси́я	f	—			No	Society & Politics			New
 549	рубль	ruble	рубль	m	рубли́			No	Money & Economy	after 2-4: рубля́ (gen. sg.); after 5+: рубле́й (gen. pl.)		New
-550	ряд	row / line	ряд	m	ряды́			No	Shapes & Measures			New
+550	ряд	row / line (a row of things)	ряд	m	ряды́			No	Shapes & Measures			New
 551	старик	old man	стари́к	m	старики́			Yes	People			New
 552	сторона	side	сторона́	f	сто́роны		сто́рон	No	Space & Parts	stress shifts in plural: сто́роны (cf. singular сторона́); gen. pl. сто́рон has no vowel -- verify before relying on this pair		New
 553	чувство	feeling	чу́вство	n	чу́вства			No	Beliefs & Emotions			New
 554	раз	time / occasion (as in "once, twice...")	раз	m	—		раз	No	Time	counting noun: ра́за (gen. sg., after 2-4); пять раз (gen. pl. = nom. sg. after 5+; no -ов)		New
-555	фильм	film / movie	фи́льм	m	фи́льмы			No	Knowledge & Culture			New
+555	фильм	film / movie (a particular film)	фи́льм	m	фи́льмы			No	Knowledge & Culture			New
 556	теннис	tennis	те́ннис	m	—			No	Sports & Games			New
 557	совет	advice / council	сове́т	m	сове́ты			No	Concepts	дать сове́т = to give advice		New
 558	бейсбол	baseball	бейсбо́л	m	—			No	Sports & Games			New
 559	футбол	football / soccer	футбо́л	m	—			No	Sports & Games			New
 560	понедельник	Monday	понеде́льник	m	понеде́льники			No	Time	в понеде́льник = on Monday		New
 561	момент	moment	моме́нт	m	моме́нты			No	Time			New
-562	управляющий	manager	управля́ющий	m	управля́ющие			Yes	Jobs & Roles	declines like an adjective		New
+562	управляющий	manager (the one in charge, an administrator)	управля́ющий	m	управля́ющие			Yes	Jobs & Roles	declines like an adjective		New
 563	свидание	date / meeting	свида́ние	n	свида́ния			No	Life & Mind	пойти́ на свида́ние = to go on a date		New
 564	лето	summer	ле́то	n	—			No	Nature & Weather	ле́том = in summer (adverb)		New
 565	контроль	control	контро́ль	m	—			No	Work, Law & Rules	masculine soft-sign noun		New
 566	подозреваемый	suspect	подозрева́емый	m	подозрева́емые			Yes	Work, Law & Rules	declines like an adjective		New
 567	спорт	sport	спорт	m	—			No	Sports & Games			New
 568	кусок	piece	кусо́к	m	куски́			No	Shapes & Measures	fleeting -о-: куска́, куски́		New
-569	шанс	chance	шанс	m	ша́нсы			No	Concepts			New
-570	офис	office	о́фис	m	о́фисы			No	City & Places			New
-571	номер	number / hotel room	но́мер	m	номера́			No	Concepts	plural номера́ is end-stressed		New
+569	шанс	chance (an opportunity)	шанс	m	ша́нсы			No	Concepts			New
+570	офис	office (a workplace)	о́фис	m	о́фисы			No	City & Places			New
+571	номер	number / hotel room (an assigned number)	но́мер	m	номера́			No	Concepts	plural номера́ is end-stressed		New
 572	роза	rose	ро́за	f	ро́зы			No	Nature & Weather			New
 573	камера	camera	ка́мера	f	ка́меры			No	Objects			New
 574	баскетбол	basketball	баскетбо́л	m	—			No	Sports & Games			New
