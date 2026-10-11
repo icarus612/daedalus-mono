@@ -98,7 +98,7 @@ EXPECTED_HEADERS = {
 }
 
 EXPECTED_LINE_COUNTS = {
-    "nouns.tsv": 630,
+    "nouns.tsv": 625,
     "verbs.tsv": 210,
     "adjectives.tsv": 173,
     "adverbs.tsv": 153,

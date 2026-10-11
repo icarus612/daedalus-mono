@@ -41,18 +41,18 @@ _DATA_DIR = (
 )
 _REAL_WORKBOOK = Path("~/Downloads/russian_vocabulary.xlsx").expanduser()
 
+# Only the two genuine homonyms remain: просто and согласно each exist as
+# two different parts of speech. The five indeclinable nouns that used to
+# sit here (кафе, кино, кофе, метро, пальто) were duplicates, not
+# homonyms -- an indeclinable noun does not decline, so it has no business
+# in the Mutable deck, and the Mutable copies are gone.
 _KNOWN_OVERLAP_SLUGS = {
-    "кафе",
-    "кино",
-    "кофе",
-    "метро",
-    "пальто",
     "просто",
     "согласно",
 }
 
 _PER_DECK_NOTES = {
-    "Nouns": 629,
+    "Nouns": 624,
     "Verbs": 209,
     "Adjectives": 172,
     "Adverbs": 132,
@@ -60,7 +60,7 @@ _PER_DECK_NOTES = {
     "Numerals": 55,
 }
 _PER_DECK_CARDS = {
-    "Nouns": 1258,
+    "Nouns": 1248,
     "Verbs": 836,
     "Adjectives": 344,
     "Adverbs": 264,
@@ -72,7 +72,7 @@ _FILENAME_RE = re.compile(r"^[^/]+_(?:f1|m2)\.mp3$")
 # Raw TSV row counts before lane missing-base-words hand-appended new rows
 # to these three sheets (see the data dir's README); Adverbs is untouched.
 _ORIGINAL_ROW_COUNTS = {
-    "Nouns": 541,
+    "Nouns": 536,
     "Verbs": 179,
     "Adjectives": 152,
 }
@@ -175,7 +175,7 @@ def test_full_pipeline_regenerates_byte_identical_tsvs(tmp_path):
 def test_full_pipeline_note_and_card_totals():
     nouns, verbs, adjectives, adverbs, pronouns, numerals = _parse_all_rows()
 
-    assert len(nouns) == 629
+    assert len(nouns) == 624
     assert len(verbs) == 209
     assert len(adjectives) == 172
     assert len(adverbs) == 132
@@ -190,7 +190,7 @@ def test_full_pipeline_note_and_card_totals():
         + len(pronouns)
         + len(numerals)
     )
-    assert total_notes == 1220
+    assert total_notes == 1215
 
     cards_by_sheet = {
         "Nouns": len(nouns) * 2,
@@ -201,7 +201,7 @@ def test_full_pipeline_note_and_card_totals():
         "Numerals": len(numerals) * 2,
     }
     assert cards_by_sheet == _PER_DECK_CARDS
-    assert sum(cards_by_sheet.values()) == 2858
+    assert sum(cards_by_sheet.values()) == 2848
 
 
 def test_full_pipeline_base_word_and_slug_totals():
@@ -211,12 +211,12 @@ def test_full_pipeline_base_word_and_slug_totals():
     for row in (*nouns, *verbs, *adjectives, *adverbs, *pronouns, *numerals):
         all_base_words.extend(row.base_words)
 
-    assert len(all_base_words) == 1427
+    assert len(all_base_words) == 1422
 
     slugs = [sanitize_word_slug(word) for word in all_base_words]
     dupes = {s: c for s, c in Counter(slugs).items() if c > 1}
     assert set(dupes) == _EXPECTED_DUPLICATE_SLUGS, dupes
-    assert len(set(slugs)) == 1422
+    assert len(set(slugs)) == 1417
 
     assert _KNOWN_OVERLAP_SLUGS <= set(slugs)
 
@@ -305,7 +305,7 @@ def test_real_source_builds_the_exact_deck_and_card_counts_unmodified(
                 package_path=out_path, options=ImportAnkiPackageOptions()
             )
         )
-        assert fresh_col.note_count() == 1220
+        assert fresh_col.note_count() == 1215
 
         for sheet, expected_notes in _PER_DECK_NOTES.items():
             deck_name = plan.subdeck_name(sheet)
@@ -350,7 +350,7 @@ def test_real_source_reimport_is_idempotent_no_duplicate_notetypes(
         fresh_col.import_anki_package(
             ImportAnkiPackageRequest(package_path=out2, options=options)
         )
-        assert fresh_col.note_count() == 1220
+        assert fresh_col.note_count() == 1215
         guids_after_second = {
             fresh_col.get_note(nid).guid for nid in fresh_col.find_notes("")
         }
@@ -365,7 +365,7 @@ def test_real_source_reimport_is_idempotent_no_duplicate_notetypes(
         fresh_col.close()
 
 
-def test_real_source_predicted_audio_filenames_well_formed_and_number_2844():
+def test_real_source_predicted_audio_filenames_well_formed_and_number_2834():
     nouns, verbs, adjectives, adverbs, pronouns, numerals = _parse_all_rows()
 
     filenames: set[str] = set()
@@ -373,7 +373,7 @@ def test_real_source_predicted_audio_filenames_well_formed_and_number_2844():
         for base_word in row.base_words:
             filenames.update(plan.audio_names(base_word))
 
-    assert len(filenames) == 2844
+    assert len(filenames) == 2834
     malformed = [name for name in filenames if not _FILENAME_RE.match(name)]
     assert malformed == []
 
@@ -413,7 +413,7 @@ def test_audio_dry_run_over_real_media_dir_reports_exact_pending_count(
     match = re.match(r"total (\d+) / present (\d+) / pending (\d+)$", lines[0])
     assert match is not None
     total, present, pending = (int(g) for g in match.groups())
-    assert total == 2854
+    assert total == 2844
     assert present + pending == total
     assert (
         lines[1]

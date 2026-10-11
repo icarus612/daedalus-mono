@@ -200,7 +200,6 @@
 199	брюки	trousers	брю́ки	pl-only	—			No	Clothing	plural-only noun		New
 200	штаны	pants	штаны́	pl-only	—			No	Clothing	plural-only noun		New
 201	куртка	jacket	ку́ртка	f	ку́ртки			No	Clothing			New
-202	пальто	coat	пальто́	n	пальто́ (indeclinable)			No	Clothing	indeclinable; neuter		New
 203	шапка	hat (knit/winter)	ша́пка	f	ша́пки			No	Clothing			New
 204	шляпа	hat (brimmed)	шля́па	f	шля́пы			No	Clothing			New
 205	шарф	scarf	шарф	m	шарфы́			No	Clothing			New
@@ -228,10 +227,8 @@
 227	класс	class / grade / classroom	класс	m	кла́ссы			No	City & Places			New
 228	библиотека	library	библиоте́ка	f	библиоте́ки			No	City & Places			New
 229	театр	theater	теа́тр	m	теа́тры			No	City & Places			New
-230	кино	cinema / movies	кино́	n	— (indeclinable)			No	City & Places	indeclinable; neuter		New
 231	музей	museum	музе́й	m	музе́и			No	City & Places			New
 232	ресторан	restaurant	рестора́н	m	рестора́ны			No	City & Places			New
-233	кафе	café	кафе́	n	кафе́ (indeclinable)			No	City & Places	indeclinable; neuter		New
 234	бар	bar	бар	m	ба́ры			No	City & Places			New
 235	гостиница	hotel (the ordinary Russian word)	гости́ница	f	гости́ницы			No	City & Places			New
 236	отель	hotel (borrowed term, usually upscale/international)	оте́ль	m	оте́ли			No	City & Places			New
@@ -242,7 +239,6 @@
 241	остановка	stop (bus/tram)	остано́вка	f	остано́вки			No	City & Places			New
 242	вокзал	train station	вокза́л	m	вокза́лы			No	City & Places	на вокзале (на + prep.)		New
 243	аэропорт	airport	аэропо́рт	m	аэропо́рты			No	City & Places			New
-244	метро	subway / metro	метро́	n	— (indeclinable)			No	City & Places	indeclinable; neuter		New
 245	машина	car / machine	маши́на	f	маши́ны			No	Transport & Travel			New
 246	автомобиль	automobile	автомоби́ль	m	автомоби́ли			No	Transport & Travel			New
 247	автобус	bus	авто́бус	m	авто́бусы			No	Transport & Travel			New
@@ -259,7 +255,6 @@
 258	еда	food	еда́	f	—			No	Food & Drink			New
 259	продукт	product / (pl.) groceries	проду́кт	m	проду́кты			No	Food & Drink			New
 260	чай	tea	чай	m	—			No	Food & Drink			New
-261	кофе	coffee	ко́фе	m	— (indeclinable)			No	Food & Drink	indeclinable; masculine		New
 262	сок	juice	сок	m	—			No	Food & Drink			New
 263	молоко	milk	молоко́	n	—			No	Food & Drink			New
 264	вино	wine	вино́	n	ви́на (= kinds of wine)			No	Food & Drink			New

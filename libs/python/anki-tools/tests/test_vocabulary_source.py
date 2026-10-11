@@ -23,7 +23,7 @@ from anki_tools.vocabulary_source import (
 REAL_WORKBOOK = Path("~/Downloads/russian_vocabulary.xlsx").expanduser()
 
 EXPECTED_ROW_COUNTS = {
-    "Nouns": 541,
+    "Nouns": 536,
     "Verbs": 179,
     "Adjectives": 152,
     "Adverbs": 152,
