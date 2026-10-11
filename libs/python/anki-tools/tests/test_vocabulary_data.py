@@ -98,18 +98,19 @@ EXPECTED_HEADERS = {
 }
 
 EXPECTED_LINE_COUNTS = {
-    "nouns.tsv": 555,
-    "verbs.tsv": 196,
-    "adjectives.tsv": 166,
+    "nouns.tsv": 630,
+    "verbs.tsv": 210,
+    "adjectives.tsv": 173,
     "adverbs.tsv": 153,
-    "pronouns.tsv": 22,
+    "pronouns.tsv": 24,
     "numerals.tsv": 56,
 }
 
 DASH_VALUES = {"—", "–", "-", "--"}
 
 EXPECTED_DASH_COUNTS = {
-    ("nouns.tsv", "Plural"): 113,
+    ("nouns.tsv", "Plural"): 131,
+    ("verbs.tsv", "Perfective"): 2,
     ("verbs.tsv", "я (1sg)"): 2,
     ("verbs.tsv", "ты (2sg)"): 2,
     ("verbs.tsv", "они (3pl)"): 2,
@@ -120,7 +121,7 @@ EXPECTED_DASH_COUNTS = {
     ("adverbs.tsv", "Comparative"): 36,
     ("adverbs.tsv", "Adverb"): 22,
     ("adverbs.tsv", "Stress"): 22,
-    ("pronouns.tsv", "Gender Forms"): 7,
+    ("pronouns.tsv", "Gender Forms"): 8,
     ("numerals.tsv", "Gender Forms"): 44,
 }
 

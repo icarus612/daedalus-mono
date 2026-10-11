@@ -97,7 +97,7 @@
 96	отдыхать	отдохнуть	rest / relax	отдыха́ть / отдохну́ть									New
 97	уставать	устать	get tired	устава́ть / уста́ть							устаю́, устаёшь		New
 98	просыпаться	проснуться	wake up	просыпа́ться / просну́ться									New
-99	засыпать	заснуть	fall asleep	засыпа́ть / засну́ть									New
+99	засыпать	заснуть	fall asleep	засыпа́ть / засну́ть							усну́ть is an equally common perfective alongside засну́ть		New
 100	мечтать	помечтать	dream	мечта́ть / помечта́ть									New
 101	желать	пожелать	wish	жела́ть / пожела́ть									New
 102	приказывать	приказать	order / command	прика́зывать / приказа́ть									New
@@ -194,3 +194,17 @@
 193	становиться	стать	to become / to start (doing)	станови́ться / стать	irregular (perf. future: ста́ну/ста́нешь/ста́нут)	становлю́сь	стано́вишься	стано́вятся	стал / стала́	+ instrumental for a predicate noun/adj. (стал изве́стным)	target word is the perfective стать; imperfective станови́ться shown first; стал/стала́ has mobile past stress like был/была́ -- moderate confidence, verify		New
 194	удаваться	удаться	to succeed / turn out well / manage	удава́ться / уда́ться	irregular (д-verb; impersonal -- 3sg only: уда́стся/удало́сь)	—	—	—	—	+ dative (experiencer): мне удало́сь	impersonal verb, like прийтись; imperfective present is удаётся; no personal m/f/pl forms exist, so those cells are dashed rather than forced		New
 195	хотеть	захотеть	to want	хоте́ть / захоте́ть	irregular (mixed: хочу́/хо́чешь/хотя́т)	хочу́	хо́чешь	хотя́т	хоте́л / хоте́ла	+ genitive (partitive) or accusative; + infinitive	mixed conjugation: singular forms use 1st-conj. endings, plural uses 2nd-conj. (хотя́т, not "хочут")		New
+196	разговаривать	поговорить	talk / have a conversation	разгова́ривать / поговори́ть	1st (-ешь)	разгова́риваю	разгова́риваешь	разгова́ривают	разгова́ривал / разгова́ривала	с + instrumental	разгова́ривать is about the activity of talking; поговори́ть = to have one (finished) talk		New
+197	уметь	суметь	be able to / know how to	уме́ть / суме́ть	1st (-ешь)	уме́ю	уме́ешь	уме́ют	уме́л / уме́ла	+ infinitive	a learned skill, unlike мочь = to be physically able		New
+198	ненавидеть	возненавидеть	hate	ненави́деть / возненави́деть	2nd (-ишь)	ненави́жу	ненави́дишь	ненави́дят	ненави́дел / ненави́дела	+ accusative	д→ж in the 1sg		New
+199	звать	позвать	call / summon / be named	зва́ть / позва́ть	1st (-ешь)	зову́	зовёшь	зову́т	звал / звала́	+ accusative	меня́ зову́т... = my name is... (literally 'they call me')		New
+200	задавать	задать	ask (a question) / set	задава́ть / зада́ть	1st (-ешь)	задаю́	задаёшь	задаю́т	задава́л / задава́ла	+ accusative, + dative of the person	зада́ть вопро́с = to ask a question		New
+201	вызывать	вызвать	call out / summon / cause	вызыва́ть / вы́звать	1st (-ешь)	вызыва́ю	вызыва́ешь	вызыва́ют	вызыва́л / вызыва́ла	+ accusative	вы́звать врача́ = to call a doctor out		New
+202	рассказывать	рассказать	tell / narrate	расска́зывать / рассказа́ть	1st (-ешь)	расска́зываю	расска́зываешь	расска́зывают	расска́зывал / расска́зывала	+ dative of the person, о + prepositional of the topic			New
+203	стоить	—	cost / be worth	сто́ить	2nd (-ишь)	сто́ю	сто́ишь	сто́ят	сто́ил / сто́ила	+ accusative (the price)	imperfective only; impersonal сто́ит + infinitive = it is worth doing		New
+204	следовать	последовать	follow	сле́довать / после́довать	1st (-ешь)	сле́дую	сле́дуешь	сле́дуют	сле́довал / сле́довала	+ dative; за + instrumental to follow physically	impersonal сле́дует + infinitive = one ought to		New
+205	знакомиться	познакомиться	get acquainted / meet	знако́миться / познако́миться	2nd (-ишь)	знако́млюсь	знако́мишься	знако́мятся	знако́мился / знако́милась	с + instrumental	-ся verb; м→мл in the 1sg		New
+206	ходить	—	go (on foot, regularly or there and back)	ходи́ть	2nd (-ишь)	хожу́	хо́дишь	хо́дят	ходи́л / ходи́ла	в/на + accusative	multidirectional partner of идти́: repeated or round trips		New
+207	встречаться	встретиться	meet (one another)	встреча́ться / встре́титься	1st (-ешь)	встреча́юсь	встреча́ешься	встреча́ются	встреча́лся / встреча́лась	с + instrumental	-ся verb; also = to be dating someone		New
+208	подозревать	заподозрить	suspect	подозрева́ть / заподо́зрить	1st (-ешь)	подозрева́ю	подозрева́ешь	подозрева́ют	подозрева́л / подозрева́ла	+ accusative; в + prepositional of the offence	imperfective only		New
+209	игнорировать	проигнорировать	ignore	игнори́ровать / проигнори́ровать	1st (-ешь)	игнори́рую	игнори́руешь	игнори́руют	игнори́ровал / игнори́ровала	+ accusative	bi-aspectual: the same form serves both aspects		New

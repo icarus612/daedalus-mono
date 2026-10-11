@@ -233,8 +233,8 @@
 232	ресторан	restaurant	рестора́н	m	рестора́ны			No	City & Places			New
 233	кафе	café	кафе́	n	кафе́ (indeclinable)			No	City & Places	indeclinable; neuter		New
 234	бар	bar	бар	m	ба́ры			No	City & Places			New
-235	гостиница	hotel	гости́ница	f	гости́ницы			No	City & Places			New
-236	отель	hotel	оте́ль	m	оте́ли			No	City & Places			New
+235	гостиница	hotel (the ordinary Russian word)	гости́ница	f	гости́ницы			No	City & Places			New
+236	отель	hotel (borrowed term, usually upscale/international)	оте́ль	m	оте́ли			No	City & Places			New
 237	банк	bank	банк	m	ба́нки			No	City & Places			New
 238	почта	post office / mail	по́чта	f	—			No	City & Places	на почте (на + prep.)		New
 239	центр	center	центр	m	це́нтры			No	City & Places			New
@@ -293,8 +293,8 @@
 292	лук	onion	лук	m	—			No	Food & Drink			New
 293	чеснок	garlic	чесно́к	m	—			No	Food & Drink			New
 294	морковь	carrot(s)	морко́вь	f	—			No	Food & Drink	collective: морковь = carrots (одна морковка = one carrot)		New
-295	врач	doctor	врач	m	врачи́			Yes	Jobs & Roles			New
-296	доктор	doctor	до́ктор	m	доктора́			Yes	Jobs & Roles			New
+295	врач	doctor (the medical profession)	врач	m	врачи́			Yes	Jobs & Roles			New
+296	доктор	doctor (as a title or form of address)	до́ктор	m	доктора́			Yes	Jobs & Roles			New
 297	медсестра	nurse	медсестра́	f	медсёстры			Yes	Jobs & Roles			New
 298	учитель	teacher	учи́тель	m	учителя́			Yes	Jobs & Roles			New
 299	преподаватель	instructor / lecturer	преподава́тель	m	преподава́тели			Yes	Jobs & Roles			New
@@ -347,7 +347,7 @@
 346	разговор	conversation	разгово́р	m	разгово́ры			No	Life & Mind			New
 347	вопрос	question	вопро́с	m	вопро́сы			No	Life & Mind			New
 348	ответ	answer	отве́т	m	отве́ты			No	Life & Mind			New
-349	правда (noun)	truth	пра́вда	f	—			No	Life & Mind			New
+349	правда (noun)	truth / justice	пра́вда	f	—			No	Life & Mind			New
 350	ложь	lie	ложь	f	—			No	Life & Mind			New
 351	ошибка	mistake	оши́бка	f	оши́бки			No	Life & Mind			New
 352	секрет	secret	секре́т	m	секре́ты			No	Life & Mind			New
@@ -553,3 +553,78 @@
 552	сторона	side	сторона́	f	сто́роны		сто́рон	No	Space & Parts	stress shifts in plural: сто́роны (cf. singular сторона́); gen. pl. сто́рон has no vowel -- verify before relying on this pair		New
 553	чувство	feeling	чу́вство	n	чу́вства			No	Beliefs & Emotions			New
 554	раз	time / occasion (as in "once, twice...")	раз	m	—		раз	No	Time	counting noun: ра́за (gen. sg., after 2-4); пять раз (gen. pl. = nom. sg. after 5+; no -ов)		New
+555	фильм	film / movie	фи́льм	m	фи́льмы			No	Knowledge & Culture			New
+556	теннис	tennis	те́ннис	m	—			No	Sports & Games			New
+557	совет	advice / council	сове́т	m	сове́ты			No	Concepts	дать сове́т = to give advice		New
+558	бейсбол	baseball	бейсбо́л	m	—			No	Sports & Games			New
+559	футбол	football / soccer	футбо́л	m	—			No	Sports & Games			New
+560	понедельник	Monday	понеде́льник	m	понеде́льники			No	Time	в понеде́льник = on Monday		New
+561	момент	moment	моме́нт	m	моме́нты			No	Time			New
+562	управляющий	manager	управля́ющий	m	управля́ющие			Yes	Jobs & Roles	declines like an adjective		New
+563	свидание	date / meeting	свида́ние	n	свида́ния			No	Life & Mind	пойти́ на свида́ние = to go on a date		New
+564	лето	summer	ле́то	n	—			No	Nature & Weather	ле́том = in summer (adverb)		New
+565	контроль	control	контро́ль	m	—			No	Work, Law & Rules	masculine soft-sign noun		New
+566	подозреваемый	suspect	подозрева́емый	m	подозрева́емые			Yes	Work, Law & Rules	declines like an adjective		New
+567	спорт	sport	спорт	m	—			No	Sports & Games			New
+568	кусок	piece	кусо́к	m	куски́			No	Shapes & Measures	fleeting -о-: куска́, куски́		New
+569	шанс	chance	шанс	m	ша́нсы			No	Concepts			New
+570	офис	office	о́фис	m	о́фисы			No	City & Places			New
+571	номер	number / hotel room	но́мер	m	номера́			No	Concepts	plural номера́ is end-stressed		New
+572	роза	rose	ро́за	f	ро́зы			No	Nature & Weather			New
+573	камера	camera	ка́мера	f	ка́меры			No	Objects			New
+574	баскетбол	basketball	баскетбо́л	m	—			No	Sports & Games			New
+575	информация	information	информа́ция	f	—			No	Knowledge & Culture	uncountable		New
+576	пицца	pizza	пи́цца	f	пи́ццы			No	Food & Drink			New
+577	клиент	client	клие́нт	m	клие́нты			Yes	Jobs & Roles			New
+578	ассистент	assistant	ассисте́нт	m	ассисте́нты			Yes	Jobs & Roles			New
+579	концерт	concert	конце́рт	m	конце́рты			No	Knowledge & Culture			New
+580	адвокат	lawyer	адвока́т	m	адвока́ты			Yes	Jobs & Roles			New
+581	гитара	guitar	гита́ра	f	гита́ры			No	Knowledge & Culture			New
+582	тигр	tiger	тигр	m	ти́гры			Yes	Animals			New
+583	чемпион	champion	чемпио́н	m	чемпио́ны			Yes	Jobs & Roles			New
+584	майонез	mayonnaise	майоне́з	m	—			No	Food & Drink			New
+585	адрес	address	а́дрес	m	адреса́			No	City & Places	plural адреса́ is end-stressed		New
+586	арест	arrest	аре́ст	m	аре́сты			No	Work, Law & Rules			New
+587	капитан	captain	капита́н	m	капита́ны			Yes	Jobs & Roles			New
+588	идиот	idiot	идио́т	m	идио́ты			Yes	People			New
+589	атака	attack	ата́ка	f	ата́ки			No	Conflict			New
+590	мелодия	melody / tune	мело́дия	f	мело́дии			No	Knowledge & Culture			New
+591	волейбол	volleyball	волейбо́л	m	—			No	Sports & Games			New
+592	хоккей	hockey	хокке́й	m	—			No	Sports & Games			New
+593	джаз	jazz	джаз	m	—			No	Knowledge & Culture			New
+594	лифт	lift / elevator	лифт	m	ли́фты			No	Home & Household			New
+595	операция	operation / surgery	опера́ция	f	опера́ции			No	Health			New
+596	расист	racist	раси́ст	m	раси́сты			Yes	People			New
+597	политик	politician	поли́тик	m	поли́тики			Yes	Society & Politics	поли́тика (f.) = politics/policy, a different word		New
+598	астма	asthma	а́стма	f	—			No	Health			New
+599	аллергия	allergy	аллерги́я	f	аллерги́и			No	Health	аллерги́я на + accusative		New
+600	диск	disc / disk	диск	m	ди́ски			No	Objects			New
+601	рис	rice	рис	m	—			No	Food & Drink			New
+602	балет	ballet	бале́т	m	бале́ты			No	Knowledge & Culture			New
+603	свитер	sweater	сви́тер	m	свитера́			No	Clothing	plural свитера́ is end-stressed		New
+604	география	geography	геогра́фия	f	—			No	Knowledge & Culture			New
+605	проза	prose	про́за	f	—			No	Knowledge & Culture			New
+606	лидер	leader	ли́дер	m	ли́деры			Yes	Jobs & Roles			New
+607	сигнал	signal	сигна́л	m	сигна́лы			No	Concepts			New
+608	старт	start	старт	m	ста́рты			No	Concepts			New
+609	кондиционер	air conditioner	кондиционе́р	m	кондиционе́ры			No	Home & Household			New
+610	бюджет	budget	бюдже́т	m	бюдже́ты			No	Money & Economy			New
+611	экзамен	exam	экза́мен	m	экза́мены			No	Knowledge & Culture	сдава́ть экза́мен = to sit an exam; сдать = to pass it		New
+612	робот	robot	ро́бот	m	ро́боты			Yes	Objects	treated as animate: ви́жу ро́бота		New
+613	пианист	pianist	пиани́ст	m	пиани́сты			Yes	Jobs & Roles			New
+614	миллионер	millionaire	миллионе́р	m	миллионе́ры			Yes	Jobs & Roles			New
+615	поэт	poet	поэ́т	m	поэ́ты			Yes	Jobs & Roles			New
+616	симптом	symptom	симпто́м	m	симпто́мы			No	Health			New
+617	гольф	golf	гольф	m	—			No	Sports & Games			New
+618	репутация	reputation	репута́ция	f	репута́ции			No	Character & Values			New
+619	вегетарианец	vegetarian	вегетариа́нец	m	вегетариа́нцы			Yes	People	fleeting -е-: вегетариа́нца		New
+620	модель	model	моде́ль	f	моде́ли			No	Jobs & Roles	feminine soft-sign noun; animate when it means a person		New
+621	композитор	composer	компози́тор	m	компози́торы			Yes	Jobs & Roles			New
+622	альбом	album	альбо́м	m	альбо́мы			No	Knowledge & Culture			New
+623	крем	cream	крем	m	кре́мы			No	Food & Drink			New
+624	панда	panda	па́нда	f	па́нды			Yes	Animals			New
+625	хулиган	hooligan	хулига́н	m	хулига́ны			Yes	People			New
+626	костюм	suit / costume	костю́м	m	костю́мы			No	Clothing			New
+627	коала	koala	коа́ла	f	коа́лы			Yes	Animals			New
+628	температура	temperature	температу́ра	f	температу́ры			No	Health			New
+629	алкоголь	alcohol	алкого́ль	m	—			No	Food & Drink	masculine soft-sign noun		New

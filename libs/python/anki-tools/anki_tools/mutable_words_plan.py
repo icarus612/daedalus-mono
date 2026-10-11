@@ -242,7 +242,16 @@ class VerbRow:
 
     @property
     def base_words(self) -> tuple[str, ...]:
-        return (self.imperfective, self.perfective)
+        """Both aspects, minus any the document marks absent with a dash.
+
+        `стоить` and `ходить` have no perfective at all; the dash records
+        that, and a dash is not a word to be voiced, slugged or collided
+        against -- the same reason `parse_adverbs` drops a dash-only
+        `Adverb`.
+        """
+        return tuple(
+            w for w in (self.imperfective, self.perfective) if w and w.strip() != "—"
+        )
 
     @property
     def guid(self) -> str:

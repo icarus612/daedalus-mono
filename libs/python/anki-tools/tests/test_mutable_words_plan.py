@@ -89,11 +89,11 @@ def _joined_audio_names(word):
 
 
 def test_row_counts(nouns, verbs, adjectives, adverbs, pronouns, numerals):
-    assert len(nouns) == 554
-    assert len(verbs) == 195
-    assert len(adjectives) == 165
+    assert len(nouns) == 629
+    assert len(verbs) == 209
+    assert len(adjectives) == 172
     assert len(adverbs) == 132
-    assert len(pronouns) == 21
+    assert len(pronouns) == 23
     assert len(numerals) == 55
 
 
@@ -150,11 +150,11 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
     pronouns_cards = len(pronouns) * 2
     numerals_cards = len(numerals) * 2
 
-    assert nouns_cards == 1108
-    assert verbs_cards == 780
-    assert adjectives_cards == 330
+    assert nouns_cards == 1258
+    assert verbs_cards == 836
+    assert adjectives_cards == 344
     assert adverbs_cards == 264
-    assert pronouns_cards == 42
+    assert pronouns_cards == 46
     assert numerals_cards == 110
     assert (
         nouns_cards
@@ -163,7 +163,7 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
         + adverbs_cards
         + pronouns_cards
         + numerals_cards
-        == 2634
+        == 2858
     )
 
 
@@ -223,12 +223,12 @@ def test_no_slug_collisions_across_all_base_words(
         + [w for row in pronouns for w in row.base_words]
         + [w for row in numerals for w in row.base_words]
     )
-    assert len(all_words) == 1317
+    assert len(all_words) == 1427
 
     slugs = [sanitize_word_slug(w) for w in all_words]
     dupes = {slug: c for slug, c in Counter(slugs).items() if c > 1}
     assert set(dupes) == _EXPECTED_DUPLICATE_SLUGS, dupes
-    assert len(set(slugs)) == 1312
+    assert len(set(slugs)) == 1422
 
 
 def test_named_media_overlap_slugs_present(nouns, verbs, adjectives, adverbs):
@@ -286,7 +286,7 @@ def test_predicted_audio_matches_build_filename(nouns, verbs, adjectives, adverb
 
 def test_dash_only_plural_survives_into_fields(nouns):
     dash_rows = [row for row in nouns if row.plural == "—"]
-    assert len(dash_rows) == 113
+    assert len(dash_rows) == 131
 
     plural_idx = mutable_words_plan.FIELD_NAMES["Nouns"].index("Plural")
     assert dash_rows[0].fields()[plural_idx] == "—"

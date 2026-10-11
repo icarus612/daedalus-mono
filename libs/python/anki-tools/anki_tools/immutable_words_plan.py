@@ -265,7 +265,7 @@ class WordRow:
             "",
             POS_FIELD_VALUE[self.pos],
             ",".join(audio_names),
-            self.info,
+            case_field.residual_info_for_row(self.pos, self.info),
             self.examples,
             audio_refs,
             case_field.case_tag_for_row(self.pos, self.info),

@@ -64,7 +64,7 @@ REAL_SOURCE_PATH = Path(__file__).resolve().parent / "data" / "source-word-list.
 EXPECTED_SECTION_COUNTS = [
     ("Prepositions", 44),
     ("Conjunctions", 35),
-    ("Particles", 42),
+    ("Particles", 43),
     ("Indeclinable Nouns", 42),
     ("Base Adverbs", 67),
 ]
@@ -133,7 +133,7 @@ def real_rows(real_source_text):
 
 # ---------------------------------------------------------------------------
 # Fixtures -- small inline markdown, deliberately smaller than the real
-# 152-row document, proving the parser does not hardcode 43/35/32/42.
+# 152-row document, proving the parser does not hardcode 43/35/43/42.
 # ---------------------------------------------------------------------------
 
 
@@ -188,7 +188,7 @@ def _remove_section(text, heading_name):
 
 
 def test_parse_real_document_total_row_count(real_rows):
-    assert len(real_rows) == EXPECTED_TOTAL_ROWS == 230
+    assert len(real_rows) == EXPECTED_TOTAL_ROWS == 231
 
 
 def test_parse_real_document_section_order_counts_and_ranks(real_rows):
@@ -233,7 +233,7 @@ def test_parse_real_document_part_two_produces_no_spurious_rows(real_rows):
     AwesomeTTS / HyperTTS / add-on-install subsections) has no tables and
     must not contribute rows or raise.
     """
-    assert len(real_rows) == 230
+    assert len(real_rows) == 231
     assert all(row.pos in SUBDECK_LEAVES for row in real_rows)
 
 
@@ -1066,7 +1066,7 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
 EXPECTED_INFO_COUNTS = {
     "Prepositions": (44, 44),
     "Conjunctions": (35, 21),
-    "Particles": (42, 29),
+    "Particles": (43, 30),
     "Indeclinable Nouns": (42, 42),
     "Base Adverbs": (67, 55),
 }
@@ -1476,7 +1476,7 @@ def test_word_row_guid_differs_when_russian_or_pos_differ():
 EXPECTED_EXAMPLES_COUNTS = {
     "Prepositions": 0,
     "Conjunctions": 4,
-    "Particles": 0,
+    "Particles": 1,
     "Indeclinable Nouns": 40,
     "Base Adverbs": 4,
 }

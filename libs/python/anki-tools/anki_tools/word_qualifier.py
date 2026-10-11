@@ -23,7 +23,7 @@ QUALIFIER_CLASS = "qualifier"
 # 1.2rem -- clearly secondary to the headword rather than competing with it.
 QUALIFIER_CSS = (
     ".qualifier {\n"
-    "\tfont-size: 0.5em;\n"
+    "\tfont-size: 20px;\n"
     "\tcolor: #7f7f7f;\n"
     "\twhite-space: nowrap;\n"
     "}"

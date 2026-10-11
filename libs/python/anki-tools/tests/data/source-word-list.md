@@ -65,7 +65,7 @@ Used to connect clauses, sentences, or concepts.
 | 2 | что | what / that | Subordinating — always a comma before it | — |
 | 3 | а | but / and (when contrasting) | — | — |
 | 4 | но | but (direct contrast) | — | — |
-| 5 | как (conjunction) | like / as | — | белый как снег |
+| 5 | как (conjunction) | like / as (comparison) | — | белый как снег |
 | 6 | если | if | Subordinating — often paired with то: если..., то... | — |
 | 7 | или | or | Coordinating — comma only when repeated: или..., или... | — |
 | 8 | чтобы / чтоб | so that / in order to | The verb after it takes the PAST form; infinitive if the subject does not change | — |
@@ -93,7 +93,7 @@ Used to connect clauses, sentences, or concepts.
 | 30 | оттого что | because (less common) | — | — |
 | 31 | причём | moreover / and what's more | Adds a pointed extra detail | — |
 | 32 | притом | besides | Close to причём, more bookish | — |
-| 33 | как будто | as if / as though | Marks an unreal comparison | — |
+| 33 | как будто | as if / as though (neutral, unreal comparison) | Marks an unreal comparison | — |
 | 34 | пускай | even though / let | Colloquial variant of пусть | — |
 
 ### Particles (Частицы)
@@ -105,7 +105,7 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 2 | же | but / then / after all (adds emphasis) | — | — |
 | 3 | бы | would (forms the conditional) | — | — |
 | 4 | вот | here/there is (pointing something out) | — | — |
-| 5 | только | only | Restrictive — "only, just" | — |
+| 5 | только | only (restrictive) | Restrictive — "only, just" | — |
 | 6 | даже | even | Marks something unexpected | — |
 | 7 | ли | whether / if (turns a statement into a question) | — | — |
 | 8 | ни | neither / (emphasize extremeness)&nbsp; | Reinforces a negation; needs не or нет in the clause | — |
@@ -116,13 +116,13 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 13 | именно | exactly / precisely | Pinpoints exactly which one | — |
 | 14 | просто | simply / just | Plays it down — "it's just that..." | — |
 | 15 | пусть / пускай | let (as in "let them") | — | — |
-| 16 | всё-таки | still / nevertheless | Concessive — "all the same, after all" | — |
+| 16 | всё-таки | still / nevertheless (all the same) | Concessive — "all the same, after all" | — |
 | 17 | вон | over there (pointing out) | — | — |
 | 18 | уж | really / indeed (emphatic) | — | — |
 | 19 | да | yes (can also act as emphasis) | — | — |
 | 20 | нет | no | Answers "no"; also "there is no" + genitive | — |
-| 21 | лишь | only / merely | Bookish equivalent of только | — |
-| 22 | всё | still / constantly | Continuative — "keeps on, still" | — |
+| 21 | лишь | only / merely (bookish) | Bookish equivalent of только | — |
+| 22 | всё | still / constantly (keeps on) | Continuative — "keeps on, still" | — |
 | 23 | -то | some- (indefinite) | кто-то "someone", где-то "somewhere"; contrast -нибудь = any- | — |
 | 24 | -ка | go on / just (informal) | softens an imperative: скажи-ка "go on, tell me" | — |
 | 25 | таки | after all / nevertheless | often hyphenated: всё-таки | — |
@@ -135,14 +135,15 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 32 | здравствуйте | hello (formal) | Formal/plural greeting; lit. imperative "be healthy" | — |
 | 33 | спасибо | thank you | Lit. "save [you] God" (spasi Bog), now a fixed word | — |
 | 34 | пожалуйста | please / you're welcome | Also used to mean "here you go" when handing something over | — |
-| 35 | извините | excuse me / sorry (formal) | Imperative pl./formal of извинить; use when you are at fault | — |
-| 36 | простите | excuse me / forgive me (formal) | Imperative pl./formal of простить; also used to get attention | — |
+| 35 | извините | excuse me / sorry (formal — when you are at fault) | Imperative pl./formal of извинить; use when you are at fault | — |
+| 36 | простите | excuse me / forgive me (formal — to get attention) | Imperative pl./formal of простить; also used to get attention | — |
 | 37 | привет | hi (informal) | Informal only; do not use with strangers or superiors | — |
 | 38 | конечно | of course / certainly | Written with ч but pronounced [ш]: конешно | — |
 | 39 | ладно | OK / all right / fine | Signals agreement or resignation ("fine, whatever") | — |
 | 40 | ничего | nothing / it's OK / no problem | Also a stand-alone reassuring reply | — |
 | 41 | поздравляю | congratulations! | 1st-person present of поздравлять; often + с + instrumental (с днём рождения!) | — |
 | 42 | помогите | help! | Imperative pl./formal of помочь; shouted in an emergency | — |
+| 43 | это | this is / that is / it is | Subject-less linking word: Э́то кни́га = This is a book. Invariable, unlike the pronoun э́тот (э́та, э́то, э́ти) which agrees with its noun | Это моя сестра |
 
 ### Indeclinable Nouns (Несклоняемые существительные)
 Foreign loan words that are frozen in their base form.
@@ -162,7 +163,7 @@ Foreign loan words that are frozen in their base form.
 | 11 | хобби | hobby | Neuter | любимое хобби |
 | 12 | интервью | interview | Neuter | длинное интервью |
 | 13 | резюме | resume / summary | Neuter | краткое резюме |
-| 14 | пианино | piano | Neuter | старое пианино |
+| 14 | пианино | piano (upright) | Neuter | старое пианино |
 | 15 | пюре | puree (often mashed potatoes) | Neuter | картофельное пюре |
 | 16 | желе | jelly | Neuter | фруктовое желе |
 | 17 | авокадо | avocado | Neuter | спелое авокадо |
@@ -184,7 +185,7 @@ Foreign loan words that are frozen in their base form.
 | 33 | пенальти | penalty (in sports) | Neuter (masculine agreement also heard) | назначено пенальти |
 | 34 | соло | solo | Neuter | гитарное соло |
 | 35 | табло | scoreboard / display board | Neuter | электронное табло |
-| 36 | фортепиано | piano | Neuter | старинное фортепиано |
+| 36 | фортепиано | piano (the instrument in general) | Neuter | старинное фортепиано |
 | 37 | бра | wall sconce / lamp | Neuter | настенное бра |
 | 38 | регби | rugby | Neuter | любимое регби |
 | 39 | цунами | tsunami | Neuter | разрушительное цунами |
@@ -202,7 +203,7 @@ A lone em dash there means "no extra info" and renders as nothing.
 | Rank | Russian | English | Info | Examples |
 |---|---|---|---|---|
 | 1 | где | where (at) | Asking for a static location | — |
-| 2 | здесь | here | Static location | — |
+| 2 | здесь | here (static location) | Static location | — |
 | 3 | тут | here (casual) | Interchangeable with здесь | — |
 | 4 | там | there | Static location | — |
 | 5 | везде | everywhere | Static location | — |
@@ -219,8 +220,8 @@ A lone em dash there means "no extra info" and renders as nothing.
 | 16 | вперёд | forwards | Motion forward | — |
 | 17 | когда (adverb) | when | Asking for a time | — |
 | 18 | тогда | then / in that case | Pointing to past/future, or conditional | — |
-| 19 | сейчас | now / right now | Current exact moment | — |
-| 20 | теперь | now / nowadays | Current reality contrasted with the past | — |
+| 19 | сейчас | now / right now (this exact moment) | Current exact moment | — |
+| 20 | теперь | now / nowadays (as opposed to before) | Current reality contrasted with the past | — |
 | 21 | сегодня | today | — | — |
 | 22 | завтра | tomorrow | — | — |
 | 23 | вчера | yesterday | — | — |
@@ -229,10 +230,10 @@ A lone em dash there means "no extra info" and renders as nothing.
 | 26 | иногда | sometimes | — | — |
 | 27 | никогда | never | Requires a negative verb (не) | — |
 | 28 | уже | already | Marks a completed status | — |
-| 29 | ещё | still / yet / more | Marks an ongoing status or asks for more | — |
+| 29 | ещё | still / yet / more (ongoing, or asking for more) | Marks an ongoing status or asks for more | — |
 | 30 | пока (adverb) | for now / so far | Also used casually to say "bye" | — |
-| 31 | опять | again | An action repeating itself | — |
-| 32 | снова | again / anew | Repeating, often implying a fresh start | — |
+| 31 | опять | again (the same action repeating) | An action repeating itself | — |
+| 32 | снова | again / anew (afresh, a new start) | Repeating, often implying a fresh start | — |
 | 33 | вдруг | suddenly | — | — |
 | 34 | сразу | immediately / at once | Doing something without delay | — |
 | 35 | наконец | finally | Conclusion of a wait or sequence | — |
