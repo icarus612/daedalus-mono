@@ -22,7 +22,14 @@ from anki.import_export_pb2 import ExportAnkiPackageOptions
 from anki.models import NotetypeDict
 from anki.utils import to_json_bytes
 
-from anki_tools import audio_naming, card_audio, examples_field, mutable_words_plan
+from anki_tools import (
+    audio_naming,
+    card_audio,
+    case_field,
+    examples_field,
+    mutable_words_plan,
+    word_qualifier,
+)
 from anki_tools.audio_naming import get_anki_collection_path
 from anki_tools.immutable_words import assert_unmodified
 
@@ -70,6 +77,10 @@ def build_note_types(
             + "\n\n"
             + examples_field.EXAMPLES_CSS
             + "\n\n"
+            + case_field.CASE_CSS
+            + "\n\n"
+            + word_qualifier.QUALIFIER_CSS
+            + "\n\n"
             + mutable_words_plan.EXTRA_CSS
         )
 
@@ -85,8 +96,8 @@ def build_note_types(
         for card_index in range(TEMPLATE_COUNTS_BY_SHEET[sheet]):
             template = build_col.models.new_template(f"Card {card_index + 1}")
             qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
-            template["qfmt"] = qfmt
-            template["afmt"] = afmt
+            template["qfmt"] = word_qualifier.add_qualifier_script(qfmt)
+            template["afmt"] = word_qualifier.add_qualifier_script(afmt)
             template["ord"] = card_index
             template["id"] = mutable_words_plan.build_template_id(sheet, card_index)
             templates.append(template)

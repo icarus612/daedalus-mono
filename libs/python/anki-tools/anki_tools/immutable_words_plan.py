@@ -23,7 +23,7 @@ and playing.
 import re
 from dataclasses import dataclass
 
-from anki_tools import card_audio
+from anki_tools import card_audio, case_field
 from anki_tools.anki_identity import guid_for_row
 from anki_tools.audio_naming import SLOTS, build_filename
 
@@ -71,6 +71,7 @@ FIELD_NAMES = (
     "Additional Info",
     "Examples",
     "AudioRefs",
+    "Case",
 )
 
 # The singular part-of-speech value written into the `Part of Speech` field,
@@ -267,6 +268,7 @@ class WordRow:
             self.info,
             self.examples,
             audio_refs,
+            case_field.case_tag_for_row(self.pos, self.info),
         ]
 
 

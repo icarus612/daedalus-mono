@@ -21,7 +21,13 @@ from anki.import_export_pb2 import ExportAnkiPackageOptions
 from anki.models import NotetypeDict
 from anki.utils import to_json_bytes
 
-from anki_tools import audio_naming, card_audio, examples_field
+from anki_tools import (
+    audio_naming,
+    card_audio,
+    case_field,
+    examples_field,
+    word_qualifier,
+)
 from anki_tools.anki_identity import notetype_id_for_name as _notetype_id_for_name
 from anki_tools.audio_naming import get_anki_collection_path
 from anki_tools.immutable_words_plan import (
@@ -87,12 +93,16 @@ def clone_note_type(
     cloned["name"] = new_name
 
     for template in cloned["tmpls"]:
-        template["qfmt"] = examples_field.add_examples_block(
-            rewrite_audio_playback(strip_part_of_speech(template["qfmt"]))
-        )
-        template["afmt"] = examples_field.add_examples_block(
-            rewrite_audio_playback(strip_part_of_speech(template["afmt"]))
-        )
+        for side in ("qfmt", "afmt"):
+            template[side] = word_qualifier.add_qualifier_script(
+                case_field.add_case_tag(
+                    examples_field.add_examples_block(
+                        rewrite_audio_playback(
+                            strip_part_of_speech(template[side])
+                        )
+                    )
+                )
+            )
 
     cloned["css"] = (
         cloned["css"]
@@ -100,6 +110,10 @@ def clone_note_type(
         + card_audio.AUDIO_BUTTON_CSS
         + "\n\n"
         + examples_field.EXAMPLES_CSS
+        + "\n\n"
+        + case_field.CASE_CSS
+        + "\n\n"
+        + word_qualifier.QUALIFIER_CSS
     )
 
     # `new_field()` hands back a field dict with a real, randomly-chosen id
@@ -111,7 +125,11 @@ def clone_note_type(
     # `notetype/merge.rs`: both ids present and non-None -> compare by id;
     # otherwise -> compare by name. Leaving new_field()'s random id in
     # place would make these fields never match themselves across builds.
-    for appended_name in (examples_field.EXAMPLES_FIELD, "AudioRefs"):
+    for appended_name in (
+        examples_field.EXAMPLES_FIELD,
+        "AudioRefs",
+        case_field.CASE_FIELD,
+    ):
         appended_field = build_col.models.new_field(appended_name)
         appended_field["id"] = None
         appended_field["ord"] = len(cloned["flds"])

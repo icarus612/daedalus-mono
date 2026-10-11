@@ -62,7 +62,14 @@ from pathlib import Path
 import pytest
 from anki.collection import Collection
 
-from anki_tools import card_audio, examples_field, mutable_words, mutable_words_plan
+from anki_tools import (
+    card_audio,
+    case_field,
+    examples_field,
+    mutable_words,
+    mutable_words_plan,
+    word_qualifier,
+)
 from anki_tools.immutable_words import (
     NEW_NOTE_TYPE_ID,
     NEW_NOTE_TYPE_NAME,
@@ -500,6 +507,7 @@ def test_clone_note_type_field_list_matches_field_names_in_order(cloned):
         "Additional Info",
         "Examples",
         "AudioRefs",
+        "Case",
     ]
 
     # AudioRefs exists solely for Anki's media-usage scan (export/import/
@@ -518,6 +526,10 @@ def test_clone_note_type_css_extends_source_with_audio_button_css(cloned):
         + card_audio.AUDIO_BUTTON_CSS
         + "\n\n"
         + examples_field.EXAMPLES_CSS
+        + "\n\n"
+        + case_field.CASE_CSS
+        + "\n\n"
+        + word_qualifier.QUALIFIER_CSS
     )
 
 
@@ -2320,7 +2332,7 @@ def test_clone_note_type_two_fresh_builds_pin_identical_id_and_fields(
         assert note_type_a["flds"] == note_type_b["flds"]
 
         for note_type in (note_type_a, note_type_b):
-            assert len(note_type["flds"]) == 8
+            assert len(note_type["flds"]) == 9
             examples_fld = note_type["flds"][6]
             assert examples_fld["name"] == "Examples"
             assert examples_fld["id"] is None

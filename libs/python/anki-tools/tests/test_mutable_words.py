@@ -16,7 +16,13 @@ import pytest
 from anki.collection import Collection
 from anki.import_export_pb2 import ImportAnkiPackageOptions, ImportAnkiPackageRequest
 
-from anki_tools import card_audio, examples_field, mutable_words_plan
+from anki_tools import (
+    card_audio,
+    case_field,
+    examples_field,
+    mutable_words_plan,
+    word_qualifier,
+)
 from anki_tools.audio_naming import get_anki_media_dir, parse_audio_filenames
 from anki_tools.immutable_words import assert_unmodified
 from anki_tools.mutable_words import (
@@ -602,6 +608,10 @@ def test_build_note_types_css_extends_source_with_extra_css(cloned_note_types):
         + card_audio.AUDIO_BUTTON_CSS
         + "\n\n"
         + examples_field.EXAMPLES_CSS
+        + "\n\n"
+        + case_field.CASE_CSS
+        + "\n\n"
+        + word_qualifier.QUALIFIER_CSS
         + "\n\n"
         + mutable_words_plan.EXTRA_CSS
     )
