@@ -1,6 +1,6 @@
 """The `Case` field: the grammatical case a Russian preposition governs.
 
-Rendered as a compact `(+ gen.)` tag inline beside the Russian word, rather
+Rendered as a `(+ genitive case)` tag inline beside the Russian word, rather
 than only as prose behind the answer side's grey info icon -- for a
 preposition the governed case is part of the lemma's identity, so it belongs
 where the word is, not one reveal away. The prose stays in `Additional Info`
@@ -31,19 +31,23 @@ CASE_CSS = (
     "}"
 )
 
-CASE_ABBREVIATIONS = (
-    ("Nominative", "nom."),
-    ("Genitive", "gen."),
-    ("Dative", "dat."),
-    ("Accusative", "acc."),
-    ("Instrumental", "instr."),
-    ("Prepositional", "prep."),
+# Spelled out, never abbreviated. The tag is read on the QUESTION side by
+# someone deciding which word is being asked for, and "(+ prep.)" is
+# reference-book shorthand that also looks like "preposition" -- the one
+# thing it does not mean.
+CASE_NAMES = (
+    ("Nominative", "nominative"),
+    ("Genitive", "genitive"),
+    ("Dative", "dative"),
+    ("Accusative", "accusative"),
+    ("Instrumental", "instrumental"),
+    ("Prepositional", "prepositional"),
 )
 
 # A dash clause is editorial commentary, not a second governed case:
 # `вопреки`'s "Dative -- one of the few Genitive-looking ones that takes
 # Dative" governs the dative ALONE, and reading the whole cell yields a
-# wrong "(+ dat./gen.)".
+# wrong "(+ dative or genitive case)".
 _COMMENTARY = re.compile(r"\s+[—–-]\s+")
 
 # Matched tolerantly (any attribute order, any inner whitespace) because it
@@ -62,21 +66,21 @@ _TRANSLATION_DIV = re.compile(
 
 
 def case_tag(info: str) -> str:
-    """The inline tag for an `Info` cell, e.g. `(+ acc./prep.)`, or `""`.
+    """The inline tag for an `Info` cell, e.g. `(+ accusative or prepositional case)`, or `""`.
 
     Cases appear in the order the cell names them, so a two-case preposition
-    reads the way the document writes it (`в / во` -> `(+ acc./prep.)`,
-    never the abbreviation table's own order).
+    reads the way the document writes it (`в / во` -> `(+ accusative or
+    prepositional case)`, never the table's own order).
     """
     governed = _COMMENTARY.split(info, maxsplit=1)[0]
     found = [
-        (match.start(), abbreviation)
-        for full, abbreviation in CASE_ABBREVIATIONS
+        (match.start(), name)
+        for full, name in CASE_NAMES
         if (match := re.search(full, governed, re.I))
     ]
     if not found:
         return ""
-    return "(+ " + "/".join(abbreviation for _, abbreviation in sorted(found)) + ")"
+    return "(+ " + " or ".join(name for _, name in sorted(found)) + " case)"
 
 
 def case_tag_for_row(pos: str, info: str) -> str:
@@ -86,7 +90,7 @@ def case_tag_for_row(pos: str, info: str) -> str:
 
 # Everything the `Case` tag already carries. What survives its removal is the
 # only part `Additional Info` still has to say.
-_CASE_WORDS = re.compile("|".join(full for full, _ in CASE_ABBREVIATIONS), re.I)
+_CASE_WORDS = re.compile("|".join(full for full, _ in CASE_NAMES), re.I)
 _ONLY_FILLER = re.compile(
     r"^[\s;,/()&.\u2013\u2014-]*(?:and|or)?[\s;,/()&.\u2013\u2014-]*$", re.I
 )
@@ -96,7 +100,7 @@ def residual_info(info: str) -> str:
     """What `Additional Info` should still say once `Case` renders the case.
 
     A cell that names the case and NOTHING else is wholly redundant with the
-    inline tag -- "Prepositional" under `о / об (+ prep.)` states the same
+    inline tag -- "Prepositional" under `о / об (+ prepositional case)` states the same
     fact twice -- so it reduces to "". A cell that also says WHEN each case
     applies ("Accusative for motion in; Prepositional for location") keeps
     its wording, because the tag can only list the cases, never choose
@@ -120,8 +124,8 @@ def add_case_tag(template_html: str) -> str:
     The case rides with the English and never with the Russian. On the
     English-prompt side that is the only thing that makes the prompt
     answerable: `about` alone cannot distinguish `о / об` from `насчёт`,
-    nor `before` `до` from `перед`, but `about (+ prep.)` and
-    `about (+ gen.)` each name exactly one preposition. Beside the Russian
+    nor `before` `до` from `перед`, but `about (+ prepositional case)`
+    and `about (+ genitive case)` each name exactly one preposition. Beside the Russian
     it would be pure restatement -- the word is already shown, and on the
     Russian-prompt side the case is something to recall, not be handed.
 

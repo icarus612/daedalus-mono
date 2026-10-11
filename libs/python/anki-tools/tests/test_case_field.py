@@ -22,14 +22,14 @@ def real_rows():
 @pytest.mark.parametrize(
     "info,expected",
     [
-        ("Genitive", "(+ gen.)"),
-        ("Dative", "(+ dat.)"),
-        ("Prepositional", "(+ prep.)"),
-        ("Instrumental", "(+ instr.)"),
-        ("Accusative", "(+ acc.)"),
-        ("Accusative for motion in; Prepositional for location", "(+ acc./prep.)"),
-        ('Instrumental for "with"; Genitive for "from / since"', "(+ instr./gen.)"),
-        ("Genitive — always", "(+ gen.)"),
+        ("Genitive", "(+ genitive case)"),
+        ("Dative", "(+ dative case)"),
+        ("Prepositional", "(+ prepositional case)"),
+        ("Instrumental", "(+ instrumental case)"),
+        ("Accusative", "(+ accusative case)"),
+        ("Accusative for motion in; Prepositional for location", "(+ accusative or prepositional case)"),
+        ('Instrumental for "with"; Genitive for "from / since"', "(+ instrumental or genitive case)"),
+        ("Genitive — always", "(+ genitive case)"),
         ("Static location", ""),
         ("", ""),
     ],
@@ -40,16 +40,16 @@ def test_case_tag_cases(info, expected):
 
 def test_dash_commentary_is_not_read_as_a_second_case():
     info = "Dative — one of the few Genitive-looking ones that takes Dative"
-    assert case_field.case_tag(info) == "(+ dat.)"
+    assert case_field.case_tag(info) == "(+ dative case)"
 
 
 def test_tag_order_follows_the_cell_not_the_abbreviation_table():
-    assert case_field.case_tag("Genitive; Accusative") == "(+ gen./acc.)"
-    assert case_field.case_tag("Accusative; Genitive") == "(+ acc./gen.)"
+    assert case_field.case_tag("Genitive; Accusative") == "(+ genitive or accusative case)"
+    assert case_field.case_tag("Accusative; Genitive") == "(+ accusative or genitive case)"
 
 
 def test_case_tag_for_row_only_fires_for_prepositions():
-    assert case_field.case_tag_for_row("Prepositions", "Genitive") == "(+ gen.)"
+    assert case_field.case_tag_for_row("Prepositions", "Genitive") == "(+ genitive case)"
     for pos in ("Particles", "Base Adverbs", "Conjunctions", "Indeclinable Nouns"):
         assert case_field.case_tag_for_row(pos, "Genitive") == ""
 
@@ -57,7 +57,7 @@ def test_case_tag_for_row_only_fires_for_prepositions():
 def test_poznravlyayu_style_row_is_never_tagged():
     """`с` governs the instrumental there, not the word itself."""
     info = "1st-person present of поздравлять; often + с + instrumental"
-    assert case_field.case_tag(info) == "(+ instr.)"
+    assert case_field.case_tag(info) == "(+ instrumental case)"
     assert case_field.case_tag_for_row("Particles", info) == ""
 
 
@@ -69,10 +69,10 @@ def test_every_real_preposition_gets_a_case_tag(real_rows):
     }
     untagged = [w for w, tag in tagged.items() if not tag]
     assert untagged == []
-    assert tagged["о / об"] == "(+ prep.)"
-    assert tagged["насчёт"] == "(+ gen.)"
-    assert tagged["в / во"] == "(+ acc./prep.)"
-    assert tagged["вопреки"] == "(+ dat.)"
+    assert tagged["о / об"] == "(+ prepositional case)"
+    assert tagged["насчёт"] == "(+ genitive case)"
+    assert tagged["в / во"] == "(+ accusative or prepositional case)"
+    assert tagged["вопреки"] == "(+ dative case)"
 
 
 def test_no_non_preposition_row_is_tagged(real_rows):
@@ -240,6 +240,14 @@ def test_prepositions_sharing_a_gloss_are_separated_by_their_case(real_rows):
     by_word = {r.russian: r for r in real_rows if r.pos == "Prepositions"}
     o, naschet = by_word["о / об"], by_word["насчёт"]
     assert "about" in o.english and "about" in naschet.english
-    assert case_field.case_tag(o.info) == "(+ prep.)"
-    assert case_field.case_tag(naschet.info) == "(+ gen.)"
+    assert case_field.case_tag(o.info) == "(+ prepositional case)"
+    assert case_field.case_tag(naschet.info) == "(+ genitive case)"
     assert case_field.case_tag(o.info) != case_field.case_tag(naschet.info)
+
+
+def test_case_tag_is_spelled_out_never_abbreviated(real_rows):
+    """`prep.` reads as "preposition", the one thing it does not mean."""
+    for row in (r for r in real_rows if r.pos == "Prepositions"):
+        tag = case_field.case_tag(row.info)
+        assert tag.endswith(" case)"), (row.russian, tag)
+        assert "." not in tag, (row.russian, tag)

@@ -487,7 +487,15 @@ def all_subdeck_names(root: str = DECK_ROOT) -> list[str]:
 
 
 def audio_names(base_word: str) -> list[str]:
-    """The two predicted media filenames for `base_word`, one per voice slot."""
+    """The two predicted media filenames for `base_word`, one per voice slot.
+
+    A word the document marks absent with a dash -- `стоить` and `ходить`
+    have no perfective at all -- has no audio to predict. Without this the
+    dash slugs to the fallback `word`, and the note ends up pointing at a
+    `word_f1.mp3` that nothing will ever generate.
+    """
+    if not base_word or base_word.strip() == "—":
+        return []
     return [build_filename(base_word, slot) for slot in VOICE_SLOTS]
 
 
