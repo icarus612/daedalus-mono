@@ -66,7 +66,7 @@ Used to connect clauses, sentences, or concepts.
 | 3 | а | but / and (when contrasting) | — | — |
 | 4 | но | but (direct contrast) | — | — |
 | 5 | как (conjunction) | like / as (comparison) | — | белый как снег |
-| 6 | если | if | Subordinating — often paired with то: если..., то... | — |
+| 6 | если | if (conditional) | Subordinating — often paired with то: если..., то... | — |
 | 7 | или | or | Coordinating — comma only when repeated: или..., или... | — |
 | 8 | чтобы / чтоб | so that / in order to | The verb after it takes the PAST form; infinitive if the subject does not change | — |
 | 9 | когда (conjunction) | when / while / as (at the time that) | — | Когда я пришёл, он спал |
