@@ -1,5 +1,6 @@
 """Tests for the committed russian-vocabulary TSV data files and README."""
 
+import re
 import subprocess
 import zipfile
 from pathlib import Path
@@ -229,3 +230,66 @@ def test_wheel_build_includes_tsv_data(tmp_path):
 
     for filename in FILENAMES:
         assert f"anki_tools/data/russian-vocabulary/{filename}" in names
+
+
+SOURCE_LIST = Path(__file__).resolve().parents[1] / "tests" / "data" / "source-word-list.md"
+
+_PARENTHETICAL = re.compile(r"\([^)]*\)")
+_LINE_BREAK = re.compile(r"<br\s*/?>|</?div>|</?p>")
+_TRAILING_CUE = re.compile(r"\(([^)]*)\)\s*$")
+
+
+def _top_level_senses(line):
+    """The `/`-separated glosses on one line, ignoring `/` inside parens."""
+    pieces, buffer, depth = [], [], 0
+    for char in _PARENTHETICAL.sub("", line):
+        if char == "(":
+            depth += 1
+        elif char == ")":
+            depth = max(0, depth - 1)
+        if char == "/" and depth == 0:
+            pieces.append("".join(buffer))
+            buffer = []
+        else:
+            buffer.append(char)
+    pieces.append("".join(buffer))
+    return [p.strip() for p in pieces if p.strip()]
+
+
+def _english_cells():
+    for filename in FILENAMES:
+        rows = _read_rows(filename)
+        english = rows[0].index("English")
+        for row in rows[1:]:
+            if row[1] and row[1] not in DASH_VALUES:
+                yield filename, row[1], row[english]
+    for line in SOURCE_LIST.read_text(encoding="utf-8").split("\n"):
+        if not line.startswith("| ") or "---" in line:
+            continue
+        cells = [c.strip() for c in line.strip("|").split("|")]
+        if len(cells) >= 3 and cells[0].isdigit():
+            yield "source-word-list.md", cells[1], cells[2]
+
+
+def _cues_enumerating_two_senses(cells):
+    """Cells whose trailing cue lists two meanings for a multi-sense line."""
+    offenders = []
+    for filename, word, cell in cells:
+        for line in _LINE_BREAK.split(cell):
+            cue = _TRAILING_CUE.search(line)
+            if cue and ", or " in cue.group(1) and len(_top_level_senses(line)) > 1:
+                offenders.append((filename, word, line.strip()))
+    return offenders
+
+
+def test_a_cue_never_enumerates_two_senses_on_one_line():
+    """Distinct senses go on their own line via `<br>`, each with its own
+    cue -- the shape the immutable prepositions established."""
+    assert _cues_enumerating_two_senses(_english_cells()) == []
+
+
+def test_the_two_sense_cue_check_catches_the_shape_it_guards():
+    tainted = [("nouns.tsv", "число", "number / date (a numeral, or a calendar day)")]
+    assert _cues_enumerating_two_senses(tainted) == [
+        ("nouns.tsv", "число", "number / date (a numeral, or a calendar day)")
+    ]

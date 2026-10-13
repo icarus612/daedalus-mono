@@ -216,7 +216,7 @@ A lone em dash there means "no extra info" and renders as nothing.
 | 12 | откуда | from where | Asking for a starting point | — |
 | 13 | отсюда | from here | — | — |
 | 14 | оттуда | from there | — | — |
-| 15 | назад | backwards / ago (direction, or time past) | Motion backward, or time (2 days ago) | — |
+| 15 | назад | backwards (direction)<br>ago (time past) | Motion backward, or time (2 days ago) | — |
 | 16 | вперёд | forwards | Motion forward | — |
 | 17 | когда (adverb) | when | Asking for a time | — |
 | 18 | тогда | then / in that case (at that time) | Pointing to past/future, or conditional | — |
@@ -230,7 +230,7 @@ A lone em dash there means "no extra info" and renders as nothing.
 | 26 | иногда | sometimes | — | — |
 | 27 | никогда | never | Requires a negative verb (не) | — |
 | 28 | уже | already | Marks a completed status | — |
-| 29 | ещё | still / yet / more (ongoing, or asking for more) | Marks an ongoing status or asks for more | — |
+| 29 | ещё | still / yet (ongoing)<br>more (asking for more) | Marks an ongoing status or asks for more | — |
 | 30 | пока (adverb) | for now / so far | Also used casually to say "bye" | — |
 | 31 | опять | again (the same action repeating) | An action repeating itself | — |
 | 32 | снова | again / anew (afresh, a new start) | Repeating, often implying a fresh start | — |

@@ -10,7 +10,7 @@
 9	утро	morning	у́тро	n	у́тра			No	Time			New
 10	вечер	evening	ве́чер	m	вечера́			No	Time			New
 11	ночь	night	ночь	f	но́чи			No	Time			New
-12	век	century / age (an era)	век	m	века́			No	Time			New
+12	век	century<br>age (an era)	век	m	века́			No	Time			New
 13	прошлое	the past	про́шлое	n	—			No	Time	declines like an adjective		New
 14	настоящее	the present	настоя́щее	n	—			No	Time	declines like an adjective		New
 15	будущее	the future	бу́дущее	n	—			No	Time	declines like an adjective		New
@@ -414,7 +414,7 @@
 418	значение	meaning / significance (what it signifies)	значе́ние	n	значе́ния			No	Concepts			New
 419	качество	quality	ка́чество	n	ка́чества			No	Concepts			New
 420	количество	quantity	коли́чество	n	—			No	Concepts			New
-421	число	number / date (a numeral, or a calendar day)	число́	n	чи́сла			No	Concepts			New
+421	число	number (a numeral)<br>date (a calendar day)	число́	n	чи́сла			No	Concepts			New
 422	цифра	digit / figure	ци́фра	f	ци́фры			No	Concepts			New
 423	размер	size	разме́р	m	разме́ры			No	Concepts			New
 424	форма	shape / form / uniform	фо́рма	f	фо́рмы			No	Concepts			New
@@ -423,7 +423,7 @@
 427	вкус	taste	вкус	m	вку́сы			No	Concepts			New
 428	вес	weight	вес	m	—			No	Concepts			New
 429	рост	height / growth	рост	m	—			No	Concepts			New
-430	вид	view / kind / appearance (what something looks like)	вид	m	ви́ды			No	Concepts			New
+430	вид	view / appearance (what something looks like)<br>kind (a type or species)	вид	m	ви́ды			No	Concepts			New
 431	образ	image / manner	о́браз	m	о́бразы			No	Concepts			New
 432	роль	role	роль	f	ро́ли			No	Concepts			New
 433	условие	condition	усло́вие	n	усло́вия			No	Concepts			New
@@ -476,7 +476,7 @@
 480	движение	movement / traffic	движе́ние	n	движе́ния			No	Force & Motion			New
 481	скорость	speed	ско́рость	f	ско́рости			No	Force & Motion			New
 482	ход	move / course (noun)	ход	m	ходы́			No	Force & Motion			New
-483	взгляд	look / glance / view (a gaze, or an opinion)	взгляд	m	взгля́ды			No	Force & Motion			New
+483	взгляд	look / glance (a gaze)<br>view (an opinion)	взгляд	m	взгля́ды			No	Force & Motion			New
 484	внимание	attention	внима́ние	n	—			No	Character & Values			New
 485	память	memory	па́мять	f	—			No	Character & Values			New
 486	характер	character / personality	хара́ктер	m	хара́ктеры			No	Character & Values			New
@@ -529,7 +529,7 @@
 533	срок	term / deadline	срок	m	сро́ки			No	Shapes & Measures			New
 534	период	period	пери́од	m	пери́оды			No	Shapes & Measures			New
 535	этап	stage	эта́п	m	эта́пы			No	Shapes & Measures			New
-536	очередь	line / queue / turn (people waiting)	о́чередь	f	о́череди			No	Groups & Quantity			New
+536	очередь	line / queue (people waiting)<br>turn	о́чередь	f	о́череди			No	Groups & Quantity			New
 537	пара	pair / couple	па́ра	f	па́ры			No	Groups & Quantity			New
 538	толпа	crowd	толпа́	f	то́лпы			No	Groups & Quantity			New
 539	группа	group	гру́ппа	f	гру́ппы			No	Groups & Quantity			New
