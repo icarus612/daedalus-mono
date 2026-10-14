@@ -174,8 +174,8 @@ def test_all_subdeck_names():
         "Languages::Russian::3. Mutable Words::b. Verbs",
         "Languages::Russian::3. Mutable Words::c. Adjectives",
         "Languages::Russian::2. Immutable Words::e. Base Adverbs",
-        "Languages::Russian::3. Mutable Words::e. Pronouns",
-        "Languages::Russian::3. Mutable Words::f. Numerals",
+        "Languages::Russian::3. Mutable Words::d. Pronouns",
+        "Languages::Russian::3. Mutable Words::e. Numerals",
     ]
     for name in names:
         assert ". " in name

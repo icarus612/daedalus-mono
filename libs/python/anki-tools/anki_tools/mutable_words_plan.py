@@ -17,18 +17,19 @@ from anki_tools.examples_field import EXAMPLES_FIELD
 
 DECK_ROOT = "Languages::Russian::3. Mutable Words"
 
+# The lettered subdecks of this tree, in order. Adverbs is absent on
+# purpose: it builds into the Immutable tree below, and leaving a hole here
+# would letter the rest a, b, c, e, f.
 SUBDECK_LEAVES = {
     "Nouns": "Nouns",
     "Verbs": "Verbs",
     "Adjectives": "Adjectives",
-    "Adverbs": "Adverbs",
     "Pronouns": "Pronouns",
     "Numerals": "Numerals",
 }
 
 # Adverbs do not decline, so they sit under Immutable Words beside the base
-# adverbs. The entry stays in SUBDECK_LEAVES above so the other sheets keep
-# their letters.
+# adverbs rather than taking a letter here.
 SUBDECK_OVERRIDES = {
     "Adverbs": "Languages::Russian::2. Immutable Words::e. Base Adverbs",
 }
@@ -482,17 +483,17 @@ class NumeralRow:
 
 def subdeck_name(sheet: str, root: str = DECK_ROOT) -> str:
     """Full deck path for `sheet`, e.g. `{root}::a. Nouns`."""
-    if sheet not in SUBDECK_LEAVES:
-        raise ValueError(f"unknown sheet: {sheet!r}")
     if sheet in SUBDECK_OVERRIDES:
         return SUBDECK_OVERRIDES[sheet]
+    if sheet not in SUBDECK_LEAVES:
+        raise ValueError(f"unknown sheet: {sheet!r}")
     letter = "abcdefghijklmnopqrstuvwxyz"[list(SUBDECK_LEAVES).index(sheet)]
     return f"{root}::{letter}. {SUBDECK_LEAVES[sheet]}"
 
 
 def all_subdeck_names(root: str = DECK_ROOT) -> list[str]:
-    """Every subdeck path, in `SUBDECK_LEAVES` order."""
-    return [subdeck_name(sheet, root) for sheet in SUBDECK_LEAVES]
+    """Every subdeck path the builder writes, in sheet order."""
+    return [subdeck_name(sheet, root) for sheet in NOTE_TYPE_NAMES]
 
 
 def audio_names(base_word: str) -> list[str]:
