@@ -114,7 +114,7 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 11 | разве | really? (implies doubt) | — | — |
 | 12 | неужели | is it possible? (strong surprise) | — | — |
 | 13 | именно | exactly / precisely | Pinpoints exactly which one | — |
-| 14 | просто (particle) | simply / just (particle) | Plays it down — "it's just that..." | — |
+| 14 | просто (particle) | simply / just | Plays it down — "it's just that..." | — |
 | 15 | пусть / пускай | let (as in "let them") | — | — |
 | 16 | всё-таки | still / nevertheless (all the same) | Concessive — "all the same, after all" | — |
 | 17 | вон | over there (pointing out) | — | — |
@@ -122,7 +122,7 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 19 | да | yes (can also act as emphasis) | — | — |
 | 20 | нет | no | Answers "no"; also "there is no" + genitive | — |
 | 21 | лишь | only / merely (bookish) | Bookish equivalent of только | — |
-| 22 | всё | still / constantly (keeps on) | Continuative — "keeps on, still" | — |
+| 22 | всё | still / all / constantly (keeps on) | Continuative — "keeps on, still" | — |
 | 23 | -то | some- (indefinite) | кто-то "someone", где-то "somewhere"; contrast -нибудь = any- | — |
 | 24 | -ка | go on / just (informal) | softens an imperative: скажи-ка "go on, tell me" | — |
 | 25 | таки | after all / nevertheless | often hyphenated: всё-таки | — |
@@ -144,6 +144,7 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 41 | поздравляю | congratulations! | 1st-person present of поздравлять; often + с + instrumental (с днём рождения!) | — |
 | 42 | помогите | help! | Imperative pl./formal of помочь; shouted in an emergency | — |
 | 43 | это | this is / that is / it is | Subject-less linking word: Э́то кни́га = This is a book. Invariable, unlike the pronoun э́тот (э́та, э́то, э́ти) which agrees with its noun | Это моя сестра |
+| 44 | так (particle) | well then / all right (resuming or confirming a point) | Colloquial — close to значит or хорошо; set off by a comma | Так, начнём |
 
 ### Indeclinable Nouns (Несклоняемые существительные)
 Foreign loan words that are frozen in their base form.
@@ -249,7 +250,7 @@ A lone em dash there means "no extra info" and renders as nothing.
 | 45 | почему | why (cause) | Asking for the reason | — |
 | 46 | зачем | what for / why (purpose) | Asking for the goal | — |
 | 47 | как (adverb) | how | Asking for the method | — |
-| 48 | так | like this / so (adverb) | Demonstrating the method | — |
+| 48 | так (adverb) | so / like this | Demonstrating the method | — |
 | 49 | пешком | on foot | The method of travel (walking) | — |
 | 50 | зря | in vain / for nothing | Wasted effort | — |
 | 51 | наоборот | vice versa / backwards (the other way round) | The exact opposite of what was expected | — |

@@ -283,8 +283,9 @@ def test_slug_collision_free_across_real_source_word_list():
     land on the same slug.
 
     "Pairwise unique" was the right assertion only while every word appeared
-    exactly once. Three words -- `как`, `когда`, `пока` -- are genuinely
-    both a conjunction and an adverb, so each has two rows, told apart by a
+    exactly once. Four words -- `как`, `когда`, `пока`, `так` -- are genuinely
+    both a conjunction and an adverb, and `так` is both a particle and an
+    adverb, so each has two rows, told apart by a
     parenthetical qualifier ("как (conjunction)") that `strip_qualifier`
     removes before a filename is built. Those two rows SHOULD share one
     recording: it is one word with one pronunciation.
@@ -305,8 +306,8 @@ def test_slug_collision_free_across_real_source_word_list():
     # A positive control on the parse itself: a bare zero (or a suspiciously
     # low count from a regex that stopped matching) would make every
     # assertion below trivially true for the wrong reason.
-    assert len(words) == 230, (
-        f"expected 230 parsed rows from the source word list, got "
+    assert len(words) == 231, (
+        f"expected 231 parsed rows from the source word list, got "
         f"{len(words)} -- the parser regex may no longer match the table "
         f"format; investigate before trusting this test's result."
     )
@@ -322,13 +323,13 @@ def test_slug_collision_free_across_real_source_word_list():
         f"instead: {collisions}"
     )
 
-    # The headline numbers, asserted on the actual counts: 230 raw rows,
-    # 227 distinct slugs -- the three dual-class words each spend two rows
+    # The headline numbers, asserted on the actual counts: 231 raw rows,
+    # 227 distinct slugs -- the four dual-class words each spend two rows
     # on one slug, and nothing else repeats.
     assert len(set(slugs)) == 227
     repeated = [slug for slug in set(slugs) if slugs.count(slug) > 1]
     assert sorted(repeated) == sorted(
-        sanitize_word_slug(w) for w in ("как", "когда", "пока")
+        sanitize_word_slug(w) for w in ("как", "когда", "пока", "так")
     )
 
     # The specific hazard named in the request: "/" cannot appear in a
