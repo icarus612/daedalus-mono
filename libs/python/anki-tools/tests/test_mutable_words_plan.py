@@ -173,7 +173,7 @@ def test_all_subdeck_names():
         "Languages::Russian::3. Mutable Words::a. Nouns",
         "Languages::Russian::3. Mutable Words::b. Verbs",
         "Languages::Russian::3. Mutable Words::c. Adjectives",
-        "Languages::Russian::3. Mutable Words::d. Adverbs",
+        "Languages::Russian::2. Immutable Words::e. Base Adverbs",
         "Languages::Russian::3. Mutable Words::e. Pronouns",
         "Languages::Russian::3. Mutable Words::f. Numerals",
     ]

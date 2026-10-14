@@ -16,7 +16,7 @@ import tempfile
 import time
 from collections.abc import Sequence
 
-from anki.collection import Collection, DeckIdLimit
+from anki.collection import Collection, NoteIdsLimit
 from anki.errors import AnkiException, DBError
 from anki.import_export_pb2 import ExportAnkiPackageOptions
 from anki.models import NotetypeDict
@@ -198,7 +198,10 @@ def export_package(
     build_col: Collection, root_deck_name: str, out_path: str, force: bool = False
 ) -> None:
     """Export `build_col`'s `root_deck_name` subtree to `out_path` as a
-    standalone `.apkg`.
+    standalone `.apkg`, together with any deck in `SUBDECK_OVERRIDES`.
+
+    Adverbs build into the Immutable Words tree, outside `root_deck_name`,
+    so a plain subtree limit would silently drop them.
 
     Raises `FileExistsError` if `out_path` already exists and `force` is
     False. Raises `ValueError` if `root_deck_name` doesn't exist.
@@ -218,8 +221,16 @@ def export_package(
         with_media=True,
         legacy=False,
     )
+    note_ids: list[int] = []
+    seen: set[int] = set()
+    for name in (root_deck_name, *mutable_words_plan.SUBDECK_OVERRIDES.values()):
+        for note_id in build_col.find_notes(f'deck:"{name}"'):
+            if note_id not in seen:
+                seen.add(note_id)
+                note_ids.append(note_id)
+
     build_col.export_anki_package(
-        out_path=out_path, options=options, limit=DeckIdLimit(root_deck_id)
+        out_path=out_path, options=options, limit=NoteIdsLimit(note_ids)
     )
 
 

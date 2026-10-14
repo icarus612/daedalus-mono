@@ -26,6 +26,13 @@ SUBDECK_LEAVES = {
     "Numerals": "Numerals",
 }
 
+# Adverbs do not decline, so they sit under Immutable Words beside the base
+# adverbs. The entry stays in SUBDECK_LEAVES above so the other sheets keep
+# their letters.
+SUBDECK_OVERRIDES = {
+    "Adverbs": "Languages::Russian::2. Immutable Words::e. Base Adverbs",
+}
+
 VOICE_SLOTS: tuple[str, ...] = ("f1", "m2")
 
 NOTE_TYPE_NAMES = {
@@ -477,6 +484,8 @@ def subdeck_name(sheet: str, root: str = DECK_ROOT) -> str:
     """Full deck path for `sheet`, e.g. `{root}::a. Nouns`."""
     if sheet not in SUBDECK_LEAVES:
         raise ValueError(f"unknown sheet: {sheet!r}")
+    if sheet in SUBDECK_OVERRIDES:
+        return SUBDECK_OVERRIDES[sheet]
     letter = "abcdefghijklmnopqrstuvwxyz"[list(SUBDECK_LEAVES).index(sheet)]
     return f"{root}::{letter}. {SUBDECK_LEAVES[sheet]}"
 
