@@ -4,7 +4,7 @@
 3	день	day	день	m	дни			No	Time			New
 4	час	hour	час	m	часы́			No	Time			New
 5	минута	minute	мину́та	f	мину́ты			No	Time			New
-6	секунда	second (noun)	секу́нда	f	секу́нды			No	Time			New
+6	секунда	second (the unit of time)	секу́нда	f	секу́нды			No	Time			New
 7	неделя	week	неде́ля	f	неде́ли			No	Time			New
 8	месяц	month	ме́сяц	m	ме́сяцы			No	Time			New
 9	утро	morning	у́тро	n	у́тра			No	Time			New
@@ -16,7 +16,7 @@
 15	будущее	the future	бу́дущее	n	—			No	Time	declines like an adjective		New
 16	место	place / seat	ме́сто	n	места́			No	Space & Parts			New
 17	край	edge / region	край	m	края́			No	Space & Parts			New
-18	конец	end (noun)	коне́ц	m	концы́			No	Space & Parts			New
+18	конец	end	коне́ц	m	концы́			No	Space & Parts			New
 19	начало	beginning	нача́ло	n	нача́ла			No	Space & Parts			New
 20	середина	middle	середи́на	f	середи́ны			No	Space & Parts			New
 21	часть	part	часть	f	ча́сти			No	Space & Parts			New
@@ -79,13 +79,13 @@
 78	кожа	skin / leather	ко́жа	f	—			No	Body			New
 79	кость	bone	кость	f	ко́сти			No	Body			New
 80	слеза	tear (crying)	слеза́	f	слёзы			No	Body			New
-81	улыбка	smile (noun)	улы́бка	f	улы́бки			No	Body			New
+81	улыбка	smile	улы́бка	f	улы́бки			No	Body			New
 82	мир	world / peace	мир	m	миры́			No	Nature & Weather	мир = world / peace (same word)		New
 83	земля	earth / land / ground	земля́	f	зе́мли			No	Nature & Weather			New
 84	вода	water	вода́	f	во́ды			No	Nature & Weather			New
 85	воздух	air	во́здух	m	—			No	Nature & Weather			New
 86	огонь	fire	ого́нь	m	огни́			No	Nature & Weather			New
-87	свет	light (noun)	свет	m	—			No	Nature & Weather			New
+87	свет	light (illumination)	свет	m	—			No	Nature & Weather			New
 88	тень	shadow / shade	тень	f	те́ни			No	Nature & Weather			New
 89	солнце	sun	со́лнце	n	—			No	Nature & Weather			New
 90	луна	moon	луна́	f	лу́ны			No	Nature & Weather			New
@@ -133,7 +133,7 @@
 132	мышь	mouse	мышь	f	мы́ши			Yes	Animals			New
 133	крыса	rat	кры́са	f	кры́сы			Yes	Animals			New
 134	змея	snake	змея́	f	зме́и			Yes	Animals			New
-135	муха	fly (noun)	му́ха	f	му́хи			Yes	Animals			New
+135	муха	fly (the insect)	му́ха	f	му́хи			Yes	Animals			New
 136	паук	spider	пау́к	m	пауки́			Yes	Animals			New
 137	жук	beetle	жук	m	жуки́			Yes	Animals			New
 138	бабочка	butterfly	ба́бочка	f	ба́бочки			Yes	Animals			New
@@ -341,21 +341,21 @@
 345	сказка	fairy tale	ска́зка	f	ска́зки			No	Life & Mind			New
 346	разговор	conversation	разгово́р	m	разгово́ры			No	Life & Mind			New
 347	вопрос	question	вопро́с	m	вопро́сы			No	Life & Mind			New
-348	ответ	answer (noun)	отве́т	m	отве́ты			No	Life & Mind			New
+348	ответ	answer	отве́т	m	отве́ты			No	Life & Mind			New
 349	правда (noun)	truth / justice	пра́вда	f	—			No	Life & Mind			New
 350	ложь	lie	ложь	f	—			No	Life & Mind			New
 351	ошибка	mistake	оши́бка	f	оши́бки			No	Life & Mind			New
 352	секрет	secret (a kept secret)	секре́т	m	секре́ты			No	Life & Mind			New
 353	тайна	mystery / secret (a mystery)	та́йна	f	та́йны			No	Life & Mind			New
 354	дело	matter / affair / business (an affair)	де́ло	n	дела́			No	Work, Law & Rules			New
-355	работа	work / job (noun)	рабо́та	f	рабо́ты			No	Work, Law & Rules	на работе (на + prep.)		New
+355	работа	work / job	рабо́та	f	рабо́ты			No	Work, Law & Rules	на работе (на + prep.)		New
 356	труд	labor	труд	m	труды́			No	Work, Law & Rules			New
-357	отдых	rest / vacation (noun)	о́тдых	m	—			No	Work, Law & Rules			New
-358	сон	sleep / dream (noun)	сон	m	сны			No	Work, Law & Rules	fleeting vowel: сна		New
+357	отдых	rest / vacation	о́тдых	m	—			No	Work, Law & Rules			New
+358	сон	sleep / dream (while asleep)	сон	m	сны			No	Work, Law & Rules	fleeting vowel: сна		New
 359	мечта	dream (aspiration)	мечта́	f	мечты́			No	Work, Law & Rules			New
-360	желание	wish / desire (noun)	жела́ние	n	жела́ния			No	Work, Law & Rules			New
+360	желание	wish / desire	жела́ние	n	жела́ния			No	Work, Law & Rules			New
 361	просьба	request	про́сьба	f	про́сьбы			No	Work, Law & Rules			New
-362	приказ	order / command (noun)	прика́з	m	прика́зы			No	Work, Law & Rules			New
+362	приказ	order / command	прика́з	m	прика́зы			No	Work, Law & Rules			New
 363	правило	rule	пра́вило	n	пра́вила			No	Work, Law & Rules			New
 364	закон	law	зако́н	m	зако́ны			No	Work, Law & Rules			New
 365	право	right / law (field)	пра́во	n	права́			No	Work, Law & Rules			New
@@ -371,8 +371,8 @@
 375	бой	battle / fight	бой	m	бои́			No	Conflict			New
 376	удар	blow / strike	уда́р	m	уда́ры			No	Conflict			New
 377	защита	defense / protection	защи́та	f	—			No	Conflict			New
-378	спасение	rescue / salvation (noun)	спасе́ние	n	—			No	Conflict			New
-379	помощь	help (noun)	по́мощь	f	—			No	Conflict			New
+378	спасение	rescue / salvation	спасе́ние	n	—			No	Conflict			New
+379	помощь	help	по́мощь	f	—			No	Conflict			New
 380	поддержка	support	подде́ржка	f	—			No	Conflict			New
 381	победа	victory	побе́да	f	побе́ды			No	Conflict			New
 382	поражение	defeat	пораже́ние	n	пораже́ния			No	Conflict			New
@@ -388,8 +388,8 @@
 392	религия	religion	рели́гия	f	рели́гии			No	Knowledge & Culture			New
 393	бог	god	бог	m	бо́ги			Yes	Beliefs & Emotions			New
 394	вера	faith	ве́ра	f	—			No	Beliefs & Emotions			New
-395	надежда	hope (noun)	наде́жда	f	наде́жды			No	Beliefs & Emotions			New
-396	любовь	love (noun)	любо́вь	f	—			No	Beliefs & Emotions			New
+395	надежда	hope	наде́жда	f	наде́жды			No	Beliefs & Emotions			New
+396	любовь	love	любо́вь	f	—			No	Beliefs & Emotions			New
 397	ненависть	hatred	не́нависть	f	—			No	Beliefs & Emotions			New
 398	страх	fear	страх	m	стра́хи			No	Beliefs & Emotions			New
 399	ужас	horror	у́жас	m	—			No	Beliefs & Emotions			New
@@ -402,7 +402,7 @@
 406	грусть	sadness	грусть	f	—			No	Beliefs & Emotions			New
 407	печаль	sorrow	печа́ль	f	—			No	Beliefs & Emotions			New
 408	смех	laughter	смех	m	—			No	Beliefs & Emotions			New
-409	плач	crying (noun)	плач	m	—			No	Beliefs & Emotions			New
+409	плач	weeping / crying (the sound)	плач	m	—			No	Beliefs & Emotions			New
 410	боль	pain	боль	f	—			No	Beliefs & Emotions			New
 411	здоровье	health	здоро́вье	n	—			No	Health			New
 412	болезнь	illness	боле́знь	f	боле́зни			No	Health			New
@@ -447,9 +447,9 @@
 451	документ	document	докуме́нт	m	докуме́нты			No	Concepts			New
 452	деньги	money	де́ньги	pl-only	—			No	Money & Economy	plural-only noun		New
 453	цена	price	цена́	f	це́ны			No	Money & Economy			New
-454	стоимость	cost (noun)	сто́имость	f	—			No	Money & Economy			New
+454	стоимость	cost	сто́имость	f	—			No	Money & Economy			New
 455	налог	tax	нало́г	m	нало́ги			No	Money & Economy			New
-456	штраф	fine / penalty (noun)	штраф	m	штра́фы			No	Money & Economy			New
+456	штраф	fine / penalty (a money punishment)	штраф	m	штра́фы			No	Money & Economy			New
 457	зарплата	salary	зарпла́та	f	зарпла́ты			No	Money & Economy			New
 458	богатство	wealth	бога́тство	n	—			No	Money & Economy			New
 459	бедность	poverty	бе́дность	f	—			No	Money & Economy			New
@@ -475,7 +475,7 @@
 479	напряжение	tension / voltage	напряже́ние	n	—			No	Force & Motion			New
 480	движение	movement / traffic	движе́ние	n	движе́ния			No	Force & Motion			New
 481	скорость	speed	ско́рость	f	ско́рости			No	Force & Motion			New
-482	ход	move / course (noun)	ход	m	ходы́			No	Force & Motion			New
+482	ход	move / course	ход	m	ходы́			No	Force & Motion			New
 483	взгляд	look / glance (a gaze)<br>view (an opinion)	взгляд	m	взгля́ды			No	Force & Motion			New
 484	внимание	attention	внима́ние	n	—			No	Character & Values			New
 485	память	memory	па́мять	f	—			No	Character & Values			New
@@ -559,7 +559,7 @@
 563	свидание	date / meeting	свида́ние	n	свида́ния			No	Life & Mind	пойти́ на свида́ние = to go on a date		New
 564	лето	summer	ле́то	n	—			No	Nature & Weather	ле́том = in summer (adverb)		New
 565	контроль	control	контро́ль	m	—			No	Work, Law & Rules	masculine soft-sign noun		New
-566	подозреваемый	suspect (noun)	подозрева́емый	m	подозрева́емые			Yes	Work, Law & Rules	declines like an adjective		New
+566	подозреваемый	suspect	подозрева́емый	m	подозрева́емые			Yes	Work, Law & Rules	declines like an adjective		New
 567	спорт	sport	спорт	m	—			No	Sports & Games			New
 568	кусок	piece	кусо́к	m	куски́			No	Shapes & Measures	fleeting -о-: куска́, куски́		New
 569	шанс	chance (an opportunity)	шанс	m	ша́нсы			No	Concepts			New
@@ -582,7 +582,7 @@
 586	арест	arrest	аре́ст	m	аре́сты			No	Work, Law & Rules			New
 587	капитан	captain	капита́н	m	капита́ны			Yes	Jobs & Roles			New
 588	идиот	idiot	идио́т	m	идио́ты			Yes	People			New
-589	атака	attack (noun)	ата́ка	f	ата́ки			No	Conflict			New
+589	атака	attack	ата́ка	f	ата́ки			No	Conflict			New
 590	мелодия	melody / tune	мело́дия	f	мело́дии			No	Knowledge & Culture			New
 591	волейбол	volleyball	волейбо́л	m	—			No	Sports & Games			New
 592	хоккей	hockey	хокке́й	m	—			No	Sports & Games			New
@@ -601,7 +601,7 @@
 605	проза	prose	про́за	f	—			No	Knowledge & Culture			New
 606	лидер	leader	ли́дер	m	ли́деры			Yes	Jobs & Roles			New
 607	сигнал	signal	сигна́л	m	сигна́лы			No	Concepts			New
-608	старт	start (noun)	старт	m	ста́рты			No	Concepts			New
+608	старт	start	старт	m	ста́рты			No	Concepts			New
 609	кондиционер	air conditioner	кондиционе́р	m	кондиционе́ры			No	Home & Household			New
 610	бюджет	budget	бюдже́т	m	бюдже́ты			No	Money & Economy			New
 611	экзамен	exam	экза́мен	m	экза́мены			No	Knowledge & Culture	сдава́ть экза́мен = to sit an exam; сдать = to pass it		New

@@ -109,7 +109,7 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 6 | даже | even | Marks something unexpected | — |
 | 7 | ли | whether / if (turns a statement into a question) | — | — |
 | 8 | ни | neither / (emphasize extremeness)&nbsp; | Reinforces a negation; needs не or нет in the clause | — |
-| 9 | ну | well / come on (particle) | Conversational opener — urging, hesitating or softening | — |
+| 9 | ну | well / come on (urging) | Conversational opener — urging, hesitating or softening | — |
 | 10 | ведь | you see / after all (asserting a known fact) | — | — |
 | 11 | разве | really? (implies doubt) | — | — |
 | 12 | неужели | is it possible? (strong surprise) | — | — |
@@ -126,7 +126,7 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 23 | -то | some- (indefinite) | кто-то "someone", где-то "somewhere"; contrast -нибудь = any- | — |
 | 24 | -ка | go on / just (informal) | softens an imperative: скажи-ка "go on, tell me" | — |
 | 25 | таки | after all / nevertheless | often hyphenated: всё-таки | — |
-| 26 | пожалуй | perhaps / I suppose (particle) | Hedges — "I suppose, perhaps" | — |
+| 26 | пожалуй | perhaps / I suppose (leaning towards it) | Hedges — "I suppose, perhaps" | — |
 | 27 | будто | as if / as though (often implies doubt) | — | — |
 | 28 | мол | supposedly / "he said" (marks reported speech; colloquial) | — | — |
 | 29 | дескать | allegedly / "so they claim" (marks someone else's words) | more formal than мол | — |
@@ -138,9 +138,9 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 35 | извините | excuse me / sorry (formal — when you are at fault) | Imperative pl./formal of извинить; use when you are at fault | — |
 | 36 | простите | excuse me / forgive me (formal — to get attention) | Imperative pl./formal of простить; also used to get attention | — |
 | 37 | привет | hi (informal) | Informal only; do not use with strangers or superiors | — |
-| 38 | конечно | of course / certainly (particle) | Written with ч but pronounced [ш]: конешно | — |
-| 39 | ладно | OK / all right / fine (particle) | Signals agreement or resignation ("fine, whatever") | — |
-| 40 | ничего | nothing / it's OK / no problem (particle) | Also a stand-alone reassuring reply | — |
+| 38 | конечно | of course / certainly (obviously so) | Written with ч but pronounced [ш]: конешно | — |
+| 39 | ладно | OK / all right (agreeing) | Signals agreement or resignation ("fine, whatever") | — |
+| 40 | ничего | nothing / it's OK / no problem | Also a stand-alone reassuring reply | — |
 | 41 | поздравляю | congratulations! | 1st-person present of поздравлять; often + с + instrumental (с днём рождения!) | — |
 | 42 | помогите | help! | Imperative pl./formal of помочь; shouted in an emergency | — |
 | 43 | это | this is / that is / it is | Subject-less linking word: Э́то кни́га = This is a book. Invariable, unlike the pronoun э́тот (э́та, э́то, э́ти) which agrees with its noun | Это моя сестра |
@@ -171,13 +171,13 @@ Foreign loan words that are frozen in their base form.
 | 18 | кенгуру | kangaroo | Masculine (animate) | большой кенгуру |
 | 19 | шимпанзе | chimpanzee | Masculine (animate) | умный шимпанзе |
 | 20 | фойе | foyer / lobby | Neuter | просторное фойе |
-| 21 | шоу | show (noun) | Neuter | новое шоу |
+| 21 | шоу | show | Neuter | новое шоу |
 | 22 | эссе | essay | Neuter | короткое эссе |
 | 23 | какао | cocoa | Neuter | горячее какао |
 | 24 | турне | tour | Neuter | мировое турне |
 | 25 | бюро | bureau / office (a bureau) | Neuter | справочное бюро |
 | 26 | купе | train compartment | Neuter | свободное купе |
-| 27 | пари | bet / wager (noun) | Neuter | глупое пари |
+| 27 | пари | bet / wager | Neuter | глупое пари |
 | 28 | алиби | alibi | Neuter | железное алиби |
 | 29 | жалюзи | blinds / shutters (always plural in concept) | Neuter, indeclinable — usually agrees in the plural | новые жалюзи |
 | 30 | рагу | stew | Neuter | овощное рагу |
@@ -254,12 +254,12 @@ A lone em dash there means "no extra info" and renders as nothing.
 | 49 | пешком | on foot | The method of travel (walking) | — |
 | 50 | зря | in vain / for nothing | Wasted effort | — |
 | 51 | наоборот | vice versa / backwards (the other way round) | The exact opposite of what was expected | — |
-| 52 | наверняка | for sure / certainly (adverb) | High degree of confidence | — |
+| 52 | наверняка | for sure / certainly (confident of it) | High degree of confidence | — |
 | 53 | нарочно | on purpose | Intentional action | — |
 | 54 | вслух | out loud | Spoken so others can hear | — |
 | 55 | наизусть | by heart | Memorized perfectly | — |
 | 56 | вообще | in general / at all (generally speaking) | Conversational filler word | — |
-| 57 | вроде | like / kind of / sort of (adverb) | Colloquial hedge; also a loose preposition (вроде того) | — |
+| 57 | вроде | like / kind of / sort of (hedging) | Colloquial hedge; also a loose preposition (вроде того) | — |
 | 58 | затем | then / after that (next in sequence) | Sequencing adverb, close synonym of потом | — |
 | 59 | иначе | otherwise / differently (or else) | Also used to mean "or else" (a conditional warning) | — |
 | 60 | мало | little / few | Takes genitive | мало времени |

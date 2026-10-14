@@ -10,7 +10,7 @@
 9	сильный	strong	си́льный	сильная	сильное	сильные			слабый	hard			New
 10	слабый	weak	сла́бый	слабая	слабое	слабые			сильный	hard			New
 11	тяжёлый	heavy (weighty)<br>hard (difficult)	тяжёлый	тяжёлая	тяжёлое	тяжёлые			лёгкий	hard	heavy or hard/difficult		New
-12	лёгкий	light / easy (adjective)	лёгкий	лёгкая	лёгкое	лёгкие			тяжёлый	velar stem (-кий/-гий/-хий)	light (weight) or easy		New
+12	лёгкий	light / easy (not heavy)	лёгкий	лёгкая	лёгкое	лёгкие			тяжёлый	velar stem (-кий/-гий/-хий)	light (weight) or easy		New
 13	длинный	long	дли́нный	длинная	длинное	длинные			короткий	hard			New
 14	короткий	short (not long)	коро́ткий	короткая	короткое	короткие			длинный	velar stem (-кий/-гий/-хий)			New
 15	быстрый	fast / quick	бы́стрый	быстрая	быстрое	быстрые			медленный	hard			New
@@ -18,7 +18,7 @@
 17	трудный	difficult	тру́дный	трудная	трудное	трудные			лёгкий	hard			New
 18	простой	simple	просто́й	простая	простое	простые			сложный	stressed ending (-ой)			New
 19	сложный	complicated / complex	сло́жный	сложная	сложное	сложные			простой	hard			New
-20	чистый	clean / pure (adjective)	чи́стый	чистая	чистое	чистые			грязный	hard			New
+20	чистый	clean / pure	чи́стый	чистая	чистое	чистые			грязный	hard			New
 21	грязный	dirty	гря́зный	грязная	грязное	грязные			чистый	hard			New
 22	дорогой	expensive / dear	дорого́й	дорогая	дорогое	дорогие			дешёвый	stressed ending (-ой)	also 'dear' as a term of address		New
 23	дешёвый	cheap	дешёвый	дешёвая	дешёвое	дешёвые			дорогой	hard			New
@@ -78,8 +78,8 @@
 77	последний	last	после́дний	последняя	последнее	последние			первый	soft	soft-stem adjective		New
 78	следующий	next / following	сле́дующий	следующая	следующее	следующие			предыдущий	sibilant stem (-жий/-ший/-чий/-щий)			New
 79	предыдущий	previous	преды́дущий	предыдущая	предыдущее	предыдущие			следующий	sibilant stem (-жий/-ший/-чий/-щий)			New
-80	ранний	early (adjective)	ра́нний	ранняя	раннее	ранние			поздний	soft			New
-81	поздний	late (adjective)	по́здний	поздняя	позднее	поздние			ранний	soft			New
+80	ранний	early	ра́нний	ранняя	раннее	ранние			поздний	soft			New
+81	поздний	late	по́здний	поздняя	позднее	поздние			ранний	soft			New
 82	утренний	morning (adj.)	у́тренний	утренняя	утреннее	утренние			вечерний	soft			New
 83	вечерний	evening (adj.)	вече́рний	вечерняя	вечернее	вечерние			утренний	soft			New
 84	ночной	night (adj.)	ночно́й	ночная	ночное	ночные			дневной	stressed ending (-ой)			New
@@ -97,14 +97,14 @@
 96	одинаковый	identical / the same	одина́ковый	одинаковая	одинаковое	одинаковые			разный	hard			New
 97	похожий	similar	похо́жий	похожая	похожее	похожие				sibilant stem (-жий/-ший/-чий/-щий)	похож на + accusative		New
 98	полный	full	по́лный	полная	полное	полные			пустой	hard			New
-99	пустой	empty (adjective)	пусто́й	пустая	пустое	пустые			полный	stressed ending (-ой)			New
+99	пустой	empty	пусто́й	пустая	пустое	пустые			полный	stressed ending (-ой)			New
 100	свободный	free	свобо́дный	свободная	свободное	свободные			занятой	hard			New
 101	занятой	busy (of a person)	занято́й	занятая	занятое	занятые	за́нят, занята́, за́нято, за́няты		свободный	stressed ending (-ой)	занятой = busy person; занятый = occupied (seat, line)		New
-102	открытый	open (adjective)	откры́тый	открытая	открытое	открытые			закрытый	hard			New
-103	закрытый	closed (adjective)	закры́тый	закрытая	закрытое	закрытые	закры́т, закры́та, закры́то, закры́ты		открытый	hard			New
+102	открытый	open	откры́тый	открытая	открытое	открытые			закрытый	hard			New
+103	закрытый	closed	закры́тый	закрытая	закрытое	закрытые	закры́т, закры́та, закры́то, закры́ты		открытый	hard			New
 104	правый	right (side)	пра́вый	правая	правое	правые			левый	hard	also 'right-wing'; прав = 'correct' (short form)		New
 105	левый	left (side)	ле́вый	левая	левое	левые			правый	hard			New
-106	прямой	straight / direct (adjective)	прямо́й	прямая	прямое	прямые				stressed ending (-ой)			New
+106	прямой	straight / direct	прямо́й	прямая	прямое	прямые				stressed ending (-ой)			New
 107	острый	sharp / spicy	о́стрый	острая	острое	острые			тупой	hard			New
 108	тупой	blunt / dumb	тупо́й	тупая	тупое	тупые			острый	stressed ending (-ой)			New
 109	твёрдый	hard / firm (solid, not soft)	твёрдый	твёрдая	твёрдое	твёрдые			мягкий	hard			New
@@ -116,9 +116,9 @@
 115	вкусный	tasty / delicious	вку́сный	вкусная	вкусное	вкусные				hard			New
 116	свежий	fresh	све́жий	свежая	свежее	свежие				sibilant stem (-жий/-ший/-чий/-щий)			New
 117	сухой	dry	сухо́й	сухая	сухое	сухие			мокрый	stressed ending (-ой)			New
-118	мокрый	wet (adjective)	мо́крый	мокрая	мокрое	мокрые			сухой	hard			New
-119	влажный	damp / humid (adjective)	вла́жный	влажная	влажное	влажные				hard			New
-120	живой	alive / lively (adjective)	живо́й	живая	живое	живые			мёртвый	stressed ending (-ой)			New
+118	мокрый	wet	мо́крый	мокрая	мокрое	мокрые			сухой	hard			New
+119	влажный	damp / humid	вла́жный	влажная	влажное	влажные				hard			New
+120	живой	alive / lively	живо́й	живая	живое	живые			мёртвый	stressed ending (-ой)			New
 121	мёртвый	dead	мёртвый	мёртвая	мёртвое	мёртвые			живой	hard			New
 122	целый	whole / entire	це́лый	целая	целое	целые				hard			New
 123	глубокий	deep	глубо́кий	глубокая	глубокое	глубокие			мелкий	velar stem (-кий/-гий/-хий)			New
@@ -131,7 +131,7 @@
 130	известный	famous / well-known	изве́стный	известная	известное	известные				hard			New
 131	популярный	popular	популя́рный	популярная	популярное	популярные				hard			New
 132	важный	important	ва́жный	важная	важное	важные				hard			New
-133	нужный	needed / necessary (adjective)	ну́жный	нужная	нужное	нужные				hard	often short form: мне нужен / нужна / нужно		New
+133	нужный	needed / necessary	ну́жный	нужная	нужное	нужные				hard	often short form: мне нужен / нужна / нужно		New
 134	лишний	extra / unnecessary	ли́шний	лишняя	лишнее	лишние				soft	soft-stem adjective		New
 135	готовый	ready	гото́вый	готовая	готовое	готовые	гото́в, гото́ва, гото́во, гото́вы			hard	often short form: я гото́в / гото́ва		New
 136	согласный	agreeing / in agreement	согла́сный	согласная	согласное	согласные				hard	mostly used in short form: я согла́сен / согла́сна		New
@@ -144,7 +144,7 @@
 143	необычный	unusual	необы́чный	необычная	необычное	необычные			обычный	hard			New
 144	возможный	possible	возмо́жный	возможная	возможное	возможные			невозможный	hard			New
 145	невозможный	impossible	невозмо́жный	невозможная	невозможное	невозможные			возможный	hard			New
-146	знакомый	familiar (adjective)	знако́мый	знакомая	знакомое	знакомые				hard	also a noun: 'an acquaintance'		New
+146	знакомый	familiar	знако́мый	знакомая	знакомое	знакомые				hard	also a noun: 'an acquaintance'		New
 147	любимый	favorite / beloved	люби́мый	любимая	любимое	любимые				hard			New
 148	понятный	clear / understandable	поня́тный	понятная	понятное	понятные				hard			New
 149	полезный	useful	поле́зный	полезная	полезное	полезные			вредный	hard			New
@@ -168,6 +168,6 @@
 167	рад	glad / pleased	рад	ра́да	ра́до	ра́ды	рад, ра́да, ра́до, ра́ды			short-form only	exists ONLY in the short form; рад + infinitive or + dative		New
 168	классический	classical	класси́ческий	класси́ческая	класси́ческое	класси́ческие				velar stem (-кий/-гий/-хий)			New
 169	бывший	former / ex-	бы́вший	бы́вшая	бы́вшее	бы́вшие				sibilant stem (-жий/-ший/-чий/-щий)	past active participle of быть, used as an ordinary adjective		New
-170	плачущий	crying (adjective)	пла́чущий	пла́чущая	пла́чущее	пла́чущие				sibilant stem (-жий/-ший/-чий/-щий)	present active participle of пла́кать		New
+170	плачущий	crying (describing someone)	пла́чущий	пла́чущая	пла́чущее	пла́чущие				sibilant stem (-жий/-ший/-чий/-щий)	present active participle of пла́кать		New
 171	наивный	naive	наи́вный	наи́вная	наи́вное	наи́вные	наи́вен, наи́вна	наи́внее		hard			New
 172	активный	active	акти́вный	акти́вная	акти́вное	акти́вные	акти́вен, акти́вна	акти́внее	пассивный	hard			New
