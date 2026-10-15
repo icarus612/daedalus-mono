@@ -28,10 +28,11 @@ SUBDECK_LEAVES = {
     "Numerals": "Numerals",
 }
 
-# Adverbs do not decline, so they sit under Immutable Words beside the base
-# adverbs rather than taking a letter here.
+# Adverbs do not decline, so they sit under Immutable Words rather than taking
+# a letter here. Base and derived stay separate decks: `e. Base Adverbs` holds
+# the primitives (тут, вчера), this leaf holds the ones built off an adjective.
 SUBDECK_OVERRIDES = {
-    "Adverbs": "Languages::Russian::2. Immutable Words::e. Base Adverbs",
+    "Adverbs": "Languages::Russian::2. Immutable Words::f. Derived Adverbs",
 }
 
 VOICE_SLOTS: tuple[str, ...] = ("f1", "m2")
