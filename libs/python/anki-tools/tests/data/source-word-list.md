@@ -108,7 +108,7 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 5 | только | only (restrictive) | Restrictive — "only, just" | — |
 | 6 | даже | even | Marks something unexpected | — |
 | 7 | ли | whether / if (turns a statement into a question) | — | — |
-| 8 | ни | neither / (emphasize extremeness)&nbsp; | Reinforces a negation; needs не or нет in the clause | — |
+| 8 | ни | not a single / not one | Reinforces a negation; needs не or нет in the clause | — |
 | 9 | ну | well / come on (urging) | Conversational opener — urging, hesitating or softening | — |
 | 10 | ведь | you see / after all (asserting a known fact) | — | — |
 | 11 | разве | really? (implies doubt) | — | — |
