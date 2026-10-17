@@ -95,7 +95,7 @@ def clone_note_type(
     for template in cloned["tmpls"]:
         for side in ("qfmt", "afmt"):
             template[side] = word_qualifier.add_qualifier_script(
-                case_field.add_case_tag(
+                case_field.add_case_row(
                     examples_field.add_examples_block(
                         rewrite_audio_playback(
                             strip_part_of_speech(template[side])

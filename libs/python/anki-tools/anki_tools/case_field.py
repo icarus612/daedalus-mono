@@ -1,10 +1,9 @@
 """The `Case` field: the grammatical case a Russian preposition governs.
 
-Rendered as a `(+ genitive case)` tag inline beside the Russian word, rather
-than only as prose behind the answer side's grey info icon -- for a
-preposition the governed case is part of the lemma's identity, so it belongs
-where the word is, not one reveal away. The prose stays in `Additional Info`
-unchanged; this is an additional, shorter presentation of the same fact.
+Rendered as its own labelled row on the answer side, through the same
+`addTitle` block every other grammar fact uses -- `Case / Preposition` on
+Verbs, `Case Governed` on Numerals, `Gender` and `Plural` on Nouns. The field
+holds the case NAME alone; the template decides how it is presented.
 
 Derived only for the Prepositions section, whose `Info` column IS the
 governed case by construction ("Prepositions never change themselves, though
@@ -19,58 +18,68 @@ Pure text -- no Anki imports.
 import re
 
 CASE_FIELD = "Case"
-CASE_CLASS = "case"
+CASE_ID = "case"
 
 GOVERNING_SECTION = "Prepositions"
 
+# The same row layout the Mutable note types give every grammar field via
+# `mutable_words_plan.EXTRA_CSS`, so a `Case` row on a preposition reads
+# identically to `Case / Preposition` on a verb. The Immutable note type is
+# cloned from a source that has no field of its own to model this on.
 CASE_CSS = (
-    ".case {\n"
-    "\tfont-size: 20px;\n"
-    "\tcolor: #7f7f7f;\n"
-    "\twhite-space: nowrap;\n"
+    "#case {\n"
+    "\tpadding: 5px 0;\n"
+    "\tdisplay: inline-flex;\n"
+    "\ttext-align: left;\n"
+    "\twidth: 100%;\n"
+    "\tword-break: break-word;\n"
+    "\thyphens: auto;\n"
+    "\talign-items: start;\n"
+    "}\n\n"
+    "#case .title {\n"
+    "\tfont-size: 1.2rem;\n"
+    "\tdisplay: inline-flex;\n"
+    "\tcolor: #656565;\n"
+    "}\n\n"
+    "#case .body {\n"
+    "\tfont-size: 1.2rem;\n"
+    "\tcolor: #656565;\n"
+    "\tpadding-top: 2px;\n"
     "}"
 )
 
-# Spelled out, never abbreviated. The tag is read on the QUESTION side by
-# someone deciding which word is being asked for, and "(+ prep.)" is
-# reference-book shorthand that also looks like "preposition" -- the one
-# thing it does not mean.
+
+# Spelled out, never abbreviated: "prep." is reference-book shorthand that
+# also looks like "preposition" -- the one thing it does not mean.
 CASE_NAMES = (
-    ("Nominative", "nominative"),
-    ("Genitive", "genitive"),
-    ("Dative", "dative"),
-    ("Accusative", "accusative"),
-    ("Instrumental", "instrumental"),
-    ("Prepositional", "prepositional"),
+    ("Nominative", "Nominative"),
+    ("Genitive", "Genitive"),
+    ("Dative", "Dative"),
+    ("Accusative", "Accusative"),
+    ("Instrumental", "Instrumental"),
+    ("Prepositional", "Prepositional"),
 )
 
 # A dash clause is editorial commentary, not a second governed case:
 # `вопреки`'s "Dative -- one of the few Genitive-looking ones that takes
 # Dative" governs the dative ALONE, and reading the whole cell yields a
-# wrong "(+ dative or genitive case)".
+# wrong "Dative or Genitive".
 _COMMENTARY = re.compile(r"\s+[—–-]\s+")
 
-# Matched tolerantly (any attribute order, any inner whitespace) because it
-# comes from a hand-written template, like `_POS_DIV` in immutable_words_plan.
-_RUSSIAN_DIV = re.compile(
-    r'([ \t]*)<div[^>]*\bid=["\']russian["\'][^>]*>\s*\{\{Russian\}\}\s*</div>'
+_INFO_DIV = re.compile(
+    r'^([ \t]*)<div id="additional-info">\{\{Additional Info\}\}</div>[ \t]*$', re.M
 )
-
-# The English side, matched the same way. `{{Translation}}` sits on its own
-# indented lines in the hand-written template, so `\s*` has to span newlines.
-_TRANSLATION_DIV = re.compile(
-    r'([ \t]*)<div[^>]*\bid=["\']translation["\'][^>]*>\s*'
-    r'\{\{Translation\}\}\s*</div>'
+_INFO_TITLE_CALL = re.compile(
+    r'^([ \t]*)addTitle\("additional-info", "&#9432;"\);[ \t]*$', re.M
 )
 
 
-
-def case_tag(info: str) -> str:
-    """The inline tag for an `Info` cell, e.g. `(+ accusative or prepositional case)`, or `""`.
+def case_name(info: str) -> str:
+    """The governed case named by an `Info` cell, e.g. `Accusative or Prepositional`.
 
     Cases appear in the order the cell names them, so a two-case preposition
-    reads the way the document writes it (`в / во` -> `(+ accusative or
-    prepositional case)`, never the table's own order).
+    reads the way the document writes it (`в / во` -> `Accusative or
+    Prepositional`, never the table's own order).
     """
     governed = _COMMENTARY.split(info, maxsplit=1)[0]
     found = [
@@ -80,19 +89,19 @@ def case_tag(info: str) -> str:
     ]
     if not found:
         return ""
-    return "(+ " + " or ".join(name for _, name in sorted(found)) + " case)"
+    return " or ".join(name for _, name in sorted(found))
 
 
-def case_tag_for_row(pos: str, info: str) -> str:
-    """`case_tag(info)` for a governing section's row, `""` for every other."""
-    return case_tag(info) if pos == GOVERNING_SECTION else ""
+def case_name_for_row(pos: str, info: str) -> str:
+    """`case_name(info)` for a governing section's row, `""` for every other."""
+    return case_name(info) if pos == GOVERNING_SECTION else ""
 
 
-# Everything the `Case` tag already carries. What survives its removal is the
-# only part `Additional Info` still has to say.
+# Everything the `Case` field already carries. What survives its removal is
+# the only part `Additional Info` still has to say.
 _CASE_WORDS = re.compile("|".join(full for full, _ in CASE_NAMES), re.I)
 _ONLY_FILLER = re.compile(
-    r"^[\s;,/()&.\u2013\u2014-]*(?:and|or)?[\s;,/()&.\u2013\u2014-]*$", re.I
+    r"^[\s;,/()&.–—-]*(?:and|or)?[\s;,/()&.–—-]*$", re.I
 )
 
 
@@ -100,11 +109,11 @@ def residual_info(info: str) -> str:
     """What `Additional Info` should still say once `Case` renders the case.
 
     A cell that names the case and NOTHING else is wholly redundant with the
-    inline tag -- "Prepositional" under `о / об (+ prepositional case)` states the same
-    fact twice -- so it reduces to "". A cell that also says WHEN each case
-    applies ("Accusative for motion in; Prepositional for location") keeps
-    its wording, because the tag can only list the cases, never choose
-    between them. Dash commentary is always kept.
+    `Case` row -- "Prepositional" under `о / об` states the same fact twice --
+    so it reduces to "". A cell that also says WHEN each case applies
+    ("Accusative for motion in; Prepositional for location") keeps its
+    wording, because the field can only list the cases, never choose between
+    them. Dash commentary is always kept.
     """
     parts = _COMMENTARY.split(info, maxsplit=1)
     head = parts[0]
@@ -118,29 +127,29 @@ def residual_info_for_row(pos: str, info: str) -> str:
     return residual_info(info) if pos == GOVERNING_SECTION else info
 
 
-def add_case_tag(template_html: str) -> str:
-    """Render `Case` inline beside the ENGLISH, on every side that shows it.
+def add_case_row(template_html: str) -> str:
+    """Add the `Case` div and its `addTitle` call above `Additional Info`'s.
 
-    The case rides with the English and never with the Russian. On the
-    English-prompt side that is the only thing that makes the prompt
-    answerable: `about` alone cannot distinguish `о / об` from `насчёт`,
-    nor `before` `до` from `перед`, but `about (+ prepositional case)`
-    and `about (+ genitive case)` each name exactly one preposition. Beside the Russian
-    it would be pure restatement -- the word is already shown, and on the
-    Russian-prompt side the case is something to recall, not be handed.
-
-    Wrapped in `{{#Case}}`/`{{/Case}}` so a row without a case renders
-    neither the span nor its leading space. Returns the template unchanged
-    when it shows no translation, or already carries the tag. Idempotent.
+    Grammar rows come before the `&#9432;` detail block and `Examples`, which
+    is the order Verbs and Numerals already render theirs in. Returns the
+    template unchanged when it lacks either the `additional-info` div or its
+    `addTitle` call (the sides that never render it), or already carries a
+    `case` div. Idempotent.
     """
-    if f'class="{CASE_CLASS}"' in template_html:
+    if f'id="{CASE_ID}"' in template_html:
         return template_html
-    return _TRANSLATION_DIV.sub(
+    if not (_INFO_DIV.search(template_html) and _INFO_TITLE_CALL.search(template_html)):
+        return template_html
+    with_div = _INFO_DIV.sub(
         lambda m: (
-            f'{m.group(1)}<div id="translation">{{{{Translation}}}}'
-            f"{{{{#{CASE_FIELD}}}}}"
-            f' <span class="{CASE_CLASS}">{{{{{CASE_FIELD}}}}}</span>'
-            f"{{{{/{CASE_FIELD}}}}}</div>"
+            f'{m.group(1)}<div id="{CASE_ID}">{{{{{CASE_FIELD}}}}}</div>\n'
+            f"{m.group(0)}"
         ),
         template_html,
+    )
+    return _INFO_TITLE_CALL.sub(
+        lambda m: (
+            f'{m.group(1)}addTitle("{CASE_ID}", "{CASE_FIELD}");\n{m.group(0)}'
+        ),
+        with_div,
     )

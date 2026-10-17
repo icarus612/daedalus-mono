@@ -38,7 +38,7 @@ import pytest
 from anki_tools.anki_identity import base91 as _base91
 from anki_tools.audio_naming import SLOTS
 from anki_tools.audio_naming import build_filename as shared_build_filename
-from anki_tools.case_field import case_tag_for_row
+from anki_tools.case_field import case_name_for_row
 from anki_tools.immutable_words_plan import (
     _EMPTY_INFO,
     DECK_ROOT,
@@ -858,7 +858,7 @@ def test_word_row_fields_shape_and_values(pos):
     assert fields[7] == "".join(
         f"[sound:{shared_build_filename('русский текст', slot)}]" for slot in SLOTS
     )  # AudioRefs -- same four filenames, as concatenated [sound:...] tags
-    assert fields[8] == case_tag_for_row(pos, "")  # Case
+    assert fields[8] == case_name_for_row(pos, "")  # Case
 
     # Singular label, not the plural section name verbatim.
     assert POS_FIELD_VALUE[pos] != pos

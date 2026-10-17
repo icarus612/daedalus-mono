@@ -268,7 +268,7 @@ class WordRow:
             case_field.residual_info_for_row(self.pos, self.info),
             self.examples,
             audio_refs,
-            case_field.case_tag_for_row(self.pos, self.info),
+            case_field.case_name_for_row(self.pos, self.info),
         ]
 
 

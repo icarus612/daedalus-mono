@@ -1,5 +1,5 @@
 """Contract tests for the `Case` field: the case a preposition governs,
-rendered inline beside the Russian word.
+rendered as its own labelled row on the answer side.
 """
 
 import re
@@ -22,64 +22,70 @@ def real_rows():
 @pytest.mark.parametrize(
     "info,expected",
     [
-        ("Genitive", "(+ genitive case)"),
-        ("Dative", "(+ dative case)"),
-        ("Prepositional", "(+ prepositional case)"),
-        ("Instrumental", "(+ instrumental case)"),
-        ("Accusative", "(+ accusative case)"),
-        ("Accusative for motion in; Prepositional for location", "(+ accusative or prepositional case)"),
-        ('Instrumental for "with"; Genitive for "from / since"', "(+ instrumental or genitive case)"),
-        ("Genitive — always", "(+ genitive case)"),
+        ("Genitive", "Genitive"),
+        ("Dative", "Dative"),
+        ("Prepositional", "Prepositional"),
+        ("Instrumental", "Instrumental"),
+        ("Accusative", "Accusative"),
+        (
+            "Accusative for motion in; Prepositional for location",
+            "Accusative or Prepositional",
+        ),
+        (
+            'Instrumental for "with"; Genitive for "from / since"',
+            "Instrumental or Genitive",
+        ),
+        ("Genitive — always", "Genitive"),
         ("Static location", ""),
         ("", ""),
     ],
 )
-def test_case_tag_cases(info, expected):
-    assert case_field.case_tag(info) == expected
+def test_case_name_cases(info, expected):
+    assert case_field.case_name(info) == expected
 
 
 def test_dash_commentary_is_not_read_as_a_second_case():
     info = "Dative — one of the few Genitive-looking ones that takes Dative"
-    assert case_field.case_tag(info) == "(+ dative case)"
+    assert case_field.case_name(info) == "Dative"
 
 
-def test_tag_order_follows_the_cell_not_the_abbreviation_table():
-    assert case_field.case_tag("Genitive; Accusative") == "(+ genitive or accusative case)"
-    assert case_field.case_tag("Accusative; Genitive") == "(+ accusative or genitive case)"
+def test_case_order_follows_the_cell_not_the_table():
+    assert case_field.case_name("Genitive; Accusative") == "Genitive or Accusative"
+    assert case_field.case_name("Accusative; Genitive") == "Accusative or Genitive"
 
 
-def test_case_tag_for_row_only_fires_for_prepositions():
-    assert case_field.case_tag_for_row("Prepositions", "Genitive") == "(+ genitive case)"
+def test_case_name_for_row_only_fires_for_prepositions():
+    assert case_field.case_name_for_row("Prepositions", "Genitive") == "Genitive"
     for pos in ("Particles", "Base Adverbs", "Conjunctions", "Indeclinable Nouns"):
-        assert case_field.case_tag_for_row(pos, "Genitive") == ""
+        assert case_field.case_name_for_row(pos, "Genitive") == ""
 
 
 def test_poznravlyayu_style_row_is_never_tagged():
     """`с` governs the instrumental there, not the word itself."""
     info = "1st-person present of поздравлять; often + с + instrumental"
-    assert case_field.case_tag(info) == "(+ instrumental case)"
-    assert case_field.case_tag_for_row("Particles", info) == ""
+    assert case_field.case_name(info) == "Instrumental"
+    assert case_field.case_name_for_row("Particles", info) == ""
 
 
-def test_every_real_preposition_gets_a_case_tag(real_rows):
+def test_every_real_preposition_gets_a_case(real_rows):
     prepositions = [r for r in real_rows if r.pos == "Prepositions"]
     assert len(prepositions) == 44
     tagged = {
-        r.russian: case_field.case_tag_for_row(r.pos, r.info) for r in prepositions
+        r.russian: case_field.case_name_for_row(r.pos, r.info) for r in prepositions
     }
     untagged = [w for w, tag in tagged.items() if not tag]
     assert untagged == []
-    assert tagged["о / об"] == "(+ prepositional case)"
-    assert tagged["насчёт"] == "(+ genitive case)"
-    assert tagged["в / во"] == "(+ accusative or prepositional case)"
-    assert tagged["вопреки"] == "(+ dative case)"
+    assert tagged["о / об"] == "Prepositional"
+    assert tagged["насчёт"] == "Genitive"
+    assert tagged["в / во"] == "Accusative or Prepositional"
+    assert tagged["вопреки"] == "Dative"
 
 
 def test_no_non_preposition_row_is_tagged(real_rows):
     tagged = [
         (r.pos, r.russian)
         for r in real_rows
-        if r.pos != "Prepositions" and case_field.case_tag_for_row(r.pos, r.info)
+        if r.pos != "Prepositions" and case_field.case_name_for_row(r.pos, r.info)
     ]
     assert tagged == []
     # positive control: those rows' raw info DOES name cases, so the
@@ -87,7 +93,7 @@ def test_no_non_preposition_row_is_tagged(real_rows):
     assert [
         r.russian
         for r in real_rows
-        if case_field.case_tag(r.info) and r.pos != "Prepositions"
+        if case_field.case_name(r.info) and r.pos != "Prepositions"
     ] == ["нет", "поздравляю", "мало", "много"]
 
 
@@ -105,50 +111,57 @@ def test_preposition_rows_carry_the_tag_in_the_case_field(real_rows):
     prepositions = [r for r in real_rows if r.pos == "Prepositions"]
     assert len(prepositions) == 44
     for row in prepositions:
-        assert row.fields()[index] == case_field.case_tag(row.info)
+        assert row.fields()[index] == case_field.case_name(row.info)
     others = [r for r in real_rows if r.pos != "Prepositions"]
     assert len(others) == 188
     for row in others:
         assert row.fields()[index] == ""
 
 
-def test_add_case_tag_wraps_the_translation_div():
-    html = '\t<div id="translation">\n\t\t{{Translation}}\n\t</div>\n'
-    out = case_field.add_case_tag(html)
-    assert (
-        '<div id="translation">{{Translation}}{{#Case}} '
-        '<span class="case">{{Case}}</span>{{/Case}}</div>' in out
-    )
+DETAIL_SIDE = (
+    '\t<div id="additional-info">{{Additional Info}}</div>\n'
+    "<script>\n"
+    '\taddTitle("additional-info", "&#9432;");\n'
+    "</script>\n"
+)
 
 
-def test_the_russian_is_never_tagged():
-    """The case rides with the English; beside the word it is restatement."""
+def test_add_case_row_adds_a_div_and_its_title_above_additional_info():
+    out = case_field.add_case_row(DETAIL_SIDE)
+    assert '<div id="case">{{Case}}</div>' in out
+    assert 'addTitle("case", "Case");' in out
+    assert out.index('id="case"') < out.index('id="additional-info"')
+    assert out.index('addTitle("case"') < out.index('addTitle("additional-info"')
+
+
+def test_the_case_is_never_spliced_into_another_field():
+    """It is its own row, like Case / Preposition on Verbs -- never text
+    appended to the Russian or the English."""
+    out = case_field.add_case_row(DETAIL_SIDE)
+    assert "{{Translation}}{{#Case}}" not in out
+    assert 'class="case"' not in out
+    assert "(+ " not in out
+
+
+def test_add_case_row_is_idempotent():
+    once = case_field.add_case_row(DETAIL_SIDE)
+    assert case_field.add_case_row(once) == once
+
+
+def test_add_case_row_leaves_a_side_without_the_detail_block_alone():
+    """The question sides render no detail block, so they get no case row."""
     for html in (
+        '<div id="pronunciation">{{hint:Pronunciation}}</div>',
         '\t<div id="russian">{{Russian}}</div>',
-        '{{FrontSide}}\n\t<div id="russian">{{Russian}}</div>',
+        '\t<div id="translation">{{Translation}}</div>',
     ):
-        assert case_field.add_case_tag(html) == html
+        assert case_field.add_case_row(html) == html
 
 
-def test_add_case_tag_is_idempotent():
-    html = '\t<div id="translation">\n\t\t{{Translation}}\n\t</div>\n'
-    once = case_field.add_case_tag(html)
-    assert case_field.add_case_tag(once) == once
-
-
-def test_add_case_tag_leaves_a_template_without_a_translation_div_alone():
-    html = '<div id="pronunciation">{{hint:Pronunciation}}</div>'
-    assert case_field.add_case_tag(html) == html
-
-
-def test_tag_is_conditional_so_an_untagged_row_renders_no_stray_space():
-    out = case_field.add_case_tag('<div id="translation">{{Translation}}</div>')
-    assert "{{#Case}}" in out and "{{/Case}}" in out
-    assert re.search(r"\{\{Translation\}\}\{\{#Case\}\}", out)
-
-
-def test_case_css_defines_the_class_the_template_uses():
-    assert f".{case_field.CASE_CLASS} {{" in case_field.CASE_CSS
+def test_case_css_styles_the_row_the_template_emits():
+    assert f"#{case_field.CASE_ID} {{" in case_field.CASE_CSS
+    assert f"#{case_field.CASE_ID} .title {{" in case_field.CASE_CSS
+    assert f"#{case_field.CASE_ID} .body {{" in case_field.CASE_CSS
 
 
 @pytest.mark.parametrize(
@@ -188,7 +201,7 @@ def test_no_preposition_states_its_case_twice(real_rows):
     """The whole point: the tag renders the case, so the prose must not."""
     for row in (r for r in real_rows if r.pos == "Prepositions"):
         residual = case_field.residual_info(row.info)
-        tag = case_field.case_tag(row.info)
+        tag = case_field.case_name(row.info)
         assert tag, row.russian
         if residual and "—" not in row.info:
             # kept only because it says WHEN each case applies
@@ -221,9 +234,9 @@ def test_no_two_rows_share_an_identical_english_gloss(real_rows):
     """An English prompt must name exactly one Russian word.
 
     `about` cannot ask for `о / об` rather than `насчёт`, and `now` cannot
-    ask for `сейчас` rather than `теперь`. Prepositions are separated by the
-    inline `Case` tag; everything else carries a parenthetical sense in its
-    own English column, which is why this holds for the whole document.
+    ask for `сейчас` rather than `теперь`. Every row carries a parenthetical
+    sense in its own English column, prepositions included, which is why
+    this holds for the whole document without the `Case` row being involved.
     """
     seen: dict[str, str] = {}
     clashes = []
@@ -235,19 +248,26 @@ def test_no_two_rows_share_an_identical_english_gloss(real_rows):
     assert clashes == []
 
 
-def test_prepositions_sharing_a_gloss_are_separated_by_their_case(real_rows):
-    """The `about` pair that prompted the tag: same gloss, different case."""
+def test_the_about_pair_is_told_apart_by_its_english_not_by_its_case(real_rows):
+    """Both say "about" and each governs a different case, but the English
+    columns already differ -- so the prompt is answerable on its own and the
+    `Case` row never has to carry that weight."""
     by_word = {r.russian: r for r in real_rows if r.pos == "Prepositions"}
     o, naschet = by_word["о / об"], by_word["насчёт"]
     assert "about" in o.english and "about" in naschet.english
-    assert case_field.case_tag(o.info) == "(+ prepositional case)"
-    assert case_field.case_tag(naschet.info) == "(+ genitive case)"
-    assert case_field.case_tag(o.info) != case_field.case_tag(naschet.info)
+    assert o.english != naschet.english
+    assert case_field.case_name(o.info) == "Prepositional"
+    assert case_field.case_name(naschet.info) == "Genitive"
 
 
-def test_case_tag_is_spelled_out_never_abbreviated(real_rows):
+def test_case_is_spelled_out_never_abbreviated(real_rows):
     """`prep.` reads as "preposition", the one thing it does not mean."""
     for row in (r for r in real_rows if r.pos == "Prepositions"):
-        tag = case_field.case_tag(row.info)
-        assert tag.endswith(" case)"), (row.russian, tag)
-        assert "." not in tag, (row.russian, tag)
+        name = case_field.case_name(row.info)
+        assert name, row.russian
+        assert "." not in name, (row.russian, name)
+        for word in name.split(" or "):
+            assert word in [full for full, _ in case_field.CASE_NAMES], (
+                row.russian,
+                word,
+            )
