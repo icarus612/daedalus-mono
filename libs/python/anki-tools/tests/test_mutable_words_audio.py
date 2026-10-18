@@ -125,13 +125,13 @@ def real_words():
     return load_base_words(str(DATA_DIR), SHEETS)
 
 
-def test_load_base_words_matches_the_real_1422_word_set(real_words):
-    assert len(real_words) == 1422
+def test_load_base_words_matches_the_real_1428_word_set(real_words):
+    assert len(real_words) == 1428
 
 
 def test_plan_requests_total_pairs_over_the_real_word_set(real_words, tmp_path):
     plan = plan_requests(real_words, ("f1", "m2"), media_dir=str(tmp_path))
-    assert plan.total_pairs == 2844
+    assert plan.total_pairs == 2856
 
 
 def test_plan_requests_pending_excludes_present_pairs(tmp_path):
@@ -199,7 +199,7 @@ def test_main_dry_run_prints_the_real_environment_totals(real_words, tmp_path, c
     out = capsys.readouterr().out
     total_pairs = len(real_words) * 2
     present = len(present_pairs)
-    assert total_pairs == 2844
+    assert total_pairs == 2856
     assert (
         f"total {total_pairs} / present {present} / pending {total_pairs - present}"
         in out

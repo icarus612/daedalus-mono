@@ -103,7 +103,7 @@ EXPECTED_LINE_COUNTS = {
     "verbs.tsv": 210,
     "adjectives.tsv": 173,
     "adverbs.tsv": 153,
-    "pronouns.tsv": 24,
+    "pronouns.tsv": 30,
     "numerals.tsv": 56,
 }
 
@@ -122,7 +122,7 @@ EXPECTED_DASH_COUNTS = {
     ("adverbs.tsv", "Comparative"): 36,
     ("adverbs.tsv", "Adverb"): 22,
     ("adverbs.tsv", "Stress"): 22,
-    ("pronouns.tsv", "Gender Forms"): 8,
+    ("pronouns.tsv", "Gender Forms"): 11,
     ("numerals.tsv", "Gender Forms"): 44,
 }
 

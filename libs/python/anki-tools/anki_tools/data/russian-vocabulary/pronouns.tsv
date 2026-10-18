@@ -4,21 +4,27 @@
 3	вы	you (plural / formal singular)	вы	personal (2nd pl./formal)	—	вас (G/A/P), вам (D), ва́ми (I)	formal singular takes plural verb agreement but is capitalized in writing (Вы)		New
 4	мы	we	мы	personal (1st pl.)	—	нас (G/A/P), нам (D), на́ми (I)			New
 5	он	he / it (m.)	он	personal (3rd sg.)	он / она́ / оно́ / они́ (m/f/n/pl)	его́/него́ (G/A), ему́/нему́ (D), им/ним (I), о нём (P)	the н- prefix appears after any preposition (у него́, к нему́)		New
-6	кто	who	кто	interrogative / relative	—	кого́ (G/A), кому́ (D), кем (I), о ком (P)	always grammatically masculine singular, even for a female referent		New
-7	ничто	nothing (not a single thing)	ничто́	negative	—	ничего́ (G, also stand-alone 'nothing, no big deal'), ничему́ (D), ниче́м (I), ни о чём (P)	requires не on the verb	я ничего́ не ви́жу	New
-8	себя	oneself (reflexive)	себя́	reflexive	—	себя́ (G/A), себе́ (D/P), собо́й (I)	no nominative form; refers back to the sentence's subject, any person		New
-9	сам	-self (emphatic: myself, yourself, himself...)	сам	emphatic	сам / сама́ / само́ / са́ми (m/f/n/pl)	самого́ (G/A m.), само́й (G/A f.)	stresses that the subject acted personally/alone; distinct from самый (superlative)		New
-10	тот	that (one) / that ... over there	тот	demonstrative	тот / та / то / те (m/f/n/pl)	того́ (G/A m./n.), той (G/D/I/P f.), тех (G/P pl.)	marks distance/contrast, opposed to этот; oblique cases are END-stressed (того́), unlike этот's stem-stressed этого		New
-11	этот	this (one)	э́тот	demonstrative	этот / эта / это / эти (m/f/n/pl)	э́того (G/A m./n.), э́той (G/D/I/P f.), э́тих (G/P pl.)	oblique cases keep the STEM stress (э́того), unlike тот's end-stressed того́		New
-12	мой	my / mine	мой	possessive (1st sg.)	мой / моя́ / моё / мои́ (m/f/n/pl)	моего́ (G/A m./n.), мое́й (f.), мои́х (pl.)	declines like an adjective; oblique forms are end-stressed (моего́)		New
-13	твой	your / yours (informal)	твой	possessive (2nd sg.)	твой / твоя́ / твоё / твои́ (m/f/n/pl)	твоего́ (G/A m./n.), твое́й (f.), твои́х (pl.)	declines like мой		New
-14	наш	our / ours	наш	possessive (1st pl.)	наш / на́ша / на́ше / на́ши (m/f/n/pl)	на́шего (G/A m./n.), на́шей (f.), на́ших (pl.)	declines like a hard-stem adjective; fixed stem stress throughout, unlike мой/твой/свой		New
-15	ваш	your / yours (formal / plural)	ваш	possessive (2nd pl./formal)	ваш / ва́ша / ва́ше / ва́ши (m/f/n/pl)	ва́шего (G/A m./n.), ва́шей (f.), ва́ших (pl.)	declines like наш		New
-16	свой	one's own (reflexive possessive)	свой	possessive (reflexive)	свой / своя́ / своё / свои́ (m/f/n/pl)	declines like мой/твой	refers back to the subject of its own clause, any person	я взял свою́ кни́гу	New
-17	самый	the most / the very	са́мый	intensifier / superlative particle	самый / самая / самое / самые (m/f/n/pl)	declines like a hard-stem adjective	forms the analytic superlative with an adjective: самый большой = the biggest		New
-18	какой	which / what kind of / what a...	како́й	interrogative / exclamative	какой / какая / какое / какие (m/f/n/pl)	declines like a stressed-ending adjective (-ой)	also used in exclamations	како́й краси́вый!	New
-19	который	which / that (relative)	кото́рый	relative / interrogative	который / которая / которое / которые (m/f/n/pl)	declines like a hard-stem adjective	introduces a relative clause	человек, который...	New
-20	никакой	no kind of / none at all	никако́й	negative	никакой / никакая / никакое / никакие (m/f/n/pl)	declines like какой	requires не on the verb	у меня́ нет никако́й иде́и	New
-21	такой	such / that kind of / so (so + adjective)	тако́й	demonstrative / intensifier	такой / такая / такое / такие (m/f/n/pl)	declines like a stressed-ending adjective (-ой)	intensifies a following adjective: тако́й краси́вый = so beautiful		New
-22	весь	all / the whole / everything	весь	determinative	весь / вся / всё / все (m/f/n/pl)	всего́ (G/A m./n.), всей (G/D/I/P f.), всех (G/P pl.), всем (D), все́ми (I pl.)	neuter всё = everything; plural все = everybody		New
-23	никто	nobody / no one	никто́	negative	—	никого́ (G/A), никому́ (D), нике́м (I), ни о ко́м (P)	requires не on the verb; a preposition splits it: ни о ко́м, ни с ке́м		New
+6	она	she / it (f.)	она́	personal (3rd sg. f.)	он / она́ / оно́ / они́ (m/f/n/pl)	её/неё (G/A), ей/ней (D), ей/не́й (I), о ней (P)	the н- prefix appears after any preposition (у неё, к ней)		New
+7	оно	it (n.)	оно́	personal (3rd sg. n.)	он / она́ / оно́ / они́ (m/f/n/pl)	его́/него́ (G/A), ему́/нему́ (D), им/ним (I), о нём (P)	oblique forms are identical to он; only the nominative differs		New
+8	они	they	они́	personal (3rd pl.)	он / она́ / оно́ / они́ (m/f/n/pl)	их/них (G/A), им/ним (D), и́ми/ни́ми (I), о них (P)	the н- prefix appears after any preposition (у них, к ним)		New
+9	его	his / its	его́	possessive (3rd sg. m./n., indeclinable)	—	indeclinable — the form never changes	Same spelling as the genitive of он, but as a possessive it never changes form: его книга, его книги, его книгам		New
+10	её	her / hers	её	possessive (3rd sg. f., indeclinable)	—	indeclinable — the form never changes	Same spelling as the genitive of она, but as a possessive it never changes form: её брат, её братья, её братьям		New
+11	их	their / theirs	их	possessive (3rd pl., indeclinable)	—	indeclinable — the form never changes	Same spelling as the genitive of они, but as a possessive it never changes form: их дом, их дома, их домам		New
+12	кто	who	кто	interrogative / relative	—	кого́ (G/A), кому́ (D), кем (I), о ком (P)	always grammatically masculine singular, even for a female referent		New
+13	ничто	nothing (not a single thing)	ничто́	negative	—	ничего́ (G, also stand-alone 'nothing, no big deal'), ничему́ (D), ниче́м (I), ни о чём (P)	requires не on the verb	я ничего́ не ви́жу	New
+14	себя	oneself (reflexive)	себя́	reflexive	—	себя́ (G/A), себе́ (D/P), собо́й (I)	no nominative form; refers back to the sentence's subject, any person		New
+15	сам	-self (emphatic: myself, yourself, himself...)	сам	emphatic	сам / сама́ / само́ / са́ми (m/f/n/pl)	самого́ (G/A m.), само́й (G/A f.)	stresses that the subject acted personally/alone; distinct from самый (superlative)		New
+16	тот	that (one) / that ... over there	тот	demonstrative	тот / та / то / те (m/f/n/pl)	того́ (G/A m./n.), той (G/D/I/P f.), тех (G/P pl.)	marks distance/contrast, opposed to этот; oblique cases are END-stressed (того́), unlike этот's stem-stressed этого		New
+17	этот	this (one)	э́тот	demonstrative	этот / эта / это / эти (m/f/n/pl)	э́того (G/A m./n.), э́той (G/D/I/P f.), э́тих (G/P pl.)	oblique cases keep the STEM stress (э́того), unlike тот's end-stressed того́		New
+18	мой	my / mine	мой	possessive (1st sg.)	мой / моя́ / моё / мои́ (m/f/n/pl)	моего́ (G/A m./n.), мое́й (f.), мои́х (pl.)	declines like an adjective; oblique forms are end-stressed (моего́)		New
+19	твой	your / yours (informal)	твой	possessive (2nd sg.)	твой / твоя́ / твоё / твои́ (m/f/n/pl)	твоего́ (G/A m./n.), твое́й (f.), твои́х (pl.)	declines like мой		New
+20	наш	our / ours	наш	possessive (1st pl.)	наш / на́ша / на́ше / на́ши (m/f/n/pl)	на́шего (G/A m./n.), на́шей (f.), на́ших (pl.)	declines like a hard-stem adjective; fixed stem stress throughout, unlike мой/твой/свой		New
+21	ваш	your / yours (formal / plural)	ваш	possessive (2nd pl./formal)	ваш / ва́ша / ва́ше / ва́ши (m/f/n/pl)	ва́шего (G/A m./n.), ва́шей (f.), ва́ших (pl.)	declines like наш		New
+22	свой	one's own (reflexive possessive)	свой	possessive (reflexive)	свой / своя́ / своё / свои́ (m/f/n/pl)	declines like мой/твой	refers back to the subject of its own clause, any person	я взял свою́ кни́гу	New
+23	самый	the most / the very	са́мый	intensifier / superlative particle	самый / самая / самое / самые (m/f/n/pl)	declines like a hard-stem adjective	forms the analytic superlative with an adjective: самый большой = the biggest		New
+24	какой	which / what kind of / what a...	како́й	interrogative / exclamative	какой / какая / какое / какие (m/f/n/pl)	declines like a stressed-ending adjective (-ой)	also used in exclamations	како́й краси́вый!	New
+25	который	which / that (relative)	кото́рый	relative / interrogative	который / которая / которое / которые (m/f/n/pl)	declines like a hard-stem adjective	introduces a relative clause	человек, который...	New
+26	никакой	no kind of / none at all	никако́й	negative	никакой / никакая / никакое / никакие (m/f/n/pl)	declines like какой	requires не on the verb	у меня́ нет никако́й иде́и	New
+27	такой	such / that kind of / so (so + adjective)	тако́й	demonstrative / intensifier	такой / такая / такое / такие (m/f/n/pl)	declines like a stressed-ending adjective (-ой)	intensifies a following adjective: тако́й краси́вый = so beautiful		New
+28	весь	all / the whole / everything	весь	determinative	весь / вся / всё / все (m/f/n/pl)	всего́ (G/A m./n.), всей (G/D/I/P f.), всех (G/P pl.), всем (D), все́ми (I pl.)	neuter всё = everything; plural все = everybody		New
+29	никто	nobody / no one	никто́	negative	—	никого́ (G/A), никому́ (D), нике́м (I), ни о ко́м (P)	requires не on the verb; a preposition splits it: ни о ко́м, ни с ке́м		New
