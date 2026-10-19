@@ -853,9 +853,7 @@ def _all_detail_slugs() -> list[str]:
 ASPECT_COLOURS = {"imperfective": "#1565c0", "perfective": "#c62828"}
 
 _ASPECT_COLOUR_CSS = "\n\n".join(
-    f"#{aspect} .title, #{aspect} .body, .aspect-{aspect} {{\n"
-    f"\tcolor: {colour};\n"
-    "}"
+    f"#{aspect} .title, #{aspect} .body, .aspect-{aspect} {{\n\tcolor: {colour};\n}}"
     for aspect, colour in ASPECT_COLOURS.items()
 )
 
@@ -982,10 +980,10 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
         aspect_id = _slug_for_field_name(counterpart)
         aspect_div = _wrap(
             aspect_id,
-            f"{{{{{counterpart}}}}}",
             card_audio.audio_line_block(
                 counterpart_audio, ASPECT_AUDIO_SLOT_ID, aspect_id
             ),
+            f"{{{{{counterpart}}}}}",
         )
         extra_titles.append((aspect_id, counterpart))
     detail_divs, detail_script = _detail_block(sheet, primary_field, extra_titles)
@@ -1004,7 +1002,7 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
             prompt_div = (
                 '<div id="translation">{{Translation}}'
                 f' <span class="aspect aspect-{aspect_slug}">'
-                f'({primary_field.lower()})</span></div>'
+                f"({primary_field.lower()})</span></div>"
             )
         front = _wrap("front", _DECK_HEADER_HTML, prompt_div)
         qfmt = front + _DECK_HEADER_SCRIPT

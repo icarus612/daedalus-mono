@@ -603,3 +603,25 @@ def test_aspect_colours_still_win_over_the_aspect_line_layout():
     for aspect in mutable_words_plan.ASPECT_COLOURS:
         colour = css.index(f"#{aspect} .title, #{aspect} .body, .aspect-{aspect} {{")
         assert colour > layout, aspect
+
+
+def test_verb_counterpart_play_button_precedes_the_word():
+    for card_index, slug, counterpart in (
+        (0, "perfective", "Perfective"),
+        (1, "perfective", "Perfective"),
+        (2, "imperfective", "Imperfective"),
+        (3, "imperfective", "Imperfective"),
+    ):
+        _qfmt, afmt = mutable_words_plan.build_template("Verbs", card_index)
+        row = afmt.split(f'<div id="{slug}">')[1]
+        slot = row.index(f'id="{mutable_words_plan.ASPECT_AUDIO_SLOT_ID}"')
+        word = row.index(f"{{{{{counterpart}}}}}")
+        assert slot < word, card_index
+
+
+def test_verb_counterpart_click_target_is_the_row_not_the_button():
+    for card_index, slug in ((0, "perfective"), (2, "imperfective")):
+        _qfmt, afmt = mutable_words_plan.build_template("Verbs", card_index)
+        assert f'var line = document.getElementById("{slug}");' in afmt, card_index
+        assert 'line.addEventListener("click"' in afmt, card_index
+        assert "button.addEventListener" not in afmt, card_index
