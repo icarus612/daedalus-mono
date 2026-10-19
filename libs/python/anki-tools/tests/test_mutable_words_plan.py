@@ -579,7 +579,7 @@ def test_verb_counterpart_line_gets_its_own_title_row():
         (2, "imperfective", "Imperfective"),
     ):
         _qfmt, afmt = mutable_words_plan.build_template("Verbs", card_index)
-        assert f'addTitle("{slug}", "{title}");' in afmt, card_index
+        assert f'addTitle("{slug}-word", "{title}");' in afmt, card_index
 
 
 def test_non_verb_sheets_have_no_aspect_line():
@@ -625,3 +625,17 @@ def test_verb_counterpart_click_target_is_the_row_not_the_button():
         assert f'var line = document.getElementById("{slug}");' in afmt, card_index
         assert 'line.addEventListener("click"' in afmt, card_index
         assert "button.addEventListener" not in afmt, card_index
+
+
+def test_verb_counterpart_play_button_opens_the_line_before_the_label():
+    for card_index, slug in (
+        (0, "perfective"),
+        (1, "perfective"),
+        (2, "imperfective"),
+        (3, "imperfective"),
+    ):
+        _qfmt, afmt = mutable_words_plan.build_template("Verbs", card_index)
+        row = afmt.split(f'<div id="{slug}">')[1]
+        slot = row.index(f'id="{mutable_words_plan.ASPECT_AUDIO_SLOT_ID}"')
+        label = row.index(f'<div id="{slug}-word">')
+        assert slot < label, card_index

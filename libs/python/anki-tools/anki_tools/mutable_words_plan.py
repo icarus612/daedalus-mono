@@ -859,6 +859,7 @@ _ASPECT_COLOUR_CSS = "\n\n".join(
 
 
 _ASPECT_LINE_IDS = ", ".join(f"#{aspect}" for aspect in ASPECT_COLOURS)
+_ASPECT_WORD_IDS = ", ".join(f"#{aspect}-word" for aspect in ASPECT_COLOURS)
 _ASPECT_LINE_TITLES = ", ".join(f"#{aspect} .title" for aspect in ASPECT_COLOURS)
 _ASPECT_LINE_BODIES = ", ".join(f"#{aspect} .body" for aspect in ASPECT_COLOURS)
 
@@ -890,6 +891,11 @@ _ASPECT_LINE_CSS = (
     f"#{ASPECT_AUDIO_SLOT_ID} {{\n"
     "\tdisplay: inline-flex;\n"
     "\talign-items: center;\n"
+    "}\n\n"
+    f"{_ASPECT_WORD_IDS} {{\n"
+    "\tdisplay: inline-flex;\n"
+    "\talign-items: center;\n"
+    "\tgap: .4rem;\n"
     "}"
 )
 
@@ -978,14 +984,15 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
     if sheet == "Verbs":
         counterpart, counterpart_audio = _ASPECT_COUNTERPART[primary_field]
         aspect_id = _slug_for_field_name(counterpart)
+        word_id = f"{aspect_id}-word"
         aspect_div = _wrap(
             aspect_id,
             card_audio.audio_line_block(
                 counterpart_audio, ASPECT_AUDIO_SLOT_ID, aspect_id
             ),
-            f"{{{{{counterpart}}}}}",
+            _wrap(word_id, f"{{{{{counterpart}}}}}"),
         )
-        extra_titles.append((aspect_id, counterpart))
+        extra_titles.append((word_id, counterpart))
     detail_divs, detail_script = _detail_block(sheet, primary_field, extra_titles)
     russian_div = f'<div id="russian">{{{{{primary_field}}}}}</div>'
     translation_div = '<div id="translation">{{Translation}}</div>'
