@@ -752,6 +752,7 @@ _ASPECT_COUNTERPART: dict[str, tuple[str, str]] = {
 }
 
 ASPECT_AUDIO_SLOT_ID = "aspect-audio"
+ASPECT_PLAY_FN = "__mutableVerbAspectPlay"
 
 
 def _slug_for_field_name(field_name: str) -> str:
@@ -951,8 +952,25 @@ def _build_extra_css() -> str:
 EXTRA_CSS = _build_extra_css()
 
 
-def _wrap(element_id: str, *parts: str) -> str:
-    return "\n".join([f'<div id="{element_id}">', *parts, "</div>"])
+def _translation_div(sheet: str, primary_field: str) -> str:
+    """`{{Translation}}`, with the card's own aspect named after it on Verbs.
+
+    The reverse cards already qualified their prompt this way; the forward
+    cards' answer side showed the gloss bare, so nothing on the card said
+    which aspect the headword itself was.
+    """
+    if sheet != "Verbs":
+        return '<div id="translation">{{Translation}}</div>'
+    aspect = _slug_for_field_name(primary_field)
+    return (
+        '<div id="translation">{{Translation}}'
+        f' <span class="aspect aspect-{aspect}">({aspect})</span></div>'
+    )
+
+
+def _wrap(element_id: str, *parts: str, attrs: str = "") -> str:
+    open_tag = f'<div id="{element_id}"{" " + attrs if attrs else ""}>'
+    return "\n".join([open_tag, *parts, "</div>"])
 
 
 def build_template(sheet: str, card_index: int) -> tuple[str, str]:
@@ -988,14 +1006,17 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
         aspect_div = _wrap(
             aspect_id,
             card_audio.audio_line_block(
-                counterpart_audio, ASPECT_AUDIO_SLOT_ID, aspect_id
+                counterpart_audio, ASPECT_AUDIO_SLOT_ID, aspect_id, ASPECT_PLAY_FN
             ),
             _wrap(word_id, f"{{{{{counterpart}}}}}"),
+            attrs=(
+                f'class="{card_audio.TAPPABLE_CLASS}" onclick="{ASPECT_PLAY_FN}(event)"'
+            ),
         )
         extra_titles.append((word_id, counterpart))
     detail_divs, detail_script = _detail_block(sheet, primary_field, extra_titles)
     russian_div = f'<div id="russian">{{{{{primary_field}}}}}</div>'
-    translation_div = '<div id="translation">{{Translation}}</div>'
+    translation_div = _translation_div(sheet, primary_field)
 
     if audio_side:
         front = _wrap("front", _DECK_HEADER_HTML, audio_html, russian_div)
@@ -1003,15 +1024,7 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
         back = _wrap("back", translation_div, aspect_div, detail_divs)
         afmt = "\n".join(["{{FrontSide}}", back, detail_script])
     else:
-        prompt_div = translation_div
-        if sheet == "Verbs":
-            aspect_slug = _slug_for_field_name(primary_field)
-            prompt_div = (
-                '<div id="translation">{{Translation}}'
-                f' <span class="aspect aspect-{aspect_slug}">'
-                f"({primary_field.lower()})</span></div>"
-            )
-        front = _wrap("front", _DECK_HEADER_HTML, prompt_div)
+        front = _wrap("front", _DECK_HEADER_HTML, translation_div)
         qfmt = front + _DECK_HEADER_SCRIPT
         back = _wrap("back", audio_html, russian_div, aspect_div, detail_divs)
         afmt = "\n".join(["{{FrontSide}}", back, detail_script])

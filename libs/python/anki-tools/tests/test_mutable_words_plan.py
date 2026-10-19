@@ -568,7 +568,7 @@ def test_verb_counterpart_aspect_is_not_also_a_grey_detail_row():
     for card_index in range(4):
         _qfmt, afmt = mutable_words_plan.build_template("Verbs", card_index)
         assert (
-            afmt.count('<div id="perfective">') + afmt.count('<div id="imperfective">')
+            afmt.count('<div id="perfective"') + afmt.count('<div id="imperfective"')
             == 1
         ), card_index
 
@@ -613,18 +613,27 @@ def test_verb_counterpart_play_button_precedes_the_word():
         (3, "imperfective", "Imperfective"),
     ):
         _qfmt, afmt = mutable_words_plan.build_template("Verbs", card_index)
-        row = afmt.split(f'<div id="{slug}">')[1]
+        row = afmt.split(f'<div id="{slug}" ')[1]
         slot = row.index(f'id="{mutable_words_plan.ASPECT_AUDIO_SLOT_ID}"')
         word = row.index(f"{{{{{counterpart}}}}}")
         assert slot < word, card_index
 
 
-def test_verb_counterpart_click_target_is_the_row_not_the_button():
-    for card_index, slug in ((0, "perfective"), (2, "imperfective")):
+def test_verb_counterpart_row_is_tappable_on_ankimobile():
+    fn = mutable_words_plan.ASPECT_PLAY_FN
+    for card_index, slug in (
+        (0, "perfective"),
+        (1, "perfective"),
+        (2, "imperfective"),
+        (3, "imperfective"),
+    ):
         _qfmt, afmt = mutable_words_plan.build_template("Verbs", card_index)
-        assert f'var line = document.getElementById("{slug}");' in afmt, card_index
-        assert 'line.addEventListener("click"' in afmt, card_index
-        assert "button.addEventListener" not in afmt, card_index
+        open_tag = afmt.split(f'<div id="{slug}" ')[1].split(">")[0]
+        assert f'class="{card_audio.TAPPABLE_CLASS}"' in open_tag, card_index
+        assert f'onclick="{fn}(event)"' in open_tag, card_index
+        assert f"window.{fn} = function (event)" in afmt, card_index
+        row = afmt.split(f'<div id="{slug}" ')[1].split("</script>")[0]
+        assert "addEventListener" not in row, card_index
 
 
 def test_verb_counterpart_play_button_opens_the_line_before_the_label():
@@ -635,7 +644,41 @@ def test_verb_counterpart_play_button_opens_the_line_before_the_label():
         (3, "imperfective"),
     ):
         _qfmt, afmt = mutable_words_plan.build_template("Verbs", card_index)
-        row = afmt.split(f'<div id="{slug}">')[1]
+        row = afmt.split(f'<div id="{slug}" ')[1]
         slot = row.index(f'id="{mutable_words_plan.ASPECT_AUDIO_SLOT_ID}"')
         label = row.index(f'<div id="{slug}-word">')
         assert slot < label, card_index
+
+
+def test_every_verb_card_names_the_headwords_own_aspect():
+    for card_index, aspect in (
+        (0, "imperfective"),
+        (1, "imperfective"),
+        (2, "perfective"),
+        (3, "perfective"),
+    ):
+        qfmt, afmt = mutable_words_plan.build_template("Verbs", card_index)
+        side = qfmt if 'id="translation"' in qfmt else afmt
+        assert f'<span class="aspect aspect-{aspect}">({aspect})</span>' in side, (
+            card_index
+        )
+
+
+def test_the_headword_aspect_never_contradicts_the_counterpart_line():
+    for card_index, own, other in (
+        (0, "imperfective", "perfective"),
+        (2, "perfective", "imperfective"),
+    ):
+        qfmt, afmt = mutable_words_plan.build_template("Verbs", card_index)
+        whole = qfmt + afmt
+        assert f'aspect-{own}">({own})</span>' in whole, card_index
+        assert f'aspect-{other}">({other})</span>' not in whole, card_index
+        assert f'<div id="{other}" ' in afmt, card_index
+
+
+def test_non_verb_sheets_keep_a_bare_translation():
+    for sheet in ("Nouns", "Adjectives", "Pronouns", "Numerals", "Adverbs"):
+        for card_index in (0, 1):
+            qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
+            assert '<div id="translation">{{Translation}}</div>' in qfmt + afmt, sheet
+            assert 'class="aspect' not in qfmt + afmt, sheet

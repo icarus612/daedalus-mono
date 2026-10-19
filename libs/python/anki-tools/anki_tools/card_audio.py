@@ -6,24 +6,30 @@ Pure module -- standard library only, no `anki` imports.
 # Shared by every caller so the button's class and its CSS never drift apart.
 BUTTON_CLASS = "audio-play"
 
-# The counterpart-aspect line's own smaller button, and the class that marks
-# the whole line as a click target for it.
+# The counterpart-aspect line's own smaller button, and the classes that mark
+# the whole line as a tap target for it. `tappable` is AnkiMobile's own
+# opt-in: it only routes taps to A/BUTTON elements, to elements carrying an
+# `onclick` handler, or to elements with this class -- everything else falls
+# through to its answer-button tap zones. A listener added with
+# addEventListener is invisible to that check, which is why the line must
+# also carry a literal `onclick` attribute.
 SMALL_BUTTON_CLASS = "audio-play-sm"
 LINE_CLASS = "audio-line"
+TAPPABLE_CLASS = "tappable"
 
 AUDIO_BUTTON_CSS = (
     f".{BUTTON_CLASS} {{\n"
     "\tdisplay: inline-flex;\n"
     "\talign-items: center;\n"
     "\tjustify-content: center;\n"
-    "\twidth: 3rem;\n"
-    "\theight: 3rem;\n"
+    "\twidth: 3.6rem;\n"
+    "\theight: 3.6rem;\n"
     "\tpadding: 0;\n"
     "\tborder: none;\n"
     "\tborder-radius: 50%;\n"
     "\tbackground-color: #605C8B;\n"
     "\tcolor: white;\n"
-    "\tfont-size: 1.4rem;\n"
+    "\tfont-size: 1.7rem;\n"
     "\tline-height: 1;\n"
     "\tcursor: pointer;\n"
     "}\n\n"
@@ -34,12 +40,15 @@ AUDIO_BUTTON_CSS = (
     "\topacity: .7;\n"
     "}\n\n"
     f".{SMALL_BUTTON_CLASS} {{\n"
-    "\twidth: 1.8rem;\n"
-    "\theight: 1.8rem;\n"
-    "\tfont-size: .8rem;\n"
+    "\twidth: 2.6rem;\n"
+    "\theight: 2.6rem;\n"
+    "\tfont-size: 1.2rem;\n"
     "}\n\n"
     f".{LINE_CLASS} {{\n"
     "\tcursor: pointer;\n"
+    "}\n\n"
+    f".{TAPPABLE_CLASS} {{\n"
+    "\t-webkit-tap-highlight-color: rgba(96, 92, 139, .18);\n"
     "}"
 )
 
@@ -134,6 +143,16 @@ _LINE_TEMPLATE = (
     r"""
 <script>
 (function () {
+  window.@@PLAY_FN@@ = function (event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    var player = document.getElementById("@@SLOT_ID@@-player");
+    if (!player) return;
+    player.currentTime = 0;
+    player.play();
+  };
   var data = document.getElementById("@@SLOT_ID@@-data");
   if (!data) return;
   var text = data.textContent.trim();
@@ -146,20 +165,17 @@ _LINE_TEMPLATE = (
   setTimeout(function () {
     var slot = document.getElementById("@@SLOT_ID@@");
     var line = document.getElementById("@@LINE_ID@@");
-    if (!slot || !line || slot.querySelector("button")) return;
-    var audio = document.createElement("audio");
-    audio.src = files[Math.floor(Math.random() * files.length)];
+    if (!slot || !line || document.getElementById("@@SLOT_ID@@-player")) return;
+    var player = document.createElement("audio");
+    player.id = "@@SLOT_ID@@-player";
+    player.src = files[Math.floor(Math.random() * files.length)];
     var button = document.createElement("button");
     button.type = "button";
     button.className = "@@BUTTON_CLASS@@ @@SMALL_BUTTON_CLASS@@";
-    button.textContent = "▶";
-    slot.appendChild(audio);
+    button.textContent = "\u25b6";
+    slot.appendChild(player);
     slot.appendChild(button);
     line.classList.add("@@LINE_CLASS@@");
-    line.addEventListener("click", function () {
-      audio.currentTime = 0;
-      audio.play();
-    });
   }, 0);
 })();
 </script>
@@ -167,7 +183,7 @@ _LINE_TEMPLATE = (
 )
 
 
-def audio_line_block(field: str, slot_id: str, line_id: str) -> str:
+def audio_line_block(field: str, slot_id: str, line_id: str, play_fn: str) -> str:
     """A counterpart word's play button, and its whole line as a click target.
 
     Unlike `audio_block` this never autoplays. The line it decorates is
@@ -180,6 +196,15 @@ def audio_line_block(field: str, slot_id: str, line_id: str) -> str:
     and the row always play the same clip. There is no cross-render state
     key because this block only ever lives on an answer side, never
     duplicated in by `{{FrontSide}}`.
+
+    `play_fn` is published on `window` so the row can carry a literal
+    `onclick` attribute: AnkiMobile decides whether a tap belongs to the
+    page or to its own answer-button zones by looking for an onclick
+    handler (or an A/BUTTON element, or the `tappable` class), and a
+    listener registered with addEventListener is invisible to that check --
+    the tap was answering the card "Good" instead. It is defined before the
+    early returns, so a row with no recording gets a harmless no-op rather
+    than a missing-function error.
     """
     return (
         _LINE_TEMPLATE.replace("@@FIELD@@", field)
@@ -188,4 +213,5 @@ def audio_line_block(field: str, slot_id: str, line_id: str) -> str:
         .replace("@@SMALL_BUTTON_CLASS@@", SMALL_BUTTON_CLASS)
         .replace("@@BUTTON_CLASS@@", BUTTON_CLASS)
         .replace("@@LINE_CLASS@@", LINE_CLASS)
+        .replace("@@PLAY_FN@@", play_fn)
     )

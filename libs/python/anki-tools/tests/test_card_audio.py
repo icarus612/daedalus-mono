@@ -16,6 +16,7 @@ from anki_tools.card_audio import (
     BUTTON_CLASS,
     LINE_CLASS,
     SMALL_BUTTON_CLASS,
+    TAPPABLE_CLASS,
     audio_block,
     audio_line_block,
 )
@@ -146,45 +147,72 @@ def test_audio_button_css_targets_button_class():
 
 
 def test_audio_line_block_references_its_field_exactly_once():
-    result = audio_line_block("Audio Perfective", "aspect-audio", "perfective")
+    result = audio_line_block("Audio Perfective", "aspect-audio", "perfective", "__fn")
     assert result.count("{{Audio Perfective}}") == 1
 
 
 def test_audio_line_block_never_autoplays():
-    result = audio_line_block("Audio Perfective", "aspect-audio", "perfective")
+    result = audio_line_block("Audio Perfective", "aspect-audio", "perfective", "__fn")
     assert "autoplay" not in result
 
 
 def test_audio_line_block_button_carries_both_classes():
-    result = audio_line_block("Audio Perfective", "aspect-audio", "perfective")
+    result = audio_line_block("Audio Perfective", "aspect-audio", "perfective", "__fn")
     assert f'"{BUTTON_CLASS} {SMALL_BUTTON_CLASS}"' in result
 
 
-def test_audio_line_block_makes_the_whole_line_a_click_target():
-    result = audio_line_block("Audio Imperfective", "aspect-audio", "imperfective")
+def test_audio_line_block_publishes_a_global_for_an_onclick_attribute():
+    result = audio_line_block(
+        "Audio Imperfective", "aspect-audio", "imperfective", "__fn"
+    )
+    assert "window.__fn = function (event)" in result
+    assert "addEventListener" not in result
+
+
+def test_audio_line_block_handler_stops_the_tap_reaching_ankis_zones():
+    result = audio_line_block("Audio Perfective", "aspect-audio", "perfective", "__fn")
+    assert "event.stopPropagation();" in result
+    assert "event.preventDefault();" in result
+
+
+def test_audio_line_block_marks_the_row_ready_for_a_pointer_cursor():
+    result = audio_line_block(
+        "Audio Imperfective", "aspect-audio", "imperfective", "__fn"
+    )
     assert 'document.getElementById("imperfective")' in result
     assert f'line.classList.add("{LINE_CLASS}")' in result
-    assert 'line.addEventListener("click"' in result
 
 
 def test_audio_line_block_slot_and_line_ids_are_independent():
-    result = audio_line_block("Audio Perfective", "slot-x", "row-y")
+    result = audio_line_block("Audio Perfective", "slot-x", "row-y", "__fn")
     assert 'id="slot-x"' in result
     assert 'document.getElementById("row-y")' in result
     assert "slot-y" not in result and "row-x" not in result
 
 
 def test_audio_line_block_bails_out_on_an_empty_field():
-    result = audio_line_block("Audio Perfective", "aspect-audio", "perfective")
+    result = audio_line_block("Audio Perfective", "aspect-audio", "perfective", "__fn")
     assert "if (!text) return;" in result
 
 
 def test_audio_line_block_is_idempotent_per_render():
-    result = audio_line_block("Audio Perfective", "aspect-audio", "perfective")
-    assert 'slot.querySelector("button")' in result
+    result = audio_line_block("Audio Perfective", "aspect-audio", "perfective", "__fn")
+    assert 'document.getElementById("aspect-audio-player")' in result
 
 
 def test_small_button_and_line_classes_are_styled():
     assert f".{SMALL_BUTTON_CLASS} {{" in AUDIO_BUTTON_CSS
     assert f".{LINE_CLASS} {{" in AUDIO_BUTTON_CSS
+    assert f".{TAPPABLE_CLASS} {{" in AUDIO_BUTTON_CSS
     assert "cursor: pointer" in AUDIO_BUTTON_CSS.split(f".{LINE_CLASS} {{")[1]
+
+
+def test_the_small_bubble_is_smaller_than_the_main_one_but_still_grew():
+    def px(block, prop):
+        return float(block.split(f"{prop}: ")[1].split("rem")[0])
+
+    main = AUDIO_BUTTON_CSS.split(f".{BUTTON_CLASS} {{")[1].split("}")[0]
+    small = AUDIO_BUTTON_CSS.split(f".{SMALL_BUTTON_CLASS} {{")[1].split("}")[0]
+    assert px(small, "width") < px(main, "width")
+    assert px(main, "width") > 3.0
+    assert px(small, "width") > 1.8
