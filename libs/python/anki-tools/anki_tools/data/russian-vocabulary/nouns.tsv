@@ -23,8 +23,8 @@
 22	половина	half	полови́на	f	полови́ны			No	Space & Parts			New
 23	человек	person	челове́к	m	лю́ди			Yes	People	irregular plural: люди (5 человек after numbers)		New
 24	люди	people (persons, individuals)	лю́ди	pl form	—			Yes	People	plural of человек		New
-25	друг	friend (m)	друг	m	друзья́			Yes	People	irregular plural: друзья		New
-26	подруга	friend (f)	подру́га	f	подру́ги			Yes	People			New
+25	друг	friend (male)	друг	m	друзья́			Yes	People	irregular plural: друзья		New
+26	подруга	friend (female)	подру́га	f	подру́ги			Yes	People			New
 27	мужчина	man	мужчи́на	m	мужчи́ны			Yes	People	masculine despite -а ending		New
 28	женщина	woman	же́нщина	f	же́нщины			Yes	People			New
 29	ребёнок	child	ребёнок	m	де́ти			Yes	People	irregular plural: дети		New
@@ -118,8 +118,8 @@
 117	лёд	ice	лёд	m	льды			No	Nature & Weather	fleeting vowel: льда		New
 118	животное	animal	живо́тное	n	живо́тные			Yes	Animals	declines like an adjective		New
 119	собака	dog	соба́ка	f	соба́ки			Yes	Animals			New
-120	кошка	cat (f)	ко́шка	f	ко́шки			Yes	Animals			New
-121	кот	cat (m) / tomcat	кот	m	коты́			Yes	Animals			New
+120	кошка	cat (female)	ко́шка	f	ко́шки			Yes	Animals			New
+121	кот	cat (male) / tomcat	кот	m	коты́			Yes	Animals			New
 122	птица	bird	пти́ца	f	пти́цы			Yes	Animals			New
 123	рыба	fish	ры́ба	f	ры́бы			Yes	Animals			New
 124	лошадь	horse	ло́шадь	f	ло́шади			Yes	Animals			New
@@ -253,7 +253,7 @@
 256	граница	border	грани́ца	f	грани́цы			No	Transport & Travel			New
 257	багаж	luggage	бага́ж	m	—			No	Transport & Travel			New
 258	еда	food	еда́	f	—			No	Food & Drink			New
-259	продукт	product / (pl.) groceries	проду́кт	m	проду́кты			No	Food & Drink			New
+259	продукт	product / (plural) groceries	проду́кт	m	проду́кты			No	Food & Drink			New
 260	чай	tea	чай	m	—			No	Food & Drink			New
 262	сок	juice	сок	m	—			No	Food & Drink			New
 263	молоко	milk	молоко́	n	—			No	Food & Drink			New
