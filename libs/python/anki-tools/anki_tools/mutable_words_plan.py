@@ -7,6 +7,7 @@ passed in.
 """
 
 import csv
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import ClassVar
 
@@ -743,6 +744,16 @@ _VERB_CARD_CONFIGS: tuple[tuple[str, str, str, str], ...] = (
 )
 
 
+# A Verbs card shows one aspect; its partner belongs on the answer side with
+# it, with its own recording -- an aspect pair is learnt as a pair.
+_ASPECT_COUNTERPART: dict[str, tuple[str, str]] = {
+    "Imperfective": ("Perfective", "Audio Perfective"),
+    "Perfective": ("Imperfective", "Audio Imperfective"),
+}
+
+ASPECT_AUDIO_SLOT_ID = "aspect-audio"
+
+
 def _slug_for_field_name(field_name: str) -> str:
     """Slug an English field name for use as an HTML id attribute."""
     slug = field_name.lower()
@@ -768,10 +779,16 @@ def _detail_fields(sheet: str, primary_field: str) -> list[str]:
         primary_field,
         "Translation",
     }
+    if sheet == "Verbs":
+        excluded |= set(_ASPECT_COUNTERPART)
     return [name for name in FIELD_NAMES[sheet] if name not in excluded]
 
 
-def _detail_block(sheet: str, primary_field: str) -> tuple[str, str]:
+def _detail_block(
+    sheet: str,
+    primary_field: str,
+    extra_titles: Sequence[tuple[str, str]] = (),
+) -> tuple[str, str]:
     """(divs, script) for `sheet`'s detail sections.
 
     Mirrors how the reference note type treats its own single "Additional
@@ -784,7 +801,7 @@ def _detail_block(sheet: str, primary_field: str) -> tuple[str, str]:
     model them on.
     """
     divs = []
-    calls = []
+    calls = [f'addTitle("{slug}", "{title}");' for slug, title in extra_titles]
     for field_name in _detail_fields(sheet, primary_field):
         if field_name == "Additional Info":
             slug, title = "additional-info", "&#9432;"
@@ -843,6 +860,42 @@ _ASPECT_COLOUR_CSS = "\n\n".join(
 )
 
 
+_ASPECT_LINE_IDS = ", ".join(f"#{aspect}" for aspect in ASPECT_COLOURS)
+_ASPECT_LINE_TITLES = ", ".join(f"#{aspect} .title" for aspect in ASPECT_COLOURS)
+_ASPECT_LINE_BODIES = ", ".join(f"#{aspect} .body" for aspect in ASPECT_COLOURS)
+
+# The counterpart aspect closes the word stack rather than opening the grey
+# detail list, so it is centred on the headword and its translation instead
+# of inheriting the details' full-width left-aligned row.
+_ASPECT_LINE_CSS = (
+    f"{_ASPECT_LINE_IDS} {{\n"
+    "\tpadding: .15rem 0;\n"
+    "\tdisplay: flex;\n"
+    "\tflex-wrap: wrap;\n"
+    "\tjustify-content: center;\n"
+    "\talign-items: center;\n"
+    "\tgap: .4rem;\n"
+    "\twidth: 100%;\n"
+    "\ttext-align: center;\n"
+    "\tline-height: 1.25;\n"
+    "}\n\n"
+    f"{_ASPECT_LINE_TITLES} {{\n"
+    "\tfont-size: 1.2rem;\n"
+    "\tmargin-right: 0;\n"
+    "}\n\n"
+    f"{_ASPECT_LINE_BODIES} {{\n"
+    "\tfont-size: 1.2rem;\n"
+    "\tdisplay: inline-flex;\n"
+    "\talign-items: center;\n"
+    "\tgap: .4rem;\n"
+    "}\n\n"
+    f"#{ASPECT_AUDIO_SLOT_ID} {{\n"
+    "\tdisplay: inline-flex;\n"
+    "\talign-items: center;\n"
+    "}"
+)
+
+
 def _build_extra_css() -> str:
     """CSS appended to the cloned source note type's CSS (never rewritten in
     place -- see `mutable_words.build_note_types`). Generalizes the
@@ -886,6 +939,7 @@ def _build_extra_css() -> str:
         "\tcolor: #656565;\n"
         "\twhite-space: nowrap;\n"
         "}\n\n"
+        f"{_ASPECT_LINE_CSS}\n\n"
         f"{_ASPECT_COLOUR_CSS}"
     )
 
@@ -921,14 +975,27 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
         raise ValueError(f"unknown sheet: {sheet!r}")
 
     audio_html = card_audio.audio_block(audio_field, dom_id, state_key)
-    detail_divs, detail_script = _detail_block(sheet, primary_field)
+    aspect_div = ""
+    extra_titles: list[tuple[str, str]] = []
+    if sheet == "Verbs":
+        counterpart, counterpart_audio = _ASPECT_COUNTERPART[primary_field]
+        aspect_id = _slug_for_field_name(counterpart)
+        aspect_div = _wrap(
+            aspect_id,
+            f"{{{{{counterpart}}}}}",
+            card_audio.audio_line_block(
+                counterpart_audio, ASPECT_AUDIO_SLOT_ID, aspect_id
+            ),
+        )
+        extra_titles.append((aspect_id, counterpart))
+    detail_divs, detail_script = _detail_block(sheet, primary_field, extra_titles)
     russian_div = f'<div id="russian">{{{{{primary_field}}}}}</div>'
     translation_div = '<div id="translation">{{Translation}}</div>'
 
     if audio_side:
         front = _wrap("front", _DECK_HEADER_HTML, audio_html, russian_div)
         qfmt = front + _DECK_HEADER_SCRIPT
-        back = _wrap("back", translation_div, detail_divs)
+        back = _wrap("back", translation_div, aspect_div, detail_divs)
         afmt = "\n".join(["{{FrontSide}}", back, detail_script])
     else:
         prompt_div = translation_div
@@ -941,7 +1008,7 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
             )
         front = _wrap("front", _DECK_HEADER_HTML, prompt_div)
         qfmt = front + _DECK_HEADER_SCRIPT
-        back = _wrap("back", audio_html, russian_div, detail_divs)
+        back = _wrap("back", audio_html, russian_div, aspect_div, detail_divs)
         afmt = "\n".join(["{{FrontSide}}", back, detail_script])
 
     return qfmt, afmt

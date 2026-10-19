@@ -29,6 +29,7 @@ from anki_tools import (
     examples_field,
     mutable_words_plan,
     word_qualifier,
+    word_stack,
 )
 from anki_tools.audio_naming import get_anki_collection_path
 from anki_tools.immutable_words import assert_unmodified
@@ -80,6 +81,8 @@ def build_note_types(
             + case_field.CASE_CSS
             + "\n\n"
             + word_qualifier.QUALIFIER_CSS
+            + "\n\n"
+            + word_stack.WORD_STACK_CSS
             + "\n\n"
             + mutable_words_plan.EXTRA_CSS
         )

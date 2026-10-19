@@ -22,6 +22,7 @@ from anki_tools import (
     examples_field,
     mutable_words_plan,
     word_qualifier,
+    word_stack,
 )
 from anki_tools.audio_naming import get_anki_media_dir, parse_audio_filenames
 from anki_tools.immutable_words import assert_unmodified
@@ -612,6 +613,8 @@ def test_build_note_types_css_extends_source_with_extra_css(cloned_note_types):
         + case_field.CASE_CSS
         + "\n\n"
         + word_qualifier.QUALIFIER_CSS
+        + "\n\n"
+        + word_stack.WORD_STACK_CSS
         + "\n\n"
         + mutable_words_plan.EXTRA_CSS
     )

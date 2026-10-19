@@ -27,6 +27,7 @@ from anki_tools import (
     case_field,
     examples_field,
     word_qualifier,
+    word_stack,
 )
 from anki_tools.anki_identity import notetype_id_for_name as _notetype_id_for_name
 from anki_tools.audio_naming import get_anki_collection_path
@@ -114,6 +115,8 @@ def clone_note_type(
         + case_field.CASE_CSS
         + "\n\n"
         + word_qualifier.QUALIFIER_CSS
+        + "\n\n"
+        + word_stack.WORD_STACK_CSS
     )
 
     # `new_field()` hands back a field dict with a real, randomly-chosen id

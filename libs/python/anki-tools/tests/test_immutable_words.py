@@ -69,6 +69,7 @@ from anki_tools import (
     mutable_words,
     mutable_words_plan,
     word_qualifier,
+    word_stack,
 )
 from anki_tools.immutable_words import (
     NEW_NOTE_TYPE_ID,
@@ -530,6 +531,8 @@ def test_clone_note_type_css_extends_source_with_audio_button_css(cloned):
         + case_field.CASE_CSS
         + "\n\n"
         + word_qualifier.QUALIFIER_CSS
+        + "\n\n"
+        + word_stack.WORD_STACK_CSS
     )
 
 

@@ -11,7 +11,14 @@ from pathlib import Path
 
 import pytest
 
-from anki_tools.card_audio import AUDIO_BUTTON_CSS, BUTTON_CLASS, audio_block
+from anki_tools.card_audio import (
+    AUDIO_BUTTON_CSS,
+    BUTTON_CLASS,
+    LINE_CLASS,
+    SMALL_BUTTON_CLASS,
+    audio_block,
+    audio_line_block,
+)
 
 ID_RE = re.compile(r'id="([^"]*)"')
 _PACKAGE_ROOT = Path(__file__).resolve().parents[1]
@@ -136,3 +143,48 @@ def test_audio_button_css_targets_button_class():
     assert f".{BUTTON_CLASS} {{" in AUDIO_BUTTON_CSS
     assert f".{BUTTON_CLASS}:hover" in AUDIO_BUTTON_CSS
     assert f".{BUTTON_CLASS}:active" in AUDIO_BUTTON_CSS
+
+
+def test_audio_line_block_references_its_field_exactly_once():
+    result = audio_line_block("Audio Perfective", "aspect-audio", "perfective")
+    assert result.count("{{Audio Perfective}}") == 1
+
+
+def test_audio_line_block_never_autoplays():
+    result = audio_line_block("Audio Perfective", "aspect-audio", "perfective")
+    assert "autoplay" not in result
+
+
+def test_audio_line_block_button_carries_both_classes():
+    result = audio_line_block("Audio Perfective", "aspect-audio", "perfective")
+    assert f'"{BUTTON_CLASS} {SMALL_BUTTON_CLASS}"' in result
+
+
+def test_audio_line_block_makes_the_whole_line_a_click_target():
+    result = audio_line_block("Audio Imperfective", "aspect-audio", "imperfective")
+    assert 'document.getElementById("imperfective")' in result
+    assert f'line.classList.add("{LINE_CLASS}")' in result
+    assert 'line.addEventListener("click"' in result
+
+
+def test_audio_line_block_slot_and_line_ids_are_independent():
+    result = audio_line_block("Audio Perfective", "slot-x", "row-y")
+    assert 'id="slot-x"' in result
+    assert 'document.getElementById("row-y")' in result
+    assert "slot-y" not in result and "row-x" not in result
+
+
+def test_audio_line_block_bails_out_on_an_empty_field():
+    result = audio_line_block("Audio Perfective", "aspect-audio", "perfective")
+    assert "if (!text) return;" in result
+
+
+def test_audio_line_block_is_idempotent_per_render():
+    result = audio_line_block("Audio Perfective", "aspect-audio", "perfective")
+    assert 'slot.querySelector("button")' in result
+
+
+def test_small_button_and_line_classes_are_styled():
+    assert f".{SMALL_BUTTON_CLASS} {{" in AUDIO_BUTTON_CSS
+    assert f".{LINE_CLASS} {{" in AUDIO_BUTTON_CSS
+    assert "cursor: pointer" in AUDIO_BUTTON_CSS.split(f".{LINE_CLASS} {{")[1]

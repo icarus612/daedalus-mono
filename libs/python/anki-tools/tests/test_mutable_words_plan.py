@@ -539,3 +539,67 @@ def test_note_type_registers_without_card_type_error(tmp_path, sheet):
         _register_note_type(col, sheet)
     finally:
         col.close()
+
+
+def test_every_verb_card_carries_its_counterpart_aspect_on_the_answer_side():
+    for card_index, counterpart in (
+        (0, "Perfective"),
+        (1, "Perfective"),
+        (2, "Imperfective"),
+        (3, "Imperfective"),
+    ):
+        _qfmt, afmt = mutable_words_plan.build_template("Verbs", card_index)
+        assert f"{{{{{counterpart}}}}}" in afmt, card_index
+        assert f"{{{{Audio {counterpart}}}}}" in afmt, card_index
+
+
+def test_verb_counterpart_aspect_never_appears_on_the_question_side():
+    for card_index, counterpart in (
+        (0, "Perfective"),
+        (1, "Perfective"),
+        (2, "Imperfective"),
+        (3, "Imperfective"),
+    ):
+        qfmt, _afmt = mutable_words_plan.build_template("Verbs", card_index)
+        assert f"{{{{{counterpart}}}}}" not in qfmt, card_index
+
+
+def test_verb_counterpart_aspect_is_not_also_a_grey_detail_row():
+    for card_index in range(4):
+        _qfmt, afmt = mutable_words_plan.build_template("Verbs", card_index)
+        assert (
+            afmt.count('<div id="perfective">') + afmt.count('<div id="imperfective">')
+            == 1
+        ), card_index
+
+
+def test_verb_counterpart_line_gets_its_own_title_row():
+    for card_index, slug, title in (
+        (0, "perfective", "Perfective"),
+        (2, "imperfective", "Imperfective"),
+    ):
+        _qfmt, afmt = mutable_words_plan.build_template("Verbs", card_index)
+        assert f'addTitle("{slug}", "{title}");' in afmt, card_index
+
+
+def test_non_verb_sheets_have_no_aspect_line():
+    for sheet in ("Nouns", "Adjectives", "Pronouns", "Numerals"):
+        for card_index in (0, 1):
+            _qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
+            assert mutable_words_plan.ASPECT_AUDIO_SLOT_ID not in afmt, sheet
+
+
+def test_aspect_line_is_centred_rather_than_a_left_aligned_detail_row():
+    css = mutable_words_plan.EXTRA_CSS
+    rule = css.split("#imperfective, #perfective {")[1].split("}")[0]
+    assert "justify-content: center" in rule
+    assert "text-align: center" in rule
+    assert "#perfective" not in css.split("{")[0]
+
+
+def test_aspect_colours_still_win_over_the_aspect_line_layout():
+    css = mutable_words_plan.EXTRA_CSS
+    layout = css.index("#imperfective .title, #perfective .title {")
+    for aspect in mutable_words_plan.ASPECT_COLOURS:
+        colour = css.index(f"#{aspect} .title, #{aspect} .body, .aspect-{aspect} {{")
+        assert colour > layout, aspect
