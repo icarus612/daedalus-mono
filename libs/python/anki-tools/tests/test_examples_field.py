@@ -99,11 +99,20 @@ def _lost_runs(before, after):
     }
 
 
+def _row_texts(row):
+    """Every string a row carries, so the drop guard sees text that MOVED
+    between fields rather than reading the move as a loss."""
+    return [
+        value
+        for value in dataclasses.asdict(row).values()
+        if isinstance(value, str)
+    ]
+
+
 def _runs_by_guid():
-    return {
-        guid: _runs(translation, info, examples)
-        for guid, translation, info, examples in _all_notes()
-    }
+    rows = [row for sheet_rows in _mutable_rows().values() for row in sheet_rows]
+    rows.extend(_immutable_rows())
+    return {row.guid: _runs(*_row_texts(row)) for row in rows}
 
 
 def test_no_russian_run_dropped_by_the_examples_migration():
@@ -148,7 +157,7 @@ def test_mutable_standalone_examples_moved_and_glossed_russian_kept():
     verbs = {r.imperfective: r for r in _mutable_rows()["Verbs"]}
     assert verbs["касаться"].examples == "это тебя не каса́ется"
     assert "каса́ется" not in verbs["касаться"].additional_info
-    assert "звонить кому" in verbs["звонить"].additional_info
+    assert "звони́ть кому́" in verbs["звонить"].case_preposition
     assert verbs["звонить"].examples == ""
     adverbs = {r.adverb: r for r in _mutable_rows()["Adverbs"]}
     assert adverbs["ужасно"].examples == "ужа́сно рад"
