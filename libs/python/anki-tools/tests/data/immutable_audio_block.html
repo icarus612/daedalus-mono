@@ -12,7 +12,8 @@
      apart: the echo is outside it, an answer-side block is inside it, and
      on the question side `#back` does not exist yet -- hence the deferral
      by one macrotask, since at parse time neither element is in the page
-     yet. -->
+     yet. The stored voice must also be one of THIS note's own files, so a
+     global left by another note can never silence a render. -->
 <div id="audio"><span id="audio-data" class="hidden">{{Audio}}</span>
 <span id="audio-controls"></span></div>
 <script>
@@ -30,9 +31,10 @@
     var container = document.getElementById("audio");
     if (!container || container.querySelector("audio")) return;
     var back = document.getElementById("back");
-    var echo = !!back && !back.contains(container);
     var stored = window.__immutableWordsAudioChoice;
-    var chosen = echo && files.indexOf(stored) !== -1
+    var echo =
+      !!back && !back.contains(container) && files.indexOf(stored) !== -1;
+    var chosen = echo
       ? stored
       : files[Math.floor(Math.random() * files.length)];
     window.__immutableWordsAudioChoice = chosen;

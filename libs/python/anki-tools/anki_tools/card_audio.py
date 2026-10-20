@@ -66,7 +66,8 @@ _TEMPLATE = r"""<!-- The Audio field holds bare filenames, never Anki sound tags
      apart: the echo is outside it, an answer-side block is inside it, and
      on the question side `#back` does not exist yet -- hence the deferral
      by one macrotask, since at parse time neither element is in the page
-     yet. -->
+     yet. The stored voice must also be one of THIS note's own files, so a
+     global left by another note can never silence a render. -->
 <div id="@@DOM_ID@@"><span id="@@DOM_ID@@-data" class="hidden">{{@@FIELD@@}}</span>
 <span id="@@DOM_ID@@-controls"></span></div>
 <script>
@@ -84,9 +85,10 @@ _TEMPLATE = r"""<!-- The Audio field holds bare filenames, never Anki sound tags
     var container = document.getElementById("@@DOM_ID@@");
     if (!container || container.querySelector("audio")) return;
     var back = document.getElementById("back");
-    var echo = !!back && !back.contains(container);
     var stored = window.@@STATE_KEY@@;
-    var chosen = echo && files.indexOf(stored) !== -1
+    var echo =
+      !!back && !back.contains(container) && files.indexOf(stored) !== -1;
+    var chosen = echo
       ? stored
       : files[Math.floor(Math.random() * files.length)];
     window.@@STATE_KEY@@ = chosen;

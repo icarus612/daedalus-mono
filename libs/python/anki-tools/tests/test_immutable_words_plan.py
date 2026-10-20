@@ -777,6 +777,25 @@ def test_rewrite_audio_playback_js_front_side_echo_is_silent_and_keeps_the_voice
     assert result["audioSrc"] == "b.mp3"
 
 
+def test_rewrite_audio_playback_js_a_stale_back_marker_cannot_silence_a_render(
+    node_executable,
+):
+    # Hardening: #back present and the block outside it is the shape of a
+    # {{FrontSide}} echo, but only a voice from THIS note's own list can
+    # have been the one just heard. A global left by another note must
+    # still play rather than being treated as already heard.
+    result = _run_audio_script_scenario(
+        node_executable,
+        files=DEFAULT_AUDIO_FILES,
+        back_present=True,
+        inside_back=False,
+        preseeded_choice="stale-from-other-note.mp3",
+        forced_random=0.4,  # floor(0.4 * 3) == 1 -> "b.mp3"
+    )
+    assert result["audioAutoplay"] is True
+    assert result["audioSrc"] == "b.mp3"
+
+
 def test_rewrite_audio_playback_js_later_review_question_side_always_rerolls(
     node_executable,
 ):
