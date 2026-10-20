@@ -542,6 +542,7 @@ def _build_harness(
     script_body: str,
     audio_text: str,
     back_present: bool,
+    inside_back: bool,
     preseeded_choice,
     forced_random: float,
 ) -> str:
@@ -554,8 +555,12 @@ def _build_harness(
     lines = [
         "var __audioDataEl = { textContent: " + json.dumps(audio_text) + " };",
         "var __audioContainerEl = { _children: [], "
+        "querySelector: function () { return null; }, "
         "appendChild: function (el) { this._children.push(el); } };",
-        "var __backEl = " + ("true" if back_present else "false") + " ? {} : null;",
+        "var __insideBack = " + ("true" if inside_back else "false") + ";",
+        "var __backEl = "
+        + ("true" if back_present else "false")
+        + " ? { contains: function (el) { return __insideBack; } } : null;",
         "",
         "var document = {",
         "  getElementById: function (id) {",
@@ -627,6 +632,7 @@ def _run_audio_script_scenario(
     *,
     files,
     back_present,
+    inside_back=False,
     preseeded_choice=None,
     forced_random,
 ):
@@ -636,6 +642,7 @@ def _run_audio_script_scenario(
         script_body=script_body,
         audio_text=",".join(files),
         back_present=back_present,
+        inside_back=inside_back,
         preseeded_choice=preseeded_choice,
         forced_random=forced_random,
     )
@@ -693,13 +700,14 @@ def test_rewrite_audio_playback_js_duplicate_answer_side_reuses_choice(node_exec
 def test_rewrite_audio_playback_js_answer_side_stale_global_from_other_note_rerolls(
     node_executable,
 ):
-    # l5.md section B scenario 3 (Card 2's shape / "the trap"): #back
-    # present, but the stored global belongs to a DIFFERENT note's file
-    # list -> must still be treated as a fresh pick, not reused.
+    # l5.md section B scenario 3 (Card 2's shape / "the trap"): the block
+    # lives inside #back, and the stored global belongs to a DIFFERENT
+    # note's file list -> must still be treated as a fresh pick.
     result = _run_audio_script_scenario(
         node_executable,
         files=DEFAULT_AUDIO_FILES,
         back_present=True,
+        inside_back=True,
         preseeded_choice="stale-from-other-note.mp3",
         forced_random=0.4,  # floor(0.4 * 3) == 1 -> "b.mp3"
     )
@@ -713,11 +721,12 @@ def test_rewrite_audio_playback_js_answer_side_unset_global_also_rerolls(
     node_executable,
 ):
     # l5.md section B scenario 3, "either none was ever stored" variant:
-    # #back present, no global at all -> also a fresh pick.
+    # inside #back, no global at all -> also a fresh pick.
     result = _run_audio_script_scenario(
         node_executable,
         files=DEFAULT_AUDIO_FILES,
         back_present=True,
+        inside_back=True,
         preseeded_choice=None,
         forced_random=0.7,  # floor(0.7 * 3) == 2 -> "c.mp3"
     )
@@ -725,6 +734,47 @@ def test_rewrite_audio_playback_js_answer_side_unset_global_also_rerolls(
     assert result["audioAutoplay"] is True
     assert result["audioSrc"] == "c.mp3"
     assert result["choiceGlobal"] == "c.mp3"
+
+
+def test_rewrite_audio_playback_js_answer_side_own_notes_global_still_plays(
+    node_executable,
+):
+    # The silence this block was reported for: an answer-side-only audio
+    # div whose stored global is a member of THIS note's own file list --
+    # left there by a sibling card, or by an earlier answer render of this
+    # same card in the same session. Membership alone cannot tell that
+    # apart from a {{FrontSide}} echo, so the pick was reused and never
+    # played. Being inside #back is what distinguishes it.
+    result = _run_audio_script_scenario(
+        node_executable,
+        files=DEFAULT_AUDIO_FILES,
+        back_present=True,
+        inside_back=True,
+        preseeded_choice="b.mp3",
+        forced_random=0.99,  # floor(0.99 * 3) == 2 -> "c.mp3"
+    )
+    assert result["audioCreated"] is True
+    assert result["audioAutoplay"] is True
+    assert result["audioSrc"] == "c.mp3"
+    assert result["choiceGlobal"] == "c.mp3"
+
+
+def test_rewrite_audio_playback_js_front_side_echo_is_silent_and_keeps_the_voice(
+    node_executable,
+):
+    # The other half of the same discrimination: outside #back with #back
+    # present is the {{FrontSide}} echo, which must stay silent on the
+    # voice already heard rather than re-roll over it.
+    result = _run_audio_script_scenario(
+        node_executable,
+        files=DEFAULT_AUDIO_FILES,
+        back_present=True,
+        inside_back=False,
+        preseeded_choice="b.mp3",
+        forced_random=0.99,
+    )
+    assert result["audioAutoplay"] is False
+    assert result["audioSrc"] == "b.mp3"
 
 
 def test_rewrite_audio_playback_js_later_review_question_side_always_rerolls(
