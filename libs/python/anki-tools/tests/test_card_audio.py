@@ -4,9 +4,12 @@ Written from the contract text alone -- ``audio_block``'s implementation is
 never read by this file's author.
 """
 
+import json
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -216,3 +219,112 @@ def test_the_small_bubble_is_smaller_than_the_main_one_but_still_grew():
     assert px(small, "width") < px(main, "width")
     assert px(main, "width") > 3.0
     assert px(small, "width") > 1.8
+
+
+# --- audio_line_block executed, not just pattern-matched. The counterpart
+# block shipped broken once: its discovery was left reading `textContent`
+# after the Audio field became <audio> elements, whose textContent is
+# empty, so it returned early and no play button was ever built. String
+# assertions all still passed. ---
+
+
+@pytest.fixture(scope="module")
+def node_executable():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("node not found on PATH; cannot run behavioral JS tests")
+    probe = subprocess.run([node, "--version"], capture_output=True, text=True)
+    if probe.returncode != 0:
+        pytest.skip(f"`node --version` failed (rc={probe.returncode})")
+    return node
+
+
+_LINE_HARNESS = """
+function audioEl(src) {
+  return { tagName: "audio", _src: src,
+    getAttribute: function (a) { return a === "src" ? this._src : null; } };
+}
+var fieldAudios = SOURCES.map(audioEl);
+var dataEl = {
+  getElementsByTagName: function (t) { return t === "audio" ? fieldAudios : []; },
+  textContent: "",
+};
+var slotKids = [];
+var slotEl = { appendChild: function (e) { slotKids.push(e); } };
+var lineClasses = [];
+var lineEl = { classList: { add: function (c) { lineClasses.push(c); } } };
+var created = {};
+var document = {
+  getElementById: function (id) {
+    if (id === "aspect-audio-data") return dataEl;
+    if (id === "aspect-audio") return slotEl;
+    if (id === "perfective") return lineEl;
+    if (id === "aspect-audio-player") return created["aspect-audio-player"] || null;
+    return null;
+  },
+  createElement: function (tag) {
+    return { tagName: tag, playCount: 0, currentTime: null,
+      set id(v) { this._id = v; created[v] = this; }, get id() { return this._id; },
+      play: function () { this.playCount += 1; } };
+  },
+};
+var window = {};
+var setTimeout = function (fn) { fn(); };
+Math.random = function () { return 0.0; };
+SCRIPT_BODY
+var player = slotKids.filter(function (e) { return e.tagName === "audio"; })[0];
+var button = slotKids.filter(function (e) { return e.tagName === "button"; })[0];
+var plays = null;
+if (typeof window.__fn === "function") {
+  window.__fn({ stopPropagation: function () {}, preventDefault: function () {} });
+  plays = player ? player.playCount : null;
+}
+console.log(JSON.stringify({
+  buttonCreated: !!button,
+  buttonClass: button ? button.className : null,
+  playerSrc: player ? player.src : null,
+  lineClasses: lineClasses,
+  playsOnTap: plays,
+}));
+"""
+
+
+def _run_line_block(node, sources):
+    block = audio_line_block("Audio Perfective", "aspect-audio", "perfective", "__fn")
+    body = block[block.index("<script>") + 8 : block.rindex("</script>")]
+    harness = _LINE_HARNESS.replace("SOURCES", json.dumps(sources)).replace(
+        "SCRIPT_BODY", body
+    )
+    with tempfile.NamedTemporaryFile(
+        mode="w", suffix=".js", delete=False, encoding="utf-8"
+    ) as handle:
+        handle.write(harness)
+        path = handle.name
+    try:
+        done = subprocess.run([node, path], capture_output=True, text=True, check=True)
+    finally:
+        Path(path).unlink()
+    return json.loads([ln for ln in done.stdout.splitlines() if ln.strip()][-1])
+
+
+def test_audio_line_block_builds_its_button_from_the_fields_audio_elements(
+    node_executable,
+):
+    result = _run_line_block(node_executable, ["простить_f1.mp3", "простить_m2.mp3"])
+    assert result["buttonCreated"] is True
+    assert result["buttonClass"] == f"{BUTTON_CLASS} {SMALL_BUTTON_CLASS}"
+    assert result["playerSrc"] == "простить_f1.mp3"
+    assert result["lineClasses"] == [LINE_CLASS]
+
+
+def test_audio_line_block_tap_plays_the_chosen_clip(node_executable):
+    result = _run_line_block(node_executable, ["простить_f1.mp3", "простить_m2.mp3"])
+    assert result["playsOnTap"] == 1
+
+
+def test_audio_line_block_builds_nothing_when_the_field_has_no_recordings(
+    node_executable,
+):
+    result = _run_line_block(node_executable, [])
+    assert result["buttonCreated"] is False
+    assert result["lineClasses"] == []

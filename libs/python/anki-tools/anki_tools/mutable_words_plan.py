@@ -949,7 +949,10 @@ def _translation_div(sheet: str, primary_field: str) -> str:
 
 def _wrap(element_id: str, *parts: str, attrs: str = "") -> str:
     open_tag = f'<div id="{element_id}"{" " + attrs if attrs else ""}>'
-    return "\n".join([open_tag, *parts, "</div>"])
+    # Empty parts are dropped rather than emitted as blank lines: a sheet
+    # without an aspect row would otherwise differ from a deployed template
+    # by whitespace alone, which is noise in any repo-vs-collection diff.
+    return "\n".join([open_tag, *(p for p in parts if p), "</div>"])
 
 
 def build_template(sheet: str, card_index: int) -> tuple[str, str]:
