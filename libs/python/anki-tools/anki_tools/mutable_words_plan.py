@@ -13,7 +13,7 @@ from typing import ClassVar
 
 from anki_tools import card_audio
 from anki_tools.anki_identity import guid_for_row, notetype_id_for_name
-from anki_tools.audio_naming import build_filename
+from anki_tools.audio_naming import audio_field_value, build_filename
 from anki_tools.examples_field import EXAMPLES_FIELD
 
 DECK_ROOT = "Languages::Russian::3. Mutable Words"
@@ -62,7 +62,6 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Examples",
         "Rank",
         "Audio",
-        "AudioRefs",
     ),
     "Verbs": (
         "Imperfective",
@@ -80,7 +79,6 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Rank",
         "Audio Imperfective",
         "Audio Perfective",
-        "AudioRefs",
     ),
     "Adjectives": (
         "Russian (m)",
@@ -97,7 +95,6 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Examples",
         "Rank",
         "Audio",
-        "AudioRefs",
     ),
     "Adverbs": (
         "Adverb",
@@ -110,7 +107,6 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Examples",
         "Rank",
         "Audio",
-        "AudioRefs",
     ),
     "Pronouns": (
         "Russian",
@@ -123,7 +119,6 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Examples",
         "Rank",
         "Audio",
-        "AudioRefs",
     ),
     "Numerals": (
         "Russian",
@@ -137,7 +132,6 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Examples",
         "Rank",
         "Audio",
-        "AudioRefs",
     ),
 }
 
@@ -213,7 +207,6 @@ class NounRow:
 
     def fields(self) -> list[str]:
         names = audio_names(self.russian)
-        audio_refs = "".join(f"[sound:{name}]" for name in names)
         return [
             self.russian,
             self.translation,
@@ -227,8 +220,7 @@ class NounRow:
             self.additional_info,
             self.examples,
             str(self.rank),
-            ",".join(names),
-            audio_refs,
+            audio_field_value(names),
         ]
 
 
@@ -274,9 +266,6 @@ class VerbRow:
     def fields(self) -> list[str]:
         imperfective_names = audio_names(self.imperfective)
         perfective_names = audio_names(self.perfective)
-        audio_refs = "".join(
-            f"[sound:{name}]" for name in (*imperfective_names, *perfective_names)
-        )
         return [
             self.imperfective,
             self.perfective,
@@ -291,9 +280,8 @@ class VerbRow:
             self.additional_info,
             self.examples,
             str(self.rank),
-            ",".join(imperfective_names),
-            ",".join(perfective_names),
-            audio_refs,
+            audio_field_value(imperfective_names),
+            audio_field_value(perfective_names),
         ]
 
 
@@ -329,7 +317,6 @@ class AdjectiveRow:
 
     def fields(self) -> list[str]:
         names = audio_names(self.russian_m)
-        audio_refs = "".join(f"[sound:{name}]" for name in names)
         return [
             self.russian_m,
             self.translation,
@@ -344,8 +331,7 @@ class AdjectiveRow:
             self.additional_info,
             self.examples,
             str(self.rank),
-            ",".join(names),
-            audio_refs,
+            audio_field_value(names),
         ]
 
 
@@ -377,7 +363,6 @@ class AdverbRow:
 
     def fields(self) -> list[str]:
         names = audio_names(self.adverb)
-        audio_refs = "".join(f"[sound:{name}]" for name in names)
         return [
             self.adverb,
             self.translation,
@@ -388,8 +373,7 @@ class AdverbRow:
             self.additional_info,
             self.examples,
             str(self.rank),
-            ",".join(names),
-            audio_refs,
+            audio_field_value(names),
         ]
 
 
@@ -421,7 +405,6 @@ class PronounRow:
 
     def fields(self) -> list[str]:
         names = audio_names(self.russian)
-        audio_refs = "".join(f"[sound:{name}]" for name in names)
         return [
             self.russian,
             self.translation,
@@ -432,8 +415,7 @@ class PronounRow:
             self.additional_info,
             self.examples,
             str(self.rank),
-            ",".join(names),
-            audio_refs,
+            audio_field_value(names),
         ]
 
 
@@ -466,7 +448,6 @@ class NumeralRow:
 
     def fields(self) -> list[str]:
         names = audio_names(self.russian)
-        audio_refs = "".join(f"[sound:{name}]" for name in names)
         return [
             self.russian,
             self.translation,
@@ -478,8 +459,7 @@ class NumeralRow:
             self.additional_info,
             self.examples,
             str(self.rank),
-            ",".join(names),
-            audio_refs,
+            audio_field_value(names),
         ]
 
 
@@ -768,13 +748,12 @@ def _slug_for_field_name(field_name: str) -> str:
 def _detail_fields(sheet: str, primary_field: str) -> list[str]:
     """`FIELD_NAMES[sheet]` entries that become titled detail sections, in
     field order -- everything but the primary word, its translation, Stress
-    (never shown on the card), the audio fields, and `Rank`/`AudioRefs`.
+    (never shown on the card), the audio fields, and `Rank`.
     """
     excluded = {
         "Audio",
         "Audio Imperfective",
         "Audio Perfective",
-        "AudioRefs",
         "Rank",
         "Stress",
         primary_field,

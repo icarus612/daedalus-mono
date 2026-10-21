@@ -26,6 +26,7 @@ import pytest
 from anki_tools.audio_naming import (
     SLOTS,
     SPOKEN_TEXT_OVERRIDES,
+    audio_field_value,
     build_filename,
     get_anki_collection_path,
     get_anki_media_dir,
@@ -251,7 +252,7 @@ def test_deck_audio_field_agrees_with_tts_build_filename_for_every_row_and_slot(
     checked = 0
     for row in real_rows:
         fields = row.fields()
-        audio_names = fields[audio_index].split(",")
+        audio_names = parse_audio_filenames(fields[audio_index])
         assert len(audio_names) == len(SLOTS)
 
         for slot, predicted_name in zip(SLOTS, audio_names):
@@ -343,7 +344,9 @@ def test_dual_class_rows_share_one_recording_per_slot(real_rows):
         assert len(audio_fields) == 1, (
             f"{word}: the two rows predict different Audio fields {audio_fields}"
         )
-        assert audio_fields == {",".join(f"{word}_{slot}.mp3" for slot in SLOTS)}
+        assert audio_fields == {
+            audio_field_value(f"{word}_{slot}.mp3" for slot in SLOTS)
+        }
 
 
 def test_budto_is_not_a_duplicate(real_rows):
@@ -363,23 +366,46 @@ def test_budto_is_not_a_duplicate(real_rows):
 
 
 # ---------------------------------------------------------------------------
-# parse_audio_filenames (lane l4, contract section 1) -- the Python-side
-# mirror of the card template's own JS split (`/[,\n]+/` in
-# rewrite_audio_playback), so attach_media (immutable_words.py) looks up
-# on disk exactly the filenames the browser will try to play.
+# audio_field_value / parse_audio_filenames -- the Audio field's one shape,
+# written and read by the same module, mirroring the card template's own DOM
+# read in card_audio, so attach_media looks up on disk exactly the filenames
+# the browser will try to play.
 # ---------------------------------------------------------------------------
 
 
-def test_parse_audio_filenames_comma_separated():
-    assert parse_audio_filenames("a.mp3,b.mp3") == ["a.mp3", "b.mp3"]
+def test_audio_field_value_emits_one_element_per_name():
+    value = audio_field_value(["a.mp3", "b.mp3"])
+    assert value.count("<audio ") == 2
+    assert 'src="a.mp3"' in value and 'src="b.mp3"' in value
 
 
-def test_parse_audio_filenames_newline_and_comma_both_split():
-    assert parse_audio_filenames("a.mp3\nb.mp3,c.mp3") == [
-        "a.mp3",
-        "b.mp3",
-        "c.mp3",
-    ]
+def test_audio_field_value_never_emits_an_av_tag():
+    # An av tag would mark the media used but autoplay every recording.
+    assert "[sound:" not in audio_field_value(["a.mp3", "b.mp3"])
+
+
+def test_audio_field_value_elements_carry_no_autoplay():
+    assert "autoplay" not in audio_field_value(["a.mp3"])
+
+
+def test_audio_field_value_elements_are_playable_in_the_editor_but_not_preloaded():
+    value = audio_field_value(["a.mp3"])
+    assert "controls" in value
+    assert 'preload="none"' in value
+
+
+def test_audio_field_value_of_nothing_is_empty():
+    assert audio_field_value([]) == ""
+
+
+def test_parse_audio_filenames_reads_back_what_audio_field_value_wrote():
+    names = ["a.mp3", "b.mp3", "c.mp3"]
+    assert parse_audio_filenames(audio_field_value(names)) == names
+
+
+def test_parse_audio_filenames_preserves_order():
+    names = ["z.mp3", "a.mp3", "m.mp3"]
+    assert parse_audio_filenames(audio_field_value(names)) == names
 
 
 def test_parse_audio_filenames_empty_string_yields_empty_list():
@@ -390,25 +416,21 @@ def test_parse_audio_filenames_whitespace_only_string_yields_empty_list():
     assert parse_audio_filenames("  ") == []
 
 
-def test_parse_audio_filenames_strips_incidental_whitespace():
-    assert parse_audio_filenames("a.mp3, b.mp3") == ["a.mp3", "b.mp3"]
-
-
 def test_parse_audio_filenames_never_yields_a_lone_empty_string_entry():
-    # An empty/whitespace-only value must yield [], never [""].
     assert parse_audio_filenames("") != [""]
     assert parse_audio_filenames("   ") != [""]
 
 
+def test_parse_audio_filenames_ignores_a_bare_filename_list():
+    # The pre-collapse shape is not a reference and must not be read as one;
+    # a field still holding it is a migration that did not run.
+    assert parse_audio_filenames("a.mp3,b.mp3") == []
+
+
 def test_parse_audio_filenames_real_four_slot_value_round_trips():
-    # The shape attach_media will actually see: build_filename's own CSV
-    # output for a real word, all four slots.
     names = [build_filename("около", slot) for slot in SLOTS]
-    csv_value = ",".join(names)
-    assert parse_audio_filenames(csv_value) == names
+    assert parse_audio_filenames(audio_field_value(names)) == names
 
 
-def test_parse_audio_filenames_mixed_newline_comma_runs_collapse():
-    # Consecutive separators (a run of commas/newlines) must not produce
-    # empty entries in between -- mirrors the JS regex's `+` quantifier.
-    assert parse_audio_filenames("a.mp3,,\n\nb.mp3") == ["a.mp3", "b.mp3"]
+def test_parse_audio_filenames_tolerates_attribute_order_and_case():
+    assert parse_audio_filenames('<AUDIO controls src="a.mp3"></AUDIO>') == ["a.mp3"]

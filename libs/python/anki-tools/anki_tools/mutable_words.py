@@ -296,8 +296,8 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help=(
             "Directory of already-generated audio files to attach as real "
-            "media before export. Omit to export with AudioRefs "
-            "[sound:...] tags marking the names as used but no bytes "
+            "media before export. Omit to export with the Audio "
+            "fields' <audio> tags marking the names as used but no bytes "
             "attached."
         ),
     )

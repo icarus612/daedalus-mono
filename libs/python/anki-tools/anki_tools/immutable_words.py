@@ -68,12 +68,10 @@ def clone_note_type(
     `.models.copy(nt, add=False)` on it, nothing else, ever. Applies
     `strip_part_of_speech`, `rewrite_audio_playback` then `add_examples_block`
     (in that order) to every template's `qfmt` and `afmt` -- 4 sides total
-    across the note type's 2 templates. Appends a 7th field, `Examples`, and an
-    8th, `AudioRefs`, invented here (not copied from the source) via
-    `build_col.models.new_field`, so the registered note type has 8 fields
-    total, matching
-    `immutable_words_plan.FIELD_NAMES`. No template side ever references
-    `{{AudioRefs}}` -- see `FIELD_NAMES`'s comment for why.
+    across the note type's 2 templates. Appends `Examples` and `Case`,
+    invented here (not copied from the source) via
+    `build_col.models.new_field`, matching
+    `immutable_words_plan.FIELD_NAMES`.
 
     Registers the transformed dict into `build_col` and returns the
     registered version, looked up fresh by id. The returned note type's
@@ -98,9 +96,7 @@ def clone_note_type(
             template[side] = word_qualifier.add_qualifier_script(
                 case_field.add_case_row(
                     examples_field.add_examples_block(
-                        rewrite_audio_playback(
-                            strip_part_of_speech(template[side])
-                        )
+                        rewrite_audio_playback(strip_part_of_speech(template[side]))
                     )
                 )
             )
@@ -130,7 +126,6 @@ def clone_note_type(
     # place would make these fields never match themselves across builds.
     for appended_name in (
         examples_field.EXAMPLES_FIELD,
-        "AudioRefs",
         case_field.CASE_FIELD,
     ):
         appended_field = build_col.models.new_field(appended_name)
@@ -217,12 +212,12 @@ def attach_media(build_col: Collection, audio_dir: str) -> tuple[list[str], list
     instead of shipping references to files that were never present in the
     scratch collection's media directory.
 
-    Does NOT touch `AudioRefs` -- that field's `[sound:...]` tags already
+    Does NOT touch any field -- the `Audio` field's `<audio>` elements already
     mark these filenames as used for Anki's media-usage scan; this function
-    only supplies the bytes those tags (and the plain `Audio` names) point
-    at. Never raises on a missing source file -- deck-before-audio: a note
-    whose recordings do not exist yet must still export and import cleanly
-    -- so the caller decides what to do with `missing`.
+    only supplies the bytes those elements point at. Never raises on a
+    missing source file -- deck-before-audio: a note whose recordings do not
+    exist yet must still export and import cleanly -- so the caller decides
+    what to do with `missing`.
 
     Returns `(found, missing)`, both sorted lists of bare filenames, over
     the UNION of every referenced filename across every note in `build_col`
@@ -357,8 +352,9 @@ def build_parser() -> argparse.ArgumentParser:
         help=(
             "Directory of already-generated <word>_<slot>.mp3 files (see "
             "anki_tools.elevenlabs_tts, DEFAULT_OUTPUT_DIR) to attach as real "
-            "media before export. Omit to export with AudioRefs [sound:...] "
-            "tags marking the names as used but no bytes attached -- an "
+            "media before export. Omit to export with the Audio field's "
+            "<audio> tags marking the names as used but no bytes attached "
+            "-- an "
             "explicit opt-in, matching this package's existing "
             "--all-voices-style convention of never defaulting to a real path "
             "on the user's machine."

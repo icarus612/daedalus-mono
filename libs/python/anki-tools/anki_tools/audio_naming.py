@@ -22,6 +22,7 @@ Two separate, deliberately un-mergeable concerns live here:
 import os
 import re
 import unicodedata
+from collections.abc import Iterable
 
 # The four default roster slots -- see `elevenlabs_tts.Voice.slot` for the
 # full voice roster this pairs with. Kept here, not there, because
@@ -149,17 +150,43 @@ def spoken_text_for(source_text: str) -> str:
     return SPOKEN_TEXT_OVERRIDES.get(stripped, stripped)
 
 
-def parse_audio_filenames(value: str) -> list[str]:
-    """Split an `Audio`-field value into its bare filenames.
+_AUDIO_SRC = re.compile(r'<audio[^>]*\bsrc="([^"]+)"', re.I)
 
-    Mirrors the card template's own JS split (`/[,\\n]+/` in
-    `rewrite_audio_playback`) byte-for-byte, so the Python side that later
-    looks these files up on disk agrees exactly with what the browser will
-    try to play. Entries are stripped; empty/whitespace-only entries
-    (including from an empty or whitespace-only `value`) are dropped, so an
-    empty `Audio` field yields `[]`, never `[""]`.
+
+def audio_field_value(names: Iterable[str]) -> str:
+    """An `Audio`-field value carrying `names`, one `<audio>` element each.
+
+    Anki's media-usage scan (export bundling, import, Tools -> Check Media)
+    reads note field text looking for REFERENCES, not for text that happens
+    to resemble a filename: an av tag (`[sound:...]`, `[anki:tts]`) or an
+    HTML media tag's `src`/`data`. A bare filename is therefore just a
+    string, and every recording named only that way reads as unused and is
+    offered for deletion, while an export gathers no audio at all.
+
+    An av tag would mark them used but Anki autoplays every one of them, in
+    order, before any template JS runs -- which is what makes picking a
+    single voice impossible. An HTML `<audio>` element is the one shape that
+    satisfies both: the scan counts it, and rendering it plays nothing,
+    because only av tags feed Anki's own autoplay queue. `controls` makes
+    each voice individually playable in the note editor, and `preload`
+    keeps the card from fetching recordings it may never play. The card's
+    own CSS hides the field, so none of it is visible during review.
     """
-    return [name.strip() for name in re.split(r"[,\n]+", value) if name.strip()]
+    return "".join(
+        f'<audio src="{name}" controls preload="none"></audio>' for name in names
+    )
+
+
+def parse_audio_filenames(value: str) -> list[str]:
+    """The filenames an `Audio`-field value references, in order.
+
+    The inverse of `audio_field_value`, and the counterpart to the card
+    template's own DOM read (`getElementsByTagName("audio")` in
+    `card_audio`), so the Python side that looks these files up on disk
+    agrees exactly with what the browser will try to play. An empty field
+    yields `[]`, never `[""]`.
+    """
+    return [name.strip() for name in _AUDIO_SRC.findall(value) if name.strip()]
 
 
 def get_anki_collection_path() -> str:

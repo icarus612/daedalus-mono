@@ -71,6 +71,7 @@ from anki_tools import (
     word_qualifier,
     word_stack,
 )
+from anki_tools.audio_naming import audio_field_value, parse_audio_filenames
 from anki_tools.immutable_words import (
     NEW_NOTE_TYPE_ID,
     NEW_NOTE_TYPE_NAME,
@@ -353,17 +354,23 @@ def _write_fake_mp3(directory, name, content=b"fake mp3 data"):
     return path
 
 
+def _audio_srcs(value):
+    """Independent oracle for one Audio field's filenames -- its own regex
+    over the <audio> elements, written here rather than importing
+    audio_naming's parser, so this doesn't just restate the implementation
+    under test.
+    """
+    return [m.group(1) for m in re.finditer(r'<audio src="([^"]+)"', value)]
+
+
 def _referenced_filenames(build_col):
     """Independent oracle: every filename referenced by any note's Audio
-    field, parsed the same way the card template's own JS does (comma/
-    newline split) -- built directly here rather than importing
-    attach_media's own parsing helper, so this doesn't just restate the
-    implementation under test.
+    field.
     """
     names = set()
     for note_id in build_col.find_notes(""):
         note = build_col.get_note(note_id)
-        for entry in re.split(r"[,\n]+", note["Audio"]):
+        for entry in _audio_srcs(note["Audio"]):
             entry = entry.strip()
             if entry:
                 names.add(entry)
@@ -507,16 +514,13 @@ def test_clone_note_type_field_list_matches_field_names_in_order(cloned):
         "Audio",
         "Additional Info",
         "Examples",
-        "AudioRefs",
         "Case",
     ]
 
-    # AudioRefs exists solely for Anki's media-usage scan (export/import/
-    # Check Media) -- it must never be rendered by any template side, or it
-    # would autoplay all four [sound:...] tags back to back (contract
-    # l4.md section 2).
+    # One audio field, and no template may ever render an av tag -- that
+    # would autoplay all four recordings back to back.
     for side in _template_sides(note_type):
-        assert "{{AudioRefs}}" not in side
+        assert "[sound:" not in side
 
 
 def test_clone_note_type_css_extends_source_with_audio_button_css(cloned):
@@ -787,8 +791,8 @@ def test_build_deck_tree_audio_field_predicts_four_filenames(cloned, build_col):
     for note_id in note_ids:
         note = build_col.get_note(note_id)
         russian = note["Russian"]
-        expected_audio = ",".join(build_filename(russian, slot) for slot in SLOTS)
-        assert note["Audio"] == expected_audio
+        expected_names = [build_filename(russian, slot) for slot in SLOTS]
+        assert _audio_srcs(note["Audio"]) == expected_names
         assert note["Audio"] != ""
 
 
@@ -1415,7 +1419,7 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
     for russian in ("в / во", "словно", "будто", "-то", "-ка", "да"):
         assert russian in russian_to_audio, f"missing note for {russian!r}"
         expected_names = [build_filename(russian, slot) for slot in SLOTS]
-        assert russian_to_audio[russian] == ",".join(expected_names)
+        assert _audio_srcs(russian_to_audio[russian]) == expected_names
 
     out_path = os.path.join(str(tmp_path), "immutable-words.apkg")
     export_package(build_col, DECK_ROOT, out_path)
@@ -1564,16 +1568,15 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
             audio_value = note["Audio"]
             russian = note["Russian"]
 
-            # Every entry parses as exactly 4 filenames -- the same split
-            # the card template's own JS performs (`/[,\n]+/`), proving the
-            # template will see four real entries, not one blob or a
-            # trailing empty string.
-            entries = [e for e in re.split(r"[,\n]+", audio_value) if e.strip()]
+            # Every field yields exactly 4 filenames -- the same elements
+            # the card template's own JS reads -- proving the template will
+            # see four real sources, not one blob or an empty string.
+            entries = [e for e in _audio_srcs(audio_value) if e.strip()]
             if len(entries) != 4:
                 mismatches.append((russian, "entry-count", entries))
                 continue
             for entry in entries:
-                if not entry.endswith(".mp3") or "," in entry or entry != entry.strip():
+                if not entry.endswith(".mp3") or entry != entry.strip():
                     mismatches.append((russian, "malformed-entry", entry))
 
             if audio_value != russian_to_audio[russian]:
@@ -1822,7 +1825,8 @@ def test_e2e_rebuild_after_translation_edit_reimports_in_place_not_duplicated(
 #
 # NOT blind, NOT a contract test: written by the builder against the PLAN'S
 # acceptance criteria (the-ask.md / the l4 dispatch), after the l4 packet
-# (AudioRefs field, attach_media, --audio-dir) went green above. Verifies the
+# (the Audio field's references, attach_media, --audio-dir) went green above.
+# Verifies the
 # actual defect this lane fixes -- that Anki's media-usage scan (export
 # bundling, import, Tools -> Check Media) sees the shipped audio as USED, not
 # merely present on disk -- by calling Anki's own `col.media.check()` API,
@@ -1912,10 +1916,11 @@ def test_e2e_real_media_is_marked_used_not_merely_present(
 
     Includes a POSITIVE CONTROL (verify-dont-assume: a bare "0 unused" is
     not evidence on its own -- prove the check could have failed): with
-    `AudioRefs` blanked back out on every note (leaving the plain-filename
-    `Audio` field untouched, exactly the pre-fix shape), the SAME files on
-    the SAME disk are reported unused by the SAME `check()` call. That is
-    the actual defect this lane fixes, demonstrated instead of argued.
+    every `Audio` field rewritten to a bare comma-joined filename list --
+    exactly the pre-collapse shape, the same names, the same files on the
+    same disk -- the SAME `check()` call reports every one of them unused.
+    That is what makes an `<audio>` element load-bearing rather than
+    decorative, demonstrated instead of argued.
     """
     from anki_tools.immutable_words_plan import parse_word_list
 
@@ -1943,17 +1948,16 @@ def test_e2e_real_media_is_marked_used_not_merely_present(
         f"despite being real, referenced audio: {list(check.unused)[:10]}"
     )
 
-    # Positive control: blank AudioRefs (the pre-fix shape -- Audio's plain
-    # filenames alone) and prove the SAME scan now flags the SAME files.
-    note_ids = build_col.find_notes("")
-    for note_id in note_ids:
+    # Positive control: downgrade every Audio field to a bare filename list
+    # and prove the SAME scan now flags the SAME files.
+    for note_id in build_col.find_notes(""):
         note = build_col.get_note(note_id)
-        note["AudioRefs"] = ""
+        note["Audio"] = ",".join(parse_audio_filenames(note["Audio"]))
         build_col.update_note(note)
 
     control_check = build_col.media.check()
     assert len(control_check.unused) == len(_REQUIRED_REAL_AUDIO_FILENAMES), (
-        "control failed: blanking AudioRefs should reproduce the original "
+        "control failed: a bare filename list should reproduce the original "
         "defect (every real file reported unused) -- if it doesn't, "
         "this test's '0 unused' result above is not proof of anything"
     )
@@ -2020,8 +2024,8 @@ def test_e2e_real_media_fresh_import_delivers_every_file_zero_missing(
     present in the new collection's OWN media directory, and every filename
     in every note's `Audio` field resolving on disk (zero
     referenced-but-missing). Also re-runs `media.check()` on the imported
-    collection itself, and confirms `{{AudioRefs}}` renders on neither
-    template while `{{Audio}}` still renders on at least one.
+    collection itself, and confirms no template renders an av tag while
+    `{{Audio}}` still renders on at least one.
     """
     from anki.import_export_pb2 import (
         ImportAnkiPackageOptions,
@@ -2099,8 +2103,8 @@ def test_e2e_real_media_fresh_import_delivers_every_file_zero_missing(
 
         imported_note_type = fresh_col.models.by_name(NEW_NOTE_TYPE_NAME)
         sides = _template_sides(imported_note_type)
-        assert not any("{{AudioRefs}}" in side for side in sides), (
-            "a template renders {{AudioRefs}} -- this would autoplay all "
+        assert not any("[sound:" in side for side in sides), (
+            "a template emits an av tag -- this would autoplay all "
             "four recordings back to back, the exact bug the Audio/"
             "random-JS split exists to avoid"
         )
@@ -2109,24 +2113,23 @@ def test_e2e_real_media_fresh_import_delivers_every_file_zero_missing(
         fresh_col.close()
 
 
-def test_audio_refs_never_rendered_by_any_template_side(cloned):
+def test_no_template_side_emits_an_av_tag(cloned):
     """Narrow, fast, fixture-only regression guard for the same invariant
     the real-import e2e test above proves at full scale: fails immediately
-    if anyone later "helpfully" wires `{{AudioRefs}}` into a template.
-    Does not need real audio or the real snapshot's live state beyond the
-    already-shared `cloned` fixture.
+    if anyone later "helpfully" puts a [sound:...] tag in a template or in
+    the Audio field's own shape.
     """
     note_type, _ = cloned
     sides = _template_sides(note_type)
-    assert not any("{{AudioRefs}}" in side for side in sides)
+    assert not any("[sound:" in side for side in sides)
     assert any("{{Audio}}" in side for side in sides)
 
 
 def test_random_pick_js_and_empty_audio_render_cleanly(cloned, build_col):
-    """`rewrite_audio_playback`'s JS still drives the `Audio` field (never
-    `AudioRefs`) and a note with an empty `Audio` field still renders
-    without error on every card side -- the defensive fallback documented
-    in `rewrite_audio_playback` must still hold now that a 7th field exists.
+    """`rewrite_audio_playback`'s JS still drives the `Audio` field, and a
+    note with an empty `Audio` field still renders without error on every
+    card side -- the defensive fallback documented in
+    `rewrite_audio_playback` must still hold.
     """
     note_type, _ = cloned
     deck_id = build_col.decks.id("Lane l4 render check", create=True)
@@ -2134,17 +2137,15 @@ def test_random_pick_js_and_empty_audio_render_cleanly(cloned, build_col):
     with_audio = build_col.new_note(note_type)
     with_audio["Russian"] = "около"
     with_audio["Translation"] = "near"
-    with_audio["Audio"] = "около_f1.mp3,около_f2.mp3,около_m1.mp3,около_m2.mp3"
-    with_audio["AudioRefs"] = (
-        "[sound:около_f1.mp3][sound:около_f2.mp3]"
-        "[sound:около_m1.mp3][sound:около_m2.mp3]"
+    with_audio["Audio"] = audio_field_value(
+        f"около_{slot}.mp3" for slot in ("f1", "f2", "m1", "m2")
     )
     build_col.add_note(with_audio, deck_id)
 
     empty_audio = build_col.new_note(note_type)
     empty_audio["Russian"] = "тест"
     empty_audio["Translation"] = "test"
-    # Audio and AudioRefs both left at their default empty string.
+    # Audio left at its default empty string.
     build_col.add_note(empty_audio, deck_id)
 
     saw_audio_data_span = False
@@ -2152,7 +2153,7 @@ def test_random_pick_js_and_empty_audio_render_cleanly(cloned, build_col):
         for card in note.cards():
             output = card.render_output()  # must not raise
             question = output.question_text
-            assert "{{AudioRefs}}" not in question
+            assert "[sound:" not in question
             if 'id="audio-data"' in question:
                 saw_audio_data_span = True
                 assert "Math.random" in question
@@ -2258,7 +2259,7 @@ def test_new_note_type_id_matches_helper_output_for_new_note_type_name():
 
 
 # ---------------------------------------------------------------------------
-# clone_note_type -- pinned id / AudioRefs id / mod persistence
+# clone_note_type -- pinned id / appended field ids / mod persistence
 # ---------------------------------------------------------------------------
 
 
@@ -2271,9 +2272,9 @@ def test_clone_note_type_two_fresh_builds_pin_identical_id_and_fields(
 
     - both return a note type whose `id` is exactly `NEW_NOTE_TYPE_ID`
       (l9.md acceptance bullet 1);
-    - produce byte-identical `flds` lists, with `AudioRefs` at ord 6 with
-      `id: None` both times and the six cloned fields' ids unchanged from
-      the source's own actual persisted values (bullet 2);
+    - produce byte-identical `flds` lists, with the appended fields
+      carrying `id: None` both times and the six cloned fields' ids
+      unchanged from the source's own actual persisted values (bullet 2);
     - produce `tmpls` id lists equal to the SOURCE note type's own actual
       ids -- read directly from the snapshot, never hardcoded (bullet 3);
     - leave both source snapshot copies byte- and mtime-unchanged (l9.md's
@@ -2333,13 +2334,13 @@ def test_clone_note_type_two_fresh_builds_pin_identical_id_and_fields(
         assert note_type_a["flds"] == note_type_b["flds"]
 
         for note_type in (note_type_a, note_type_b):
-            assert len(note_type["flds"]) == 9
+            assert len(note_type["flds"]) == 8
             examples_fld = note_type["flds"][6]
             assert examples_fld["name"] == "Examples"
             assert examples_fld["id"] is None
-            audio_refs_field = note_type["flds"][7]
-            assert audio_refs_field["name"] == "AudioRefs"
-            assert audio_refs_field["id"] is None
+            case_fld = note_type["flds"][7]
+            assert case_fld["name"] == "Case"
+            assert case_fld["id"] is None
 
             cloned_field_ids = [f["id"] for f in note_type["flds"][:6]]
             assert cloned_field_ids == source_field_ids
@@ -2419,7 +2420,7 @@ def test_clone_note_type_deck_header_script_survives_alongside_id_change(cloned)
 # NOT blind, NOT written from a contract: written directly against the
 # PLAN'S real acceptance bar -- the live scenario reported minutes before
 # this lane started (see .artifacts/contracts/l9.md's defect analysis) --
-# after the l9 packet (deterministic notetype id, AudioRefs field id
+# after the l9 packet (deterministic notetype id, appended field ids
 # pinned to None, mod bumped on every build) went green above.
 #
 # Deliberately uses `ImportAnkiPackageOptions()` -- Anki's DEFAULT, i.e.

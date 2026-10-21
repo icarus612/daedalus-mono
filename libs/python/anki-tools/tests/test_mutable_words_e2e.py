@@ -221,7 +221,7 @@ def test_full_pipeline_base_word_and_slug_totals():
     assert _KNOWN_OVERLAP_SLUGS <= set(slugs)
 
 
-def test_no_audio_refs_in_any_real_built_template():
+def test_no_av_tag_in_any_real_built_template():
     card_counts = {
         "Nouns": 2,
         "Verbs": 4,
@@ -233,8 +233,8 @@ def test_no_audio_refs_in_any_real_built_template():
     for sheet, count in card_counts.items():
         for card_index in range(count):
             qfmt, afmt = plan.build_template(sheet, card_index)
-            assert "{{AudioRefs}}" not in qfmt
-            assert "{{AudioRefs}}" not in afmt
+            assert "[sound:" not in qfmt
+            assert "[sound:" not in afmt
 
 
 def test_guid_for_row_argument_order_matches_shipped_signature():

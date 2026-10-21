@@ -17,6 +17,7 @@ from anki.utils import to_json_bytes
 
 from anki_tools import card_audio, examples_field, mutable_words_plan
 from anki_tools.audio_naming import (
+    audio_field_value,
     build_filename,
     get_anki_collection_path,
     sanitize_word_slug,
@@ -82,8 +83,8 @@ def _all_sides():
     return sides
 
 
-def _joined_audio_names(word):
-    return ",".join(
+def _audio_field_for(word):
+    return audio_field_value(
         build_filename(word, slot) for slot in mutable_words_plan.VOICE_SLOTS
     )
 
@@ -189,14 +190,15 @@ def test_field_name_legality():
             assert '"' not in name
             assert "{" not in name
             assert "}" not in name
-        assert names[-1] == "AudioRefs"
+        assert names[-1].startswith("Audio")
 
 
-def test_no_audio_refs_placeholder_in_any_template():
+def test_no_av_tag_in_any_template():
     sides = _all_sides()
     assert len(sides) == 28
     for _sheet, _card_index, _side_name, content in sides:
-        assert "{{AudioRefs}}" not in content
+        assert "[sound:" not in content
+        assert "[anki:tts" not in content
 
 
 def test_no_duplicate_ids_or_addtitle_per_side():
@@ -267,21 +269,21 @@ def test_guid_stable_across_subprocesses():
 def test_predicted_audio_matches_build_filename(nouns, verbs, adjectives, adverbs):
     noun_idx = mutable_words_plan.FIELD_NAMES["Nouns"].index("Audio")
     row = nouns[0]
-    assert row.fields()[noun_idx] == _joined_audio_names(row.russian)
+    assert row.fields()[noun_idx] == _audio_field_for(row.russian)
 
     adj_idx = mutable_words_plan.FIELD_NAMES["Adjectives"].index("Audio")
     row = adjectives[0]
-    assert row.fields()[adj_idx] == _joined_audio_names(row.russian_m)
+    assert row.fields()[adj_idx] == _audio_field_for(row.russian_m)
 
     adv_idx = mutable_words_plan.FIELD_NAMES["Adverbs"].index("Audio")
     row = adverbs[0]
-    assert row.fields()[adv_idx] == _joined_audio_names(row.adverb)
+    assert row.fields()[adv_idx] == _audio_field_for(row.adverb)
 
     imp_idx = mutable_words_plan.FIELD_NAMES["Verbs"].index("Audio Imperfective")
     perf_idx = mutable_words_plan.FIELD_NAMES["Verbs"].index("Audio Perfective")
     row = verbs[0]
-    assert row.fields()[imp_idx] == _joined_audio_names(row.imperfective)
-    assert row.fields()[perf_idx] == _joined_audio_names(row.perfective)
+    assert row.fields()[imp_idx] == _audio_field_for(row.imperfective)
+    assert row.fields()[perf_idx] == _audio_field_for(row.perfective)
 
 
 def test_dash_only_plural_survives_into_fields(nouns):

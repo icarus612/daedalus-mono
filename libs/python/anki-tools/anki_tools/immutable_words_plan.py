@@ -25,7 +25,7 @@ from dataclasses import dataclass
 
 from anki_tools import card_audio, case_field
 from anki_tools.anki_identity import guid_for_row
-from anki_tools.audio_naming import SLOTS, build_filename
+from anki_tools.audio_naming import SLOTS, audio_field_value, build_filename
 
 # Deck the four part-of-speech subdecks hang off. The `2. ` prefix is the user's
 # choice; they renumber the sibling Russian decks themselves.
@@ -50,18 +50,6 @@ SUBDECK_LEAVES = {
 # note -- instead carry a parenthetical qualifier in their `Russian` text
 # ("как (conjunction)"), so the two cards are told apart on sight. See
 # `audio_naming.strip_qualifier` for why that suffix never reaches a filename.
-#
-# `AudioRefs` is the 7th and last field: the same four filenames as `Audio`,
-# but as concatenated `[sound:...]` tags. It exists SOLELY so Anki's
-# media-usage scan (export bundling, import, Tools -> Check Media) sees those
-# filenames as used -- that scan reads note field TEXT DIRECTLY, independent
-# of any template, whereas Anki's autoplay is triggered only by
-# `[sound:...]` tags present in RENDERED template output. Because of that
-# asymmetry, an unrendered field can mark media "used" without ever playing
-# it, so `AudioRefs` must NEVER be referenced by any template
-# (`{{AudioRefs}}`) -- rendering it would autoplay all four recordings back
-# to back, the exact bug the `Audio`/random-JS split (see module docstring)
-# was built to avoid. Do not "helpfully" wire it into a template.
 FIELD_NAMES = (
     "Russian",
     "Translation",
@@ -70,7 +58,6 @@ FIELD_NAMES = (
     "Audio",
     "Additional Info",
     "Examples",
-    "AudioRefs",
     "Case",
 )
 
@@ -239,7 +226,7 @@ class WordRow:
         return guid_for_row(self.russian, self.pos)
 
     def fields(self) -> list[str]:
-        """The eight field values, in FIELD_NAMES order.
+        """The field values, in FIELD_NAMES order.
 
         `Pronunciation` is left empty. `Additional Info` holds `self.info` --
         the source document's optional fourth column -- which the note type's
@@ -251,23 +238,19 @@ class WordRow:
         four PREDICTED filenames (comma-separated, no spaces), derived from
         `self.russian` via the shared `audio_naming.build_filename` -- the same
         function `elevenlabs_tts.py` uses to name the files it actually writes,
-        so the two agree byte-for-byte before any audio file exists. `AudioRefs`
-        holds the SAME four filenames, as concatenated `[sound:...]` tags --
-        never independently computed -- so the two fields always describe the
-        same media (see FIELD_NAMES's comment for why AudioRefs must never be
-        rendered by a template).
+        so the two agree byte-for-byte before any audio file exists, wrapped
+        by `audio_naming.audio_field_value` in the one shape Anki's media scan
+        counts and its autoplay ignores.
         """
         audio_names = [build_filename(self.russian, slot) for slot in SLOTS]
-        audio_refs = "".join(f"[sound:{name}]" for name in audio_names)
         return [
             self.russian,
             self.english,
             "",
             POS_FIELD_VALUE[self.pos],
-            ",".join(audio_names),
+            audio_field_value(audio_names),
             case_field.residual_info_for_row(self.pos, self.info),
             self.examples,
-            audio_refs,
             case_field.case_name_for_row(self.pos, self.info),
         ]
 

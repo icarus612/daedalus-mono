@@ -52,11 +52,14 @@ AUDIO_BUTTON_CSS = (
     "}"
 )
 
-_TEMPLATE = r"""<!-- The Audio field holds bare filenames, never Anki sound tags:
-     Anki autoplays every sound tag in a rendered field, in order, before
-     any template JS runs, so tags would play all four recordings back to
-     back with no way to pick one. This script picks one and renders a
-     <button> so the native replay key still has something to replay.
+_TEMPLATE = r"""<!-- The Audio field holds one hidden <audio> element per recording,
+     never an Anki sound tag: Anki autoplays every sound tag in a rendered
+     field, in order, before any template JS runs, so tags would play all
+     four recordings back to back with no way to pick one. An element is
+     inert when rendered yet still counts for Anki's media scan, so the one
+     field serves both (see `audio_naming.audio_field_value`). This script
+     reads their sources, picks one, and renders a <button> so the native
+     replay key still has something to replay.
 
      `afmt` re-embeds the question's rendered HTML via `{{FrontSide}}`,
      re-running this script on the answer side of a card whose audio sits
@@ -74,16 +77,16 @@ _TEMPLATE = r"""<!-- The Audio field holds bare filenames, never Anki sound tags
 (function () {
   var data = document.getElementById("@@DOM_ID@@-data");
   if (!data) return;
-  var text = data.textContent.trim();
-  if (!text) return;
-  var files = text
-    .split(/[,\n]+/)
-    .map(function (f) { return f.trim(); })
-    .filter(function (f) { return f.length > 0; });
+  var sources = data.getElementsByTagName("audio");
+  var files = [];
+  for (var i = 0; i < sources.length; i++) {
+    var src = sources[i].getAttribute("src");
+    if (src) files.push(src);
+  }
   if (files.length === 0) return;
   setTimeout(function () {
     var container = document.getElementById("@@DOM_ID@@");
-    if (!container || container.querySelector("audio")) return;
+    if (!container || document.getElementById("@@DOM_ID@@-player")) return;
     var back = document.getElementById("back");
     var stored = window.@@STATE_KEY@@;
     var echo =
@@ -93,6 +96,7 @@ _TEMPLATE = r"""<!-- The Audio field holds bare filenames, never Anki sound tags
       : files[Math.floor(Math.random() * files.length)];
     window.@@STATE_KEY@@ = chosen;
     var audio = document.createElement("audio");
+    audio.id = "@@DOM_ID@@-player";
     audio.autoplay = !echo;
     audio.src = chosen;
     var button = document.createElement("button");
@@ -138,12 +142,12 @@ _LINE_TEMPLATE = (
   };
   var data = document.getElementById("@@SLOT_ID@@-data");
   if (!data) return;
-  var text = data.textContent.trim();
-  if (!text) return;
-  var files = text
-    .split(/[,\n]+/)
-    .map(function (f) { return f.trim(); })
-    .filter(function (f) { return f.length > 0; });
+  var sources = data.getElementsByTagName("audio");
+  var files = [];
+  for (var i = 0; i < sources.length; i++) {
+    var src = sources[i].getAttribute("src");
+    if (src) files.push(src);
+  }
   if (files.length === 0) return;
   setTimeout(function () {
     var slot = document.getElementById("@@SLOT_ID@@");

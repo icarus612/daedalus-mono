@@ -192,7 +192,7 @@ def test_audio_line_block_slot_and_line_ids_are_independent():
 
 def test_audio_line_block_bails_out_on_an_empty_field():
     result = audio_line_block("Audio Perfective", "aspect-audio", "perfective", "__fn")
-    assert "if (!text) return;" in result
+    assert "if (files.length === 0) return;" in result
 
 
 def test_audio_line_block_is_idempotent_per_render():

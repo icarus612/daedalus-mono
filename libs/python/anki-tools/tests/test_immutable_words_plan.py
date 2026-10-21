@@ -36,7 +36,7 @@ from pathlib import Path
 import pytest
 
 from anki_tools.anki_identity import base91 as _base91
-from anki_tools.audio_naming import SLOTS
+from anki_tools.audio_naming import SLOTS, audio_field_value, parse_audio_filenames
 from anki_tools.audio_naming import build_filename as shared_build_filename
 from anki_tools.case_field import case_name_for_row
 from anki_tools.immutable_words_plan import (
@@ -540,7 +540,7 @@ def _extract_script_body(rewritten_template: str) -> str:
 def _build_harness(
     *,
     script_body: str,
-    audio_text: str,
+    audio_files,
     back_present: bool,
     inside_back: bool,
     preseeded_choice,
@@ -553,20 +553,34 @@ def _build_harness(
     str.format/%-substitution over the untrusted script body, whose braces
     would collide with a format template)."""
     lines = [
-        "var __audioDataEl = { textContent: " + json.dumps(audio_text) + " };",
-        "var __audioContainerEl = { _children: [], "
-        "querySelector: function () { return null; }, "
-        "appendChild: function (el) { this._children.push(el); } };",
+        "var __audioSrcs = " + json.dumps(list(audio_files)) + ";",
+        "var __audioDataEl = {",
+        "  getElementsByTagName: function (tag) {",
+        '    if (tag !== "audio") { return []; }',
+        "    return __audioSrcs.map(function (s) {",
+        "      return { getAttribute: function (a) {",
+        '        return a === "src" ? s : null;',
+        "      } };",
+        "    });",
+        "  },",
+        "};",
+        "var __audioContainerEl = { _children: [], appendChild: function (el) {",
+        '  if (el.tagName === "audio") { __createdPlayer = el; }',
+        "  this._children.push(el);",
+        "} };",
         "var __insideBack = " + ("true" if inside_back else "false") + ";",
         "var __backEl = "
         + ("true" if back_present else "false")
         + " ? { contains: function (el) { return __insideBack; } } : null;",
+        "",
+        "var __createdPlayer = null;",
         "",
         "var document = {",
         "  getElementById: function (id) {",
         '    if (id === "audio-data") { return __audioDataEl; }',
         '    if (id === "audio") { return __audioContainerEl; }',
         '    if (id === "back") { return __backEl; }',
+        '    if (id === "audio-player") { return __createdPlayer; }',
         "    return null;",
         "  },",
         "  createElement: function (tag) {",
@@ -640,7 +654,7 @@ def _run_audio_script_scenario(
     script_body = _extract_script_body(rewritten)
     harness = _build_harness(
         script_body=script_body,
-        audio_text=",".join(files),
+        audio_files=files,
         back_present=back_present,
         inside_back=inside_back,
         preseeded_choice=preseeded_choice,
@@ -886,8 +900,6 @@ def test_counts_by_deck_includes_every_deck_even_zero():
 
 
 def test_field_names_constant():
-    # Corrected per lane l4 contract (.artifacts/contracts/l4.md, section 2):
-    # AudioRefs is appended as the 7th and last field.
     assert FIELD_NAMES == (
         "Russian",
         "Translation",
@@ -896,38 +908,27 @@ def test_field_names_constant():
         "Audio",
         "Additional Info",
         "Examples",
-        "AudioRefs",
         "Case",
     )
 
 
 @pytest.mark.parametrize("pos", list(SUBDECK_LEAVES))
 def test_word_row_fields_shape_and_values(pos):
-    # NOTE: per the l3 contract (section 3b), Audio is no longer always
-    # empty -- it now holds the four predicted filenames. Per the l4
-    # contract (section 2), a 7th field AudioRefs is appended, carrying the
-    # same four filenames as [sound:...] tags (see
-    # test_word_row_fields_audio_matches_shared_build_filename below, which
-    # covers the Audio slot's exact contents in more detail, and the
-    # AudioRefs-specific tests further down this file).
     row = WordRow(pos=pos, rank=1, russian="русский текст", english="english text")
 
     fields = row.fields()
 
-    assert len(fields) == len(FIELD_NAMES) == 9
+    assert len(fields) == len(FIELD_NAMES) == 8
     assert fields[0] == "русский текст"  # Russian
     assert fields[1] == "english text"  # Translation
     assert fields[2] == ""  # Pronunciation
     assert fields[3] == POS_FIELD_VALUE[pos]  # Part of Speech
-    assert fields[4] == ",".join(
+    assert fields[4] == audio_field_value(
         shared_build_filename("русский текст", slot) for slot in SLOTS
-    )  # Audio -- four predicted filenames, comma-joined
+    )  # Audio -- the four predicted filenames, one <audio> element each
     assert fields[5] == ""  # Additional Info
     assert fields[6] == ""  # Examples
-    assert fields[7] == "".join(
-        f"[sound:{shared_build_filename('русский текст', slot)}]" for slot in SLOTS
-    )  # AudioRefs -- same four filenames, as concatenated [sound:...] tags
-    assert fields[8] == case_name_for_row(pos, "")  # Case
+    assert fields[7] == case_name_for_row(pos, "")  # Case
 
     # Singular label, not the plural section name verbatim.
     assert POS_FIELD_VALUE[pos] != pos
@@ -1211,48 +1212,32 @@ def test_word_row_fields_audio_matches_shared_build_filename(pos, rank, russian)
     row = WordRow(pos=pos, rank=rank, russian=russian, english="whatever")
     fields = row.fields()
     audio_index = FIELD_NAMES.index("Audio")
-    expected = ",".join(shared_build_filename(russian, slot) for slot in SLOTS)
+    expected = audio_field_value(shared_build_filename(russian, slot) for slot in SLOTS)
     assert fields[audio_index] == expected
     assert fields[audio_index] != ""
 
 
 # ---------------------------------------------------------------------------
-# WordRow.fields() -- AudioRefs slot (index 6), added by lane l4 contract
-# section 2. AudioRefs and Audio must always describe the SAME four
-# filenames -- one as a plain CSV, one as concatenated [sound:...] tags --
-# never independently computed, and both derived from the SOURCE text, never
-# spoken_text_for.
+# WordRow.fields() -- the Audio slot is the ONLY audio field. It must carry
+# the filenames in a shape Anki's media scan counts as a reference, derived
+# from the SOURCE text and never from spoken_text_for, and must never be an
+# av tag (which would autoplay every recording).
 # ---------------------------------------------------------------------------
 
 
-def test_word_row_fields_audio_refs_formula_for_okolo():
+def test_word_row_fields_audio_formula_for_okolo():
     row = WordRow(pos="Prepositions", rank=1, russian="около", english="near")
-    fields = row.fields()
-    audio_refs_index = FIELD_NAMES.index("AudioRefs")
-    assert fields[audio_refs_index] == (
-        "[sound:около_f1.mp3][sound:около_f2.mp3]"
-        "[sound:около_m1.mp3][sound:около_m2.mp3]"
+    audio = row.fields()[FIELD_NAMES.index("Audio")]
+    assert audio == (
+        '<audio src="около_f1.mp3" controls preload="none"></audio>'
+        '<audio src="около_f2.mp3" controls preload="none"></audio>'
+        '<audio src="около_m1.mp3" controls preload="none"></audio>'
+        '<audio src="около_m2.mp3" controls preload="none"></audio>'
     )
 
 
-@pytest.mark.parametrize(
-    "pos,rank,russian",
-    [
-        ("Prepositions", 1, "в / во"),  # real multi-form row
-        ("Conjunctions", 1, "и"),
-        ("Particles", 20, "да"),
-        ("Indeclinable Nouns", 2, "метро"),
-    ],
-)
-def test_word_row_fields_audio_refs_matches_shared_build_filename(pos, rank, russian):
-    row = WordRow(pos=pos, rank=rank, russian=russian, english="whatever")
-    fields = row.fields()
-    audio_refs_index = FIELD_NAMES.index("AudioRefs")
-    expected = "".join(
-        f"[sound:{shared_build_filename(russian, slot)}]" for slot in SLOTS
-    )
-    assert fields[audio_refs_index] == expected
-    assert fields[audio_refs_index] != ""
+def test_word_row_has_exactly_one_audio_field():
+    assert [name for name in FIELD_NAMES if name.startswith("Audio")] == ["Audio"]
 
 
 @pytest.mark.parametrize(
@@ -1265,44 +1250,33 @@ def test_word_row_fields_audio_refs_matches_shared_build_filename(pos, rank, rus
         ("Prepositions", 2, "около"),
     ],
 )
-def test_word_row_fields_audio_refs_and_audio_describe_same_four_filenames(
-    pos, rank, russian
-):
-    """AudioRefs (index 6) and Audio (index 4) must never independently
-    compute their filenames -- AudioRefs is Audio's own names wrapped in
-    [sound:...] tags, same word, same slots, same order.
-    """
+def test_word_row_fields_audio_references_all_four_slots(pos, rank, russian):
     row = WordRow(pos=pos, rank=rank, russian=russian, english="whatever")
-    fields = row.fields()
-    audio_index = FIELD_NAMES.index("Audio")
-    audio_refs_index = FIELD_NAMES.index("AudioRefs")
-
-    audio_names = fields[audio_index].split(",")
-    expected_refs = "".join(f"[sound:{name}]" for name in audio_names)
-
-    assert fields[audio_refs_index] == expected_refs
-    assert len(audio_names) == len(SLOTS) == 4
+    audio = row.fields()[FIELD_NAMES.index("Audio")]
+    names = parse_audio_filenames(audio)
+    assert names == [shared_build_filename(russian, slot) for slot in SLOTS]
+    assert len(names) == len(SLOTS) == 4
 
 
-def test_word_row_fields_audio_refs_multi_form_hazard_uses_source_text():
-    """The lane 3 multi-form hazard restated for AudioRefs: filenames (and
-    therefore the AudioRefs tags) must derive from the SOURCE text
+def test_word_row_fields_audio_is_never_an_av_tag():
+    row = WordRow(pos="Prepositions", rank=2, russian="около", english="near")
+    audio = row.fields()[FIELD_NAMES.index("Audio")]
+    assert "[sound:" not in audio
+    assert "[anki:tts" not in audio
+    assert "autoplay" not in audio
+
+
+def test_word_row_fields_audio_multi_form_hazard_uses_source_text():
+    """The multi-form hazard: filenames must derive from the SOURCE text
     "в / во", never from spoken_text_for's "во".
     """
     row = WordRow(pos="Prepositions", rank=1, russian="в / во", english="in")
-    fields = row.fields()
-    audio_refs_index = FIELD_NAMES.index("AudioRefs")
-
-    expected = "".join(
-        f"[sound:{shared_build_filename('в / во', slot)}]" for slot in SLOTS
-    )
-    assert fields[audio_refs_index] == expected
-
-    # The wrong (spoken-text-derived) filenames must NOT appear.
-    wrong = "".join(f"[sound:{shared_build_filename('во', slot)}]" for slot in SLOTS)
-    assert fields[audio_refs_index] != wrong
-    for slot in SLOTS:
-        assert shared_build_filename("в / во", slot) in fields[audio_refs_index]
+    audio = row.fields()[FIELD_NAMES.index("Audio")]
+    names = parse_audio_filenames(audio)
+    assert names == [shared_build_filename("в / во", slot) for slot in SLOTS]
+    # Compared as whole names: "во_f1.mp3" is a SUBSTRING of "в-во_f1.mp3",
+    # so a substring check here would pass on the wrong value.
+    assert names != [shared_build_filename("во", slot) for slot in SLOTS]
 
 
 # ---------------------------------------------------------------------------

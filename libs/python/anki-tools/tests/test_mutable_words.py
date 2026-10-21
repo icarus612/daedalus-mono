@@ -133,7 +133,7 @@ def _referenced_filenames(build_col):
     for note_id in build_col.find_notes(""):
         note = build_col.get_note(note_id)
         for field_name in note.keys():
-            if field_name.startswith("Audio") and field_name != "AudioRefs":
+            if field_name.startswith("Audio"):
                 names.update(parse_audio_filenames(note[field_name]))
     return names
 
