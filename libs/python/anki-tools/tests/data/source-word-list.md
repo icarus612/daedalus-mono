@@ -137,7 +137,7 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 34 | пожалуйста | please / you're welcome | Also used to mean "here you go" when handing something over | — |
 | 35 | извините | excuse me / sorry (formal — when you are at fault) | Imperative pl./formal of извинить; use when you are at fault | — |
 | 36 | простите | excuse me / forgive me (formal — to get attention) | Imperative pl./formal of простить; also used to get attention | — |
-| 37 | привет | hi (informal) | Informal only; do not use with strangers or superiors | — |
+| 37 | привет | hello / hi (informal) | Informal only; do not use with strangers or superiors | — |
 | 38 | конечно | of course / certainly (obviously so) | Written with ч but pronounced [ш]: конешно | — |
 | 39 | ладно | OK / all right (agreeing) | Signals agreement or resignation ("fine, whatever") | — |
 | 40 | ничего | nothing / it's OK / no problem | Also a stand-alone reassuring reply | — |
