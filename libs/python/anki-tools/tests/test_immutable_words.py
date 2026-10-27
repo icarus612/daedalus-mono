@@ -68,6 +68,7 @@ from anki_tools import (
     examples_field,
     mutable_words,
     mutable_words_plan,
+    prompt_hint,
     word_qualifier,
     word_stack,
 )
@@ -515,6 +516,8 @@ def test_clone_note_type_field_list_matches_field_names_in_order(cloned):
         "Additional Info",
         "Examples",
         "Case",
+        "Russian Distinction",
+        "English Distinction",
     ]
 
     # One audio field, and no template may ever render an av tag -- that
@@ -537,6 +540,8 @@ def test_clone_note_type_css_extends_source_with_audio_button_css(cloned):
         + word_qualifier.QUALIFIER_CSS
         + "\n\n"
         + word_stack.WORD_STACK_CSS
+        + "\n\n"
+        + prompt_hint.PROMPT_HINT_CSS
     )
 
 
@@ -1378,14 +1383,14 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
     with open(SOURCE_DOC_PATH, encoding="utf-8") as fh:
         source_text = fh.read()
     rows = parse_word_list(source_text)
-    assert len(rows) == 232
+    assert len(rows) == 233
     expected_counts = counts_by_deck(rows)
     assert expected_counts == {
         subdeck_name("Prepositions"): 44,
         subdeck_name("Conjunctions"): 35,
         subdeck_name("Particles"): 44,
         subdeck_name("Indeclinable Nouns"): 42,
-        subdeck_name("Base Adverbs"): 67,
+        subdeck_name("Base Adverbs"): 68,
     }
 
     snapshot_mtime_before = os.path.getmtime(collection_snapshot_copy)
@@ -1467,8 +1472,8 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
             assert len(note_ids) == expected_counts[name], name
             total_notes += len(note_ids)
             total_cards += len(card_ids)
-        assert total_notes == 232
-        assert total_cards == 464
+        assert total_notes == 233
+        assert total_cards == 466
 
         # ONE note type across all five decks, with its two card templates
         # -- never one per part of speech. Asserted on the IMPORTED
@@ -1561,7 +1566,7 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
         # this machine -- the deck exports/imports cleanly on field-level
         # filename references alone.
         all_note_ids = fresh_col.find_notes(f'note:"{NEW_NOTE_TYPE_NAME}"')
-        assert len(all_note_ids) == 232
+        assert len(all_note_ids) == 233
         mismatches = []
         for note_id in all_note_ids:
             note = fresh_col.get_note(note_id)
@@ -1662,7 +1667,7 @@ def test_e2e_guid_determinism_real_document_full_set(
 
     with open(SOURCE_DOC_PATH, encoding="utf-8") as fh:
         rows = parse_word_list(fh.read())
-    assert len(rows) == 232
+    assert len(rows) == 233
 
     _, guids_first = _build_real_package_with_guids(
         rows, collection_snapshot_copy, tmp_path, "determinism-a.apkg"
@@ -1672,7 +1677,7 @@ def test_e2e_guid_determinism_real_document_full_set(
     )
 
     # Full set, not a sample: same 152 (pos, russian) keys both times.
-    assert len(guids_first) == 232
+    assert len(guids_first) == 233
     assert set(guids_first) == set(guids_second)
 
     mismatches = [key for key in guids_first if guids_first[key] != guids_second[key]]
@@ -1721,7 +1726,7 @@ def test_e2e_rebuild_after_translation_edit_reimports_in_place_not_duplicated(
 
     with open(SOURCE_DOC_PATH, encoding="utf-8") as fh:
         rows_v1 = parse_word_list(fh.read())
-    assert len(rows_v1) == 232
+    assert len(rows_v1) == 233
 
     edited_index = next(
         i
@@ -1779,7 +1784,7 @@ def test_e2e_rebuild_after_translation_edit_reimports_in_place_not_duplicated(
         fresh_col.import_anki_package(
             ImportAnkiPackageRequest(package_path=out1, options=import_options)
         )
-        assert fresh_col.note_count() == 232
+        assert fresh_col.note_count() == 233
 
         # The exact live scenario: import the REBUILT package into the
         # SAME collection.
@@ -1788,7 +1793,7 @@ def test_e2e_rebuild_after_translation_edit_reimports_in_place_not_duplicated(
         )
 
         # The defect this lane fixes: must still be 152, never 304.
-        assert fresh_col.note_count() == 232, (
+        assert fresh_col.note_count() == 233, (
             f"expected 152 notes after re-importing the rebuilt package, "
             f"got {fresh_col.note_count()} -- this is exactly the live "
             f"defect (10,664 -> 10,817) reproduced at this lane's own "
@@ -1814,7 +1819,7 @@ def test_e2e_rebuild_after_translation_edit_reimports_in_place_not_duplicated(
 
         # Every OTHER note (unchanged rows) must be untouched and still
         # present -- the fix must not disturb notes it had no reason to.
-        assert fresh_col.note_count() == len(rows_v2) == 232
+        assert fresh_col.note_count() == len(rows_v2) == 233
     finally:
         fresh_col.close()
 
@@ -1926,7 +1931,7 @@ def test_e2e_real_media_is_marked_used_not_merely_present(
 
     with open(SOURCE_DOC_PATH, encoding="utf-8") as fh:
         rows = parse_word_list(fh.read())
-    assert len(rows) == 232
+    assert len(rows) == 233
 
     build_col = Collection(os.path.join(str(tmp_path), "build.anki2"))
     source_col = Collection(collection_snapshot_copy)
@@ -2020,7 +2025,7 @@ def test_e2e_real_media_fresh_import_delivers_every_file_zero_missing(
 ):
     """The strongest evidence available: import the real package into a
     collection that never existed before, and assert entirely against what
-    THAT import produced -- 232 notes, 464 cards, and every media file actually
+    THAT import produced -- 233 notes, 466 cards, and every media file actually
     present in the new collection's OWN media directory, and every filename
     in every note's `Audio` field resolving on disk (zero
     referenced-but-missing). Also re-runs `media.check()` on the imported
@@ -2076,14 +2081,14 @@ def test_e2e_real_media_fresh_import_delivers_every_file_zero_missing(
             note_ids = {fresh_col.get_card(cid).nid for cid in card_ids}
             total_notes += len(note_ids)
             total_cards += len(card_ids)
-        assert total_notes == 232
-        assert total_cards == 464
+        assert total_notes == 233
+        assert total_cards == 466
 
         media_files_on_disk = set(os.listdir(fresh_col.media.dir()))
         assert len(media_files_on_disk) == len(_REQUIRED_REAL_AUDIO_FILENAMES)
 
         all_note_ids = fresh_col.find_notes(f'note:"{NEW_NOTE_TYPE_NAME}"')
-        assert len(all_note_ids) == 232
+        assert len(all_note_ids) == 233
         missing_refs = []
         for note_id in all_note_ids:
             note = fresh_col.get_note(note_id)
@@ -2334,13 +2339,19 @@ def test_clone_note_type_two_fresh_builds_pin_identical_id_and_fields(
         assert note_type_a["flds"] == note_type_b["flds"]
 
         for note_type in (note_type_a, note_type_b):
-            assert len(note_type["flds"]) == 8
+            assert len(note_type["flds"]) == 10
             examples_fld = note_type["flds"][6]
             assert examples_fld["name"] == "Examples"
             assert examples_fld["id"] is None
             case_fld = note_type["flds"][7]
             assert case_fld["name"] == "Case"
             assert case_fld["id"] is None
+            russian_distinction_fld = note_type["flds"][8]
+            assert russian_distinction_fld["name"] == "Russian Distinction"
+            assert russian_distinction_fld["id"] is None
+            english_distinction_fld = note_type["flds"][9]
+            assert english_distinction_fld["name"] == "English Distinction"
+            assert english_distinction_fld["id"] is None
 
             cloned_field_ids = [f["id"] for f in note_type["flds"][:6]]
             assert cloned_field_ids == source_field_ids
@@ -2486,7 +2497,7 @@ def test_e2e_live_rebuild_translation_and_template_edit_update_in_place_default_
 
     with open(SOURCE_DOC_PATH, encoding="utf-8") as fh:
         rows_v1 = parse_word_list(fh.read())
-    assert len(rows_v1) == 232
+    assert len(rows_v1) == 233
 
     out1, _ = _build_real_package_with_guids(
         rows_v1, collection_snapshot_copy, tmp_path, "l9-e2e-v1.apkg"
@@ -2508,7 +2519,7 @@ def test_e2e_live_rebuild_translation_and_template_edit_update_in_place_default_
         fresh_col.import_anki_package(
             ImportAnkiPackageRequest(package_path=out1, options=default_options)
         )
-        assert fresh_col.note_count() == 232
+        assert fresh_col.note_count() == 233
 
         names_after_import1 = _immutable_words_notetype_names()
         assert names_after_import1 == [NEW_NOTE_TYPE_NAME], (
@@ -2564,7 +2575,7 @@ def test_e2e_live_rebuild_translation_and_template_edit_update_in_place_default_
 
         # The defect this lane fixes: still 152, never 304, and still
         # exactly ONE note type -- no `+`-suffixed duplicate.
-        assert fresh_col.note_count() == 232, (
+        assert fresh_col.note_count() == 233, (
             f"expected 152 notes after re-importing the rebuilt package "
             f"under DEFAULT import options, got {fresh_col.note_count()} "
             f"-- a jump to 304 means notes duplicated instead of updating"
@@ -2607,7 +2618,7 @@ def test_e2e_live_rebuild_translation_and_template_edit_update_in_place_default_
         assert "<br>" in updated_note["Translation"]
 
         # Every other note (unchanged rows) must be untouched and present.
-        assert fresh_col.note_count() == len(rows_v2) == 232
+        assert fresh_col.note_count() == len(rows_v2) == 233
     finally:
         fresh_col.close()
 
@@ -2665,13 +2676,13 @@ def test_e2e_every_imported_translation_exactly_matches_source_document(
 
     with open(SOURCE_DOC_PATH, encoding="utf-8") as fh:
         rows = parse_word_list(fh.read())
-    assert len(rows) == 232
+    assert len(rows) == 233
 
     expected_by_key = {
         f"{row.russian}||{subdeck_name(row.pos).rsplit('::', 1)[-1]}": row.english
         for row in rows
     }
-    assert len(expected_by_key) == 232  # no (russian, deck) key collided
+    assert len(expected_by_key) == 233  # no (russian, deck) key collided
 
     build_col = Collection(os.path.join(str(tmp_path), "build.anki2"))
     source_col = Collection(collection_snapshot_copy)
@@ -2701,7 +2712,7 @@ def test_e2e_every_imported_translation_exactly_matches_source_document(
         )
 
         all_note_ids = fresh_col.find_notes(f'note:"{NEW_NOTE_TYPE_NAME}"')
-        assert len(all_note_ids) == 232
+        assert len(all_note_ids) == 233
 
         seen_keys = set()
         mismatches = []
@@ -2733,8 +2744,8 @@ def test_e2e_every_imported_translation_exactly_matches_source_document(
             note_ids = {fresh_col.get_card(cid).nid for cid in card_ids}
             total_notes += len(note_ids)
             total_cards += len(card_ids)
-        assert total_notes == 232
-        assert total_cards == 464
+        assert total_notes == 233
+        assert total_cards == 466
 
         conjunctions_da = fresh_col.find_notes(
             f'deck:"{subdeck_name("Conjunctions")}" Russian:да'

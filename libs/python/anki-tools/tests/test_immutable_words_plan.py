@@ -66,7 +66,7 @@ EXPECTED_SECTION_COUNTS = [
     ("Conjunctions", 35),
     ("Particles", 44),
     ("Indeclinable Nouns", 42),
-    ("Base Adverbs", 67),
+    ("Base Adverbs", 68),
 ]
 EXPECTED_TOTAL_ROWS = sum(count for _, count in EXPECTED_SECTION_COUNTS)
 
@@ -188,7 +188,7 @@ def _remove_section(text, heading_name):
 
 
 def test_parse_real_document_total_row_count(real_rows):
-    assert len(real_rows) == EXPECTED_TOTAL_ROWS == 232
+    assert len(real_rows) == EXPECTED_TOTAL_ROWS == 233
 
 
 def test_parse_real_document_section_order_counts_and_ranks(real_rows):
@@ -214,7 +214,7 @@ def test_parse_real_document_row_order_endpoints(real_rows):
     assert real_rows[0].pos == "Prepositions"
     assert real_rows[0].rank == 1
     assert real_rows[-1].pos == "Base Adverbs"
-    assert real_rows[-1].rank == 67
+    assert real_rows[-1].rank == 68
 
 
 @pytest.mark.parametrize(
@@ -233,7 +233,7 @@ def test_parse_real_document_part_two_produces_no_spurious_rows(real_rows):
     AwesomeTTS / HyperTTS / add-on-install subsections) has no tables and
     must not contribute rows or raise.
     """
-    assert len(real_rows) == 232
+    assert len(real_rows) == 233
     assert all(row.pos in SUBDECK_LEAVES for row in real_rows)
 
 
@@ -909,6 +909,8 @@ def test_field_names_constant():
         "Additional Info",
         "Examples",
         "Case",
+        "Russian Distinction",
+        "English Distinction",
     )
 
 
@@ -918,7 +920,7 @@ def test_word_row_fields_shape_and_values(pos):
 
     fields = row.fields()
 
-    assert len(fields) == len(FIELD_NAMES) == 8
+    assert len(fields) == len(FIELD_NAMES) == 10
     assert fields[0] == "русский текст"  # Russian
     assert fields[1] == "english text"  # Translation
     assert fields[2] == ""  # Pronunciation
@@ -929,6 +931,8 @@ def test_word_row_fields_shape_and_values(pos):
     assert fields[5] == ""  # Additional Info
     assert fields[6] == ""  # Examples
     assert fields[7] == case_name_for_row(pos, "")  # Case
+    assert fields[8] == ""  # Russian Distinction -- headword has no parenthetical
+    assert fields[9] == ""  # English Distinction -- headword is in no collision set
 
     # Singular label, not the plural section name verbatim.
     assert POS_FIELD_VALUE[pos] != pos
@@ -1112,7 +1116,7 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
     cells, so the test cannot pass by finding nothing to check.
     """
     adverbs = [row for row in real_rows if row.pos == "Base Adverbs"]
-    assert len(adverbs) == 67
+    assert len(adverbs) == 68
 
     populated = 0
     for row in adverbs:
@@ -1121,10 +1125,10 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
         if additional_info:
             populated += 1
 
-    # 55 of the 67 rows carry info; the other 12 are the document's em-dash
+    # 56 of the 68 rows carry info; the other 12 are the document's em-dash
     # "no info" rows. Asserted exactly so that silently losing the column
     # fails here rather than passing with 0.
-    assert populated == 55
+    assert populated == 56
 
 
 # Populated info cells per section. Every section is four-column now:
@@ -1138,7 +1142,7 @@ EXPECTED_INFO_COUNTS = {
     "Conjunctions": (35, 21),
     "Particles": (44, 31),
     "Indeclinable Nouns": (42, 42),
-    "Base Adverbs": (67, 55),
+    "Base Adverbs": (68, 56),
 }
 
 

@@ -243,7 +243,7 @@ def real_rows(real_source_text):
 def test_deck_audio_field_agrees_with_tts_build_filename_for_every_row_and_slot(
     real_rows,
 ):
-    assert len(real_rows) == 232  # positive control: don't trivially pass on 0 rows
+    assert len(real_rows) == 233  # positive control: don't trivially pass on 0 rows
 
     audio_index = FIELD_NAMES.index("Audio")
     slot_to_voice = {voice.slot: voice for voice in VOICES}
@@ -269,7 +269,7 @@ def test_deck_audio_field_agrees_with_tts_build_filename_for_every_row_and_slot(
             )
             checked += 1
 
-    assert checked == 232 * 4 == 928
+    assert checked == 233 * 4 == 932
 
 
 # ---------------------------------------------------------------------------
@@ -299,7 +299,7 @@ def test_real_document_slugs_no_collision_between_different_words(real_rows):
     landing on one slug), which is the defect the hash-free naming scheme
     has to stay clear of.
     """
-    assert len(real_rows) == 232
+    assert len(real_rows) == 233
 
     slug_to_words = {}
     for row in real_rows:
@@ -313,9 +313,9 @@ def test_real_document_slugs_no_collision_between_different_words(real_rows):
     }
     assert collisions == {}
 
-    # 232 rows, 228 distinct slugs: the four dual-class words each
+    # 233 rows, 229 distinct slugs: the four dual-class words each
     # contribute two rows and one slug.
-    assert len(slug_to_words) == 228
+    assert len(slug_to_words) == 229
 
     shared = {
         slug

@@ -91,11 +91,47 @@ API_KEY_ENV_VAR = "ELEVENLABS_API_KEY"
 # location, the Anki media directory, is derived via `get_anki_media_dir()`.
 DEFAULT_OUTPUT_DIR = os.path.expanduser("~/Desktop/russian-audio")
 
-# eleven_multilingual_v2 is ElevenLabs' documented multilingual model and the
-# one they recommend for non-English text (including Russian); their
-# English-only models (e.g. eleven_monolingual_v1) are not suitable here.
-# Trivially overridable via --model-id.
-DEFAULT_MODEL_ID = "eleven_multilingual_v2"
+# The model MUST be one that honours `language_code`. ElevenLabs' API
+# reference is explicit that `language_code` "is not supported for
+# multilingual_v2 models" and that for a model which does not support it the
+# code "will be ignored" -- silently, with a 200 and audio back. Under
+# eleven_multilingual_v2 the language was therefore guessed from the text,
+# and on Cyrillic it sometimes guessed Ukrainian: unstressed `о` came out as
+# [o] instead of reducing to [ɐ], which is Russian akanye and is exactly
+# what Ukrainian does not do.
+#
+# eleven_turbo_v2_5 covers Russian and does honour the code. Changing this
+# default to a model that does not is a correctness regression, not a
+# preference -- `assert_model_supports_language` below exists to stop it.
+DEFAULT_MODEL_ID = "eleven_turbo_v2_5"
+
+# Sent on every request. Russian is the only language this package voices.
+DEFAULT_LANGUAGE_CODE = "ru"
+
+# Models known to ignore `language_code`. Not an allow-list of good models:
+# an unknown id is allowed through, because the catalogue grows.
+MODELS_IGNORING_LANGUAGE_CODE = frozenset({
+    "eleven_multilingual_v2",
+    "eleven_multilingual_v1",
+    "eleven_monolingual_v1",
+    "eleven_turbo_v2",
+    "eleven_flash_v2",
+})
+
+
+def assert_model_supports_language(model_id: str) -> None:
+    """Raise when `model_id` would silently drop `language_code`.
+
+    Called before any synthesis so the failure is a loud error at the start
+    of a run rather than thousands of files voiced in the wrong language.
+    """
+    if model_id in MODELS_IGNORING_LANGUAGE_CODE:
+        raise ValueError(
+            f"model {model_id!r} ignores language_code, so the language "
+            "cannot be enforced and Russian text may be voiced as another "
+            "language. Use a model that honours it, e.g. "
+            f"{DEFAULT_MODEL_ID!r}."
+        )
 
 DEFAULT_TIMEOUT = 30  # seconds, per HTTP request
 
@@ -427,6 +463,7 @@ def _fetch_tts_audio(
     api_key: str,
     stability: float,
     similarity_boost: float,
+    language_code: str = DEFAULT_LANGUAGE_CODE,
     session=None,
     timeout: int = DEFAULT_TIMEOUT,
 ) -> bytes:
@@ -451,6 +488,7 @@ def _fetch_tts_audio(
     payload = {
         "text": text,
         "model_id": model_id,
+        "language_code": language_code,
         "voice_settings": {
             "stability": stability,
             "similarity_boost": similarity_boost,
@@ -502,6 +540,7 @@ def fetch_tts_audio_metered(
     timeout: int = DEFAULT_TIMEOUT,
     stability: float = DEFAULT_STABILITY,
     similarity_boost: float = DEFAULT_SIMILARITY_BOOST,
+    language_code: str = DEFAULT_LANGUAGE_CODE,
 ) -> bytes:
     """THE single choke point: the only function in this module that is
     allowed to actually issue a real ElevenLabs request.
@@ -517,6 +556,9 @@ def fetch_tts_audio_metered(
     """
     validate_voice_setting("stability", stability)
     validate_voice_setting("similarity_boost", similarity_boost)
+    # Before the budget is touched, so a model that would drop the language
+    # fails on request one rather than after a few thousand files.
+    assert_model_supports_language(model_id)
     budget.spend(1)
     return _fetch_tts_audio(
         voice.voice_id,
@@ -525,6 +567,7 @@ def fetch_tts_audio_metered(
         api_key,
         stability,
         similarity_boost,
+        language_code=language_code,
         session=session,
         timeout=timeout,
     )
@@ -547,6 +590,7 @@ def build_and_save(
     session=None,
     stability: float = DEFAULT_STABILITY,
     similarity_boost: float = DEFAULT_SIMILARITY_BOOST,
+    language_code: str = DEFAULT_LANGUAGE_CODE,
     anki_media_dir: Optional[str] = None,
 ) -> list:
     """Synthesize ONE word across every voice in `voices`, writing it to
@@ -623,6 +667,7 @@ def build_and_save(
             session=session,
             stability=stability,
             similarity_boost=similarity_boost,
+            language_code=language_code,
         )
 
         if need_primary_write:
@@ -668,6 +713,7 @@ def build_and_save_batch(
     session=None,
     stability: float = DEFAULT_STABILITY,
     similarity_boost: float = DEFAULT_SIMILARITY_BOOST,
+    language_code: str = DEFAULT_LANGUAGE_CODE,
     anki_media_dir: Optional[str] = None,
 ) -> list:
     """Synthesize many words, each across every voice in `voices`.
@@ -698,6 +744,7 @@ def build_and_save_batch(
                 session=session,
                 stability=stability,
                 similarity_boost=similarity_boost,
+                language_code=language_code,
                 anki_media_dir=anki_media_dir,
             )
         )
@@ -840,6 +887,16 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument(
+        "--language-code",
+        default=DEFAULT_LANGUAGE_CODE,
+        help=(
+            "ISO 639-1 language sent with every request, so the model does "
+            "not guess from the text. Default: "
+            f"{DEFAULT_LANGUAGE_CODE!r}. The model must honour it; "
+            "eleven_multilingual_v2 and friends silently ignore it."
+        ),
+    )
+    parser.add_argument(
         "--replace",
         action="store_true",
         default=False,
@@ -950,6 +1007,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         voices=selected_voices,
         dir_name=args.output_dir,
         model_id=args.model_id,
+        language_code=args.language_code,
         replace=args.replace,
         api_key=api_key,
         session=session,

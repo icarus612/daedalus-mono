@@ -28,6 +28,7 @@ from anki_tools import (
     case_field,
     examples_field,
     mutable_words_plan,
+    prompt_hint,
     word_qualifier,
     word_stack,
 )
@@ -83,6 +84,8 @@ def build_note_types(
             + word_qualifier.QUALIFIER_CSS
             + "\n\n"
             + word_stack.WORD_STACK_CSS
+            + "\n\n"
+            + prompt_hint.PROMPT_HINT_CSS
             + "\n\n"
             + mutable_words_plan.EXTRA_CSS
         )

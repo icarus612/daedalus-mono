@@ -25,7 +25,9 @@ from anki_tools import (
     audio_naming,
     card_audio,
     case_field,
+    distinction,
     examples_field,
+    prompt_hint,
     word_qualifier,
     word_stack,
 )
@@ -94,10 +96,13 @@ def clone_note_type(
     for template in cloned["tmpls"]:
         for side in ("qfmt", "afmt"):
             template[side] = word_qualifier.add_qualifier_script(
-                case_field.add_case_row(
-                    examples_field.add_examples_block(
-                        rewrite_audio_playback(strip_part_of_speech(template[side]))
-                    )
+                prompt_hint.add_prompt_hint(
+                    case_field.add_case_row(
+                        examples_field.add_examples_block(
+                            rewrite_audio_playback(strip_part_of_speech(template[side]))
+                        )
+                    ),
+                    case_field.CASE_FIELD,
                 )
             )
 
@@ -113,6 +118,8 @@ def clone_note_type(
         + word_qualifier.QUALIFIER_CSS
         + "\n\n"
         + word_stack.WORD_STACK_CSS
+        + "\n\n"
+        + prompt_hint.PROMPT_HINT_CSS
     )
 
     # `new_field()` hands back a field dict with a real, randomly-chosen id
@@ -127,6 +134,7 @@ def clone_note_type(
     for appended_name in (
         examples_field.EXAMPLES_FIELD,
         case_field.CASE_FIELD,
+        *distinction.FIELDS,
     ):
         appended_field = build_col.models.new_field(appended_name)
         appended_field["id"] = None

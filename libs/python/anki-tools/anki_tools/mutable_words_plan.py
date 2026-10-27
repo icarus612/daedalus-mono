@@ -11,7 +11,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import ClassVar
 
-from anki_tools import card_audio
+from anki_tools import card_audio, distinction, prompt_hint
 from anki_tools.anki_identity import guid_for_row, notetype_id_for_name
 from anki_tools.audio_naming import audio_field_value, build_filename
 from anki_tools.examples_field import EXAMPLES_FIELD
@@ -62,6 +62,8 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Examples",
         "Rank",
         "Audio",
+        "Russian Distinction",
+        "English Distinction",
     ),
     "Verbs": (
         "Imperfective",
@@ -79,6 +81,8 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Rank",
         "Audio Imperfective",
         "Audio Perfective",
+        "Russian Distinction",
+        "English Distinction",
     ),
     "Adjectives": (
         "Russian (m)",
@@ -95,6 +99,8 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Examples",
         "Rank",
         "Audio",
+        "Russian Distinction",
+        "English Distinction",
     ),
     "Adverbs": (
         "Adverb",
@@ -107,6 +113,8 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Examples",
         "Rank",
         "Audio",
+        "Russian Distinction",
+        "English Distinction",
     ),
     "Pronouns": (
         "Russian",
@@ -119,6 +127,8 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Examples",
         "Rank",
         "Audio",
+        "Russian Distinction",
+        "English Distinction",
     ),
     "Numerals": (
         "Russian",
@@ -132,6 +142,8 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Examples",
         "Rank",
         "Audio",
+        "Russian Distinction",
+        "English Distinction",
     ),
 }
 
@@ -221,6 +233,8 @@ class NounRow:
             self.examples,
             str(self.rank),
             audio_field_value(names),
+            distinction.qualifier_of(self.russian),
+            distinction.english_distinction(self.russian),
         ]
 
 
@@ -282,6 +296,8 @@ class VerbRow:
             str(self.rank),
             audio_field_value(imperfective_names),
             audio_field_value(perfective_names),
+            distinction.qualifier_of(self.imperfective),
+            distinction.english_distinction(self.imperfective),
         ]
 
 
@@ -332,6 +348,8 @@ class AdjectiveRow:
             self.examples,
             str(self.rank),
             audio_field_value(names),
+            distinction.qualifier_of(self.russian_m),
+            distinction.english_distinction(self.russian_m),
         ]
 
 
@@ -374,6 +392,8 @@ class AdverbRow:
             self.examples,
             str(self.rank),
             audio_field_value(names),
+            distinction.qualifier_of(self.adverb),
+            distinction.english_distinction(self.adverb),
         ]
 
 
@@ -416,6 +436,8 @@ class PronounRow:
             self.examples,
             str(self.rank),
             audio_field_value(names),
+            distinction.qualifier_of(self.russian),
+            distinction.english_distinction(self.russian),
         ]
 
 
@@ -460,6 +482,8 @@ class NumeralRow:
             self.examples,
             str(self.rank),
             audio_field_value(names),
+            distinction.qualifier_of(self.russian),
+            distinction.english_distinction(self.russian),
         ]
 
 
@@ -1007,6 +1031,7 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
         afmt = "\n".join(["{{FrontSide}}", back, detail_script])
     else:
         front = _wrap("front", _DECK_HEADER_HTML, translation_div)
+        front = prompt_hint.add_prompt_hint(front, distinction.ENGLISH_FIELD)
         qfmt = front + _DECK_HEADER_SCRIPT
         back = _wrap("back", audio_html, russian_div, aspect_div, detail_divs)
         afmt = "\n".join(["{{FrontSide}}", back, detail_script])

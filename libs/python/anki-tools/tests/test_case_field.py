@@ -113,7 +113,7 @@ def test_preposition_rows_carry_the_tag_in_the_case_field(real_rows):
     for row in prepositions:
         assert row.fields()[index] == case_field.case_name(row.info)
     others = [r for r in real_rows if r.pos != "Prepositions"]
-    assert len(others) == 188
+    assert len(others) == 189
     for row in others:
         assert row.fields()[index] == ""
 

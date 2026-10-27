@@ -39,6 +39,7 @@ from anki_tools.audio_naming import strip_qualifier
 from anki_tools.elevenlabs_tts import (
     ALL_VOICES,
     API_KEY_ENV_VAR,
+    DEFAULT_LANGUAGE_CODE,
     DEFAULT_MODEL_ID,
     DEFAULT_SIMILARITY_BOOST,
     DEFAULT_STABILITY,
@@ -46,6 +47,7 @@ from anki_tools.elevenlabs_tts import (
     DEFAULT_VOICES,
     DEFAULT_WORD_LIMIT,
     ELEN_KURAGINA,
+    MODELS_IGNORING_LANGUAGE_CODE,
     VOICES,
     BudgetExceededError,
     ElevenLabsAPIError,
@@ -55,6 +57,7 @@ from anki_tools.elevenlabs_tts import (
     TransientServerError,
     Voice,
     _check_unique_slots,
+    assert_model_supports_language,
     build_and_save,
     build_and_save_batch,
     build_filename,
@@ -278,7 +281,7 @@ SOURCE_WORD_LIST_PATH = Path(__file__).resolve().parent / "data" / "source-word-
 
 
 def test_slug_collision_free_across_real_source_word_list():
-    """Prove, don't assume: run every word in the real 206-row raw source
+    """Prove, don't assume: run every word in the real 232-row raw source
     list through `sanitize_word_slug` and assert that no two DIFFERENT words
     land on the same slug.
 
@@ -306,8 +309,8 @@ def test_slug_collision_free_across_real_source_word_list():
     # A positive control on the parse itself: a bare zero (or a suspiciously
     # low count from a regex that stopped matching) would make every
     # assertion below trivially true for the wrong reason.
-    assert len(words) == 231, (
-        f"expected 231 parsed rows from the source word list, got "
+    assert len(words) == 232, (
+        f"expected 232 parsed rows from the source word list, got "
         f"{len(words)} -- the parser regex may no longer match the table "
         f"format; investigate before trusting this test's result."
     )
@@ -323,10 +326,10 @@ def test_slug_collision_free_across_real_source_word_list():
         f"instead: {collisions}"
     )
 
-    # The headline numbers, asserted on the actual counts: 231 raw rows,
-    # 227 distinct slugs -- the four dual-class words each spend two rows
+    # The headline numbers, asserted on the actual counts: 232 raw rows,
+    # 228 distinct slugs -- the four dual-class words each spend two rows
     # on one slug, and nothing else repeats.
-    assert len(set(slugs)) == 227
+    assert len(set(slugs)) == 228
     repeated = [slug for slug in set(slugs) if slugs.count(slug) > 1]
     assert sorted(repeated) == sorted(
         sanitize_word_slug(w) for w in ("как", "когда", "пока", "так")
@@ -1360,3 +1363,197 @@ def test_build_parser_anki_media_dir_flag_accepts_explicit_value():
         ["--word", "на", "--anki-media-dir", "/tmp/some-media-dir"]
     )
     assert args.anki_media_dir == "/tmp/some-media-dir"
+
+
+# ---------------------------------------------------------------------------
+# language_code: sent on every request, and only to a model that honours it
+# ---------------------------------------------------------------------------
+
+
+def test_build_and_save_sends_the_default_language_code_in_the_payload(tmp_path):
+    session = _mock_session([FakeResponse(200, content=b"audio")])
+    build_and_save(
+        "около",
+        dir_name=str(tmp_path / "audio"),
+        anki_media_dir=str(tmp_path / "media"),
+        api_key="k",
+        session=session,
+        budget=RequestBudget(1),
+    )
+    assert session.post.call_args.kwargs["json"]["language_code"] == "ru"
+    assert DEFAULT_LANGUAGE_CODE == "ru"
+
+
+def test_build_and_save_forwards_an_explicit_language_code_verbatim(tmp_path):
+    session = _mock_session([FakeResponse(200, content=b"audio")])
+    build_and_save(
+        "около",
+        dir_name=str(tmp_path / "audio"),
+        anki_media_dir=str(tmp_path / "media"),
+        api_key="k",
+        session=session,
+        budget=RequestBudget(1),
+        language_code="uk",
+    )
+    sent_json = session.post.call_args.kwargs["json"]
+    assert sent_json["language_code"] == "uk"
+    assert sent_json["language_code"] != DEFAULT_LANGUAGE_CODE
+
+
+def test_default_model_can_actually_enforce_a_language():
+    assert DEFAULT_MODEL_ID not in MODELS_IGNORING_LANGUAGE_CODE
+
+
+def test_assert_model_supports_language_rejects_eleven_multilingual_v2():
+    assert "eleven_multilingual_v2" in MODELS_IGNORING_LANGUAGE_CODE
+    with pytest.raises(ValueError) as exc_info:
+        assert_model_supports_language("eleven_multilingual_v2")
+    message = str(exc_info.value)
+    assert "eleven_multilingual_v2" in message
+    assert "language_code" in message
+    # The message must point at a model that actually works, not just complain.
+    assert DEFAULT_MODEL_ID in message
+    assert DEFAULT_MODEL_ID not in MODELS_IGNORING_LANGUAGE_CODE
+
+
+@pytest.mark.parametrize("model_id", sorted(MODELS_IGNORING_LANGUAGE_CODE))
+def test_assert_model_supports_language_rejects_every_ignoring_model(model_id):
+    with pytest.raises(ValueError, match="ignores language_code"):
+        assert_model_supports_language(model_id)
+
+
+def test_assert_model_supports_language_allows_the_default_and_unknown_models():
+    assert_model_supports_language(DEFAULT_MODEL_ID)
+    assert_model_supports_language("eleven_some_future_model_v9")
+
+
+def test_fetch_tts_audio_metered_rejects_an_ignoring_model_before_spending():
+    session = _mock_session([FakeResponse(200, content=b"audio")])
+    budget = RequestBudget(limit=1)
+    with pytest.raises(ValueError, match="ignores language_code"):
+        fetch_tts_audio_metered(
+            VOICES[0],
+            "около",
+            "eleven_multilingual_v2",
+            "k",
+            budget,
+            session=session,
+        )
+    # The whole point is to fail on request one: ElevenLabs answers 200 with
+    # audio for an ignored language_code, so nothing downstream would notice.
+    assert budget.spent == 0
+    assert budget.remaining() == 1
+    assert session.post.call_count == 0
+
+
+def test_build_and_save_rejects_an_ignoring_model_before_any_request(tmp_path):
+    session = _mock_session([FakeResponse(200, content=b"audio")])
+    budget = RequestBudget(limit=1)
+    with pytest.raises(ValueError, match="ignores language_code"):
+        build_and_save(
+            "около",
+            dir_name=str(tmp_path / "audio"),
+            anki_media_dir=str(tmp_path / "media"),
+            api_key="k",
+            session=session,
+            budget=budget,
+            model_id="eleven_multilingual_v2",
+        )
+    assert session.post.call_count == 0
+    assert budget.spent == 0
+
+
+def test_build_and_save_batch_forwards_language_code_to_every_payload(tmp_path):
+    words = ["около", "рядом"]
+    session = _mock_session(
+        [FakeResponse(200, content=b"a"), FakeResponse(200, content=b"b")]
+    )
+    build_and_save_batch(
+        words,
+        dir_name=str(tmp_path / "audio"),
+        anki_media_dir=str(tmp_path / "media"),
+        api_key="k",
+        session=session,
+        budget=RequestBudget(len(words)),
+        language_code="uk",
+    )
+    sent_codes = [
+        c.kwargs["json"]["language_code"] for c in session.post.call_args_list
+    ]
+    assert sent_codes == ["uk", "uk"]
+
+
+def test_build_and_save_batch_sends_the_default_language_code(tmp_path):
+    words = ["около", "рядом"]
+    session = _mock_session(
+        [FakeResponse(200, content=b"a"), FakeResponse(200, content=b"b")]
+    )
+    build_and_save_batch(
+        words,
+        dir_name=str(tmp_path / "audio"),
+        anki_media_dir=str(tmp_path / "media"),
+        api_key="k",
+        session=session,
+        budget=RequestBudget(len(words)),
+    )
+    sent_codes = [
+        c.kwargs["json"]["language_code"] for c in session.post.call_args_list
+    ]
+    assert sent_codes == ["ru", "ru"]
+
+
+def test_every_posted_payload_carries_a_language_code_key(tmp_path):
+    """Positive control: fails if `language_code` is dropped from the payload.
+
+    Asserts the KEY is posted, not that its value is right when present --
+    a missing key is exactly the bug that let the model guess Ukrainian from
+    the Cyrillic text while still returning 200 and audio.
+    """
+    responses = [FakeResponse(200, content=f"a{i}".encode()) for i in range(4)]
+    session = _mock_session(responses)
+    build_and_save(
+        "около",
+        dir_name=str(tmp_path / "audio"),
+        anki_media_dir=str(tmp_path / "media"),
+        api_key="k",
+        session=session,
+        budget=RequestBudget(4),
+        voices=VOICES,
+    )
+    assert session.post.call_count == 4
+    for call in session.post.call_args_list:
+        sent_json = call.kwargs["json"]
+        assert "language_code" in sent_json, (
+            f"no language_code key in the posted payload (keys: "
+            f"{sorted(sent_json)}) -- ElevenLabs would guess the language "
+            f"from the text and Russian akanye would be lost."
+        )
+        assert sent_json["language_code"] == DEFAULT_LANGUAGE_CODE
+
+
+def test_cli_language_code_flag_defaults_to_ru_and_reaches_the_request(
+    tmp_path, monkeypatch
+):
+    parser = build_parser()
+    assert parser.parse_args(["--word", "около"]).language_code == "ru"
+    assert (
+        parser.parse_args(["--word", "около", "--language-code", "uk"]).language_code
+        == "uk"
+    )
+
+    monkeypatch.setenv(API_KEY_ENV_VAR, "test-key")
+    session = _patch_session(monkeypatch, [FakeResponse(200, content=b"audio")])
+    exit_code = main(
+        [
+            "--word",
+            "около",
+            "--output-dir",
+            str(tmp_path / "audio"),
+            "--anki-media-dir",
+            str(tmp_path / "media"),
+        ]
+    )
+    assert exit_code == 0
+    sent_json = session.post.call_args.kwargs["json"]
+    assert sent_json["language_code"] == "ru"
+    assert sent_json["model_id"] == DEFAULT_MODEL_ID

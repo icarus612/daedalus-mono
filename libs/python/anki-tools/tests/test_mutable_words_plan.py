@@ -15,7 +15,7 @@ import pytest
 from anki.collection import Collection
 from anki.utils import to_json_bytes
 
-from anki_tools import card_audio, examples_field, mutable_words_plan
+from anki_tools import card_audio, examples_field, mutable_words_plan, prompt_hint
 from anki_tools.audio_naming import (
     audio_field_value,
     build_filename,
@@ -90,10 +90,10 @@ def _audio_field_for(word):
 
 
 def test_row_counts(nouns, verbs, adjectives, adverbs, pronouns, numerals):
-    assert len(nouns) == 624
-    assert len(verbs) == 209
+    assert len(nouns) == 631
+    assert len(verbs) == 214
     assert len(adjectives) == 172
-    assert len(adverbs) == 132
+    assert len(adverbs) == 134
     assert len(pronouns) == 29
     assert len(numerals) == 55
 
@@ -151,10 +151,10 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
     pronouns_cards = len(pronouns) * 2
     numerals_cards = len(numerals) * 2
 
-    assert nouns_cards == 1248
-    assert verbs_cards == 836
+    assert nouns_cards == 1262
+    assert verbs_cards == 856
     assert adjectives_cards == 344
-    assert adverbs_cards == 264
+    assert adverbs_cards == 268
     assert pronouns_cards == 58
     assert numerals_cards == 110
     assert (
@@ -164,7 +164,7 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
         + adverbs_cards
         + pronouns_cards
         + numerals_cards
-        == 2860
+        == 2898
     )
 
 
@@ -190,7 +190,8 @@ def test_field_name_legality():
             assert '"' not in name
             assert "{" not in name
             assert "}" not in name
-        assert names[-1].startswith("Audio")
+        assert tuple(names[-2:]) == ("Russian Distinction", "English Distinction")
+        assert names[-3].startswith("Audio")
 
 
 def test_no_av_tag_in_any_template():
@@ -225,12 +226,12 @@ def test_no_slug_collisions_across_all_base_words(
         + [w for row in pronouns for w in row.base_words]
         + [w for row in numerals for w in row.base_words]
     )
-    assert len(all_words) == 1428
+    assert len(all_words) == 1445
 
     slugs = [sanitize_word_slug(w) for w in all_words]
     dupes = {slug: c for slug, c in Counter(slugs).items() if c > 1}
     assert set(dupes) == _EXPECTED_DUPLICATE_SLUGS, dupes
-    assert len(set(slugs)) == 1423
+    assert len(set(slugs)) == 1440
 
 
 def test_named_media_overlap_slugs_present(nouns, verbs, adjectives, adverbs):
@@ -288,7 +289,7 @@ def test_predicted_audio_matches_build_filename(nouns, verbs, adjectives, adverb
 
 def test_dash_only_plural_survives_into_fields(nouns):
     dash_rows = [row for row in nouns if row.plural == "—"]
-    assert len(dash_rows) == 131
+    assert len(dash_rows) == 134
 
     plural_idx = mutable_words_plan.FIELD_NAMES["Nouns"].index("Plural")
     assert dash_rows[0].fields()[plural_idx] == "—"
@@ -425,6 +426,8 @@ def test_every_template_id_and_class_has_a_css_rule(tmp_path):
         + card_audio.AUDIO_BUTTON_CSS
         + "\n\n"
         + examples_field.EXAMPLES_CSS
+        + "\n\n"
+        + prompt_hint.PROMPT_HINT_CSS
         + "\n\n"
         + mutable_words_plan.EXTRA_CSS
     )

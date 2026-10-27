@@ -188,7 +188,8 @@ def build_parser() -> argparse.ArgumentParser:
         dest="archive_dir",
         type=str,
         default=None,
-        help=f"Where --replace moves old files. Default: {DEFAULT_ARCHIVE_ROOT}/<timestamp>",
+        help="Where --replace moves old files. "
+        f"Default: {DEFAULT_ARCHIVE_ROOT}/<timestamp>",
     )
     parser.add_argument(
         "--dry-run",
