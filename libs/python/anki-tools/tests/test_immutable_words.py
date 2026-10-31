@@ -65,6 +65,7 @@ from anki.collection import Collection
 from anki_tools import (
     card_audio,
     case_field,
+    distinction,
     examples_field,
     mutable_words,
     mutable_words_plan,
@@ -72,7 +73,11 @@ from anki_tools import (
     word_qualifier,
     word_stack,
 )
-from anki_tools.audio_naming import audio_field_value, parse_audio_filenames
+from anki_tools.audio_naming import (
+    audio_field_value,
+    parse_audio_filenames,
+    strip_qualifier,
+)
 from anki_tools.immutable_words import (
     NEW_NOTE_TYPE_ID,
     NEW_NOTE_TYPE_NAME,
@@ -146,25 +151,25 @@ _DECK_HEADER_SCRIPT = """\
 _CARD1_QFMT = f"""<div id="deck-header"></div>
 {_DECK_HEADER_SCRIPT}
 <div id="part-of-speech">{{{{Part of Speech}}}}</div>
-{{{{Russian}}}}"""
+<div id="russian">{{{{Russian}}}}</div>"""
 
 _CARD1_AFMT = """{{FrontSide}}
 
 <hr id=answer>
 
-{{Translation}}
+<div id="translation">{{Translation}}</div>
 <div id="audio">{{Audio}}</div>
 {{Pronunciation}}"""
 
 _CARD2_QFMT = """<div id="audio">{{Audio}}</div>
-{{Translation}}"""
+<div id="translation">{{Translation}}</div>"""
 
 _CARD2_AFMT = """{{FrontSide}}
 
 <hr id=answer>
 
 <div id="part-of-speech">{{Part of Speech}}</div>
-{{Russian}}
+<div id="russian">{{Russian}}</div>
 <div id="additional-info">{{Additional Info}}</div>
 <script>
 addTitle("additional-info", "&#9432;");
@@ -1498,19 +1503,19 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
         assert len(only_note_type["tmpls"]) == 2
         assert [f["name"] for f in only_note_type["flds"]] == list(FIELD_NAMES)
 
-        # The three dual-class words: two notes each, same Russian word,
-        # different subdeck, told apart by the parenthetical qualifier --
-        # and both notes on that same single note type.
+        # The three dual-class words: two notes each, same bare headword in
+        # `Russian`, different subdeck, told apart by `Russian Distinction`
+        # -- and both notes on that same single note type.
         for word in ("как", "когда", "пока"):
-            note_ids = fresh_col.find_notes(f'"Russian:{word} (*)"')
+            note_ids = fresh_col.find_notes(f"Russian:{word}")
             assert len(note_ids) == 2, (
-                f"{word}: expected a (conjunction) and an (adverb) note, "
+                f"{word}: expected a conjunction and an adverb note, "
                 f"found {len(note_ids)}"
             )
-            assert {fresh_col.get_note(nid)["Russian"] for nid in note_ids} == {
-                f"{word} (conjunction)",
-                f"{word} (adverb)",
-            }
+            assert {fresh_col.get_note(nid)["Russian"] for nid in note_ids} == {word}
+            assert {
+                fresh_col.get_note(nid)["Russian Distinction"] for nid in note_ids
+            } == {"conjunction", "adverb"}
             assert {fresh_col.get_note(nid).mid for nid in note_ids} == {
                 only_note_type["id"]
             }
@@ -1641,7 +1646,7 @@ def _build_real_package_with_guids(rows, collection_snapshot_copy, tmp_path, out
     guids = {}
     for row in rows:
         note_ids = build_col.find_notes(
-            'deck:"%s" Russian:"%s"' % (row.deck, row.russian)
+            'deck:"%s" Russian:"%s"' % (row.deck, strip_qualifier(row.russian))
         )
         assert len(note_ids) == 1, (
             f"expected exactly one note for pos={row.pos!r} "
@@ -2679,7 +2684,8 @@ def test_e2e_every_imported_translation_exactly_matches_source_document(
     assert len(rows) == 233
 
     expected_by_key = {
-        f"{row.russian}||{subdeck_name(row.pos).rsplit('::', 1)[-1]}": row.english
+        f"{strip_qualifier(row.russian)}||"
+        f"{subdeck_name(row.pos).rsplit('::', 1)[-1]}": row.english
         for row in rows
     }
     assert len(expected_by_key) == 233  # no (russian, deck) key collided
@@ -2816,3 +2822,238 @@ def test_examples_field_add_block_is_idempotent_and_skips_sides_without_info():
     once = examples_field.add_examples_block(side)
     assert examples_field.add_examples_block(once) == once
     assert examples_field.add_examples_block("{{Russian}}") == "{{Russian}}"
+
+
+# ===========================================================================
+# Subphases 2.1-2.3: the distinction cues actually render
+# ===========================================================================
+
+IMMUTABLE_FAMILY = "Immutable"
+
+DISTINCTION_TEMPLATE_ORDS = [(IMMUTABLE_FAMILY, 0), (IMMUTABLE_FAMILY, 1)] + [
+    (sheet, card_index)
+    for sheet in mutable_words_plan.FIELD_NAMES
+    for card_index in (range(4) if sheet == "Verbs" else range(2))
+]
+
+_PARENTHESISED_FIELD = re.compile(r"\(\{\{([^{}#^/]+)\}\}\)")
+_HINT_DIV_TEXT = re.compile(
+    r'<div id="(' + "|".join(prompt_hint.HINT_IDS) + r')">([^<]*)</div>'
+)
+_WRAPPED_HINT = re.compile(r"\{\{#([^{}]+)\}\}\(\{\{\1\}\}\)\{\{/\1\}\}")
+
+# (pos, russian, english, info) -> the cue strings each one must produce,
+# keyed by the (headword, Russian Distinction) pair the note actually carries.
+# `о / об` is the user-reported word whose Case and English Distinction are
+# the same string; `вопреки` has a case and no English cue; `как
+# (conjunction)` has a Russian cue; `в` has none of the three.
+_CUE_ROWS = [
+    ("Prepositions", "о / об", "about", "Prepositional"),
+    ("Prepositions", "вопреки", "despite", "Dative"),
+    ("Conjunctions", "как (conjunction)", "as", ""),
+    ("Prepositions", "в", "in", ""),
+]
+_EXPECTED_CUES = {
+    ("о / об", ""): {"(Prepositional)"},
+    ("вопреки", ""): {"(Dative)"},
+    ("как", "conjunction"): {"(comparison)", "(conjunction)"},
+    ("в", ""): set(),
+}
+
+
+@pytest.fixture(scope="session")
+def distinction_templates(_synthetic_source_base, tmp_path_factory):
+    """(qfmt, afmt) per template ord for every note type that carries both
+    distinction fields: the Immutable clone plus all six Mutable sheets.
+    """
+    work = tmp_path_factory.mktemp("distinction-templates")
+    copy_path = os.path.join(str(work), "source.anki2")
+    shutil.copy2(_synthetic_source_base, copy_path)
+    build = Collection(os.path.join(str(work), "distinction-build.anki2"))
+    try:
+        source_col = Collection(copy_path)
+        try:
+            note_type = clone_note_type(source_col, build, NEW_NOTE_TYPE_NAME)
+        finally:
+            source_col.close()
+        templates = {
+            IMMUTABLE_FAMILY: {
+                index: (tmpl["qfmt"], tmpl["afmt"])
+                for index, tmpl in enumerate(note_type["tmpls"])
+            }
+        }
+    finally:
+        build.close()
+
+    for family, card_index in DISTINCTION_TEMPLATE_ORDS:
+        if family == IMMUTABLE_FAMILY:
+            continue
+        templates.setdefault(family, {})[card_index] = (
+            mutable_words_plan.build_template(family, card_index)
+        )
+    return templates
+
+
+def _rendered_sides(qfmt, afmt):
+    """Question text, then the answer as Anki assembles it: every afmt in
+    both families opens with `{{FrontSide}}`, which re-embeds the question
+    verbatim, so a cue on the prompt is on the answer too.
+    """
+    assert afmt.startswith("{{FrontSide}}")
+    return qfmt, qfmt + "\n" + afmt
+
+
+@pytest.mark.parametrize("family,card_index", DISTINCTION_TEMPLATE_ORDS)
+def test_every_distinction_notetype_cues_the_side_that_needs_it(
+    family, card_index, distinction_templates
+):
+    """The headword clause is asserted on the answer, the one side both
+    families show the headword on: a Mutable forward card's QUESTION shows
+    the headword with no Russian cue, which lives in `mutable_words_plan`,
+    outside this lane's file scope.
+    """
+    qfmt, afmt = distinction_templates[family][card_index]
+    question, answer = _rendered_sides(qfmt, afmt)
+
+    assert 'id="translation"' in answer, (family, card_index)
+    assert distinction.ENGLISH_FIELD in answer, (family, card_index)
+    assert 'id="russian"' in answer, (family, card_index)
+    assert distinction.RUSSIAN_FIELD in answer, (family, card_index)
+
+    if 'id="translation"' in question:
+        assert distinction.ENGLISH_FIELD in question, (family, card_index)
+
+    for side in (question, answer):
+        for field_name in _PARENTHESISED_FIELD.findall(side):
+            assert f"{{{{#{field_name}}}}}" in side, (family, card_index, field_name)
+
+
+def test_immutable_prompt_shows_the_english_cue_and_keeps_the_case_cue(cloned):
+    note_type, _ = cloned
+    prompt_sides = [
+        side for side in _template_sides(note_type) if 'id="translation"' in side
+    ]
+    assert len(prompt_sides) == 2
+    for side in prompt_sides:
+        assert prompt_hint.hint_div(distinction.ENGLISH_FIELD) in side
+        assert (
+            prompt_hint.hint_div(
+                case_field.CASE_FIELD,
+                prompt_hint.PROMPT_CASE_ID,
+                distinction.ENGLISH_FIELD,
+            )
+            in side
+        )
+
+
+def test_immutable_headword_side_shows_the_russian_cue(cloned):
+    note_type, _ = cloned
+    headword_sides = [
+        side for side in _template_sides(note_type) if 'id="russian"' in side
+    ]
+    assert len(headword_sides) == 2
+    for side in headword_sides:
+        assert (
+            prompt_hint.hint_div(distinction.RUSSIAN_FIELD, prompt_hint.RUSSIAN_HINT_ID)
+            in side
+        )
+
+
+def _rendered_hint_texts(build_col):
+    """Every hint div's rendered text, per (headword, Russian Distinction),
+    across both cards and both sides.
+
+    The pair is the key because `Russian` now holds the bare headword, so the
+    two senses of a dual-class word would otherwise overwrite each other.
+    """
+    texts = {}
+    for note_id in build_col.find_notes(""):
+        note = build_col.get_note(note_id)
+        found = texts.setdefault((note["Russian"], note["Russian Distinction"]), set())
+        for card in note.cards():
+            output = card.render_output()
+            for rendered in (output.question_text, output.answer_text):
+                found.update(text for _, text in _HINT_DIV_TEXT.findall(rendered))
+    return texts
+
+
+def test_empty_cue_renders_nothing_and_the_check_fails_without_the_wrapper(
+    cloned, build_col
+):
+    """Positive control for the `{{#Field}}` wrappers: an unpopulated cue
+    renders no stray parentheses, and the same assertion DOES fail once the
+    wrappers are stripped, so it cannot pass vacuously.
+    """
+    note_type, _ = cloned
+    rows = [
+        WordRow(pos=pos, rank=rank, russian=russian, english=english, info=info)
+        for rank, (pos, russian, english, info) in enumerate(_CUE_ROWS, start=1)
+    ]
+    build_deck_tree(build_col, rows, note_type)
+
+    texts = _rendered_hint_texts(build_col)
+    assert set(texts) == {
+        (strip_qualifier(russian), distinction.qualifier_of(russian))
+        for _, russian, _, _ in _CUE_ROWS
+    }
+    for key, expected in _EXPECTED_CUES.items():
+        assert "()" not in texts[key], key
+        assert expected <= texts[key], (key, texts[key])
+        assert texts[key] <= expected | {""}, (key, texts[key])
+
+    stripped = build_col.models.get(note_type["id"])
+    for template in stripped["tmpls"]:
+        for side in ("qfmt", "afmt"):
+            template[side] = _WRAPPED_HINT.sub(r"({{\1}})", template[side])
+    build_col.models.update_dict(stripped)
+
+    assert "()" in _rendered_hint_texts(build_col)[("в", "")]
+
+
+def test_real_source_clone_carries_every_distinction_cue(tmp_path):
+    """Real-collection proof (skipped if unavailable) that the cues land at
+    all: the synthetic fixture can only show the transform works against a
+    note type of the right shape, never that the user's own source note type
+    carries the `#translation` / `#russian` anchors the transform keys off.
+    A missing anchor makes `add_prompt_hint` a silent no-op, which is the
+    shape of the defect subphase 2.1 fixed.
+    """
+    real_path = get_anki_collection_path()
+    if not os.path.isfile(real_path):
+        pytest.skip("no real Anki collection on this machine")
+    mtime_before = os.path.getmtime(real_path)
+    copy_path = os.path.join(str(tmp_path), "real-source-snapshot.anki2")
+    shutil.copy2(real_path, copy_path)
+
+    build_col = Collection(os.path.join(str(tmp_path), "real-cue-build.anki2"))
+    try:
+        source_col = Collection(copy_path)
+        try:
+            note_type = clone_note_type(source_col, build_col, NEW_NOTE_TYPE_NAME)
+        finally:
+            source_col.close()
+    finally:
+        build_col.close()
+
+    assert os.path.getmtime(real_path) == mtime_before
+
+    english_hint = prompt_hint.hint_div(distinction.ENGLISH_FIELD)
+    case_hint = prompt_hint.hint_div(
+        case_field.CASE_FIELD, prompt_hint.PROMPT_CASE_ID, distinction.ENGLISH_FIELD
+    )
+    russian_hint = prompt_hint.hint_div(
+        distinction.RUSSIAN_FIELD, prompt_hint.RUSSIAN_HINT_ID
+    )
+
+    prompt_sides = 0
+    headword_sides = 0
+    for side in _template_sides(note_type):
+        if 'id="translation"' in side:
+            prompt_sides += 1
+            assert english_hint in side
+            assert case_hint in side
+        if 'id="russian"' in side:
+            headword_sides += 1
+            assert russian_hint in side
+    assert prompt_sides == 2
+    assert headword_sides == 2

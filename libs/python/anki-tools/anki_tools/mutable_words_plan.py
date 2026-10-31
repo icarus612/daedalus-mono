@@ -13,7 +13,11 @@ from typing import ClassVar
 
 from anki_tools import card_audio, distinction, prompt_hint
 from anki_tools.anki_identity import guid_for_row, notetype_id_for_name
-from anki_tools.audio_naming import audio_field_value, build_filename
+from anki_tools.audio_naming import (
+    audio_field_value,
+    build_filename,
+    strip_qualifier,
+)
 from anki_tools.examples_field import EXAMPLES_FIELD
 
 DECK_ROOT = "Languages::Russian::3. Mutable Words"
@@ -220,7 +224,7 @@ class NounRow:
     def fields(self) -> list[str]:
         names = audio_names(self.russian)
         return [
-            self.russian,
+            headword_text(self.russian),
             self.translation,
             self.stress,
             self.gender,
@@ -281,8 +285,8 @@ class VerbRow:
         imperfective_names = audio_names(self.imperfective)
         perfective_names = audio_names(self.perfective)
         return [
-            self.imperfective,
-            self.perfective,
+            headword_text(self.imperfective),
+            headword_text(self.perfective),
             self.translation,
             self.stress,
             self.conjugation,
@@ -334,7 +338,7 @@ class AdjectiveRow:
     def fields(self) -> list[str]:
         names = audio_names(self.russian_m)
         return [
-            self.russian_m,
+            headword_text(self.russian_m),
             self.translation,
             self.stress,
             self.feminine,
@@ -382,7 +386,7 @@ class AdverbRow:
     def fields(self) -> list[str]:
         names = audio_names(self.adverb)
         return [
-            self.adverb,
+            headword_text(self.adverb),
             self.translation,
             self.stress,
             self.from_adjective,
@@ -426,7 +430,7 @@ class PronounRow:
     def fields(self) -> list[str]:
         names = audio_names(self.russian)
         return [
-            self.russian,
+            headword_text(self.russian),
             self.translation,
             self.stress,
             self.pronoun_type,
@@ -471,7 +475,7 @@ class NumeralRow:
     def fields(self) -> list[str]:
         names = audio_names(self.russian)
         return [
-            self.russian,
+            headword_text(self.russian),
             self.translation,
             self.stress,
             self.numeral_type,
@@ -513,6 +517,18 @@ def audio_names(base_word: str) -> list[str]:
     if not base_word or base_word.strip() == "—":
         return []
     return [build_filename(base_word, slot) for slot in VOICE_SLOTS]
+
+
+def headword_text(stored: str) -> str:
+    """The headword as a note stores it: bare, with the editorial qualifier
+    carried by `Russian Distinction` instead of printed twice.
+
+    Deliberately decoupled from `base_words`, which keeps the QUALIFIED text
+    because `guid_for_row` hashes it -- stripping it there would re-GUID
+    `первый (adjective)` and its four siblings, and the next import would
+    insert duplicates instead of updating the user's scheduling.
+    """
+    return strip_qualifier(stored)
 
 
 def parse_nouns(tsv_path: str) -> list[NounRow]:
@@ -769,6 +785,25 @@ def _slug_for_field_name(field_name: str) -> str:
     return slug.strip("-")
 
 
+# `#russian-distinction` is the question side's prompt cue, and `{{FrontSide}}`
+# puts that copy first, so `addTitle`'s getElementById would title it instead
+# of this row.
+_DETAIL_ID_OVERRIDES: dict[str, tuple[str, str]] = {
+    "Additional Info": ("additional-info", "&#9432;"),
+    distinction.RUSSIAN_FIELD: (
+        "detail-russian-distinction",
+        distinction.RUSSIAN_FIELD,
+    ),
+}
+
+
+def _detail_id_and_title(field_name: str) -> tuple[str, str]:
+    """The (element id, title) a detail row uses for `field_name`."""
+    if field_name in _DETAIL_ID_OVERRIDES:
+        return _DETAIL_ID_OVERRIDES[field_name]
+    return _slug_for_field_name(field_name), field_name
+
+
 def _detail_fields(sheet: str, primary_field: str) -> list[str]:
     """`FIELD_NAMES[sheet]` entries that become titled detail sections, in
     field order -- everything but the primary word, its translation, Stress
@@ -807,10 +842,7 @@ def _detail_block(
     divs = []
     calls = [f'addTitle("{slug}", "{title}");' for slug, title in extra_titles]
     for field_name in _detail_fields(sheet, primary_field):
-        if field_name == "Additional Info":
-            slug, title = "additional-info", "&#9432;"
-        else:
-            slug, title = _slug_for_field_name(field_name), field_name
+        slug, title = _detail_id_and_title(field_name)
         divs.append(f'<div id="{slug}">{{{{{field_name}}}}}</div>')
         calls.append(f'addTitle("{slug}", "{title}");')
     script = "\n".join(["<script>", _ADD_TITLE_FUNCTION, *calls, "</script>"])
@@ -845,7 +877,7 @@ def _all_detail_slugs() -> list[str]:
             for field_name in _detail_fields(sheet, primary_field):
                 if field_name in ("Additional Info", EXAMPLES_FIELD):
                     continue
-                slug = _slug_for_field_name(field_name)
+                slug = _detail_id_and_title(field_name)[0]
                 if slug not in seen:
                     seen.add(slug)
                     slugs.append(slug)
@@ -971,6 +1003,21 @@ def _translation_div(sheet: str, primary_field: str) -> str:
     )
 
 
+def _add_russian_cue(side_html: str) -> str:
+    """The `Russian Distinction` cue under the headword, empty-safe.
+
+    Mirrors `immutable_words.clone_note_type`'s own call. A question that
+    shows the gloss rather than the word has no `#russian` div and is
+    returned unchanged.
+    """
+    return prompt_hint.add_prompt_hint(
+        side_html,
+        distinction.RUSSIAN_FIELD,
+        prompt_hint.RUSSIAN_HINT_ID,
+        prompt_hint.RUSSIAN_ANCHOR,
+    )
+
+
 def _wrap(element_id: str, *parts: str, attrs: str = "") -> str:
     open_tag = f'<div id="{element_id}"{" " + attrs if attrs else ""}>'
     # Empty parts are dropped rather than emitted as blank lines: a sheet
@@ -1036,4 +1083,4 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
         back = _wrap("back", audio_html, russian_div, aspect_div, detail_divs)
         afmt = "\n".join(["{{FrontSide}}", back, detail_script])
 
-    return qfmt, afmt
+    return _add_russian_cue(qfmt), afmt

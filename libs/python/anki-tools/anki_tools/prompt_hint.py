@@ -1,15 +1,18 @@
-"""The grammatical hint shown beside an English prompt on a recall card.
+"""The grammatical hint shown beside a word on a card.
 
 A recall card asks for the Russian word from its English gloss, and 143
 English senses in these decks are produced by two or more different Russian
 words -- "about" is both `о / об` and `насчёт`, "which" is both `какой` and
-`который`. With the gloss alone there is nothing to choose by.
+`который`. With the gloss alone there is nothing to choose by. The mirror
+problem sits on the other side: one spelling, two parts of speech -- `как`
+is both a conjunction and an adverb -- so the headword alone does not say
+which card is being asked for either.
 
-What separates them is already stored, in a real field, already populated:
-`Case` on a preposition (Prepositional vs Genitive), `Pronoun Type` on a
-pronoun (interrogative vs relative), `Case / Preposition` on a verb. Every
-one of those fields rendered only on the ANSWER side, where the choice has
-already been made. This module puts it on the question side instead.
+What separates them is already stored, in real fields, already populated:
+`English Distinction` and `Russian Distinction` on both note-type families,
+`Case` on a preposition (Prepositional vs Genitive). Every one of those
+fields rendered only where the choice had already been made. This module
+puts each one beside the word it disambiguates.
 
 Nothing is written into the gloss text. The hint is the field, wrapped by
 Anki's own `{{#Field}}` conditional so an empty field renders nothing at
@@ -23,11 +26,20 @@ Pure text -- no Anki imports.
 import re
 
 PROMPT_HINT_ID = "prompt-hint"
+PROMPT_CASE_ID = "prompt-case"
+RUSSIAN_HINT_ID = "russian-distinction"
 
-# Matches `.qualifier`'s grey and `#case`'s sizing, so the hint reads as
-# secondary to the prompt it sits under rather than as part of the answer.
+TRANSLATION_ANCHOR = "translation"
+RUSSIAN_ANCHOR = "russian"
+
+HINT_IDS = (PROMPT_HINT_ID, PROMPT_CASE_ID, RUSSIAN_HINT_ID)
+
+# Matches `.qualifier`'s grey and `#case`'s sizing, so a hint reads as
+# secondary to the word it sits under rather than as part of the answer.
+# One rule for every hint id, appended to BOTH families' CSS at the same
+# point, so the two trees keep identical base rules.
 PROMPT_HINT_CSS = (
-    "#prompt-hint {\n"
+    ", ".join(f"#{hint_id}" for hint_id in HINT_IDS) + " {\n"
     "\ttext-align: center;\n"
     "\tfont-size: 1.2rem;\n"
     "\tcolor: #7f7f7f;\n"
@@ -35,36 +47,70 @@ PROMPT_HINT_CSS = (
     "}"
 )
 
-_TRANSLATION_DIV = re.compile(
-    r'(<div[^>]*\bid=["\']translation["\'][^>]*>.*?</div>)', re.S
-)
+
+def _anchor_pattern(anchor_id: str) -> re.Pattern[str]:
+    return re.compile(
+        rf'(<div[^>]*\bid=["\']{re.escape(anchor_id)}["\'][^>]*>.*?</div>)', re.S
+    )
 
 
-def hint_div(field_name: str) -> str:
+# The pattern demands the closing quote right after the anchor name, so an
+# already-inserted `id="russian-distinction"` is never read as `#russian`.
+_ANCHORS = {
+    anchor: _anchor_pattern(anchor) for anchor in (TRANSLATION_ANCHOR, RUSSIAN_ANCHOR)
+}
+
+
+def hint_div(
+    field_name: str,
+    element_id: str = PROMPT_HINT_ID,
+    unless_field: str = "",
+) -> str:
     """The hint element for `field_name`, empty-safe.
 
     `{{#Field}}...{{/Field}}` is Anki's own conditional: the parentheses
     exist only when the field does, so a preposition with no recorded case
     shows nothing instead of "()".
+
+    `unless_field` wraps that in Anki's negated conditional `{{^Other}}`, so
+    this hint yields to a better one on the same prompt rather than repeating
+    it. Of the 28 Immutable rows carrying both `Case` and `English
+    Distinction`, 13 hold the IDENTICAL string (`о / об` -> "Prepositional")
+    and 12 more open the English cue with the case ("Genitive; out of"), so
+    two unconditional divs would print the cue twice on exactly the words it
+    was added for. The governed case keeps its own labelled answer row either
+    way -- see `case_field.add_case_row`.
     """
-    return (
-        f'<div id="{PROMPT_HINT_ID}">'
-        f"{{{{#{field_name}}}}}({{{{{field_name}}}}}){{{{/{field_name}}}}}"
-        "</div>"
-    )
+    body = f"{{{{#{field_name}}}}}({{{{{field_name}}}}}){{{{/{field_name}}}}}"
+    if unless_field:
+        body = f"{{{{^{unless_field}}}}}{body}{{{{/{unless_field}}}}}"
+    return f'<div id="{element_id}">{body}</div>'
 
 
-def add_prompt_hint(template_html: str, field_name: str) -> str:
-    """Insert the hint straight after the `#translation` div.
+def add_prompt_hint(
+    template_html: str,
+    field_name: str,
+    element_id: str = PROMPT_HINT_ID,
+    anchor_id: str = TRANSLATION_ANCHOR,
+    unless_field: str = "",
+) -> str:
+    """Insert the hint straight after the `#<anchor_id>` div.
 
-    Returns the template unchanged when it shows no translation (a listening
-    card's question, or any answer side) or already carries the hint, so
-    applying this to every side of every template is safe. Idempotent.
+    Returns the template unchanged when that div is absent -- a listening
+    card's question shows no translation, a recall card's question shows no
+    headword -- or when `element_id` is already present, so applying this to
+    every side of every template is safe. Idempotent.
+
+    Two calls sharing one anchor stack in reverse call order: each lands
+    immediately after the anchor and pushes the earlier one down.
     """
-    if f'id="{PROMPT_HINT_ID}"' in template_html:
+    if f'id="{element_id}"' in template_html:
         return template_html
-    if not _TRANSLATION_DIV.search(template_html):
+    anchor = _ANCHORS.get(anchor_id) or _anchor_pattern(anchor_id)
+    if not anchor.search(template_html):
         return template_html
-    return _TRANSLATION_DIV.sub(
-        lambda m: m.group(1) + "\n" + hint_div(field_name), template_html, count=1
+    return anchor.sub(
+        lambda m: m.group(1) + "\n" + hint_div(field_name, element_id, unless_field),
+        template_html,
+        count=1,
     )

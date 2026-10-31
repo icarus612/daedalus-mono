@@ -15,12 +15,19 @@ import pytest
 from anki.collection import Collection
 from anki.utils import to_json_bytes
 
-from anki_tools import card_audio, examples_field, mutable_words_plan, prompt_hint
+from anki_tools import (
+    card_audio,
+    distinction,
+    examples_field,
+    mutable_words_plan,
+    prompt_hint,
+)
 from anki_tools.audio_naming import (
     audio_field_value,
     build_filename,
     get_anki_collection_path,
     sanitize_word_slug,
+    strip_qualifier,
 )
 from anki_tools.mutable_words import SOURCE_NOTETYPE_ID
 
@@ -687,3 +694,170 @@ def test_non_verb_sheets_keep_a_bare_translation():
             qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
             assert '<div id="translation">{{Translation}}</div>' in qfmt + afmt, sheet
             assert 'class="aspect' not in qfmt + afmt, sheet
+
+
+_HEADWORD_SIDES = [
+    (sheet, card_index)
+    for sheet in mutable_words_plan.FIELD_NAMES
+    for card_index in range(SHEET_CARD_COUNTS[sheet])
+]
+
+RUSSIAN_CUE = prompt_hint.hint_div(
+    distinction.RUSSIAN_FIELD, prompt_hint.RUSSIAN_HINT_ID
+)
+
+
+@pytest.mark.parametrize("sheet,card_index", _HEADWORD_SIDES)
+def test_a_question_showing_the_headword_cues_it(sheet, card_index):
+    qfmt, _afmt = mutable_words_plan.build_template(sheet, card_index)
+    assert ('id="russian"' in qfmt) == (RUSSIAN_CUE in qfmt), (sheet, card_index)
+    if RUSSIAN_CUE not in qfmt:
+        return
+    assert re.search(
+        r'<div id="russian">\{\{[^{}]+\}\}</div>\n' + re.escape(RUSSIAN_CUE), qfmt
+    ), (sheet, card_index)
+    field = distinction.RUSSIAN_FIELD
+    assert f"{{{{#{field}}}}}" in qfmt
+    assert f"{{{{/{field}}}}}" in qfmt
+
+
+@pytest.mark.parametrize("sheet", list(mutable_words_plan.FIELD_NAMES))
+def test_every_sheet_cues_the_headword_on_at_least_one_question(sheet):
+    cued = [
+        card_index
+        for card_index in range(SHEET_CARD_COUNTS[sheet])
+        if RUSSIAN_CUE in mutable_words_plan.build_template(sheet, card_index)[0]
+    ]
+    assert cued == [
+        card_index
+        for card_index in range(SHEET_CARD_COUNTS[sheet])
+        if 'id="russian"' in mutable_words_plan.build_template(sheet, card_index)[0]
+    ]
+    assert cued
+
+
+@pytest.mark.parametrize("sheet,card_index", _HEADWORD_SIDES)
+def test_the_answer_keeps_a_labelled_russian_distinction_row(sheet, card_index):
+    _qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
+    field = distinction.RUSSIAN_FIELD
+    row = re.search(rf'<div id="([\w-]+)">\{{\{{{re.escape(field)}\}}\}}</div>', afmt)
+    assert row, (sheet, card_index)
+    assert f'addTitle("{row.group(1)}", "{field}");' in afmt, (sheet, card_index)
+
+
+@pytest.mark.parametrize("sheet,card_index", _HEADWORD_SIDES)
+def test_no_duplicate_ids_once_frontside_expands(sheet, card_index):
+    qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
+    assert afmt.startswith("{{FrontSide}}")
+    rendered = qfmt + "\n" + afmt[len("{{FrontSide}}") :]
+    ids = re.findall(r'id="([^"]*)"', rendered)
+    assert len(ids) == len(set(ids)), (sheet, card_index, ids)
+
+
+# Pinned as literals: `guid_for_row` hashes the QUALIFIED text, so a change
+# here means every one of these notes re-imports as a duplicate instead of
+# updating, losing its scheduling.
+_QUALIFIED_HEADWORD_GUIDS = {
+    ("Nouns", "правда (noun)"): "OMBx{Do|O@",
+    ("Adjectives", "первый (adjective)"): "fX3LIC8l!>",
+    ("Adverbs", "просто (adverb)"): "v*^Y^8o93j",
+    ("Adverbs", "согласно (adverb)"): "tL.M_0|Uet",
+    ("Numerals", "первый (numeral)"): "B.OZ`5x]dH",
+}
+
+
+def test_qualified_headwords_keep_their_guids_and_drop_the_inline_qualifier(
+    nouns, verbs, adjectives, adverbs, pronouns, numerals
+):
+    by_sheet = {
+        "Nouns": nouns,
+        "Verbs": verbs,
+        "Adjectives": adjectives,
+        "Adverbs": adverbs,
+        "Pronouns": pronouns,
+        "Numerals": numerals,
+    }
+    found = {}
+    for sheet, rows in by_sheet.items():
+        field_names = mutable_words_plan.FIELD_NAMES[sheet]
+        for row in rows:
+            fields = dict(zip(field_names, row.fields()))
+            for stored in row.base_words:
+                if strip_qualifier(stored) == stored:
+                    continue
+                found[(sheet, stored)] = row.guid
+                assert fields[field_names[0]] == strip_qualifier(stored)
+                assert "(" not in fields[field_names[0]]
+                assert fields[distinction.RUSSIAN_FIELD] == distinction.qualifier_of(
+                    stored
+                )
+    assert found == _QUALIFIED_HEADWORD_GUIDS
+
+
+def test_audio_filenames_ignore_the_qualifier(adjectives, numerals):
+    for rows, sheet, attr in (
+        (adjectives, "Adjectives", "russian_m"),
+        (numerals, "Numerals", "russian"),
+    ):
+        audio_idx = mutable_words_plan.FIELD_NAMES[sheet].index("Audio")
+        row = next(r for r in rows if getattr(r, attr).startswith("первый ("))
+        assert row.fields()[audio_idx] == _audio_field_for(getattr(row, attr))
+        assert "(" not in row.fields()[audio_idx]
+        assert "первый_f1.mp3" in row.fields()[audio_idx]
+
+
+_RENDERED_CUE = re.compile(
+    rf'<div id="{prompt_hint.RUSSIAN_HINT_ID}">(.*?)</div>', re.S
+)
+_WRAPPED_CUE = re.compile(
+    rf"\{{\{{#({re.escape(distinction.RUSSIAN_FIELD)})\}}\}}"
+    r"\(\{\{\1\}\}\)"
+    r"\{\{/\1\}\}"
+)
+
+
+def _rendered_cues(col):
+    cues = {}
+    for note_id in col.find_notes(""):
+        note = col.get_note(note_id)
+        found = cues.setdefault(note["Russian"], set())
+        for card in note.cards():
+            output = card.render_output()
+            for text in (output.question_text, output.answer_text):
+                found.update(_RENDERED_CUE.findall(text))
+    return cues
+
+
+def test_an_empty_cue_renders_nothing_and_the_check_fails_without_the_wrapper(tmp_path):
+    """Positive control for `{{#Russian Distinction}}`: an unpopulated cue
+    renders no stray parentheses, and the same assertion DOES fail once the
+    wrapper is stripped, so it cannot pass vacuously.
+    """
+    col = Collection(str(tmp_path / "cue.anki2"))
+    try:
+        _register_note_type(col, "Nouns")
+        note_type = col.models.by_name(mutable_words_plan.NOTE_TYPE_NAMES["Nouns"])
+        for russian, cue in (("правда", "noun"), ("дом", "")):
+            note = col.new_note(note_type)
+            note["Russian"] = russian
+            note["Translation"] = "truth"
+            note[distinction.RUSSIAN_FIELD] = cue
+            col.add_note(note, col.decks.id("Cue"))
+
+        cues = _rendered_cues(col)
+        assert cues["правда"] == {"(noun)"}
+        assert "()" not in cues["дом"]
+        assert cues["дом"] == {""}
+
+        stripped = col.models.get(note_type["id"])
+        substitutions = 0
+        for template in stripped["tmpls"]:
+            for side in ("qfmt", "afmt"):
+                template[side], count = _WRAPPED_CUE.subn(r"({{\1}})", template[side])
+                substitutions += count
+        assert substitutions == 1
+        col.models.update_dict(stripped)
+
+        assert "()" in _rendered_cues(col)["дом"]
+    finally:
+        col.close()

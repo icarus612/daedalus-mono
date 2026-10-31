@@ -41,8 +41,62 @@ def test_is_idempotent():
     assert prompt_hint.add_prompt_hint(once, FIELD) == once
 
 
-def test_css_styles_the_element_the_hint_emits():
-    assert f"#{prompt_hint.PROMPT_HINT_ID} {{" in prompt_hint.PROMPT_HINT_CSS
+def test_css_styles_every_element_the_hint_emits():
+    for hint_id in prompt_hint.HINT_IDS:
+        assert f"#{hint_id}" in prompt_hint.PROMPT_HINT_CSS
+    assert prompt_hint.PROMPT_HINT_CSS.rstrip().endswith("}")
+
+
+RUSSIAN_DIV = '<div id="russian">{{Russian}}</div>'
+
+
+def test_element_id_names_the_div_the_hint_emits():
+    out = prompt_hint.hint_div(distinction.RUSSIAN_FIELD, prompt_hint.RUSSIAN_HINT_ID)
+    assert out.startswith(f'<div id="{prompt_hint.RUSSIAN_HINT_ID}">')
+
+
+def test_hint_goes_straight_after_the_headword_on_the_russian_anchor():
+    out = prompt_hint.add_prompt_hint(
+        RUSSIAN_DIV,
+        distinction.RUSSIAN_FIELD,
+        prompt_hint.RUSSIAN_HINT_ID,
+        prompt_hint.RUSSIAN_ANCHOR,
+    )
+    assert out == RUSSIAN_DIV + "\n" + prompt_hint.hint_div(
+        distinction.RUSSIAN_FIELD, prompt_hint.RUSSIAN_HINT_ID
+    )
+
+
+def test_an_inserted_russian_hint_is_never_its_own_anchor():
+    once = prompt_hint.add_prompt_hint(
+        RUSSIAN_DIV,
+        distinction.RUSSIAN_FIELD,
+        prompt_hint.RUSSIAN_HINT_ID,
+        prompt_hint.RUSSIAN_ANCHOR,
+    )
+    bare = prompt_hint.hint_div(distinction.RUSSIAN_FIELD, prompt_hint.RUSSIAN_HINT_ID)
+    assert (
+        prompt_hint.add_prompt_hint(
+            bare,
+            distinction.RUSSIAN_FIELD,
+            "second-hint",
+            prompt_hint.RUSSIAN_ANCHOR,
+        )
+        == bare
+    )
+    assert once.count(prompt_hint.RUSSIAN_HINT_ID) == 1
+
+
+def test_two_hints_on_one_anchor_stack_in_reverse_call_order():
+    out = prompt_hint.add_prompt_hint(PROMPT_SIDE, "Case", prompt_hint.PROMPT_CASE_ID)
+    out = prompt_hint.add_prompt_hint(out, FIELD)
+    assert (
+        TRANSLATION_DIV
+        + "\n"
+        + prompt_hint.hint_div(FIELD)
+        + "\n"
+        + prompt_hint.hint_div("Case", prompt_hint.PROMPT_CASE_ID)
+    ) in out
 
 
 def _card_indices(sheet):

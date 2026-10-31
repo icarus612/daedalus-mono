@@ -25,7 +25,12 @@ from dataclasses import dataclass
 
 from anki_tools import card_audio, case_field, distinction
 from anki_tools.anki_identity import guid_for_row
-from anki_tools.audio_naming import SLOTS, audio_field_value, build_filename
+from anki_tools.audio_naming import (
+    SLOTS,
+    audio_field_value,
+    build_filename,
+    strip_qualifier,
+)
 
 # Deck the four part-of-speech subdecks hang off. The `2. ` prefix is the user's
 # choice; they renumber the sibling Russian decks themselves.
@@ -45,11 +50,8 @@ SUBDECK_LEAVES = {
 # Field order of the note type, cloned from the source note type. `Part of
 # Speech` is still populated (it is useful in the browser's search) but is no
 # longer rendered on either side of the card - the deck name carries it instead.
-# The three words that are genuinely two parts of speech at once -- `как`,
-# `когда`, `пока`, each of which has a Conjunctions note AND a Base Adverbs
-# note -- instead carry a parenthetical qualifier in their `Russian` text
-# ("как (conjunction)"), so the two cards are told apart on sight. See
-# `audio_naming.strip_qualifier` for why that suffix never reaches a filename.
+# Words that are two parts of speech at once (`как`, `когда`, `пока`, ...) are
+# told apart by `Russian Distinction`; `Russian` itself holds the bare word.
 FIELD_NAMES = (
     "Russian",
     "Translation",
@@ -245,8 +247,9 @@ class WordRow:
         counts and its autoplay ignores.
         """
         audio_names = [build_filename(self.russian, slot) for slot in SLOTS]
+        # `guid` still hashes the qualified text, so stripping here keeps GUIDs stable.
         return [
-            self.russian,
+            strip_qualifier(self.russian),
             self.english,
             "",
             POS_FIELD_VALUE[self.pos],

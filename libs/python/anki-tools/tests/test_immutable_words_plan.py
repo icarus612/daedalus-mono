@@ -1554,3 +1554,114 @@ def test_parse_word_list_reads_optional_fifth_examples_cell():
     )
     rows = [row for row in parse_word_list(text) if row.pos == "Prepositions"]
     assert [row.examples for row in rows] == ["в доме", ""]
+
+
+# ---------------------------------------------------------------------------
+# Qualifier supersession: `Russian` holds the bare word, `Russian Distinction`
+# holds the qualifier, and the GUID keeps hashing the QUALIFIED source text.
+# ---------------------------------------------------------------------------
+
+# (pos, source text, bare headword, qualifier, GUID). The GUIDs are hard-coded
+# literals, not recomputed: these eleven notes already exist in the collection
+# with review history, and feeding stripped text to `guid_for_row` would
+# re-identify every one of them. A refactor that does so fails here.
+QUALIFIED_ROWS = (
+    (
+        "Prepositions",
+        "согласно (preposition)",
+        "согласно",
+        "preposition",
+        "sOIrDtHy,;",
+    ),
+    ("Conjunctions", "как (conjunction)", "как", "conjunction", "rMK!oN+,fY"),
+    ("Conjunctions", "когда (conjunction)", "когда", "conjunction", "j^<Rt&~%@c"),
+    ("Conjunctions", "пока (conjunction)", "пока", "conjunction", "dpu^rGACeg"),
+    ("Particles", "просто (particle)", "просто", "particle", "e?fXscN7<r"),
+    ("Particles", "так (particle)", "так", "particle", "zrbEss%Xjc"),
+    ("Base Adverbs", "как (adverb)", "как", "adverb", "B!s$bTdC60"),
+    ("Base Adverbs", "когда (adverb)", "когда", "adverb", "PK!!ts-EGZ"),
+    ("Base Adverbs", "пока (adverb)", "пока", "adverb", "d/(bEQ_U/Y"),
+    ("Base Adverbs", "так (adverb)", "так", "adverb", "f)^X@TkXxV"),
+    ("Base Adverbs", "правда (adverb)", "правда", "adverb", "kaU+d{l/fy"),
+)
+
+RUSSIAN_INDEX = 0
+RUSSIAN_DISTINCTION_INDEX = 8
+
+
+@pytest.fixture
+def real_rows_by_source_text(real_rows):
+    return {(row.pos, row.russian): row for row in real_rows}
+
+
+@pytest.mark.parametrize(
+    ("pos", "source_text", "bare", "qualifier", "guid"), QUALIFIED_ROWS
+)
+def test_qualifier_lives_only_in_russian_distinction(
+    real_rows_by_source_text, pos, source_text, bare, qualifier, guid
+):
+    row = real_rows_by_source_text[(pos, source_text)]
+
+    fields = row.fields()
+    assert fields[RUSSIAN_INDEX] == bare
+    assert "(" not in fields[RUSSIAN_INDEX]
+    assert ")" not in fields[RUSSIAN_INDEX]
+    assert fields[RUSSIAN_DISTINCTION_INDEX] == qualifier
+
+
+@pytest.mark.parametrize(
+    ("pos", "source_text", "bare", "qualifier", "guid"), QUALIFIED_ROWS
+)
+def test_stripping_the_russian_field_does_not_move_the_guid(
+    real_rows_by_source_text, pos, source_text, bare, qualifier, guid
+):
+    row = real_rows_by_source_text[(pos, source_text)]
+
+    assert row.guid == guid
+    assert row.guid == guid_for_row(source_text, pos)
+    assert row.guid != guid_for_row(bare, pos)
+
+
+def test_every_source_row_carrying_a_qualifier_is_in_the_table(real_rows):
+    qualified = {
+        (row.pos, row.russian)
+        for row in real_rows
+        if row.fields()[8] or "(" in row.russian
+    }
+    assert qualified == {(pos, text) for pos, text, _, _, _ in QUALIFIED_ROWS}
+
+
+def test_no_russian_field_in_the_real_document_carries_a_parenthetical(real_rows):
+    assert len(real_rows) == 233
+    assert len(QUALIFIED_ROWS) == 11
+    offenders = [row.russian for row in real_rows if "(" in row.fields()[RUSSIAN_INDEX]]
+    assert offenders == []
+
+
+def test_unqualified_headword_is_untouched(real_rows_by_source_text):
+    row = real_rows_by_source_text[("Prepositions", "из")]
+
+    fields = row.fields()
+    assert fields[RUSSIAN_INDEX] == "из"
+    assert fields[RUSSIAN_DISTINCTION_INDEX] == ""
+    assert row.guid == guid_for_row("из", "Prepositions")
+
+
+def test_word_row_decouples_russian_field_from_guid_input():
+    row = WordRow(
+        pos="Conjunctions", rank=1, russian="как (conjunction)", english="as, like"
+    )
+
+    assert row.fields()[RUSSIAN_INDEX] == "как"
+    assert row.fields()[RUSSIAN_DISTINCTION_INDEX] == "conjunction"
+    assert row.guid == guid_for_row("как (conjunction)", "Conjunctions")
+
+
+def test_audio_filenames_ignore_the_qualifier(real_rows_by_source_text):
+    conjunction = real_rows_by_source_text[("Conjunctions", "как (conjunction)")]
+    adverb = real_rows_by_source_text[("Base Adverbs", "как (adverb)")]
+    audio_index = FIELD_NAMES.index("Audio")
+
+    names = parse_audio_filenames(conjunction.fields()[audio_index])
+    assert names == [f"как_{slot}.mp3" for slot in SLOTS]
+    assert names == parse_audio_filenames(adverb.fields()[audio_index])

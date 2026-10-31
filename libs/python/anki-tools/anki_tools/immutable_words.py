@@ -95,16 +95,28 @@ def clone_note_type(
 
     for template in cloned["tmpls"]:
         for side in ("qfmt", "afmt"):
-            template[side] = word_qualifier.add_qualifier_script(
-                prompt_hint.add_prompt_hint(
-                    case_field.add_case_row(
-                        examples_field.add_examples_block(
-                            rewrite_audio_playback(strip_part_of_speech(template[side]))
-                        )
-                    ),
-                    case_field.CASE_FIELD,
+            html = case_field.add_case_row(
+                examples_field.add_examples_block(
+                    rewrite_audio_playback(strip_part_of_speech(template[side]))
                 )
             )
+            # Case goes in first so the gloss-collision cue, added second,
+            # lands directly under the gloss it disambiguates, and yields to
+            # it when both are populated (see `prompt_hint.hint_div`).
+            html = prompt_hint.add_prompt_hint(
+                html,
+                case_field.CASE_FIELD,
+                prompt_hint.PROMPT_CASE_ID,
+                unless_field=distinction.ENGLISH_FIELD,
+            )
+            html = prompt_hint.add_prompt_hint(html, distinction.ENGLISH_FIELD)
+            html = prompt_hint.add_prompt_hint(
+                html,
+                distinction.RUSSIAN_FIELD,
+                prompt_hint.RUSSIAN_HINT_ID,
+                prompt_hint.RUSSIAN_ANCHOR,
+            )
+            template[side] = word_qualifier.add_qualifier_script(html)
 
     cloned["css"] = (
         cloned["css"]
