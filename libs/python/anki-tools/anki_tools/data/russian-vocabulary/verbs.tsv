@@ -30,7 +30,7 @@
 29	начинать	начать	to begin / to start	начина́ть / нача́ть									New
 30	заканчивать	закончить	to finish / to end	зака́нчивать / зако́нчить									New
 31	открывать	открыть	to open	открыва́ть / откры́ть									New
-32	закрывать	закрыть	close	закрыва́ть / закры́ть									New
+32	закрывать	закрыть	(to) close	закрыва́ть / закры́ть									New
 33	забывать	забыть	forget	забыва́ть / забы́ть									New
 34	помогать	помочь	to help	помога́ть / помо́чь						+ dative (помога́ть кому́)			New
 35	играть	сыграть	play	игра́ть / сыгра́ть									New
@@ -60,7 +60,7 @@
 59	посылать	послать	send	посыла́ть / посла́ть									New
 60	менять	поменять	change / exchange	меня́ть / поменя́ть									New
 61	выбирать	выбрать	choose	выбира́ть / вы́брать									New
-62	готовить	приготовить	prepare / cook (prepare food)	гото́вить / пригото́вить									New
+62	готовить	приготовить	prepare / cook&nbsp;	гото́вить / пригото́вить									New
 63	учить	выучить	learn (memorize) / teach	учи́ть / вы́учить							учить что = learn/memorize; учить кого чему = teach		New
 64	учиться	научиться	study / learn how to	учи́ться / научи́ться						+ dative (a subject), or где for a school			New
 65	строить	построить	build	стро́ить / постро́ить									New
@@ -195,7 +195,7 @@
 194	удаваться	удаться	to succeed / turn out well / manage	удава́ться / уда́ться	irregular (д-verb; impersonal -- 3sg only: уда́стся/удало́сь)	—	—	—	—	+ dative (experiencer): мне удало́сь	impersonal, like прийти́сь; present is удаётся; no personal m/f/pl forms exist		New
 195	хотеть	захотеть	to want	хоте́ть / захоте́ть	irregular (mixed: хочу́/хо́чешь/хотя́т)	хочу́	хо́чешь	хотя́т	хоте́л / хоте́ла	+ genitive (partitive) or accusative; + infinitive	mixed conjugation: singular forms use 1st-conj. endings, plural uses 2nd-conj. (хотя́т, not "хочут")		New
 196	разговаривать	поговорить	talk / have a conversation (converse)	разгова́ривать / поговори́ть	1st (-ешь)	разгова́риваю	разгова́риваешь	разгова́ривают	разгова́ривал / разгова́ривала	с + instrumental	разгова́ривать is about the activity of talking; поговори́ть = to have one (finished) talk		New
-197	уметь	суметь	be able to / know how to (a learned skill)	уме́ть / суме́ть	1st (-ешь)	уме́ю	уме́ешь	уме́ют	уме́л / уме́ла	+ infinitive	a learned skill, unlike мочь = to be physically able		New
+197	уметь	суметь	can / be able to / know how to (a learned skill)	уме́ть / суме́ть	1st (-ешь)	уме́ю	уме́ешь	уме́ют	уме́л / уме́ла	+ infinitive	a learned skill, unlike мочь = to be physically able		New
 198	ненавидеть	возненавидеть	hate	ненави́деть / возненави́деть	2nd (-ишь)	ненави́жу	ненави́дишь	ненави́дят	ненави́дел / ненави́дела	+ accusative	д→ж in the 1sg		New
 199	звать	позвать	call / summon / be named (summon someone)	зва́ть / позва́ть	1st (-ешь)	зову́	зовёшь	зову́т	звал / звала́	+ accusative	меня́ зову́т... = my name is... (literally 'they call me')		New
 200	задавать	задать	ask (a question) / set	задава́ть / зада́ть	1st (-ешь)	задаю́	задаёшь	задаю́т	задава́л / задава́ла	+ accusative, + dative of the person	зада́ть вопро́с = to ask a question		New

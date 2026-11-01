@@ -239,7 +239,7 @@
 241	остановка	stop (bus/tram)	остано́вка	f	остано́вки			No	City & Places			New
 242	вокзал	train station	вокза́л	m	вокза́лы			No	City & Places	на вокзале (на + prep.)		New
 243	аэропорт	airport	аэропо́рт	m	аэропо́рты			No	City & Places			New
-245	машина	car / machine	маши́на	f	маши́ны			No	Transport & Travel			New
+245	машина	machine / car	маши́на	f	маши́ны			No	Transport & Travel			New
 246	автомобиль	automobile	автомоби́ль	m	автомоби́ли			No	Transport & Travel			New
 247	автобус	bus	авто́бус	m	авто́бусы			No	Transport & Travel			New
 248	трамвай	tram	трамва́й	m	трамва́и			No	Transport & Travel			New
@@ -536,7 +536,7 @@
 540	большинство	majority	большинство́	n	—			No	Groups & Quantity			New
 541	меньшинство	minority	меньшинство́	n	меньши́нства			No	Groups & Quantity			New
 542	банкомат	ATM (cash machine)	банкома́т	m	банкома́ты			No	Money & Economy			New
-543	бронь	reservation (for a hotel or restaurant)	бронь	f	—			No	Transport & Travel	colloquial; formal = бронирование		New
+543	бронь	reservation (for a place or event)	бронь	f	—			No	Transport & Travel	colloquial; formal = бронирование		New
 544	имя	name	и́мя	n	имена́	и́мени	имён	No	People	irregular -мя noun: и́мени, и́менем (like вре́мя)		New
 545	москва	Moscow	москва́	f	—			No	City & Places			New
 546	полиция	police	поли́ция	f	—			No	Society & Politics			New

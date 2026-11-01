@@ -104,11 +104,11 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 1 | не | not / don’t | Negates the word directly after it | — |
 | 2 | же | but / then / after all (adds emphasis) | — | — |
 | 3 | бы | would (forms the conditional) | — | — |
-| 4 | вот | here/there is (pointing something out) | — | — |
+| 4 | вот | here (is) / there (is) (pointing something out) | — | — |
 | 5 | только | only (restrictive) | Restrictive — "only, just" | — |
 | 6 | даже | even | Marks something unexpected | — |
 | 7 | ли | whether / if (turns a statement into a question) | — | — |
-| 8 | ни | not a single / not one | Reinforces a negation; needs не or нет in the clause | — |
+| 8 | ни | neither / not a single / not one | Reinforces a negation; needs не or нет in the clause | — |
 | 9 | ну | well / come on (urging) | Conversational opener — urging, hesitating or softening | — |
 | 10 | ведь | you see / after all (asserting a known fact) | — | — |
 | 11 | разве | really? (implies doubt) | — | — |
@@ -144,7 +144,7 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 41 | поздравляю | congratulations! | 1st-person present of поздравлять; often + с + instrumental (с днём рождения!) | — |
 | 42 | помогите | help! | Imperative pl./formal of помочь; shouted in an emergency | — |
 | 43 | это | this is / that is / it is | Subject-less linking word: Э́то кни́га = This is a book. Invariable, unlike the pronoun э́тот (э́та, э́то, э́ти) which agrees with its noun | Это моя сестра |
-| 44 | так (particle) | well then / all right (resuming or confirming a point) | Colloquial — close to значит or хорошо; set off by a comma | Так, начнём |
+| 44 | так (particle) | well then / alright (resuming or confirming a point) | Colloquial — close to значит or хорошо; set off by a comma | Так, начнём |
 
 ### Indeclinable Nouns (Несклоняемые существительные)
 Foreign loan words that are frozen in their base form.
@@ -239,7 +239,7 @@ A lone em dash there means "no extra info" and renders as nothing.
 | 34 | сразу | immediately / at once | Doing something without delay | — |
 | 35 | наконец | finally | Conclusion of a wait or sequence | — |
 | 36 | очень | very | Amplifies an adjective/adverb | — |
-| 37 | немного | a little bit / some | — | — |
+| 37 | немного | a little bit / some / few | — | — |
 | 38 | слишком | too / too much | Exceeding a reasonable limit | — |
 | 39 | почти | almost | — | — |
 | 40 | совсем | completely / entirely (utterly) | Often paired with не for "not at all" | — |
