@@ -236,3 +236,30 @@ def test_backup_lands_under_the_backup_root(monkeypatch, tmp_path):
     assert os.path.exists(made)
     assert "presync-" in made
     assert Path(made).read_bytes() == b"x" * 16
+
+
+def test_the_guard_brackets_the_import_not_the_whole_rebuild():
+    """Dating a new card converts it to a review card, so `studied` grows by
+    design. The earlier guard compared end-to-end and so aborted on its own
+    intended change -- it would have stopped every real run before the upload.
+    """
+    source = _PATH.read_text(encoding="utf-8")
+    assert "the import moved scheduling" in source
+    assert "imported = review_state(col)" in source
+    assert "expected_studied = imported[1] + made_due" in source
+    # the end-to-end comparison that caused the false abort must be gone
+    assert "after[1:] != before[1:]" not in source
+
+
+def test_the_guard_still_fails_on_drift_it_should_catch():
+    """Positive control for the arithmetic: the check passes only when the
+    growth is exactly the cards asked for, and fails one either side."""
+
+    def passes(imported, after, made_due):
+        return after[1] == imported[1] + made_due and after[2] == imported[2]
+
+    imported = (100, 50, 7)
+    assert passes(imported, (162, 112, 7), 62)
+    assert not passes(imported, (162, 113, 7), 62)  # one card too many
+    assert not passes(imported, (162, 111, 7), 62)  # one too few
+    assert not passes(imported, (162, 112, 6), 62)  # a suspend was lifted

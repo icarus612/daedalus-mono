@@ -134,6 +134,13 @@ def rebuild(path: str) -> None:
             if out.log.conflicting:
                 raise SystemExit(f"{name} reported conflicts; stopping")
 
+        imported = review_state(col)
+        if imported[1:] != before[1:]:
+            raise SystemExit(
+                f"the import moved scheduling ({before} -> {imported}); "
+                "stopping before anything is pushed"
+            )
+
         phrases, index, card_rows, _ = collect(col, pw.PHRASE_NOTE_TYPE, False)
         all_new = pw.group_by_state(pw.audit(phrases, index, card_rows))[pw.ALL_NEW]
         note_ids = set()
@@ -153,13 +160,19 @@ def rebuild(path: str) -> None:
                 f"  phrase words: {len(all_new)} word(s), {len(due)} card(s) due, "
                 f"{skipped} suspended skipped"
             )
+            made_due = len(due)
+        else:
+            made_due = 0
 
         after = review_state(col)
         print(f"  after:  revlog={after[0]} studied={after[1]} suspended={after[2]}")
-        if after[1:] != before[1:]:
+        # Dating a new card turns it into a review card, so `studied` is
+        # expected to grow by exactly the cards asked for -- and by no others.
+        expected_studied = imported[1] + made_due
+        if after[1] != expected_studied or after[2] != imported[2]:
             raise SystemExit(
-                f"studied/suspended counts moved during rebuild ({before} -> {after}); "
-                "stopping before anything is pushed"
+                f"scheduling moved beyond the {made_due} card(s) asked for "
+                f"({imported} -> {after}); stopping before anything is pushed"
             )
     finally:
         col.close()
