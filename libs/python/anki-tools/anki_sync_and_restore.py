@@ -10,11 +10,18 @@ full sync. That is why a download alone loses the fields and an upload alone
 loses whatever was reviewed elsewhere -- this runs download, rebuild, upload
 in one pass so neither side has to be the loser.
 
+Run in stages with --stage: `pull` downloads only; `rebuild` re-imports the
+packages and records a review-state snapshot (no login); `push` uploads, and
+refuses unless the collection still matches that snapshot; `all` (default)
+does the three in one pass.
+
 Aborts rather than guessing whenever the server asks for a direction it was
 not told to take.
 """
 
+import argparse
 import getpass
+import json
 import os
 import shutil
 import subprocess
@@ -30,6 +37,7 @@ PACKAGES = (
     "/home/icarus64/Desktop/anki-rebuild/immutable-words.apkg",
 )
 BACKUP_ROOT = os.path.expanduser("~/anki-backups")
+STAGES = ("pull", "rebuild", "push", "all")
 
 _REQUIRED = {v.number: v.name for v in SyncStatusResponse.Required.DESCRIPTOR.values}
 _CHANGES = {
@@ -239,37 +247,71 @@ def push_media(path: str, login) -> None:
         col.close()
 
 
-def main() -> int:
-    from anki_tools.audio_naming import get_anki_collection_path
+def snapshot_file() -> str:
+    return os.path.join(BACKUP_ROOT, "review-state.json")
 
-    path = get_anki_collection_path()
-    if anki_is_running():
-        print("Anki is running -- close it first", file=sys.stderr)
-        return 2
-    missing = [p for p in PACKAGES if not os.path.exists(p)]
-    if missing:
-        print(f"missing package(s): {', '.join(missing)}", file=sys.stderr)
-        return 2
 
-    user, password = credentials()
+def save_snapshot(state: tuple[int, int, int]) -> None:
+    os.makedirs(BACKUP_ROOT, exist_ok=True)
+    with open(snapshot_file(), "w", encoding="utf-8") as handle:
+        json.dump(
+            {"revlog": state[0], "studied": state[1], "suspended": state[2]}, handle
+        )
 
-    def login(col):
-        return col.sync_login(user, password, None)
 
-    print(f"\nbackup: {backup(path, 'presync')}")
+def load_snapshot() -> tuple[int, int, int] | None:
     try:
-        print("\n[1/3] pulling from AnkiWeb")
-        pull(path, login)
-        print(f"backup after pull: {backup(path, 'postpull')}")
-        print("\n[2/3] putting the deck changes back")
-        rebuild(path)
-        print("\n[3/3] pushing to AnkiWeb")
-        push(path, login)
-        push_media(path, login)
-    except (AnkiException, DBError) as error:
-        print(f"\nanki error: {error}", file=sys.stderr)
-        return 1
+        with open(snapshot_file(), encoding="utf-8") as handle:
+            data = json.load(handle)
+        counts = (data["revlog"], data["studied"], data["suspended"])
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+    if not all(type(count) is int for count in counts):
+        return None
+    return counts
 
+
+def snapshot_problem(col) -> str | None:
+    saved = load_snapshot()
+    if saved is None:
+        return (
+            f"no usable review-state snapshot at {snapshot_file()}; "
+            "run --stage rebuild first"
+        )
+    current = review_state(col)
+    if saved != current:
+        return (
+            f"reviewed state changed since the snapshot (snapshot {saved}, "
+            f"collection {current}); run --stage rebuild again"
+        )
+    return None
+
+
+def record_snapshot(path: str) -> tuple[int, int, int]:
+    col = Collection(path)
+    try:
+        state = review_state(col)
+        save_snapshot(state)
+    finally:
+        col.close()
+    return state
+
+
+def parse_args(argv: list[str]) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--stage", choices=STAGES, default="all")
+    return parser.parse_args(argv)
+
+
+def _stale_snapshot(path: str) -> str | None:
+    col = Collection(path)
+    try:
+        return snapshot_problem(col)
+    finally:
+        col.close()
+
+
+def _print_summary(path: str) -> None:
     col = Collection(path)
     try:
         mod, ls = col.db.all("select mod, ls from col")[0]
@@ -284,8 +326,81 @@ def main() -> int:
         )
     finally:
         col.close()
+
+
+def _print_snapshot(state: tuple[int, int, int]) -> None:
+    print(f"  snapshot: revlog={state[0]} studied={state[1]} suspended={state[2]}")
+
+
+def _run_stage(stage: str, path: str, login) -> int:
+    if stage == "pull":
+        print(f"\nbackup: {backup(path, 'presync')}")
+        pull(path, login)
+        print(f"backup after pull: {backup(path, 'postpull')}")
+        return 0
+    if stage == "rebuild":
+        print(f"\nbackup: {backup(path, 'prerebuild')}")
+        rebuild(path)
+        _print_snapshot(record_snapshot(path))
+        return 0
+    if stage == "push":
+        print(f"\nbackup: {backup(path, 'prepush')}")
+        push(path, login)
+        push_media(path, login)
+        _print_summary(path)
+        return 0
+
+    print(f"\nbackup: {backup(path, 'presync')}")
+    print("\n[1/3] pulling from AnkiWeb")
+    pull(path, login)
+    print(f"backup after pull: {backup(path, 'postpull')}")
+    print("\n[2/3] putting the deck changes back")
+    rebuild(path)
+    _print_snapshot(record_snapshot(path))
+    problem = _stale_snapshot(path)
+    if problem:
+        print(problem, file=sys.stderr)
+        return 2
+    print("\n[3/3] pushing to AnkiWeb")
+    push(path, login)
+    push_media(path, login)
+    _print_summary(path)
     return 0
 
 
+def main(argv: list[str] | None = None) -> int:
+    from anki_tools.audio_naming import get_anki_collection_path
+
+    stage = parse_args([] if argv is None else argv).stage
+    path = get_anki_collection_path()
+    if anki_is_running():
+        print("Anki is running -- close it first", file=sys.stderr)
+        return 2
+    if stage != "pull":
+        missing = [p for p in PACKAGES if not os.path.exists(p)]
+        if missing:
+            print(f"missing package(s): {', '.join(missing)}", file=sys.stderr)
+            return 2
+
+    try:
+        if stage == "push":
+            problem = _stale_snapshot(path)
+            if problem:
+                print(problem, file=sys.stderr)
+                return 2
+
+        login = None
+        if stage != "rebuild":
+            user, password = credentials()
+
+            def login(col):
+                return col.sync_login(user, password, None)
+
+        return _run_stage(stage, path, login)
+    except (AnkiException, DBError) as error:
+        print(f"\nanki error: {error}", file=sys.stderr)
+        return 1
+
+
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(main(sys.argv[1:]))
