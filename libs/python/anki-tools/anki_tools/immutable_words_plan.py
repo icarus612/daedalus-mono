@@ -21,9 +21,10 @@ and playing.
 """
 
 import re
+from collections.abc import Mapping
 from dataclasses import dataclass
 
-from anki_tools import card_audio, case_field, distinction
+from anki_tools import card_audio, case_field, case_pill, distinction
 from anki_tools.anki_identity import guid_for_row
 from anki_tools.audio_naming import (
     SLOTS,
@@ -229,7 +230,9 @@ class WordRow:
         """This row's deterministic Anki note GUID -- see `guid_for_row`."""
         return guid_for_row(self.russian, self.pos)
 
-    def fields(self) -> list[str]:
+    def fields(
+        self, government: Mapping[str, case_field.CaseGovernment] | None = None
+    ) -> list[str]:
         """The field values, in FIELD_NAMES order.
 
         `Pronunciation` is left empty. `Additional Info` holds `self.info` --
@@ -244,19 +247,29 @@ class WordRow:
         function `elevenlabs_tts.py` uses to name the files it actually writes,
         so the two agree byte-for-byte before any audio file exists, wrapped
         by `audio_naming.audio_field_value` in the one shape Anki's media scan
-        counts and its autoplay ignores.
+        counts and its autoplay ignores. `Case` and the per-line `Translation`
+        tinting come from `government` (default: the packaged case-government
+        TSV), keyed by this row's GUID.
         """
+        if government is None:
+            government = case_field.default_government()
+        entry = government.get(self.guid)
+        translation = (
+            case_pill.tint_lines(self.english, entry.line_cases)
+            if entry and entry.line_cases
+            else self.english
+        )
         audio_names = [build_filename(self.russian, slot) for slot in SLOTS]
         # `guid` still hashes the qualified text, so stripping here keeps GUIDs stable.
         return [
             strip_qualifier(self.russian),
-            self.english,
+            translation,
             "",
             POS_FIELD_VALUE[self.pos],
             audio_field_value(audio_names),
             case_field.residual_info_for_row(self.pos, self.info),
             self.examples,
-            case_field.case_name_for_row(self.pos, self.info),
+            case_field.case_value(government, self.guid),
             distinction.qualifier_of(self.russian),
             distinction.english_distinction(self.russian),
         ]

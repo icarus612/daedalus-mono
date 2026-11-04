@@ -1,5 +1,7 @@
 """Contract tests for the grammatical hint under an English prompt."""
 
+import inspect
+
 import pytest
 
 from anki_tools import distinction, prompt_hint
@@ -88,15 +90,72 @@ def test_an_inserted_russian_hint_is_never_its_own_anchor():
 
 
 def test_two_hints_on_one_anchor_stack_in_reverse_call_order():
-    out = prompt_hint.add_prompt_hint(PROMPT_SIDE, "Case", prompt_hint.PROMPT_CASE_ID)
+    out = prompt_hint.add_prompt_hint(PROMPT_SIDE, "Other", "second-hint")
     out = prompt_hint.add_prompt_hint(out, FIELD)
     assert (
         TRANSLATION_DIV
         + "\n"
         + prompt_hint.hint_div(FIELD)
         + "\n"
-        + prompt_hint.hint_div("Case", prompt_hint.PROMPT_CASE_ID)
+        + prompt_hint.hint_div("Other", "second-hint")
     ) in out
+
+
+def test_the_case_hint_is_gone_from_the_public_surface():
+    assert prompt_hint.HINT_IDS == (
+        prompt_hint.PROMPT_HINT_ID,
+        prompt_hint.RUSSIAN_HINT_ID,
+    )
+    assert not hasattr(prompt_hint, "PROMPT_CASE_ID")
+    assert "prompt-case" not in prompt_hint.PROMPT_HINT_CSS
+    assert "prompt-case" not in prompt_hint.add_prompt_hint(PROMPT_SIDE, FIELD)
+
+
+@pytest.mark.parametrize(
+    "func,expected",
+    [
+        (
+            prompt_hint.hint_div,
+            [("field_name", inspect.Parameter.empty), ("element_id", "prompt-hint")],
+        ),
+        (
+            prompt_hint.add_prompt_hint,
+            [
+                ("template_html", inspect.Parameter.empty),
+                ("field_name", inspect.Parameter.empty),
+                ("element_id", "prompt-hint"),
+                ("anchor_id", prompt_hint.TRANSLATION_ANCHOR),
+            ],
+        ),
+    ],
+)
+def test_signatures_are_pinned(func, expected):
+    params = inspect.signature(func).parameters
+    assert [(n, p.default) for n, p in params.items()] == expected
+
+
+def test_constants_are_kept():
+    assert prompt_hint.PROMPT_HINT_ID == "prompt-hint"
+    assert prompt_hint.RUSSIAN_HINT_ID
+    assert prompt_hint.TRANSLATION_ANCHOR == "translation"
+    assert prompt_hint.RUSSIAN_ANCHOR == "russian"
+
+
+@pytest.mark.parametrize(
+    "call",
+    [
+        lambda: prompt_hint.hint_div(FIELD, unless_field="X"),
+        lambda: prompt_hint.add_prompt_hint(PROMPT_SIDE, FIELD, unless_field="X"),
+    ],
+)
+def test_the_removed_unless_field_parameter_is_rejected(call):
+    with pytest.raises(TypeError):
+        call()
+
+
+def test_the_current_call_shape_is_accepted():
+    assert prompt_hint.hint_div(FIELD)
+    assert prompt_hint.add_prompt_hint(PROMPT_SIDE, FIELD)
 
 
 def _card_indices(sheet):

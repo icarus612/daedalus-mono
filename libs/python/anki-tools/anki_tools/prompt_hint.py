@@ -9,16 +9,13 @@ is both a conjunction and an adverb -- so the headword alone does not say
 which card is being asked for either.
 
 What separates them is already stored, in real fields, already populated:
-`English Distinction` and `Russian Distinction` on both note-type families,
-`Case` on a preposition (Prepositional vs Genitive). Every one of those
-fields rendered only where the choice had already been made. This module
-puts each one beside the word it disambiguates.
+`English Distinction` and `Russian Distinction` on both note-type families.
+Every one of those fields rendered only where the choice had already been
+made. This module puts each one beside the word it disambiguates.
 
 Nothing is written into the gloss text. The hint is the field, wrapped by
 Anki's own `{{#Field}}` conditional so an empty field renders nothing at
-all rather than an empty pair of brackets -- the same "real field, grey, in
-parens when non-empty" shape `case_field` uses, rather than a parenthetical
-baked into the stored text.
+all rather than an empty pair of brackets.
 
 Pure text -- no Anki imports.
 """
@@ -26,15 +23,14 @@ Pure text -- no Anki imports.
 import re
 
 PROMPT_HINT_ID = "prompt-hint"
-PROMPT_CASE_ID = "prompt-case"
 RUSSIAN_HINT_ID = "russian-distinction"
 
 TRANSLATION_ANCHOR = "translation"
 RUSSIAN_ANCHOR = "russian"
 
-HINT_IDS = (PROMPT_HINT_ID, PROMPT_CASE_ID, RUSSIAN_HINT_ID)
+HINT_IDS = (PROMPT_HINT_ID, RUSSIAN_HINT_ID)
 
-# Matches `.qualifier`'s grey and `#case`'s sizing, so a hint reads as
+# Matches `.qualifier`'s grey, so a hint reads as
 # secondary to the word it sits under rather than as part of the answer.
 # One rule for every hint id, appended to BOTH families' CSS at the same
 # point, so the two trees keep identical base rules.
@@ -61,29 +57,14 @@ _ANCHORS = {
 }
 
 
-def hint_div(
-    field_name: str,
-    element_id: str = PROMPT_HINT_ID,
-    unless_field: str = "",
-) -> str:
+def hint_div(field_name: str, element_id: str = PROMPT_HINT_ID) -> str:
     """The hint element for `field_name`, empty-safe.
 
     `{{#Field}}...{{/Field}}` is Anki's own conditional: the parentheses
-    exist only when the field does, so a preposition with no recorded case
-    shows nothing instead of "()".
-
-    `unless_field` wraps that in Anki's negated conditional `{{^Other}}`, so
-    this hint yields to a better one on the same prompt rather than repeating
-    it. Of the 28 Immutable rows carrying both `Case` and `English
-    Distinction`, 13 hold the IDENTICAL string (`о / об` -> "Prepositional")
-    and 12 more open the English cue with the case ("Genitive; out of"), so
-    two unconditional divs would print the cue twice on exactly the words it
-    was added for. The governed case keeps its own labelled answer row either
-    way -- see `case_field.add_case_row`.
+    exist only when the field does, so an empty field shows nothing
+    instead of "()".
     """
     body = f"{{{{#{field_name}}}}}({{{{{field_name}}}}}){{{{/{field_name}}}}}"
-    if unless_field:
-        body = f"{{{{^{unless_field}}}}}{body}{{{{/{unless_field}}}}}"
     return f'<div id="{element_id}">{body}</div>'
 
 
@@ -92,7 +73,6 @@ def add_prompt_hint(
     field_name: str,
     element_id: str = PROMPT_HINT_ID,
     anchor_id: str = TRANSLATION_ANCHOR,
-    unless_field: str = "",
 ) -> str:
     """Insert the hint straight after the `#<anchor_id>` div.
 
@@ -110,7 +90,7 @@ def add_prompt_hint(
     if not anchor.search(template_html):
         return template_html
     return anchor.sub(
-        lambda m: m.group(1) + "\n" + hint_div(field_name, element_id, unless_field),
+        lambda m: m.group(1) + "\n" + hint_div(field_name, element_id),
         template_html,
         count=1,
     )

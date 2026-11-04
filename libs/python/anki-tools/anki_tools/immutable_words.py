@@ -25,6 +25,7 @@ from anki_tools import (
     audio_naming,
     card_audio,
     case_field,
+    case_pill,
     distinction,
     examples_field,
     prompt_hint,
@@ -95,21 +96,11 @@ def clone_note_type(
 
     for template in cloned["tmpls"]:
         for side in ("qfmt", "afmt"):
-            html = case_field.add_case_row(
-                examples_field.add_examples_block(
-                    rewrite_audio_playback(strip_part_of_speech(template[side]))
-                )
-            )
-            # Case goes in first so the gloss-collision cue, added second,
-            # lands directly under the gloss it disambiguates, and yields to
-            # it when both are populated (see `prompt_hint.hint_div`).
-            html = prompt_hint.add_prompt_hint(
-                html,
-                case_field.CASE_FIELD,
-                prompt_hint.PROMPT_CASE_ID,
-                unless_field=distinction.ENGLISH_FIELD,
+            html = examples_field.add_examples_block(
+                rewrite_audio_playback(strip_part_of_speech(template[side]))
             )
             html = prompt_hint.add_prompt_hint(html, distinction.ENGLISH_FIELD)
+            html = case_pill.add_pill_block(html)
             html = prompt_hint.add_prompt_hint(
                 html,
                 distinction.RUSSIAN_FIELD,
@@ -125,7 +116,7 @@ def clone_note_type(
         + "\n\n"
         + examples_field.EXAMPLES_CSS
         + "\n\n"
-        + case_field.CASE_CSS
+        + case_pill.CASE_PILL_CSS
         + "\n\n"
         + word_qualifier.QUALIFIER_CSS
         + "\n\n"
