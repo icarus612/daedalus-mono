@@ -17,6 +17,7 @@ from anki.utils import to_json_bytes
 
 from anki_tools import (
     card_audio,
+    case_pill,
     distinction,
     examples_field,
     mutable_words_plan,
@@ -39,6 +40,8 @@ ADJECTIVES_TSV = DATA_DIR / "adjectives.tsv"
 ADVERBS_TSV = DATA_DIR / "adverbs.tsv"
 PRONOUNS_TSV = DATA_DIR / "pronouns.tsv"
 NUMERALS_TSV = DATA_DIR / "numerals.tsv"
+
+CASE_SHEETS = ("Verbs", "Adverbs")
 
 SHEET_CARD_COUNTS = {
     "Nouns": 2,
@@ -197,8 +200,15 @@ def test_field_name_legality():
             assert '"' not in name
             assert "{" not in name
             assert "}" not in name
-        assert tuple(names[-2:]) == ("Russian Distinction", "English Distinction")
-        assert names[-3].startswith("Audio")
+    tail = ("Russian Distinction", "English Distinction")
+    for sheet, names in mutable_words_plan.FIELD_NAMES.items():
+        if sheet in CASE_SHEETS:
+            assert tuple(names[-3:]) == (*tail, "Case"), sheet
+            assert names[-4].startswith("Audio"), sheet
+        else:
+            assert tuple(names[-2:]) == tail, sheet
+            assert names[-3].startswith("Audio"), sheet
+            assert "Case" not in names, sheet
 
 
 def test_no_av_tag_in_any_template():
@@ -435,6 +445,8 @@ def test_every_template_id_and_class_has_a_css_rule(tmp_path):
         + examples_field.EXAMPLES_CSS
         + "\n\n"
         + prompt_hint.PROMPT_HINT_CSS
+        + "\n\n"
+        + case_pill.CASE_PILL_CSS
         + "\n\n"
         + mutable_words_plan.EXTRA_CSS
     )
@@ -737,12 +749,12 @@ def test_every_sheet_cues_the_headword_on_at_least_one_question(sheet):
 
 
 @pytest.mark.parametrize("sheet,card_index", _HEADWORD_SIDES)
-def test_the_answer_keeps_a_labelled_russian_distinction_row(sheet, card_index):
+def test_the_answer_has_no_labelled_russian_distinction_row(sheet, card_index):
     _qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
     field = distinction.RUSSIAN_FIELD
-    row = re.search(rf'<div id="([\w-]+)">\{{\{{{re.escape(field)}\}}\}}</div>', afmt)
-    assert row, (sheet, card_index)
-    assert f'addTitle("{row.group(1)}", "{field}");' in afmt, (sheet, card_index)
+    assert "detail-russian-distinction" not in afmt, (sheet, card_index)
+    assert f'"{field}"' not in afmt, (sheet, card_index)
+    assert re.search(rf"\{{\{{{re.escape(field)}\}}\}}", _details_block(afmt)) is None
 
 
 @pytest.mark.parametrize("sheet,card_index", _HEADWORD_SIDES)
@@ -855,9 +867,374 @@ def test_an_empty_cue_renders_nothing_and_the_check_fails_without_the_wrapper(tm
             for side in ("qfmt", "afmt"):
                 template[side], count = _WRAPPED_CUE.subn(r"({{\1}})", template[side])
                 substitutions += count
-        assert substitutions == 1
+        assert substitutions == 2
         col.models.update_dict(stripped)
 
         assert "()" in _rendered_cues(col)["дом"]
     finally:
         col.close()
+
+
+HEADWORD_FRONT = {
+    sheet: (0, 2) if sheet == "Verbs" else (0,) for sheet in SHEET_CARD_COUNTS
+}
+GLOSS_FRONT = {
+    sheet: (1, 3) if sheet == "Verbs" else (1,) for sheet in SHEET_CARD_COUNTS
+}
+_ENGLISH_CUE = prompt_hint.hint_div(distinction.ENGLISH_FIELD)
+_PILLS = case_pill.pill_block()
+_CARDS = [
+    (sheet, card_index)
+    for sheet, count in SHEET_CARD_COUNTS.items()
+    for card_index in range(count)
+]
+_SECTION = re.compile(
+    r"\{\{([#^])([^{}]+)\}\}((?:(?!\{\{[#^]).)*?)\{\{/\2\}\}", re.S
+)
+_TOKEN = re.compile(r"\{\{(?:text:)?([^{}#^/]+)\}\}")
+
+
+def _render(template, fields, front_side=""):
+    def section(match):
+        present = bool(fields.get(match.group(2), "").strip())
+        return match.group(3) if present == (match.group(1) == "#") else ""
+
+    template = re.sub(r"<!--.*?-->", "", template, flags=re.DOTALL)
+    previous = None
+    while previous != template:
+        previous = template
+        template = _SECTION.sub(section, template)
+    return _TOKEN.sub(
+        lambda m: front_side
+        if m.group(1) == "FrontSide"
+        else fields.get(m.group(1), ""),
+        template,
+    )
+
+
+def _full_fields(sheet, **overrides):
+    fields = {
+        name: "v-" + name.replace(" ", "-")
+        for name in mutable_words_plan.FIELD_NAMES[sheet]
+    }
+    fields["Case"] = "Accusative"
+    fields.update(overrides)
+    return fields
+
+
+def _question_and_answer(sheet, card_index, fields):
+    qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
+    question = _render(qfmt, fields)
+    return question, _render(afmt, fields, front_side=question)
+
+
+def _details_block(html):
+    start = html.index('<div id="details">')
+    depth = 0
+    for match in re.finditer(r"<div\b|</div>", html[start:]):
+        depth += 1 if match.group(0) == "<div" else -1
+        if depth == 0:
+            return html[start : start + match.end()]
+    raise AssertionError("unbalanced #details")
+
+
+def _ids(html):
+    return re.findall(r'id="([^"]*)"', html)
+
+
+@pytest.mark.parametrize("sheet,card_index", _CARDS)
+def test_details_is_one_container_after_the_aspect_line_before_standalone_rows(
+    sheet, card_index
+):
+    _qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
+    assert afmt.count('<div id="details">') == 1
+    block = _details_block(afmt)
+    start = afmt.index(block)
+    end = start + len(block)
+    assert "{{Additional Info}}" not in block
+    assert "{{Examples}}" not in block
+    assert afmt.index("{{Additional Info}}") > end
+    assert afmt.find("{{Examples}}", end) != -1 or "{{Examples}}" not in afmt
+    if sheet == "Verbs":
+        slug = "perfective" if card_index in (0, 1) else "imperfective"
+        assert afmt.index(f'<div id="{slug}" ') < start
+
+
+@pytest.mark.parametrize("sheet,card_index", _CARDS)
+def test_details_rows_are_conditional_static_labelled_and_exclude_cues(
+    sheet, card_index
+):
+    _qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
+    block = _details_block(afmt)
+    for excluded in (distinction.RUSSIAN_FIELD, distinction.ENGLISH_FIELD, "Case"):
+        assert f"{{{{{excluded}}}}}" not in block, (sheet, excluded)
+    assert "addTitle" not in block
+    fields_in_block = re.findall(r"\{\{#([^{}]+)\}\}", block)
+    assert fields_in_block
+    for field in fields_in_block:
+        assert f"{{{{/{field}}}}}" in block
+        assert f"{{{{{field}}}}}" in block.split(f"{{{{#{field}}}}}")[1]
+        opener = f"{{{{#{field}}}}}"
+        assert block[block.index(opener) + len(opener) :].lstrip().startswith("<")
+
+
+@pytest.mark.parametrize("sheet,card_index", _CARDS)
+def test_add_title_is_only_called_for_rows_outside_the_details_block(
+    sheet, card_index
+):
+    _qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
+    detail_ids = set(_ids(_details_block(afmt)))
+    called = re.findall(r'addTitle\("([^"]+)"', afmt)
+    assert called
+    assert not detail_ids & set(called)
+    assert afmt.count("function addTitle") == 1
+
+
+@pytest.mark.parametrize("sheet,card_index", _CARDS)
+def test_empty_detail_fields_leave_no_element_behind(sheet, card_index):
+    _qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
+    full = _details_block(_render(afmt, _full_fields(sheet)))
+    detail_fields = re.findall(r"\{\{#([^{}]+)\}\}", _details_block(afmt))
+    for field in detail_fields:
+        reduced = _details_block(_render(afmt, _full_fields(sheet, **{field: ""})))
+        assert len(_ids(reduced)) < len(_ids(full)), (sheet, field)
+        assert f"v-{field.replace(' ', '-')}" not in reduced
+    blank = {name: "" for name in detail_fields}
+    emptied = _details_block(_render(afmt, _full_fields(sheet, **blank)))
+    assert _ids(emptied) == ["details"]
+
+
+def test_a_noun_with_empty_genitives_renders_no_genitive_rows():
+    sheet = "Nouns"
+    for card_index in HEADWORD_FRONT[sheet] + GLOSS_FRONT[sheet]:
+        _qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
+        full = _details_block(_render(afmt, _full_fields(sheet)))
+        sparse = _details_block(
+            _render(afmt, _full_fields(sheet, **{"Genitive Sg": "", "Genitive Pl": ""}))
+        )
+        assert len(_ids(full)) - len(_ids(sparse)) == 2
+        assert "v-Genitive-Sg" in full and "v-Genitive-Sg" not in sparse
+        assert "v-Genitive-Pl" in full and "v-Genitive-Pl" not in sparse
+        assert "v-Plural" in sparse
+
+
+def test_details_css_is_a_centred_two_column_grid():
+    css = re.sub(r"\s+", " ", mutable_words_plan.EXTRA_CSS)
+    rule = re.search(r"#details \{([^}]*)\}", css)
+    assert rule, "no #details rule"
+    body = rule.group(1)
+    for declaration in (
+        "display: grid",
+        "grid-template-columns: max-content max-content",
+        "width: max-content",
+        "margin: 0 auto",
+    ):
+        assert declaration in body, declaration
+    assert "display: contents" in css
+    assert "text-align: right" in css
+    assert "text-align: left" in css
+
+
+@pytest.mark.parametrize("sheet,card_index", _CARDS)
+def test_english_cue_follows_the_translation_on_headword_front_back(
+    sheet, card_index
+):
+    if card_index not in HEADWORD_FRONT[sheet]:
+        pytest.skip("gloss-front card")
+    qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
+    assert _ENGLISH_CUE not in qfmt
+    assert afmt.startswith("{{FrontSide}}")
+    assert re.search(
+        r'<div id="translation">.*?</div>\s*' + re.escape(_ENGLISH_CUE), afmt, re.S
+    )
+
+
+@pytest.mark.parametrize("sheet,card_index", _CARDS)
+def test_gloss_front_has_the_english_cue_on_the_question_and_russian_cue_on_the_back(
+    sheet, card_index
+):
+    if card_index not in GLOSS_FRONT[sheet]:
+        pytest.skip("headword-front card")
+    qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
+    assert re.search(
+        r'<div id="translation">.*?</div>\s*' + re.escape(_ENGLISH_CUE), qfmt, re.S
+    )
+    assert _ENGLISH_CUE not in afmt
+    assert RUSSIAN_CUE not in qfmt
+    assert re.search(r'<div id="russian">[^<]*</div>\s*' + re.escape(RUSSIAN_CUE), afmt)
+
+
+@pytest.mark.parametrize("sheet,card_index", _CARDS)
+def test_pill_placement_in_the_raw_templates(sheet, card_index):
+    qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
+    if sheet not in CASE_SHEETS:
+        assert 'class="case-pills"' not in qfmt + afmt
+        return
+    if card_index in HEADWORD_FRONT[sheet]:
+        assert 'class="case-pills"' not in qfmt
+        assert afmt.count(_PILLS) == 1
+        assert re.search(re.escape(_ENGLISH_CUE) + r"\s*" + re.escape(_PILLS), afmt)
+        if sheet == "Verbs":
+            slug = "perfective" if card_index == 0 else "imperfective"
+            assert afmt.index(_PILLS) < afmt.index(f'<div id="{slug}" ')
+        assert afmt.index(_PILLS) < afmt.index('<div id="details">')
+    else:
+        assert qfmt.count(_PILLS) == 1
+        assert re.search(re.escape(_ENGLISH_CUE) + r"\s*" + re.escape(_PILLS), qfmt)
+        assert 'class="case-pills"' not in afmt
+
+
+def test_pill_positive_and_negative_controls():
+    question, _answer = _question_and_answer("Verbs", 1, _full_fields("Verbs"))
+    assert 'class="case-pills"' in question
+    question, _answer = _question_and_answer(
+        "Adverbs", 1, _full_fields("Adverbs", Case="")
+    )
+    assert 'class="case-pills"' not in question
+    for card_index in (0, 1):
+        question, answer = _question_and_answer(
+            "Nouns", card_index, _full_fields("Nouns")
+        )
+        assert "case-pills" not in question + answer
+
+
+@pytest.mark.parametrize("sheet,card_index", _CARDS)
+def test_cues_and_pills_render_exactly_once_on_the_answer_side(sheet, card_index):
+    question, answer = _question_and_answer(sheet, card_index, _full_fields(sheet))
+    assert answer.count('id="prompt-hint"') == 1, (sheet, card_index)
+    assert answer.count('id="russian-distinction"') == 1, (sheet, card_index)
+    expected_pills = 1 if sheet in CASE_SHEETS else 0
+    assert answer.count('class="case-pills"') == expected_pills, (sheet, card_index)
+    ids = _ids(answer)
+    assert len(ids) == len(set(ids)), (sheet, card_index, ids)
+    if card_index in HEADWORD_FRONT[sheet]:
+        assert 'class="case-pills"' not in question
+        assert 'id="prompt-hint"' not in question
+        assert question.count('id="russian-distinction"') == 1
+    else:
+        assert question.count('id="prompt-hint"') == 1
+        assert 'id="russian-distinction"' not in question
+        assert question.count('class="case-pills"') == expected_pills
+
+
+@pytest.mark.parametrize("sheet,card_index", _CARDS)
+def test_ids_stay_unique_with_every_field_empty_or_full(sheet, card_index):
+    for fields in (
+        _full_fields(sheet),
+        {name: "" for name in mutable_words_plan.FIELD_NAMES[sheet]},
+    ):
+        _question, answer = _question_and_answer(sheet, card_index, fields)
+        ids = _ids(answer)
+        assert len(ids) == len(set(ids)), (sheet, card_index)
+
+
+def _tsv_lines(path):
+    return path.read_text(encoding="utf-8").split("\n")
+
+
+@pytest.mark.parametrize("path", [VERBS_TSV, ADVERBS_TSV])
+def test_case_column_is_a_new_empty_final_column(path):
+    lines = _tsv_lines(path)
+    assert lines[-1] == ""
+    header, *rows = lines[:-1]
+    assert header.endswith("\tCase")
+    width = len(header.split("\t"))
+    assert rows
+    for row in rows:
+        cells = row.split("\t")
+        assert len(cells) == width, row[:40]
+        assert cells[-1] == ""
+
+
+@pytest.mark.parametrize("path", [VERBS_TSV, ADVERBS_TSV])
+def test_removing_the_case_column_reproduces_the_original(path):
+    show = subprocess.run(
+        ["git", "show", f"HEAD:./anki_tools/data/russian-vocabulary/{path.name}"],
+        capture_output=True,
+        text=True,
+        cwd=str(PACKAGE_ROOT),
+    )
+    if show.returncode != 0:
+        pytest.skip("no git HEAD copy")
+    original = show.stdout
+    if original.split("\n", 1)[0].endswith("\tCase"):
+        pytest.skip("HEAD already carries the Case column")
+    stripped = "\n".join(
+        line.rsplit("\t", 1)[0] if line else line for line in _tsv_lines(path)
+    )
+    assert stripped == original
+
+
+@pytest.mark.parametrize(
+    "path", [NOUNS_TSV, ADJECTIVES_TSV, PRONOUNS_TSV, NUMERALS_TSV]
+)
+def test_other_sheets_gain_no_case_column(path):
+    header = _tsv_lines(path)[0]
+    assert not header.endswith("\tCase")
+    diff = subprocess.run(
+        ["git", "diff", "--quiet", "HEAD", "--", str(path)],
+        cwd=str(PACKAGE_ROOT),
+    )
+    assert diff.returncode in (0, 128)
+
+
+def _tsv_with_case(path, tmp_path, value):
+    lines = _tsv_lines(path)
+    out = [lines[0]] + [
+        line.rsplit("\t", 1)[0] + "\t" + value for line in lines[1:-1]
+    ]
+    doctored = tmp_path / path.name
+    doctored.write_text("\n".join(out) + "\n", encoding="utf-8")
+    return str(doctored)
+
+
+def test_parse_verbs_reads_the_case_column(verbs, tmp_path):
+    assert all(row.case == "" for row in verbs)
+    assert all(row.fields()[-1] == "" for row in verbs)
+    parsed = mutable_words_plan.parse_verbs(
+        _tsv_with_case(VERBS_TSV, tmp_path, "Accusative")
+    )
+    assert len(parsed) == len(verbs)
+    assert {row.case for row in parsed} == {"Accusative"}
+    assert all(row.fields()[-1] == "Accusative" for row in parsed)
+
+
+def test_parse_adverbs_reads_the_case_column_including_split_rows(adverbs, tmp_path):
+    assert all(row.case == "" for row in adverbs)
+    parsed = mutable_words_plan.parse_adverbs(
+        _tsv_with_case(ADVERBS_TSV, tmp_path, "Genitive")
+    )
+    assert len(parsed) == len(adverbs) == 134
+    assert {row.case for row in parsed} == {"Genitive"}
+    by_adverb = {row.adverb: row for row in parsed}
+    for word in ("направо", "справа", "налево", "слева"):
+        assert by_adverb[word].case == "Genitive"
+    assert [row.rank for row in parsed] == [row.rank for row in adverbs]
+
+
+@pytest.mark.parametrize("sheet", ["Verbs", "Adverbs"])
+def test_case_is_the_last_field_and_changes_nothing_else(sheet, verbs, adverbs):
+    import dataclasses
+
+    row = (verbs if sheet == "Verbs" else adverbs)[0]
+    other = dataclasses.replace(row, case="Dative")
+    assert len(row.fields()) == len(mutable_words_plan.FIELD_NAMES[sheet])
+    assert other.fields()[-1] == "Dative"
+    assert other.fields()[:-1] == row.fields()[:-1]
+    assert other.guid == row.guid
+
+
+def test_rows_without_a_case_argument_still_construct():
+    row = mutable_words_plan.AdverbRow(
+        rank=1,
+        adverb="быстро",
+        translation="quickly",
+        stress="",
+        from_adjective="",
+        formation="",
+        comparative="",
+        additional_info="",
+        examples="",
+    )
+    assert row.case == ""
+    assert row.fields()[-1] == ""

@@ -19,6 +19,7 @@ from anki.import_export_pb2 import ImportAnkiPackageOptions, ImportAnkiPackageRe
 from anki_tools import (
     card_audio,
     case_field,
+    case_pill,
     examples_field,
     mutable_words_plan,
     prompt_hint,
@@ -621,8 +622,28 @@ def test_build_note_types_css_extends_source_with_extra_css(cloned_note_types):
         + "\n\n"
         + mutable_words_plan.EXTRA_CSS
     )
-    for note_type in note_types.values():
-        assert note_type["css"] == expected_css
+    for sheet, note_type in note_types.items():
+        css = note_type["css"]
+        if "Case" in FIELD_NAMES[sheet]:
+            assert css.count(case_pill.CASE_PILL_CSS) == 1, sheet
+            assert css.replace("\n\n" + case_pill.CASE_PILL_CSS, "", 1) == expected_css
+        else:
+            assert case_pill.CASE_PILL_CSS not in css, sheet
+            assert css == expected_css
+
+
+def test_build_note_types_case_field_exists_only_on_verbs_and_adverbs(
+    cloned_note_types,
+):
+    note_types, _ = cloned_note_types
+    for sheet, note_type in note_types.items():
+        names = [f["name"] for f in note_type["flds"]]
+        if sheet in ("Verbs", "Adverbs"):
+            assert names[-1] == "Case", sheet
+            assert names[-3:-1] == ["Russian Distinction", "English Distinction"]
+            assert note_type["flds"][-1]["id"] is None
+        else:
+            assert "Case" not in names, sheet
 
 
 def test_build_note_types_new_note_succeeds_for_every_note_type(
