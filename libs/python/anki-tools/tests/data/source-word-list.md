@@ -143,7 +143,7 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 40 | ничего | nothing / it's OK / no problem | Also a stand-alone reassuring reply | — |
 | 41 | поздравляю | congratulations! | 1st-person present of поздравлять; often + с + instrumental (с днём рождения!) | — |
 | 42 | помогите | help! | Imperative pl./formal of помочь; shouted in an emergency | — |
-| 43 | это | this is / that is / it is | Subject-less linking word: Э́то кни́га = This is a book. Invariable, unlike the pronoun э́тот (э́та, э́то, э́ти) which agrees with its noun | Это моя сестра |
+| 43 | это | this (is) / that (is) / it (is) | Subject-less linking word: Э́то кни́га = This is a book. Invariable, unlike the pronoun э́тот (э́та, э́то, э́ти) which agrees with its noun | Это моя сестра |
 | 44 | так (particle) | well then / alright (resuming or confirming a point) | Colloquial — close to значит or хорошо; set off by a comma | Так, начнём |
 
 ### Indeclinable Nouns (Несклоняемые существительные)
