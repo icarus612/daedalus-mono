@@ -944,7 +944,6 @@ def test_word_row_deck_property_matches_subdeck_name(pos):
     assert row.deck == subdeck_name(pos)
 
 
-
 CASE_INDEX = FIELD_NAMES.index("Case")
 TRANSLATION_INDEX = FIELD_NAMES.index("Translation")
 ADDITIONAL_INFO_INDEX = FIELD_NAMES.index("Additional Info")
