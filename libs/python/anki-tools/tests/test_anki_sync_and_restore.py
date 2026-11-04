@@ -263,3 +263,365 @@ def test_the_guard_still_fails_on_drift_it_should_catch():
     assert not passes(imported, (162, 113, 7), 62)  # one card too many
     assert not passes(imported, (162, 111, 7), 62)  # one too few
     assert not passes(imported, (162, 112, 6), 62)  # a suspend was lifted
+
+
+STATE = (100, 50, 7)
+
+
+class _Db:
+    def all(self, sql):
+        return [(1, 1)]
+
+    def scalar(self, sql):
+        return 0
+
+
+class _SummaryCol(_Col):
+    db = _Db()
+
+
+class _Harness:
+    def __init__(self, monkeypatch, tmp_path):
+        self.calls = []
+        self.state = STATE
+        self.root = tmp_path / "backups"
+        package = tmp_path / "a.apkg"
+        package.write_bytes(b"x")
+        monkeypatch.setattr(sar, "BACKUP_ROOT", str(self.root))
+        monkeypatch.setattr(sar, "PACKAGES", (str(package),))
+        monkeypatch.setattr(sar, "anki_is_running", lambda: False)
+        monkeypatch.setattr(sar, "review_state", lambda col: self.state)
+        _patch_collection(monkeypatch, _SummaryCol(SyncStatusResponse.NO_CHANGES))
+        self._patch_path(monkeypatch)
+        self._record(monkeypatch, "credentials", ("user", "pw"))
+        self._record(monkeypatch, "backup", "made", args=True)
+        for name in ("pull", "rebuild", "push", "push_media"):
+            self._record(monkeypatch, name, None, args=True)
+        original = sar.record_snapshot
+
+        def record_snapshot(path):
+            self.calls.append("record_snapshot")
+            return original(path)
+
+        monkeypatch.setattr(sar, "record_snapshot", record_snapshot)
+
+    @staticmethod
+    def _patch_path(monkeypatch):
+        import anki_tools.audio_naming as audio_naming
+
+        monkeypatch.setattr(
+            audio_naming, "get_anki_collection_path", lambda: "/fake/collection"
+        )
+        if hasattr(sar, "get_anki_collection_path"):
+            monkeypatch.setattr(
+                sar, "get_anki_collection_path", lambda: "/fake/collection"
+            )
+
+    def _record(self, monkeypatch, name, result, args=False):
+        def fake(*a, **kw):
+            self.calls.append((name, a[1]) if name == "backup" else name)
+            return result
+
+        monkeypatch.setattr(sar, name, fake)
+
+    def names(self):
+        return [c if isinstance(c, str) else f"{c[0]}:{c[1]}" for c in self.calls]
+
+
+@pytest.fixture
+def harness(monkeypatch, tmp_path):
+    return _Harness(monkeypatch, tmp_path)
+
+
+def test_stages_are_the_four_named_ones():
+    assert sar.STAGES == ("pull", "rebuild", "push", "all")
+
+
+@pytest.mark.parametrize(
+    "argv,expected",
+    [
+        ([], "all"),
+        (["--stage", "pull"], "pull"),
+        (["--stage", "rebuild"], "rebuild"),
+        (["--stage", "push"], "push"),
+        (["--stage", "all"], "all"),
+    ],
+)
+def test_parse_args_stage(argv, expected):
+    assert sar.parse_args(argv).stage == expected
+
+
+def test_parse_args_rejects_an_unknown_stage():
+    with pytest.raises(SystemExit):
+        sar.parse_args(["--stage", "sideways"])
+
+
+def test_main_without_args_ignores_sys_argv_and_means_all(harness, monkeypatch):
+    monkeypatch.setattr(sys, "argv", ["prog", "--stage", "pull"])
+    assert sar.main() == 0
+    assert "rebuild" in harness.calls and "push" in harness.calls
+
+
+@pytest.mark.parametrize(
+    "state",
+    [(0, 0, 0), (1, 2, 3), (100, 50, 7)],
+)
+def test_snapshot_round_trips(monkeypatch, tmp_path, state):
+    monkeypatch.setattr(sar, "BACKUP_ROOT", str(tmp_path / "new" / "root"))
+    sar.save_snapshot(state)
+    assert sar.snapshot_file() == os.path.join(sar.BACKUP_ROOT, "review-state.json")
+    assert os.path.exists(sar.snapshot_file())
+    assert sar.load_snapshot() == state
+
+
+@pytest.mark.parametrize(
+    "content",
+    [
+        None,
+        "",
+        "{not json",
+        "[1, 2]",
+        "[1, 2, 3, 4]",
+        '"abc"',
+        "null",
+        '["a", "b", "c"]',
+        "[1.5, 2, 3]",
+        "{}",
+    ],
+)
+def test_load_snapshot_is_none_when_absent_or_malformed(monkeypatch, tmp_path, content):
+    monkeypatch.setattr(sar, "BACKUP_ROOT", str(tmp_path))
+    if content is not None:
+        Path(sar.snapshot_file()).write_text(content, encoding="utf-8")
+    assert sar.load_snapshot() is None
+
+
+def test_snapshot_problem_none_when_matching(harness):
+    sar.save_snapshot(STATE)
+    assert sar.snapshot_problem(object()) is None
+
+
+def test_snapshot_problem_on_absent_snapshot_names_snapshot_and_rebuild(harness):
+    message = sar.snapshot_problem(object())
+    assert "snapshot" in message and "rebuild" in message
+
+
+def test_snapshot_problem_on_malformed_snapshot_names_snapshot_and_rebuild(harness):
+    harness.root.mkdir()
+    Path(sar.snapshot_file()).write_text("{oops", encoding="utf-8")
+    message = sar.snapshot_problem(object())
+    assert "snapshot" in message and "rebuild" in message
+
+
+def test_snapshot_problem_on_mismatch_shows_both_states(harness):
+    sar.save_snapshot(STATE)
+    harness.state = (101, 50, 7)
+    message = sar.snapshot_problem(object())
+    assert "reviewed" in message
+    assert "100" in message and "101" in message
+
+
+def test_record_snapshot_saves_returns_and_closes(monkeypatch, tmp_path):
+    col = _Col(SyncStatusResponse.NO_CHANGES)
+    _patch_collection(monkeypatch, col)
+    monkeypatch.setattr(sar, "BACKUP_ROOT", str(tmp_path))
+    monkeypatch.setattr(sar, "review_state", lambda c: STATE)
+    assert sar.record_snapshot("ignored") == STATE
+    assert sar.load_snapshot() == STATE
+    assert col.closed
+
+
+def test_record_snapshot_closes_the_collection_when_the_state_read_fails(
+    monkeypatch, tmp_path
+):
+    col = _Col(SyncStatusResponse.NO_CHANGES)
+    _patch_collection(monkeypatch, col)
+    monkeypatch.setattr(sar, "BACKUP_ROOT", str(tmp_path))
+
+    def boom(c):
+        raise RuntimeError("db gone")
+
+    monkeypatch.setattr(sar, "review_state", boom)
+    with pytest.raises(RuntimeError):
+        sar.record_snapshot("ignored")
+    assert col.closed
+    assert sar.load_snapshot() is None
+
+
+def test_pull_stage_calls_only_pull_and_backups(harness):
+    assert sar.main(["--stage", "pull"]) == 0
+    assert harness.names() == [
+        "credentials",
+        "backup:presync",
+        "pull",
+        "backup:postpull",
+    ]
+
+
+def test_pull_stage_is_not_blocked_by_a_missing_package(harness, monkeypatch, tmp_path):
+    monkeypatch.setattr(sar, "PACKAGES", (str(tmp_path / "nope.apkg"),))
+    assert sar.main(["--stage", "pull"]) == 0
+    assert "pull" in harness.calls
+
+
+@pytest.mark.parametrize("stage", ["rebuild", "push", "all"])
+def test_other_stages_are_blocked_by_a_missing_package(
+    harness, monkeypatch, tmp_path, capsys, stage
+):
+    monkeypatch.setattr(sar, "PACKAGES", (str(tmp_path / "nope.apkg"),))
+    assert sar.main(["--stage", stage]) == 2
+    assert "missing package" in capsys.readouterr().err
+    assert harness.calls == []
+
+
+@pytest.mark.parametrize("stage", ["pull", "rebuild", "push", "all"])
+def test_every_stage_refuses_while_anki_runs(harness, monkeypatch, capsys, stage):
+    monkeypatch.setattr(sar, "anki_is_running", lambda: True)
+    assert sar.main(["--stage", stage]) == 2
+    assert "close it first" in capsys.readouterr().err
+    assert harness.calls == []
+
+
+def test_push_stage_with_a_matching_snapshot_pushes_then_syncs_media(harness):
+    sar.save_snapshot(STATE)
+    assert sar.main(["--stage", "push"]) == 0
+    assert harness.names() == [
+        "credentials",
+        "backup:prepush",
+        "push",
+        "push_media",
+    ]
+
+
+def _refusal_cases():
+    return ["running", "package", "absent", "stale", "malformed"]
+
+
+@pytest.mark.parametrize("case", _refusal_cases())
+def test_push_stage_refuses_before_credentials_backup_or_push(
+    harness, monkeypatch, tmp_path, capsys, case
+):
+    if case == "running":
+        sar.save_snapshot(STATE)
+        monkeypatch.setattr(sar, "anki_is_running", lambda: True)
+    elif case == "package":
+        sar.save_snapshot(STATE)
+        monkeypatch.setattr(sar, "PACKAGES", (str(tmp_path / "nope.apkg"),))
+    elif case == "stale":
+        sar.save_snapshot(STATE)
+        harness.state = (STATE[0] + 1, STATE[1], STATE[2])
+    elif case == "malformed":
+        harness.root.mkdir()
+        Path(sar.snapshot_file()).write_text("[1, 2]", encoding="utf-8")
+    assert sar.main(["--stage", "push"]) == 2
+    assert capsys.readouterr().err.strip()
+    assert harness.calls == []
+
+
+def test_push_stage_stale_snapshot_message_mentions_reviewed(harness, capsys):
+    sar.save_snapshot(STATE)
+    harness.state = (STATE[0] + 1, STATE[1], STATE[2])
+    sar.main(["--stage", "push"])
+    assert "reviewed" in capsys.readouterr().err
+
+
+def test_push_stage_absent_snapshot_message_points_at_rebuild(harness, capsys):
+    sar.main(["--stage", "push"])
+    err = capsys.readouterr().err
+    assert "snapshot" in err and "rebuild" in err
+
+
+def test_push_stage_closes_the_collection_it_opened_for_the_check(harness, monkeypatch):
+    col = _SummaryCol(SyncStatusResponse.NO_CHANGES)
+    _patch_collection(monkeypatch, col)
+    sar.save_snapshot(STATE)
+    sar.main(["--stage", "push"])
+    assert col.closed
+
+
+def test_rebuild_stage_rebuilds_then_records_and_never_syncs(harness):
+    assert sar.main(["--stage", "rebuild"]) == 0
+    assert harness.names() == [
+        "backup:prerebuild",
+        "rebuild",
+        "record_snapshot",
+    ]
+    assert sar.load_snapshot() == STATE
+
+
+def test_rebuild_stage_prints_the_snapshot_state(harness, capsys):
+    sar.main(["--stage", "rebuild"])
+    out = capsys.readouterr().out
+    assert all(str(n) in out for n in STATE)
+
+
+def test_rebuild_then_push_is_the_positive_path(harness):
+    assert sar.main(["--stage", "rebuild"]) == 0
+    harness.calls.clear()
+    assert sar.main(["--stage", "push"]) == 0
+    assert "push" in harness.calls and "push_media" in harness.calls
+
+
+def test_all_stage_runs_pull_rebuild_push_in_order(harness):
+    assert sar.main(["--stage", "all"]) == 0
+    assert _in_order(
+        harness.names(),
+        ["backup:presync", "pull", "backup:postpull", "rebuild", "record_snapshot"]
+        + ["push", "push_media"],
+    )
+    assert sar.load_snapshot() == STATE
+
+
+def _in_order(seen, expected):
+    positions = [seen.index(item) for item in expected]
+    return positions == sorted(positions)
+
+
+def test_all_stage_equals_the_default(harness):
+    sar.main(["--stage", "all"])
+    explicit = list(harness.calls)
+    harness.calls.clear()
+    sar.main()
+    assert harness.calls == explicit
+
+
+def test_all_stage_aborts_before_push_when_state_changes_after_recording(
+    harness, monkeypatch, capsys
+):
+    original = sar.record_snapshot
+
+    def record_then_drift(path):
+        result = original(path)
+        harness.state = (STATE[0] + 1, STATE[1], STATE[2])
+        return result
+
+    monkeypatch.setattr(sar, "record_snapshot", record_then_drift)
+    assert sar.main(["--stage", "all"]) == 2
+    assert "push" not in harness.calls and "push_media" not in harness.calls
+    assert "reviewed" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize(
+    "stage,failing",
+    [
+        ("pull", "pull"),
+        ("all", "pull"),
+        ("rebuild", "rebuild"),
+        ("all", "rebuild"),
+        ("push", "push"),
+        ("all", "push"),
+        ("push", "push_media"),
+        ("all", "push_media"),
+    ],
+)
+def test_anki_errors_return_one(harness, monkeypatch, capsys, stage, failing):
+    from anki.errors import AnkiException
+
+    sar.save_snapshot(STATE)
+
+    def boom(*a, **kw):
+        raise AnkiException("kaput")
+
+    monkeypatch.setattr(sar, failing, boom)
+    assert sar.main(["--stage", stage]) == 1
+    assert "anki error" in capsys.readouterr().err
