@@ -944,9 +944,6 @@ def test_word_row_deck_property_matches_subdeck_name(pos):
     assert row.deck == subdeck_name(pos)
 
 
-# ---------------------------------------------------------------------------
-# WordRow.fields(government) -- Case (7) and Translation (1)
-# ---------------------------------------------------------------------------
 
 CASE_INDEX = FIELD_NAMES.index("Case")
 TRANSLATION_INDEX = FIELD_NAMES.index("Translation")
