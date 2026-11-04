@@ -169,8 +169,9 @@ def _card_indices(sheet):
 def test_the_hint_rides_the_prompt_and_never_an_answer(sheet, card_index):
     qfmt, afmt = build_template(sheet, card_index)
     marker = f'id="{prompt_hint.PROMPT_HINT_ID}"'
-    assert (marker in qfmt) == ('id="translation"' in qfmt)
-    assert marker not in afmt
+    english_prompt = 'id="translation"' in qfmt
+    assert (marker in qfmt) == english_prompt
+    assert afmt.count(marker) == (0 if english_prompt else 1)
 
 
 @pytest.mark.parametrize("sheet", list(FIELD_NAMES))

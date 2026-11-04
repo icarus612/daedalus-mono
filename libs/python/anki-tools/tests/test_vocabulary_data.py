@@ -42,6 +42,7 @@ EXPECTED_HEADERS = {
         "Additional Info",
         "Examples",
         "Status",
+        "Case",
     ],
     "adjectives.tsv": [
         "#",
@@ -70,6 +71,7 @@ EXPECTED_HEADERS = {
         "Additional Info",
         "Examples",
         "Status",
+        "Case",
     ],
     "pronouns.tsv": [
         "#",
@@ -232,7 +234,9 @@ def test_wheel_build_includes_tsv_data(tmp_path):
         assert f"anki_tools/data/russian-vocabulary/{filename}" in names
 
 
-SOURCE_LIST = Path(__file__).resolve().parents[1] / "tests" / "data" / "source-word-list.md"
+SOURCE_LIST = (
+    Path(__file__).resolve().parents[1] / "tests" / "data" / "source-word-list.md"
+)
 
 _PARENTHETICAL = re.compile(r"\([^)]*\)")
 _LINE_BREAK = re.compile(r"<br\s*/?>|</?div>|</?p>")

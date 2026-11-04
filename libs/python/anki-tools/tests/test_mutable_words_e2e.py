@@ -140,6 +140,7 @@ def _comparable_to_workbook(lines, sheet):
     return normalized
 
 
+@pytest.mark.skip(reason="workbook retired (D8); the importer is deleted in 4.8")
 def test_full_pipeline_regenerates_byte_identical_tsvs(tmp_path):
     """Pronouns/Numerals are hand-authored (not workbook sheets, see the
     data dir's README) so this only covers the four workbook-backed sheets,
