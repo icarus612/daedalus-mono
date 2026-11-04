@@ -38,7 +38,7 @@ import pytest
 from anki_tools.anki_identity import base91 as _base91
 from anki_tools.audio_naming import SLOTS, audio_field_value, parse_audio_filenames
 from anki_tools.audio_naming import build_filename as shared_build_filename
-from anki_tools.case_field import case_name_for_row
+from anki_tools.case_field import load_case_government
 from anki_tools.immutable_words_plan import (
     _EMPTY_INFO,
     DECK_ROOT,
@@ -918,7 +918,7 @@ def test_field_names_constant():
 def test_word_row_fields_shape_and_values(pos):
     row = WordRow(pos=pos, rank=1, russian="русский текст", english="english text")
 
-    fields = row.fields()
+    fields = row.fields({})
 
     assert len(fields) == len(FIELD_NAMES) == 10
     assert fields[0] == "русский текст"  # Russian
@@ -930,7 +930,7 @@ def test_word_row_fields_shape_and_values(pos):
     )  # Audio -- the four predicted filenames, one <audio> element each
     assert fields[5] == ""  # Additional Info
     assert fields[6] == ""  # Examples
-    assert fields[7] == case_name_for_row(pos, "")  # Case
+    assert fields[7] == ""  # Case -- unlisted guid
     assert fields[8] == ""  # Russian Distinction -- headword has no parenthetical
     assert fields[9] == ""  # English Distinction -- headword is in no collision set
 
@@ -942,6 +942,115 @@ def test_word_row_fields_shape_and_values(pos):
 def test_word_row_deck_property_matches_subdeck_name(pos):
     row = WordRow(pos=pos, rank=1, russian="x", english="y")
     assert row.deck == subdeck_name(pos)
+
+
+# ---------------------------------------------------------------------------
+# WordRow.fields(government) -- Case (7) and Translation (1)
+# ---------------------------------------------------------------------------
+
+CASE_INDEX = FIELD_NAMES.index("Case")
+TRANSLATION_INDEX = FIELD_NAMES.index("Translation")
+ADDITIONAL_INFO_INDEX = FIELD_NAMES.index("Additional Info")
+MULTI_ENGLISH = "in / at (where)<br>into (where/what)"
+MULTI_CELL = "in / at (where) => Prepositional || into (where/what) => Accusative"
+
+
+def _strip_tags(text):
+    return re.sub(r"<[^>]*>", "", text)
+
+
+@pytest.fixture
+def government_rows(tmp_path):
+    multi = WordRow(pos="Prepositions", rank=1, russian="в", english=MULTI_ENGLISH)
+    single = WordRow(pos="Prepositions", rank=2, russian="около", english="near")
+    outside = WordRow(pos="Particles", rank=1, russian="не", english="not")
+    unlisted = WordRow(pos="Prepositions", rank=3, russian="над", english="above")
+    path = tmp_path / "case-government.tsv"
+    path.write_text(
+        "guid\tcases\tmeaning→case\n"
+        f"{multi.guid}\tAccusative, Prepositional\t{MULTI_CELL}\n"
+        f"{single.guid}\tGenitive\t\n"
+        f"{outside.guid}\tDative\t\n",
+        encoding="utf-8",
+    )
+    return load_case_government(path), multi, single, outside, unlisted
+
+
+def test_fields_case_value_listed_rows_get_cases_unlisted_get_blank(government_rows):
+    government, multi, single, outside, unlisted = government_rows
+    assert multi.fields(government)[CASE_INDEX] == "Accusative, Prepositional"
+    assert single.fields(government)[CASE_INDEX] == "Genitive"
+    assert outside.fields(government)[CASE_INDEX] == "Dative"
+    assert unlisted.fields(government)[CASE_INDEX] == ""
+
+
+def test_fields_multi_case_translation_gets_line_spans(government_rows):
+    government, multi, *_ = government_rows
+    translation = multi.fields(government)[TRANSLATION_INDEX]
+    assert translation != multi.english
+    assert 'class="case-text case-prepositional"' in translation
+    assert 'class="case-text case-accusative"' in translation
+    assert _strip_tags(translation) == _strip_tags(multi.english)
+
+
+def test_fields_single_case_and_unlisted_translation_is_byte_identical(government_rows):
+    government, multi, single, outside, unlisted = government_rows
+    for row in (single, outside, unlisted):
+        assert row.fields(government)[TRANSLATION_INDEX] == row.english
+    assert multi.fields(government)[TRANSLATION_INDEX] != multi.english
+
+
+def test_fields_with_empty_government_changes_nothing(government_rows):
+    _, multi, single, outside, unlisted = government_rows
+    for row in (multi, single, outside, unlisted):
+        fields = row.fields({})
+        assert fields[CASE_INDEX] == ""
+        assert fields[TRANSLATION_INDEX] == row.english
+
+
+def test_fields_default_government_matches_explicit_default(monkeypatch, tmp_path):
+    from anki_tools import case_field
+
+    row = WordRow(pos="Prepositions", rank=1, russian="около", english="near")
+    path = tmp_path / "gov.tsv"
+    path.write_text(f"guid\tcases\n{row.guid}\tGenitive\n", encoding="utf-8")
+    monkeypatch.setattr(case_field, "CASE_GOVERNMENT_PATH", path)
+    case_field.default_government.cache_clear()
+    try:
+        assert row.fields()[CASE_INDEX] == "Genitive"
+        assert row.fields() == row.fields(case_field.default_government())
+    finally:
+        case_field.default_government.cache_clear()
+
+
+def test_fields_additional_info_stays_the_residual(government_rows):
+    from anki_tools.case_field import residual_info_for_row
+
+    government, *_ = government_rows
+    row = WordRow(
+        pos="Prepositions",
+        rank=1,
+        russian="для",
+        english="for",
+        info="Genitive — always",
+    )
+    assert row.fields(government)[ADDITIONAL_INFO_INDEX] == residual_info_for_row(
+        "Prepositions", "Genitive — always"
+    )
+    assert row.fields({})[ADDITIONAL_INFO_INDEX] == "always"
+
+
+def test_guid_pin_file_still_matches_the_real_source_rows(real_rows):
+    pinned = json.loads(
+        (Path(__file__).resolve().parent / "data" / "immutable_guids.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert pinned
+    by_key = {(row.pos, row.russian): row.guid for row in real_rows}
+    shared = [e for e in pinned if (e["pos"], e["russian"]) in by_key]
+    assert len(shared) > 150
+    assert [e for e in shared if by_key[(e["pos"], e["russian"])] != e["guid"]] == []
 
 
 # ---------------------------------------------------------------------------

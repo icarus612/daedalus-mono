@@ -1,31 +1,32 @@
-"""The `Case` field: the grammatical case a Russian preposition governs.
+"""The `Case` field: the grammatical cases a Russian word governs.
 
-Rendered as its own labelled row on the answer side, through the same
-`addTitle` block every other grammar fact uses -- `Case / Preposition` on
-Verbs, `Case Governed` on Numerals, `Gender` and `Plural` on Nouns. The field
-holds the case NAME alone; the template decides how it is presented.
+The field holds the canonical case names alone, comma-joined in the order
+`case-government.tsv` lists them; the card template renders them as pills
+(`case_pill`). The TSV is the only source of which words govern which cases,
+and optionally which gloss line of the translation goes with which case.
 
-Derived only for the Prepositions section, whose `Info` column IS the
-governed case by construction ("Prepositions never change themselves, though
-they dictate the case of the noun that follows them"). Other sections use
-that column for unrelated notes, and a case word appearing there does not
-mean the row's own word governs it -- `поздравляю`'s "often + с +
-instrumental" is governed by `с`, not by `поздравляю`.
+`residual_info` still serves the Prepositions section, whose `Info` column
+names the governed case by construction.
 
 Pure text -- no Anki imports.
 """
 
+import csv
 import re
+from collections.abc import Mapping
+from dataclasses import dataclass
+from functools import lru_cache
+from pathlib import Path
 
 CASE_FIELD = "Case"
 CASE_ID = "case"
 
 GOVERNING_SECTION = "Prepositions"
 
-# The same row layout the Mutable note types give every grammar field via
-# `mutable_words_plan.EXTRA_CSS`, so a `Case` row on a preposition reads
-# identically to `Case / Preposition` on a verb. The Immutable note type is
-# cloned from a source that has no field of its own to model this on.
+CASE_GOVERNMENT_PATH = Path(__file__).parent / "data" / "case-government.tsv"
+LINE_CASE_SEPARATOR = " || "
+LINE_CASE_ARROW = " => "
+
 CASE_CSS = (
     "#case {\n"
     "\tpadding: 5px 0;\n"
@@ -66,13 +67,6 @@ CASE_NAMES = (
 # wrong "Dative or Genitive".
 _COMMENTARY = re.compile(r"\s+[—–-]\s+")
 
-_INFO_DIV = re.compile(
-    r'^([ \t]*)<div id="additional-info">\{\{Additional Info\}\}</div>[ \t]*$', re.M
-)
-_INFO_TITLE_CALL = re.compile(
-    r'^([ \t]*)addTitle\("additional-info", "&#9432;"\);[ \t]*$', re.M
-)
-
 
 def case_name(info: str) -> str:
     """The governed case named by an `Info` cell, e.g. `Accusative or Prepositional`.
@@ -92,17 +86,10 @@ def case_name(info: str) -> str:
     return " or ".join(name for _, name in sorted(found))
 
 
-def case_name_for_row(pos: str, info: str) -> str:
-    """`case_name(info)` for a governing section's row, `""` for every other."""
-    return case_name(info) if pos == GOVERNING_SECTION else ""
-
-
 # Everything the `Case` field already carries. What survives its removal is
 # the only part `Additional Info` still has to say.
 _CASE_WORDS = re.compile("|".join(full for full, _ in CASE_NAMES), re.I)
-_ONLY_FILLER = re.compile(
-    r"^[\s;,/()&.–—-]*(?:and|or)?[\s;,/()&.–—-]*$", re.I
-)
+_ONLY_FILLER = re.compile(r"^[\s;,/()&.–—-]*(?:and|or)?[\s;,/()&.–—-]*$", re.I)
 
 
 def residual_info(info: str) -> str:
@@ -127,29 +114,102 @@ def residual_info_for_row(pos: str, info: str) -> str:
     return residual_info(info) if pos == GOVERNING_SECTION else info
 
 
-def add_case_row(template_html: str) -> str:
-    """Add the `Case` div and its `addTitle` call above `Additional Info`'s.
+@dataclass(frozen=True)
+class CaseGovernment:
+    cases: tuple[str, ...]
+    line_cases: Mapping[str, str]
 
-    Grammar rows come before the `&#9432;` detail block and `Examples`, which
-    is the order Verbs and Numerals already render theirs in. Returns the
-    template unchanged when it lacks either the `additional-info` div or its
-    `addTitle` call (the sides that never render it), or already carries a
-    `case` div. Idempotent.
+
+_CANONICAL = frozenset(full for full, _ in CASE_NAMES)
+_LINE_CASE_HEADERS = ("meaning→case", "meaning->case")
+
+
+def _parse_cases(cell: str) -> tuple[str, ...]:
+    names = tuple(name.strip() for name in cell.split(","))
+    for name in names:
+        if name not in _CANONICAL:
+            raise ValueError(f"unknown case name: {name!r}")
+    if len(set(names)) != len(names):
+        raise ValueError(f"duplicate case name in {cell!r}")
+    return names
+
+
+def _parse_line_cases(cell: str, cases: tuple[str, ...]) -> dict[str, str]:
+    if not cell.strip():
+        return {}
+    line_cases: dict[str, str] = {}
+    for entry in cell.split(LINE_CASE_SEPARATOR):
+        line, arrow, case = entry.partition(LINE_CASE_ARROW)
+        line, case = line.strip(), case.strip()
+        if not arrow or not line:
+            raise ValueError(f"malformed meaning->case entry: {entry!r}")
+        if case not in _CANONICAL:
+            raise ValueError(f"unknown case name: {case!r}")
+        if case not in cases:
+            raise ValueError(f"line case {case!r} is not in cases {cases}")
+        line_cases[line] = case
+    return line_cases
+
+
+def load_case_government(path: Path | str | None = None) -> dict[str, CaseGovernment]:
+    """Read the case-government TSV into `{guid: CaseGovernment}`.
+
+    Columns are found by header name; only `guid` and `cases` are required.
+    A row with a blank `cases` cell is not a governor and yields no entry.
+    With no `path`, a missing default file yields `{}`.
     """
-    if f'id="{CASE_ID}"' in template_html:
-        return template_html
-    if not (_INFO_DIV.search(template_html) and _INFO_TITLE_CALL.search(template_html)):
-        return template_html
-    with_div = _INFO_DIV.sub(
-        lambda m: (
-            f'{m.group(1)}<div id="{CASE_ID}">{{{{{CASE_FIELD}}}}}</div>\n'
-            f"{m.group(0)}"
-        ),
-        template_html,
+    if path is None:
+        if not CASE_GOVERNMENT_PATH.exists():
+            return {}
+        source = CASE_GOVERNMENT_PATH
+    else:
+        source = Path(path)
+        if not source.exists():
+            raise FileNotFoundError(source)
+
+    with source.open(encoding="utf-8", newline="") as handle:
+        rows = [
+            row
+            for row in csv.reader(handle, delimiter="\t", quoting=csv.QUOTE_NONE)
+            if any(cell.strip() for cell in row)
+        ]
+    if not rows:
+        return {}
+
+    header = [cell.strip().casefold() for cell in rows[0]]
+    for required in ("guid", "cases"):
+        if required not in header:
+            raise ValueError(f"missing required column: {required}")
+    guid_at, cases_at = header.index("guid"), header.index("cases")
+    line_at = next(
+        (header.index(name) for name in _LINE_CASE_HEADERS if name in header), None
     )
-    return _INFO_TITLE_CALL.sub(
-        lambda m: (
-            f'{m.group(1)}addTitle("{CASE_ID}", "{CASE_FIELD}");\n{m.group(0)}'
-        ),
-        with_div,
-    )
+
+    def cell(row: list[str], index: int | None) -> str:
+        return row[index] if index is not None and index < len(row) else ""
+
+    government: dict[str, CaseGovernment] = {}
+    for row in rows[1:]:
+        guid = cell(row, guid_at).strip()
+        cases_cell = cell(row, cases_at).strip()
+        if guid in government:
+            raise ValueError(f"duplicate guid: {guid!r}")
+        if not cases_cell:
+            continue
+        cases = _parse_cases(cases_cell)
+        government[guid] = CaseGovernment(
+            cases, _parse_line_cases(cell(row, line_at), cases)
+        )
+    return government
+
+
+def case_value(government: Mapping[str, CaseGovernment], guid: str) -> str:
+    """The comma-joined cases `guid` governs, `""` for an unlisted guid."""
+    entry = government.get(guid)
+    return ", ".join(entry.cases) if entry else ""
+
+
+@lru_cache(maxsize=1)
+def default_government() -> dict[str, CaseGovernment]:
+    """`load_case_government()`, memoised -- callers must not mutate it."""
+    return load_case_government()

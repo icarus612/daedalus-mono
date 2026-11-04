@@ -1,5 +1,5 @@
-"""Contract tests for the `Case` field: the case a preposition governs,
-rendered as its own labelled row on the answer side.
+"""Contract tests for the `Case` field: the cases a word governs, read from
+a government TSV and rendered as pills.
 """
 
 import re
@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from anki_tools import case_field
-from anki_tools.immutable_words_plan import FIELD_NAMES, parse_word_list
+from anki_tools.immutable_words_plan import FIELD_NAMES, WordRow, parse_word_list
 
 REAL_SOURCE_PATH = Path(__file__).resolve().parent / "data" / "source-word-list.md"
 
@@ -54,47 +54,29 @@ def test_case_order_follows_the_cell_not_the_table():
     assert case_field.case_name("Accusative; Genitive") == "Accusative or Genitive"
 
 
-def test_case_name_for_row_only_fires_for_prepositions():
-    assert case_field.case_name_for_row("Prepositions", "Genitive") == "Genitive"
-    for pos in ("Particles", "Base Adverbs", "Conjunctions", "Indeclinable Nouns"):
-        assert case_field.case_name_for_row(pos, "Genitive") == ""
-
-
-def test_poznravlyayu_style_row_is_never_tagged():
-    """`с` governs the instrumental there, not the word itself."""
+def test_poznravlyayu_style_row_names_the_governed_case_only_in_raw_info():
     info = "1st-person present of поздравлять; often + с + instrumental"
     assert case_field.case_name(info) == "Instrumental"
-    assert case_field.case_name_for_row("Particles", info) == ""
 
 
-def test_every_real_preposition_gets_a_case(real_rows):
+def test_every_real_preposition_info_names_a_case(real_rows):
     prepositions = [r for r in real_rows if r.pos == "Prepositions"]
     assert len(prepositions) == 44
-    tagged = {
-        r.russian: case_field.case_name_for_row(r.pos, r.info) for r in prepositions
-    }
-    untagged = [w for w, tag in tagged.items() if not tag]
-    assert untagged == []
-    assert tagged["о / об"] == "Prepositional"
-    assert tagged["насчёт"] == "Genitive"
-    assert tagged["в / во"] == "Accusative or Prepositional"
-    assert tagged["вопреки"] == "Dative"
+    named = {r.russian: case_field.case_name(r.info) for r in prepositions}
+    assert [w for w, tag in named.items() if not tag] == []
+    assert named["о / об"] == "Prepositional"
+    assert named["насчёт"] == "Genitive"
+    assert named["в / во"] == "Accusative or Prepositional"
+    assert named["вопреки"] == "Dative"
 
 
-def test_no_non_preposition_row_is_tagged(real_rows):
-    tagged = [
-        (r.pos, r.russian)
-        for r in real_rows
-        if r.pos != "Prepositions" and case_field.case_name_for_row(r.pos, r.info)
-    ]
-    assert tagged == []
-    # positive control: those rows' raw info DOES name cases, so the
-    # section guard is what suppresses them, not an empty input.
-    assert [
-        r.russian
-        for r in real_rows
-        if case_field.case_name(r.info) and r.pos != "Prepositions"
-    ] == ["нет", "поздравляю", "мало", "много"]
+@pytest.mark.parametrize("name", ["case_name_for_row", "add_case_row"])
+def test_removed_helpers_are_gone(name):
+    assert not hasattr(case_field, name)
+
+
+def test_the_module_does_not_import_case_pill():
+    assert not hasattr(case_field, "case_pill")
 
 
 def test_case_is_a_field_of_the_note_type():
@@ -106,62 +88,232 @@ def test_every_row_supplies_a_value_for_every_field(real_rows):
         assert len(row.fields()) == len(FIELD_NAMES)
 
 
-def test_preposition_rows_carry_the_tag_in_the_case_field(real_rows):
-    index = FIELD_NAMES.index(case_field.CASE_FIELD)
-    prepositions = [r for r in real_rows if r.pos == "Prepositions"]
-    assert len(prepositions) == 44
-    for row in prepositions:
-        assert row.fields()[index] == case_field.case_name(row.info)
-    others = [r for r in real_rows if r.pos != "Prepositions"]
-    assert len(others) == 189
-    for row in others:
-        assert row.fields()[index] == ""
-
-
-DETAIL_SIDE = (
-    '\t<div id="additional-info">{{Additional Info}}</div>\n'
-    "<script>\n"
-    '\taddTitle("additional-info", "&#9432;");\n'
-    "</script>\n"
-)
-
-
-def test_add_case_row_adds_a_div_and_its_title_above_additional_info():
-    out = case_field.add_case_row(DETAIL_SIDE)
-    assert '<div id="case">{{Case}}</div>' in out
-    assert 'addTitle("case", "Case");' in out
-    assert out.index('id="case"') < out.index('id="additional-info"')
-    assert out.index('addTitle("case"') < out.index('addTitle("additional-info"')
-
-
-def test_the_case_is_never_spliced_into_another_field():
-    """It is its own row, like Case / Preposition on Verbs -- never text
-    appended to the Russian or the English."""
-    out = case_field.add_case_row(DETAIL_SIDE)
-    assert "{{Translation}}{{#Case}}" not in out
-    assert 'class="case"' not in out
-    assert "(+ " not in out
-
-
-def test_add_case_row_is_idempotent():
-    once = case_field.add_case_row(DETAIL_SIDE)
-    assert case_field.add_case_row(once) == once
-
-
-def test_add_case_row_leaves_a_side_without_the_detail_block_alone():
-    """The question sides render no detail block, so they get no case row."""
-    for html in (
-        '<div id="pronunciation">{{hint:Pronunciation}}</div>',
-        '\t<div id="russian">{{Russian}}</div>',
-        '\t<div id="translation">{{Translation}}</div>',
-    ):
-        assert case_field.add_case_row(html) == html
-
-
 def test_case_css_styles_the_row_the_template_emits():
     assert f"#{case_field.CASE_ID} {{" in case_field.CASE_CSS
-    assert f"#{case_field.CASE_ID} .title {{" in case_field.CASE_CSS
-    assert f"#{case_field.CASE_ID} .body {{" in case_field.CASE_CSS
+
+
+HEADER = "guid\tcases\tmeaning→case\tfamily\theadword"
+
+
+def write_tsv(tmp_path, rows, header=HEADER, name="case-government.tsv"):
+    path = tmp_path / name
+    path.write_text("\n".join([header, *rows]) + "\n", encoding="utf-8")
+    return path
+
+
+MULTI_LINE_CELL = "in / at (where) => Prepositional || into (where/what) => Accusative"
+
+
+def test_constants_have_the_pinned_values():
+    assert case_field.LINE_CASE_SEPARATOR == " || "
+    assert case_field.LINE_CASE_ARROW == " => "
+    assert case_field.CASE_GOVERNMENT_PATH == (
+        Path(case_field.__file__).parent / "data" / "case-government.tsv"
+    )
+
+
+def test_loader_reads_cases_in_file_order_and_line_cases(tmp_path):
+    path = write_tsv(
+        tmp_path,
+        [
+            f"g1\tAccusative, Prepositional\t{MULTI_LINE_CELL}\tx\tв",
+            "g2\tGenitive\t\tx\tоколо",
+        ],
+    )
+    government = case_field.load_case_government(path)
+    assert set(government) == {"g1", "g2"}
+    assert government["g1"].cases == ("Accusative", "Prepositional")
+    assert dict(government["g1"].line_cases) == {
+        "in / at (where)": "Prepositional",
+        "into (where/what)": "Accusative",
+    }
+    assert government["g2"].cases == ("Genitive",)
+    assert dict(government["g2"].line_cases) == {}
+
+
+def test_loader_accepts_str_path_and_ascii_arrow_header(tmp_path):
+    path = write_tsv(
+        tmp_path,
+        ["g1\tAccusative, Prepositional\tin => Prepositional"],
+        header="guid\tcases\tmeaning->case",
+    )
+    government = case_field.load_case_government(str(path))
+    assert dict(government["g1"].line_cases) == {"in": "Prepositional"}
+
+
+def test_loader_matches_headers_casefolded_stripped_in_any_order(tmp_path):
+    path = write_tsv(
+        tmp_path,
+        ["Genitive\tg1"],
+        header=" CASES \t Guid ",
+    )
+    assert case_field.load_case_government(path)["g1"].cases == ("Genitive",)
+
+
+def test_loader_ignores_extra_columns_and_blank_lines(tmp_path):
+    path = tmp_path / "gov.tsv"
+    path.write_text(
+        "\nguid\tnote type\tcases\tstatus\n\ng1\tImmutable\tDative\tok\n\n",
+        encoding="utf-8",
+    )
+    assert set(case_field.load_case_government(path)) == {"g1"}
+
+
+def test_loader_does_not_interpret_quotes(tmp_path):
+    path = write_tsv(
+        tmp_path,
+        ['g1\tAccusative, Prepositional\t"in" => Prepositional\tx\tв'],
+    )
+    government = case_field.load_case_government(path)
+    assert dict(government["g1"].line_cases) == {'"in"': "Prepositional"}
+
+
+def test_blank_cases_row_yields_no_entry(tmp_path):
+    path = write_tsv(tmp_path, ["g1\t   \t\tx\tв", "g2\tGenitive\t\tx\tоколо"])
+    assert set(case_field.load_case_government(path)) == {"g2"}
+
+
+def test_line_case_splits_on_the_first_arrow_and_strips(tmp_path):
+    path = write_tsv(
+        tmp_path,
+        ["g1\tDative, Genitive\t  a => b => Dative  ||  c => Genitive \tx\tк"],
+    )
+    # the value "b => Dative" is not canonical, so the first-arrow split fails
+    with pytest.raises(ValueError):
+        case_field.load_case_government(path)
+    ok = write_tsv(
+        tmp_path,
+        ["g1\tDative, Genitive\t  a b =>  Dative  ||  c => Genitive \tx\tк"],
+        name="ok.tsv",
+    )
+    assert dict(case_field.load_case_government(ok)["g1"].line_cases) == {
+        "a b": "Dative",
+        "c": "Genitive",
+    }
+
+
+GOOD_ROW = f"g1\tAccusative, Prepositional\t{MULTI_LINE_CELL}\tx\tв"
+
+
+@pytest.mark.parametrize(
+    "bad_rows,bad_header,message",
+    [
+        (["g1\tAccusativ\t\tx\tв"], HEADER, "Accusativ"),
+        (["g1\tAccusative, Accusative\t\tx\tв"], HEADER, "Accusative"),
+        (
+            ["g1\tAccusative\t\tx\tв", "g1\tGenitive\t\tx\tв"],
+            HEADER,
+            "g1",
+        ),
+        (
+            ["g1\tAccusative, Prepositional\tin => Dative\tx\tв"],
+            HEADER,
+            "Dative",
+        ),
+        (
+            ["g1\tAccusative, Prepositional\tin => Locative\tx\tв"],
+            HEADER,
+            "Locative",
+        ),
+        (["g1\tAccusative, Prepositional\tin\tx\tв"], HEADER, "in"),
+        (
+            ["g1\tAccusative, Prepositional\t => Accusative\tx\tв"],
+            HEADER,
+            "",
+        ),
+        (["Accusative\tx\tв"], "cases\tfamily\theadword", "guid"),
+        (["g1\tx\tв"], "guid\tfamily\theadword", "cases"),
+    ],
+    ids=[
+        "unknown-case",
+        "duplicate-case-in-cell",
+        "duplicate-guid",
+        "line-case-not-in-cases",
+        "line-case-not-canonical",
+        "entry-without-arrow",
+        "empty-gloss-key",
+        "missing-guid-header",
+        "missing-cases-header",
+    ],
+)
+def test_loader_rejects_malformed_files_but_loads_the_clean_twin(
+    tmp_path, bad_rows, bad_header, message
+):
+    clean = write_tsv(tmp_path, [GOOD_ROW], name="clean.tsv")
+    assert set(case_field.load_case_government(clean)) == {"g1"}
+    bad = write_tsv(tmp_path, bad_rows, header=bad_header, name="bad.tsv")
+    with pytest.raises(ValueError, match=re.escape(message) if message else None):
+        case_field.load_case_government(bad)
+
+
+def test_missing_explicit_path_raises_but_an_existing_one_loads(tmp_path):
+    existing = write_tsv(tmp_path, [GOOD_ROW])
+    assert case_field.load_case_government(existing)
+    with pytest.raises(FileNotFoundError):
+        case_field.load_case_government(tmp_path / "absent.tsv")
+
+
+def test_default_path_missing_returns_empty(monkeypatch, tmp_path):
+    monkeypatch.setattr(case_field, "CASE_GOVERNMENT_PATH", tmp_path / "absent.tsv")
+    assert case_field.load_case_government() == {}
+
+
+def test_default_path_present_is_read(monkeypatch, tmp_path):
+    path = write_tsv(tmp_path, [GOOD_ROW])
+    monkeypatch.setattr(case_field, "CASE_GOVERNMENT_PATH", path)
+    assert set(case_field.load_case_government()) == {"g1"}
+
+
+@pytest.mark.parametrize(
+    "guid,expected",
+    [
+        ("g1", "Accusative, Prepositional"),
+        ("g2", "Genitive"),
+        ("unlisted", ""),
+        ("", ""),
+    ],
+)
+def test_case_value_joins_cases_and_blanks_unlisted(tmp_path, guid, expected):
+    path = write_tsv(tmp_path, [GOOD_ROW, "g2\tGenitive\t\tx\tоколо"])
+    government = case_field.load_case_government(path)
+    assert case_field.case_value(government, guid) == expected
+
+
+def test_case_value_on_an_empty_mapping_is_blank():
+    assert case_field.case_value({}, "g1") == ""
+
+
+def test_default_government_is_cached_and_follows_the_default_path(
+    monkeypatch, tmp_path
+):
+    case_field.default_government.cache_clear()
+    monkeypatch.setattr(
+        case_field, "CASE_GOVERNMENT_PATH", write_tsv(tmp_path, [GOOD_ROW])
+    )
+    try:
+        first = case_field.default_government()
+        assert set(first) == {"g1"}
+        assert case_field.default_government() is first
+    finally:
+        case_field.default_government.cache_clear()
+
+
+def test_row_fields_case_value_comes_from_the_government_not_the_section(tmp_path):
+    preposition = WordRow(pos="Prepositions", rank=1, russian="в", english="in")
+    particle = WordRow(pos="Particles", rank=1, russian="не", english="not")
+    unlisted = WordRow(pos="Prepositions", rank=2, russian="над", english="above")
+    path = write_tsv(
+        tmp_path,
+        [
+            f"{preposition.guid}\tAccusative, Prepositional\t\tx\tв",
+            f"{particle.guid}\tGenitive\t\tx\tне",
+        ],
+    )
+    government = case_field.load_case_government(path)
+    index = FIELD_NAMES.index(case_field.CASE_FIELD)
+    assert preposition.fields(government)[index] == "Accusative, Prepositional"
+    assert particle.fields(government)[index] == "Genitive"
+    assert unlisted.fields(government)[index] == ""
 
 
 @pytest.mark.parametrize(

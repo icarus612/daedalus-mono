@@ -64,7 +64,7 @@ from anki.collection import Collection
 
 from anki_tools import (
     card_audio,
-    case_field,
+    case_pill,
     distinction,
     examples_field,
     mutable_words,
@@ -540,7 +540,7 @@ def test_clone_note_type_css_extends_source_with_audio_button_css(cloned):
         + "\n\n"
         + examples_field.EXAMPLES_CSS
         + "\n\n"
-        + case_field.CASE_CSS
+        + case_pill.CASE_PILL_CSS
         + "\n\n"
         + word_qualifier.QUALIFIER_CSS
         + "\n\n"
@@ -647,7 +647,34 @@ def test_immutable_and_mutable_css_share_identical_base_rules(tmp_path):
         immutable_note_type["css"] + "\n\n" + mutable_words_plan.EXTRA_CSS
     )
     for sheet, note_type in mutable_note_types.items():
-        assert note_type["css"] == expected_mutable_css, sheet
+        assert _non_case_rules(note_type["css"]) == _non_case_rules(
+            expected_mutable_css
+        ), sheet
+
+
+_CASE_SELECTOR = re.compile(r"#case|\.case-pills?\b|\.case-text")
+
+
+def _non_case_rules(css):
+    rules = re.findall(r"([^{}]+)\{([^{}]*)\}", css)
+    return [
+        (" ".join(sel.split()), " ".join(body.split()))
+        for sel, body in rules
+        if not _CASE_SELECTOR.search(sel)
+    ]
+
+
+@pytest.mark.parametrize(
+    "left,right,equal",
+    [
+        ("a{x:1} #case{y:2}", "a{x:1}", True),
+        ("a{x:1} .nightMode .case-pill{y:2}", "a{x:1} .case-text{z:3}", True),
+        ("a{x:1}", "a{x:2}", False),
+        ("a{x:1} .case-pills{y:2}", "a{x:1} b{y:2}", False),
+    ],
+)
+def test_non_case_rules_comparison_ignores_only_case_rules(left, right, equal):
+    assert (_non_case_rules(left) == _non_case_rules(right)) is equal
 
 
 def test_clone_note_type_strips_part_of_speech_from_every_template_side(cloned):
@@ -2844,20 +2871,26 @@ _WRAPPED_HINT = re.compile(r"\{\{#([^{}]+)\}\}\(\{\{\1\}\}\)\{\{/\1\}\}")
 
 # (pos, russian, english, info) -> the cue strings each one must produce,
 # keyed by the (headword, Russian Distinction) pair the note actually carries.
-# `о / об` is the user-reported word whose Case and English Distinction are
-# the same string; `вопреки` has a case and no English cue; `как
-# (conjunction)` has a Russian cue; `в` has none of the three.
+# Case is no longer a cue; expected cues come from English Distinction data.
 _CUE_ROWS = [
     ("Prepositions", "о / об", "about", "Prepositional"),
     ("Prepositions", "вопреки", "despite", "Dative"),
     ("Conjunctions", "как (conjunction)", "as", ""),
     ("Prepositions", "в", "in", ""),
 ]
+
+
+def _expected_cues(russian):
+    english = distinction.english_distinction(russian)
+    qualifier = distinction.qualifier_of(russian)
+    return {f"({cue})" for cue in (english, qualifier) if cue}
+
+
 _EXPECTED_CUES = {
-    ("о / об", ""): {"(Prepositional)"},
-    ("вопреки", ""): {"(Dative)"},
-    ("как", "conjunction"): {"(comparison)", "(conjunction)"},
-    ("в", ""): set(),
+    (strip_qualifier(russian), distinction.qualifier_of(russian)): _expected_cues(
+        russian
+    )
+    for _, russian, _, _ in _CUE_ROWS
 }
 
 
@@ -2903,6 +2936,20 @@ def _rendered_sides(qfmt, afmt):
     return qfmt, qfmt + "\n" + afmt
 
 
+_PILL_MARK = f'class="{case_pill.PILL_WRAPPER_CLASS}"'
+_CASE_ROW_MARKERS = ('id="prompt-case"', 'id="case"', 'addTitle("case"')
+
+
+def _case_row_markers(html):
+    found = [marker for marker in _CASE_ROW_MARKERS if marker in html]
+    found += [
+        f"({name})"
+        for name in case_pill.CASE_ORDER
+        if f"({name})" in html or f"({name.lower()})" in html
+    ]
+    return found
+
+
 @pytest.mark.parametrize("family,card_index", DISTINCTION_TEMPLATE_ORDS)
 def test_every_distinction_notetype_cues_the_side_that_needs_it(
     family, card_index, distinction_templates
@@ -2927,23 +2974,97 @@ def test_every_distinction_notetype_cues_the_side_that_needs_it(
         for field_name in _PARENTHESISED_FIELD.findall(side):
             assert f"{{{{#{field_name}}}}}" in side, (family, card_index, field_name)
 
+    if family == IMMUTABLE_FAMILY:
+        assert _case_row_markers(question + answer) == [], card_index
+        assert question.count(_PILL_MARK) == card_index, card_index
+        assert answer.count(_PILL_MARK) == 1, card_index
 
-def test_immutable_prompt_shows_the_english_cue_and_keeps_the_case_cue(cloned):
+
+@pytest.mark.parametrize(
+    "html,expected",
+    [
+        ("<div>ok</div>", []),
+        ('<div id="prompt-case">(Genitive)</div>', ['id="prompt-case"', "(Genitive)"]),
+        ('<div id="case"></div>', ['id="case"']),
+        ('addTitle("case", "Case");', ['addTitle("case"']),
+    ],
+)
+def test_case_row_marker_detector_catches_the_old_shapes(html, expected):
+    assert _case_row_markers(html) == expected
+
+
+def test_immutable_prompt_shows_the_english_cue_and_the_pills_not_a_case_cue(cloned):
     note_type, _ = cloned
     prompt_sides = [
         side for side in _template_sides(note_type) if 'id="translation"' in side
     ]
     assert len(prompt_sides) == 2
     for side in prompt_sides:
-        assert prompt_hint.hint_div(distinction.ENGLISH_FIELD) in side
-        assert (
-            prompt_hint.hint_div(
-                case_field.CASE_FIELD,
-                prompt_hint.PROMPT_CASE_ID,
-                distinction.ENGLISH_FIELD,
-            )
-            in side
-        )
+        english = side.index(prompt_hint.hint_div(distinction.ENGLISH_FIELD))
+        assert english < side.index(case_pill.pill_block())
+        assert side.count(_PILL_MARK) == 1
+    for side in _template_sides(note_type):
+        assert _case_row_markers(side) == []
+
+
+def test_immutable_card_spec_places_pills_on_the_right_sides(cloned):
+    note_type, _ = cloned
+    card1, card2 = note_type["tmpls"]
+    english = prompt_hint.hint_div(distinction.ENGLISH_FIELD)
+    russian = prompt_hint.hint_div(
+        distinction.RUSSIAN_FIELD, prompt_hint.RUSSIAN_HINT_ID
+    )
+
+    assert 'id="russian"' in card1["qfmt"]
+    assert russian in card1["qfmt"]
+    assert _PILL_MARK not in card1["qfmt"]
+    back1 = card1["afmt"]
+    assert back1.count(_PILL_MARK) == 1
+    assert english in back1
+    translation_at = back1.index("{{Translation}}")
+    assert back1.index(english) > translation_at
+    assert back1.index(english) < back1.index(_PILL_MARK)
+    ordered = [translation_at, back1.index(_PILL_MARK)]
+    for marker in ('id="additional-info"', 'id="examples"'):
+        if marker in back1:
+            ordered.append(back1.index(marker))
+    assert ordered == sorted(ordered)
+
+    assert "{{Translation}}" in card2["qfmt"]
+    assert english in card2["qfmt"]
+    assert card2["qfmt"].count(_PILL_MARK) == 1
+    assert _PILL_MARK not in card2["afmt"]
+    assert "{{Translation}}" not in card2["afmt"]
+
+
+_RENDER_PILL_COUNTS = [
+    ("Accusative, Prepositional", {(0, "q"): 0, (0, "a"): 1, (1, "q"): 1, (1, "a"): 1}),
+    ("", {(0, "q"): 0, (0, "a"): 0, (1, "q"): 0, (1, "a"): 0}),
+]
+
+
+@pytest.mark.parametrize("case_value,expected", _RENDER_PILL_COUNTS)
+def test_rendered_cards_carry_the_pills_where_the_spec_says(
+    cloned, build_col, case_value, expected
+):
+    note_type, _ = cloned
+    note = build_col.new_note(note_type)
+    note["Russian"] = "в"
+    note["Translation"] = "in"
+    note["Case"] = case_value
+    build_col.add_note(note, build_col.decks.id("Pill render check", create=True))
+
+    seen = {}
+    for card in note.cards():
+        output = card.render_output()
+        seen[(card.ord, "q")] = output.question_text
+        seen[(card.ord, "a")] = output.answer_text
+
+    assert {k: v.count(_PILL_MARK) for k, v in seen.items()} == expected
+    if case_value:
+        assert f'data-case="{case_value}"' in seen[(1, "q")]
+    else:
+        assert "data-case" not in "".join(seen.values())
 
 
 def test_immutable_headword_side_shows_the_russian_cue(cloned):
@@ -3038,9 +3159,6 @@ def test_real_source_clone_carries_every_distinction_cue(tmp_path):
     assert os.path.getmtime(real_path) == mtime_before
 
     english_hint = prompt_hint.hint_div(distinction.ENGLISH_FIELD)
-    case_hint = prompt_hint.hint_div(
-        case_field.CASE_FIELD, prompt_hint.PROMPT_CASE_ID, distinction.ENGLISH_FIELD
-    )
     russian_hint = prompt_hint.hint_div(
         distinction.RUSSIAN_FIELD, prompt_hint.RUSSIAN_HINT_ID
     )
@@ -3051,9 +3169,16 @@ def test_real_source_clone_carries_every_distinction_cue(tmp_path):
         if 'id="translation"' in side:
             prompt_sides += 1
             assert english_hint in side
-            assert case_hint in side
         if 'id="russian"' in side:
             headword_sides += 1
             assert russian_hint in side
     assert prompt_sides == 2
     assert headword_sides == 2
+
+    card1, card2 = note_type["tmpls"]
+    assert _PILL_MARK not in card1["qfmt"]
+    assert card1["afmt"].count(_PILL_MARK) == 1
+    assert card2["qfmt"].count(_PILL_MARK) == 1
+    assert _PILL_MARK not in card2["afmt"]
+    for side in _template_sides(note_type):
+        assert _case_row_markers(side) == []
