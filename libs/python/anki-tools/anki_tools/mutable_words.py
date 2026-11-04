@@ -26,6 +26,7 @@ from anki_tools import (
     audio_naming,
     card_audio,
     case_field,
+    case_pill,
     examples_field,
     mutable_words_plan,
     prompt_hint,
@@ -72,23 +73,19 @@ def build_note_types(
     for sheet, name in mutable_words_plan.NOTE_TYPE_NAMES.items():
         cloned = source_col.models.copy(source_note_type, add=False)
         cloned["name"] = name
-        cloned["css"] = (
-            cloned["css"]
-            + "\n\n"
-            + card_audio.AUDIO_BUTTON_CSS
-            + "\n\n"
-            + examples_field.EXAMPLES_CSS
-            + "\n\n"
-            + case_field.CASE_CSS
-            + "\n\n"
-            + word_qualifier.QUALIFIER_CSS
-            + "\n\n"
-            + word_stack.WORD_STACK_CSS
-            + "\n\n"
-            + prompt_hint.PROMPT_HINT_CSS
-            + "\n\n"
-            + mutable_words_plan.EXTRA_CSS
-        )
+        css_parts = [
+            cloned["css"],
+            card_audio.AUDIO_BUTTON_CSS,
+            examples_field.EXAMPLES_CSS,
+            case_field.CASE_CSS,
+            word_qualifier.QUALIFIER_CSS,
+            word_stack.WORD_STACK_CSS,
+            prompt_hint.PROMPT_HINT_CSS,
+            mutable_words_plan.EXTRA_CSS,
+        ]
+        if "Case" in mutable_words_plan.FIELD_NAMES[sheet]:
+            css_parts.insert(-1, case_pill.CASE_PILL_CSS)
+        cloned["css"] = "\n\n".join(css_parts)
 
         fields = []
         for ord_, field_name in enumerate(mutable_words_plan.FIELD_NAMES[sheet]):

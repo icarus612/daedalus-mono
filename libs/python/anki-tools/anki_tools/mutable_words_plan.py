@@ -11,7 +11,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import ClassVar
 
-from anki_tools import card_audio, distinction, prompt_hint
+from anki_tools import card_audio, case_pill, distinction, prompt_hint
 from anki_tools.anki_identity import guid_for_row, notetype_id_for_name
 from anki_tools.audio_naming import (
     audio_field_value,
@@ -87,6 +87,7 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Audio Perfective",
         "Russian Distinction",
         "English Distinction",
+        "Case",
     ),
     "Adjectives": (
         "Russian (m)",
@@ -119,6 +120,7 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Audio",
         "Russian Distinction",
         "English Distinction",
+        "Case",
     ),
     "Pronouns": (
         "Russian",
@@ -257,6 +259,7 @@ class VerbRow:
     case_preposition: str
     additional_info: str
     examples: str
+    case: str = ""
 
     SHEET: ClassVar[str] = "Verbs"
 
@@ -302,6 +305,7 @@ class VerbRow:
             audio_field_value(perfective_names),
             distinction.qualifier_of(self.imperfective),
             distinction.english_distinction(self.imperfective),
+            self.case,
         ]
 
 
@@ -368,6 +372,7 @@ class AdverbRow:
     comparative: str
     additional_info: str
     examples: str
+    case: str = ""
 
     SHEET: ClassVar[str] = "Adverbs"
 
@@ -398,6 +403,7 @@ class AdverbRow:
             audio_field_value(names),
             distinction.qualifier_of(self.adverb),
             distinction.english_distinction(self.adverb),
+            self.case,
         ]
 
 
@@ -575,6 +581,7 @@ def parse_verbs(tsv_path: str) -> list[VerbRow]:
                     case_preposition=row["Case / Preposition"],
                     additional_info=row["Additional Info"],
                     examples=row["Examples"],
+                    case=row.get("Case", ""),
                 )
             )
     return rows
@@ -626,6 +633,7 @@ def parse_adverbs(tsv_path: str) -> list[AdverbRow]:
                             comparative=row["Comparative"],
                             additional_info=row["Additional Info"],
                             examples=row["Examples"],
+                            case=row.get("Case", ""),
                         )
                     )
                 continue
@@ -656,6 +664,7 @@ def parse_adverbs(tsv_path: str) -> list[AdverbRow]:
                     comparative=row["Comparative"],
                     additional_info=row["Additional Info"],
                     examples=row["Examples"],
+                    case=row.get("Case", ""),
                 )
             )
 
@@ -670,6 +679,7 @@ def parse_adverbs(tsv_path: str) -> list[AdverbRow]:
             comparative=row.comparative,
             additional_info=row.additional_info,
             examples=row.examples,
+            case=row.case,
         )
         for rank, row in enumerate(parsed, start=1)
     ]
@@ -785,16 +795,11 @@ def _slug_for_field_name(field_name: str) -> str:
     return slug.strip("-")
 
 
-# `#russian-distinction` is the question side's prompt cue, and `{{FrontSide}}`
-# puts that copy first, so `addTitle`'s getElementById would title it instead
-# of this row.
 _DETAIL_ID_OVERRIDES: dict[str, tuple[str, str]] = {
     "Additional Info": ("additional-info", "&#9432;"),
-    distinction.RUSSIAN_FIELD: (
-        "detail-russian-distinction",
-        distinction.RUSSIAN_FIELD,
-    ),
 }
+
+_STANDALONE_DETAILS = ("Additional Info", EXAMPLES_FIELD)
 
 
 def _detail_id_and_title(field_name: str) -> tuple[str, str]:
@@ -805,9 +810,10 @@ def _detail_id_and_title(field_name: str) -> tuple[str, str]:
 
 
 def _detail_fields(sheet: str, primary_field: str) -> list[str]:
-    """`FIELD_NAMES[sheet]` entries that become titled detail sections, in
-    field order -- everything but the primary word, its translation, Stress
-    (never shown on the card), the audio fields, and `Rank`.
+    """`FIELD_NAMES[sheet]` entries that become detail sections, in field
+    order -- everything but the primary word, its translation, Stress (never
+    shown on the card), the audio fields, `Rank`, the two distinction cues and
+    `Case`, which render elsewhere.
     """
     excluded = {
         "Audio",
@@ -817,36 +823,61 @@ def _detail_fields(sheet: str, primary_field: str) -> list[str]:
         "Stress",
         primary_field,
         "Translation",
+        distinction.RUSSIAN_FIELD,
+        distinction.ENGLISH_FIELD,
+        "Case",
     }
     if sheet == "Verbs":
         excluded |= set(_ASPECT_COUNTERPART)
     return [name for name in FIELD_NAMES[sheet] if name not in excluded]
 
 
+def _detail_row(field_name: str) -> str:
+    """One labelled row, label included inside the field's own conditional so
+    an empty field leaves no element behind.
+    """
+    slug = _slug_for_field_name(field_name)
+    return (
+        f"{{{{#{field_name}}}}}"
+        f'<div id="{slug}">'
+        f'<div class="detail-label">{field_name}</div>'
+        f'<div class="detail-value">{{{{{field_name}}}}}</div>'
+        f"</div>"
+        f"{{{{/{field_name}}}}}"
+    )
+
+
 def _detail_block(
     sheet: str,
     primary_field: str,
     extra_titles: Sequence[tuple[str, str]] = (),
-) -> tuple[str, str]:
-    """(divs, script) for `sheet`'s detail sections.
+) -> tuple[str, str, str]:
+    """(details, standalone, script) for `sheet`.
 
-    Mirrors how the reference note type treats its own single "Additional
-    Info" field: each populated field becomes a `.title`/`.body` pair via
-    `addTitle`, itself a verbatim port of the reference's own function.
-    "Additional Info" keeps the reference's own id and icon, reusing the
-    shared CSS's `#additional-info` rule unchanged; every other field gets
-    its own id, grouped into `EXTRA_CSS`'s selector list under the same
-    layout rule, since the reference note type has no field of its own to
-    model them on.
+    `details` is the `#details` grid of labelled rows; `standalone` holds the
+    `Additional Info` and `Examples` divs, which keep the reference note
+    type's `.title`/`.body` treatment via `addTitle` (a verbatim port of the
+    reference's own function) and so stay outside the grid. `script` is empty
+    when nothing calls `addTitle`.
     """
-    divs = []
+    fields = _detail_fields(sheet, primary_field)
+    rows = [_detail_row(name) for name in fields if name not in _STANDALONE_DETAILS]
+    details = _wrap("details", *rows)
+
     calls = [f'addTitle("{slug}", "{title}");' for slug, title in extra_titles]
-    for field_name in _detail_fields(sheet, primary_field):
+    standalone = []
+    for field_name in fields:
+        if field_name not in _STANDALONE_DETAILS:
+            continue
         slug, title = _detail_id_and_title(field_name)
-        divs.append(f'<div id="{slug}">{{{{{field_name}}}}}</div>')
+        standalone.append(f'<div id="{slug}">{{{{{field_name}}}}}</div>')
         calls.append(f'addTitle("{slug}", "{title}");')
-    script = "\n".join(["<script>", _ADD_TITLE_FUNCTION, *calls, "</script>"])
-    return "\n".join(divs), script
+    script = (
+        "\n".join(["<script>", _ADD_TITLE_FUNCTION, *calls, "</script>"])
+        if calls
+        else ""
+    )
+    return details, "\n".join(standalone), script
 
 
 def _all_primary_fields(sheet: str) -> list[str]:
@@ -864,20 +895,18 @@ def _all_primary_fields(sheet: str) -> list[str]:
 
 
 def _all_detail_slugs() -> list[str]:
-    """Every slug `_detail_block` can emit for any sheet/card, excluding
-    "Additional Info" (styled via the reference's own `#additional-info`
-    rule) and "Examples" (styled by `examples_field.EXAMPLES_CSS`), neither
-    of which this rule covers. Drives `EXTRA_CSS`'s selector lists so every id
-    `_detail_block` emits has a rule covering it.
+    """Every row slug `_detail_block` can emit inside `#details` for any
+    sheet/card. Drives `EXTRA_CSS`'s selector list so every row id has a rule
+    covering it.
     """
     slugs: list[str] = []
     seen: set[str] = set()
     for sheet in FIELD_NAMES:
         for primary_field in _all_primary_fields(sheet):
             for field_name in _detail_fields(sheet, primary_field):
-                if field_name in ("Additional Info", EXAMPLES_FIELD):
+                if field_name in _STANDALONE_DETAILS:
                     continue
-                slug = _detail_id_and_title(field_name)[0]
+                slug = _slug_for_field_name(field_name)
                 if slug not in seen:
                     seen.add(slug)
                     slugs.append(slug)
@@ -938,37 +967,38 @@ _ASPECT_LINE_CSS = (
 
 def _build_extra_css() -> str:
     """CSS appended to the cloned source note type's CSS (never rewritten in
-    place -- see `mutable_words.build_note_types`). Generalizes the
-    reference's own `#additional-info` layout to every other detail-section
-    id `_detail_block` can emit, since the reference note type has no field
-    to model them on; `#audio-imperfective`/`#audio-perfective` close the
+    place -- see `mutable_words.build_note_types`). Lays the `#details` rows
+    out as a centred two-column label/value grid; `#audio-imperfective`/`#audio-perfective` close the
     same coverage gap for the Verbs sheet's two audio containers, mirroring
     `#audio`; `.aspect` styles the Verbs reverse fronts' inline aspect
     qualifier.
     """
     slugs = _all_detail_slugs()
     ids = ", ".join(f"#{slug}" for slug in slugs)
-    titles = ", ".join(f"#{slug} .title" for slug in slugs)
-    bodies = ", ".join(f"#{slug} .body" for slug in slugs)
     return (
+        "#details {\n"
+        "\tdisplay: grid;\n"
+        "\tgrid-template-columns: max-content max-content;\n"
+        "\tcolumn-gap: .6rem;\n"
+        "\twidth: max-content;\n"
+        "\tmax-width: 100%;\n"
+        "\tmargin: 0 auto;\n"
+        "}\n\n"
         f"{ids} {{\n"
+        "\tdisplay: contents;\n"
+        "}\n\n"
+        "#details .detail-label, #details .detail-value {\n"
         "\tpadding: 5px 0;\n"
-        "\tdisplay: inline-flex;\n"
-        "\ttext-align: left;\n"
-        "\twidth: 100%;\n"
+        "\tfont-size: 1.2rem;\n"
+        "\tcolor: #656565;\n"
         "\tword-break: break-word;\n"
         "\thyphens: auto;\n"
-        "\talign-items: start;\n"
         "}\n\n"
-        f"{titles} {{\n"
-        "\tfont-size: 1.2rem;\n"
-        "\tdisplay: inline-flex;\n"
-        "\tcolor: #656565;\n"
+        "#details .detail-label {\n"
+        "\ttext-align: right;\n"
         "}\n\n"
-        f"{bodies} {{\n"
-        "\tfont-size: 1.2rem;\n"
-        "\tcolor: #656565;\n"
-        "\tpadding-top: 2px;\n"
+        "#details .detail-value {\n"
+        "\ttext-align: left;\n"
         "}\n\n"
         "#audio-imperfective, #audio-perfective {\n"
         "\ttext-align: center;\n"
@@ -1067,20 +1097,31 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
             ),
         )
         extra_titles.append((word_id, counterpart))
-    detail_divs, detail_script = _detail_block(sheet, primary_field, extra_titles)
+    details_html, standalone_html, detail_script = _detail_block(
+        sheet, primary_field, extra_titles
+    )
     russian_div = f'<div id="russian">{{{{{primary_field}}}}}</div>'
     translation_div = _translation_div(sheet, primary_field)
+    has_case = "Case" in FIELD_NAMES[sheet]
 
     if audio_side:
         front = _wrap("front", _DECK_HEADER_HTML, audio_html, russian_div)
-        qfmt = front + _DECK_HEADER_SCRIPT
-        back = _wrap("back", translation_div, aspect_div, detail_divs)
-        afmt = "\n".join(["{{FrontSide}}", back, detail_script])
+        qfmt = _add_russian_cue(front + _DECK_HEADER_SCRIPT)
+        back = _wrap(
+            "back", translation_div, aspect_div, details_html, standalone_html
+        )
+        back = prompt_hint.add_prompt_hint(back, distinction.ENGLISH_FIELD)
+        if has_case:
+            back = case_pill.add_pill_block(back)
     else:
         front = _wrap("front", _DECK_HEADER_HTML, translation_div)
         front = prompt_hint.add_prompt_hint(front, distinction.ENGLISH_FIELD)
+        if has_case:
+            front = case_pill.add_pill_block(front)
         qfmt = front + _DECK_HEADER_SCRIPT
-        back = _wrap("back", audio_html, russian_div, aspect_div, detail_divs)
-        afmt = "\n".join(["{{FrontSide}}", back, detail_script])
+        back = _wrap(
+            "back", audio_html, russian_div, aspect_div, details_html, standalone_html
+        )
+        back = _add_russian_cue(back)
 
-    return _add_russian_cue(qfmt), afmt
+    return qfmt, "\n".join(p for p in ("{{FrontSide}}", back, detail_script) if p)
