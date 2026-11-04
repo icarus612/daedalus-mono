@@ -1,0 +1,582 @@
+family	note type	headword	guid	pos	cases	meaning->case	current Case value	status	reference
+immutable	Russian - Immutable Words (Ellis Version)	в / во	NyZhE)yQL;	Prepositions	Accusative, Prepositional	in / at (where) => Prepositional || into (where/what) => Accusative	Accusative, Prepositional	ok	https://en.wiktionary.org/wiki/в#Russian (Preposition, {{+obj}}: Nominative/Accusative/Prepositional); https://en.wiktionary.org/wiki/во#Russian (Preposition, {{+obj}}: Nominative/Accusative/Prepositional)
+immutable	Russian - Immutable Words (Ellis Version)	на	vDu=Xes7VF	Prepositions	Accusative, Prepositional	on / at (where) => Prepositional || onto (where/what) => Accusative	Accusative, Prepositional	ok	https://en.wiktionary.org/wiki/на#Russian (Preposition, {{+obj}}: Accusative/Prepositional)
+immutable	Russian - Immutable Words (Ellis Version)	с / со	glCs7HO_81	Prepositions	Instrumental, Genitive	with (whom/what) => Instrumental || from / off of (where/what) => Genitive || since (when) => Genitive	Instrumental, Genitive	ok	https://en.wiktionary.org/wiki/с#Russian (Preposition, {{+obj}}: Genitive/Accusative/Instrumental); https://en.wiktionary.org/wiki/со#Russian (Preposition, {{+obj}}: Genitive/Accusative/Instrumental)
+immutable	Russian - Immutable Words (Ellis Version)	по	o}<{.EA~`V	Prepositions	Dative		Dative	ok	https://en.wiktionary.org/wiki/по#Russian (Preposition, {{+obj}}: Dative/Accusative/Prepositional)
+immutable	Russian - Immutable Words (Ellis Version)	к / ко	cgFjJ$GiX*	Prepositions	Dative		Dative	ok	https://en.wiktionary.org/wiki/к#Russian (Preposition, {{+obj}}: Dative); https://en.wiktionary.org/wiki/ко#Russian (Preposition, {{+obj}}: Dative)
+immutable	Russian - Immutable Words (Ellis Version)	из	kWpFW%g>/T	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/из#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	у	M$L_&4Opk<	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/у#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	за	t9U|e!OMz?	Prepositions	Accusative, Instrumental	behind (where/whom/what) => Instrumental || for (whom/what) => Accusative	Accusative, Instrumental	ok	https://en.wiktionary.org/wiki/за#Russian (Preposition, {{+obj}}: Accusative/Instrumental)
+immutable	Russian - Immutable Words (Ellis Version)	от	xP+xM!q31L	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/от#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	о / об	ef}Y#mp3{g	Prepositions	Prepositional		Prepositional	ok	https://en.wiktionary.org/wiki/о#Russian (Preposition, {{+obj}}: Accusative/Prepositional); https://en.wiktionary.org/wiki/об#Russian (Preposition, {{+obj}}: Accusative/Prepositional)
+immutable	Russian - Immutable Words (Ellis Version)	до	g~r[4v3PKX	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/до#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	без	uv3)*@XB~.	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/без#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	под	i^%k&akS;S	Prepositions	Accusative, Instrumental		Accusative, Instrumental	ok	https://en.wiktionary.org/wiki/под#Russian (Preposition, {{+obj}}: Accusative/Instrumental)
+immutable	Russian - Immutable Words (Ellis Version)	над	B=*m(FzW.n	Prepositions	Instrumental		Instrumental	ok	https://en.wiktionary.org/wiki/над#Russian (Preposition, {{+obj}}: Instrumental)
+immutable	Russian - Immutable Words (Ellis Version)	перед	C+FyacC3k<	Prepositions	Instrumental		Instrumental	ok	https://en.wiktionary.org/wiki/перед#Russian (Preposition, {{+obj}}: Instrumental)
+immutable	Russian - Immutable Words (Ellis Version)	при	Cw%P[sCR2.	Prepositions	Prepositional		Prepositional	ok	https://en.wiktionary.org/wiki/при#Russian (Preposition, {{+obj}}: Prepositional)
+immutable	Russian - Immutable Words (Ellis Version)	через	d4&X7p6UrS	Prepositions	Accusative		Accusative	ok	https://en.wiktionary.org/wiki/через#Russian (Preposition, {{+obj}}: Accusative)
+immutable	Russian - Immutable Words (Ellis Version)	после	pG4O?.s+iv	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/после#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	кроме	Nvc59u9(Ec	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/кроме#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	между	wnI9fjT7NX	Prepositions	Instrumental		Instrumental	ok	https://en.wiktionary.org/wiki/между#Russian (Preposition, {{+obj}}: Genitive/Instrumental)
+immutable	Russian - Immutable Words (Ellis Version)	против	Jy-rcPw}7H	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/против#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	вокруг	Q:Swyhj[??	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/вокруг#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	вместо	nXG;6|x!>.	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/вместо#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	из-за	uy*7n8fQCw	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/из-за#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	около	OOE6c&Sv<T	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/около#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	возле	B_XI@LgAs*	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/возле#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	вдоль	ImZdo[Af+J	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/вдоль#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	сквозь	wHx$46(U%b	Prepositions	Accusative		Accusative	ok	https://en.wiktionary.org/wiki/сквозь#Russian (Preposition, {{+obj}}: Genitive/Accusative)
+immutable	Russian - Immutable Words (Ellis Version)	среди	f{8y^MFq^]	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/среди#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	внутри	QO+JS5r8H0	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/внутри#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	вне	cY:~Re,N7d	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/вне#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	мимо	GTiPQRB2rA	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/мимо#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	ради	fycl77<f{D	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/ради#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	насчёт	Am}cLuW%,d	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/насчёт#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	из-под	Ll?2qJVqPa	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/из-под#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	вопреки	Ip}I5wxN;h	Prepositions	Dative		Dative	ok	https://en.wiktionary.org/wiki/вопреки#Russian (Preposition, {{+obj}}: Dative)
+immutable	Russian - Immutable Words (Ellis Version)	благодаря	<OHY<n{:9	Prepositions	Dative		Dative	ok	https://en.wiktionary.org/wiki/благодаря#Russian (Preposition, {{+obj}}: Dative)
+immutable	Russian - Immutable Words (Ellis Version)	согласно (preposition)	sOIrDtHy,;	Prepositions	Dative		Dative	ok	https://en.wiktionary.org/wiki/согласно#Russian (Preposition, {{+obj}}: Dative)
+immutable	Russian - Immutable Words (Ellis Version)	навстречу	o;}63TX5]q	Prepositions	Dative		Dative	ok	https://en.wiktionary.org/wiki/навстречу#Russian (Preposition, {{+obj}}: Dative)
+immutable	Russian - Immutable Words (Ellis Version)	позади	fk&fa:@eA?	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/позади#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	посреди	i2q=]z/5YB	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/посреди#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	поверх	hJj3aD)q@G	Prepositions	Genitive		Genitive	ok	https://ru.wiktionary.org/wiki/поверх (prep ru, п=род.)
+immutable	Russian - Immutable Words (Ellis Version)	ввиду	Fo]/X)NX(W	Prepositions	Genitive		Genitive	ok	https://ru.wiktionary.org/wiki/ввиду (prep ru, п=родительным)
+immutable	Russian - Immutable Words (Ellis Version)	для	epGoS8S$NC	Prepositions	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/для#Russian (Preposition, {{+obj}}: Genitive)
+immutable	Russian - Immutable Words (Ellis Version)	нет	jY!=9;TFcY	Particles	Genitive			empty	https://en.wiktionary.org/wiki/нет#Russian (Particle, {{+obj|ru|gen<something> + у(gen)}}); https://elon.io/grammar/russian/cases/genitive/summary (нет forces the genitive)
+immutable	Russian - Immutable Words (Ellis Version)	мало	B0/fN8*P&W	Base Adverbs	Genitive			empty	https://elon.io/grammar/russian/cases/genitive/after-quantity (мало govern the genitive)
+immutable	Russian - Immutable Words (Ellis Version)	много	bbhsloFY@N	Base Adverbs	Genitive			empty	https://en.wiktionary.org/wiki/много#Russian (Adverb, {{+obj|ru|gen}}); https://elon.io/grammar/russian/cases/genitive/after-quantity
+immutable	Russian - Immutable Words (Ellis Version)	немного	M_1lN)k0T9	Base Adverbs	Genitive			empty	https://en.wiktionary.org/wiki/немного#Russian (Adverb, {{+obj|ru|gen}}); https://elon.io/grammar/russian/cases/genitive/after-quantity
+immutable	Russian - Immutable Words (Ellis Version)	сколько	Q1BQj*^Uu*	Base Adverbs	Genitive			empty	https://elon.io/grammar/russian/cases/genitive/after-quantity (сколько govern the genitive)
+immutable	Russian - Immutable Words (Ellis Version)	чуть-чуть	ll-M]Y>Gn8	Base Adverbs	Genitive			empty	https://elon.io/grammar/russian/cases/genitive/partitive (a-bit words: немного, чуть-чуть + genitive)
+immutable	Russian - Immutable Words (Ellis Version)	вроде	FU#1qR9`T&	Base Adverbs	Genitive			empty	https://en.wiktionary.org/wiki/вроде#Russian (Preposition, {{+obj|ru|gen}})
+mutable	Russian - Mutable Adverbs (Ellis Version)	согласно (adverb)	tL.M_0|Uet	Adverbs	Dative			empty	https://en.wiktionary.org/wiki/согласно#Russian (Preposition, {{+obj|ru|dat}})
+mutable	Russian - Mutable Verbs (Ellis Version)	делать	L-F;:5Rdzj	Verbs	Accusative		Accusative	ok	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	говорить	sh!DMJ^?Oh	Verbs	Accusative, Prepositional			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142; https://elon.io/grammar/russian/verbs/government/preposition-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	знать	HZM.2*$v>c	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	идти	GvPzaU&0?W	Verbs	Accusative			empty	https://elon.io/grammar/russian/verbs/motion/ekhat-ezdit
+mutable	Russian - Mutable Verbs (Ellis Version)	видеть	y]vymT;mHw	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	думать	A*xnQ-<f^{	Verbs	Prepositional			empty	https://elon.io/grammar/russian/verbs/government/preposition-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	спрашивать	PINiKo>0-i	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	смотреть	B!0ovh*&~;	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	понимать	xA84kezhvg	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	давать	k3Lg=cJ&0j	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	брать	I(p0@s*+v~	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	писать	vy]*EpO;Mw	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	читать	AqAVOx{}MJ	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	любить	eEE{#p$j%x	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	отвечать	ESUa]z}Ld0	Verbs	Dative, Accusative			empty	https://elon.io/grammar/russian/verbs/government/dative-verbs; https://elon.io/grammar/russian/verbs/government/preposition-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	помнить	s<s/rL*ifK	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	ждать	P8s-0MK+CZ	Verbs	Genitive, Accusative			empty	https://en.wiktionary.org/wiki/ждать#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/instrumental-genitive-verbs; OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	получать	O!]Fc}Xb+g	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	приходить	>8{C)c+:O	Verbs	Accusative			empty	https://elon.io/grammar/russian/verbs/motion/ekhat-ezdit
+mutable	Russian - Mutable Verbs (Ellis Version)	находить	eR[me`xzv4	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	начинать	E=o:r;ZWg<	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	заканчивать	yRw[@eva4I	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	открывать	m[/5-GCvcL	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	закрывать	OCS.$0>%c<	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	забывать	H2lP}cbL+]	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	помогать	RcSyAYecq_	Verbs	Dative		Dative	ok	https://en.wiktionary.org/wiki/помогать#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/dative-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	играть	BafTIA+UQU	Verbs	Accusative, Prepositional			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142; https://elon.io/grammar/russian/verbs/government/preposition-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	есть	D[A2X$,vHX	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	пить	nv{ls5ng@`	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	покупать	uZ%U)jM$Eo	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	продавать	l-0XcUXXXj	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	платить	f;bEe);|H=	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	решать	P4+*NwGKoA	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	слушать	iVv~aM)ET8	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	слышать	Y3eL0(j4~	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	чувствовать	yE69Mkj,M;	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	терять	zlfzDF2(h{	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	верить	G,xUhM@d&j	Verbs	Dative, Accusative			empty	https://en.wiktionary.org/wiki/верить#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/dative-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	просить	srX+?%t?0H	Verbs	Accusative, Genitive			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142; https://en.wiktionary.org/wiki/просить#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/instrumental-genitive-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	объяснять	Inq^9g4YV(	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	надеяться	Dn*Y~-?q?V	Verbs	Accusative			empty	https://elon.io/grammar/russian/verbs/government/preposition-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	бояться	uUg8fQDUSY	Verbs	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/бояться#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/instrumental-genitive-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	поднимать	A;&SihXm$v	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	бросать	e1|d^r^Z[S	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	искать	uT2J^/RYNp	Verbs	Accusative, Genitive			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142; https://en.wiktionary.org/wiki/искать#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/instrumental-genitive-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	посылать	bO$G]ku`CN	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	менять	uzho{b1H8m	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	выбирать	l?LL88,SK8	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	готовить	sc`&_PWs2w	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	учить	y2IJ(V:J(b	Verbs	Accusative, Dative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142; https://en.wiktionary.org/wiki/учить#Russian (Verb {{+obj}})
+mutable	Russian - Mutable Verbs (Ellis Version)	учиться	nBp-|hXH;O	Verbs	Dative		Dative	ok	https://en.wiktionary.org/wiki/учиться#Russian (Verb {{+obj}})
+mutable	Russian - Mutable Verbs (Ellis Version)	строить	k![CJCGaq9	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	ломать	Au;Ubko/;-	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	петь	o6)AGnQVwO	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	танцевать	IY;wOU50Jy	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	летать	e%mvv?LRZ,	Verbs	Accusative			empty	https://elon.io/grammar/russian/verbs/motion/ekhat-ezdit
+mutable	Russian - Mutable Verbs (Ellis Version)	бегать	nGuzyLiKzQ	Verbs	Accusative			empty	https://elon.io/grammar/russian/verbs/motion/ekhat-ezdit
+mutable	Russian - Mutable Verbs (Ellis Version)	плавать	LX/H9V6`h$	Verbs	Accusative			empty	https://elon.io/grammar/russian/verbs/motion/ekhat-ezdit
+mutable	Russian - Mutable Verbs (Ellis Version)	ездить	EpzJvDrgXi	Verbs	Accusative, Prepositional			empty	https://elon.io/grammar/russian/verbs/motion/ekhat-ezdit
+mutable	Russian - Mutable Verbs (Ellis Version)	водить	w],J){q5o7	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	носить	u.A920{X_Z	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	возить	QbH#J}_yw+	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	приносить	L]0>C/G{18	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	уносить	IU&}e~^NA}	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	мыть	Mr_7sw22_%	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	стирать	dCoThg_eJR	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	убирать	Hw</P?;hT.	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	чистить	mWk;!_j!R^	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	резать	FHn+7H?Xu,	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	варить	Ekx6PsmdX/	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	жарить	k413~6zz=P	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	печь	kSl#$v8`X`	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	встречать	NSEY7c<J$r	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	провожать	eiU(!yC}1T	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	целовать	E?3;P9?hDX	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	обнимать	p{J^1x36>a	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	жениться	zNN-&N,vb	Verbs	Prepositional		Prepositional	ok	https://en.wiktionary.org/wiki/жениться#Russian (Verb {{+obj}})
+mutable	Russian - Mutable Verbs (Ellis Version)	разводиться	d2SQ#g&6js	Verbs	Instrumental			empty	https://en.wiktionary.org/wiki/разводиться#Russian (Verb {{+obj}})
+mutable	Russian - Mutable Verbs (Ellis Version)	рожать	uZ3IzF9TZ+	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	растить	mP6._J90Ce	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	лечить	C4L7CVe|Q,	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	мечтать	Nhj<gIl0<f	Verbs	Prepositional			empty	https://elon.io/grammar/russian/verbs/government/preposition-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	желать	Btk8By:5o^	Verbs	Genitive			empty	https://en.wiktionary.org/wiki/желать#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/instrumental-genitive-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	приказывать	j9O@fIFj2B	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	запрещать	JXSk4<Ypf!	Verbs	Accusative, Dative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142; https://en.wiktionary.org/wiki/запрещать#Russian (Verb {{+obj}})
+mutable	Russian - Mutable Verbs (Ellis Version)	разрешать	t?wk45CaZ5	Verbs	Accusative, Dative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142; https://en.wiktionary.org/wiki/разрешать#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/dative-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	обещать	kEY7pG[0I[	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	обманывать	gnCET_9,@a	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	доверять	HMv7o:Tc-Q	Verbs	Dative, Accusative			empty	https://en.wiktionary.org/wiki/доверять#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/dative-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	требовать	oxs4ay|=1l	Verbs	Genitive			empty	https://en.wiktionary.org/wiki/требовать#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/instrumental-genitive-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	показывать	F,t=Mv!bjt	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	возвращаться	wkyJ6_X`XZ	Verbs	Accusative			empty	https://elon.io/grammar/russian/verbs/motion/ekhat-ezdit
+mutable	Russian - Mutable Verbs (Ellis Version)	продолжать	l8i`q+-tnO	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	предлагать	xgi*i,+WrN	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	создавать	L.U$@Lb*ap	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	считать	Eg;!OOE.1s	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	называть	Bgilgb8tKr	Verbs	Accusative, Instrumental			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142; https://en.wiktionary.org/wiki/называть#Russian (Verb {{+obj}})
+mutable	Russian - Mutable Verbs (Ellis Version)	проходить	p6>p1n7yf#	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	отдавать	Qa)K,<>M&,	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	передавать	kd&tYq{(g{	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	убивать	j6p-Z]$reT	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	случаться	Q&|8yb0;F?	Verbs	Instrumental			empty	https://en.wiktionary.org/wiki/случаться#Russian (Verb {{+obj}})
+mutable	Russian - Mutable Verbs (Ellis Version)	собирать	DWU{f)r,Sx	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	касаться	l*K>e&-b|M	Verbs	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/касаться#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/instrumental-genitive-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	замечать	iC0a`Jk`Mj	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	признавать	sXC)n4e>h1	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	готовиться	HuiWUHcV4|	Verbs	Dative			empty	https://en.wiktionary.org/wiki/готовиться#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/preposition-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	хватать	FrC%56A3%|	Verbs	Genitive		Genitive	ok	https://elon.io/grammar/russian/syntax/genitive-subject-constructions (хватать takes the genitive of what suffices)
+mutable	Russian - Mutable Verbs (Ellis Version)	обращаться	KU,@0*-i6v	Verbs	Dative	turn to / address (direct words to someone) => Dative	Dative	ok	https://elon.io/grammar/russian/verbs/government/preposition-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	отличаться	n&G-$vD4Qv	Verbs	Genitive		Genitive	ok	https://en.wiktionary.org/wiki/отличаться#Russian (Verb {{+obj}})
+mutable	Russian - Mutable Verbs (Ellis Version)	прятать	DsTR73p/MS	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	сдавать	L+Bj}PEyHQ	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	отказываться	i$ak3m$5Ip	Verbs	Genitive			empty	https://en.wiktionary.org/wiki/отказываться#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/preposition-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	жаловаться	K?F*Z)DCey	Verbs	Accusative			empty	https://en.wiktionary.org/wiki/жаловаться#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/preposition-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	удивляться	F5W`Qs>6TV	Verbs	Dative			empty	https://elon.io/grammar/russian/verbs/government/dative-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	радоваться	cbp&G]XZ6q	Verbs	Dative			empty	https://en.wiktionary.org/wiki/радоваться#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/dative-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	гордиться	H!0vO8BW$~	Verbs	Instrumental		Instrumental	ok	https://en.wiktionary.org/wiki/гордиться#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/instrumental-genitive-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	защищать	jYP`4dp36`	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	спасать	x4W&67siP#	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	красть	k<k*/fea+^	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	наказывать	f2-p$DM9w%	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	прощать	JR)=cWou-F	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	ценить	kF.nESu^+|	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	проверять	M9C8]gVO[	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	спорить	E~T}a(WvLX	Verbs	Instrumental, Prepositional			empty	https://en.wiktionary.org/wiki/спорить#Russian (Verb {{+obj}})
+mutable	Russian - Mutable Verbs (Ellis Version)	сравнивать	wx2,X8^ZK`	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	приглашать	lR>(hKwVXz	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	поздравлять	u4N-PXH-Xp	Verbs	Accusative, Instrumental			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142; https://en.wiktionary.org/wiki/поздравлять#Russian (Verb {{+obj}})
+mutable	Russian - Mutable Verbs (Ellis Version)	жалеть	b5j_(x!HX}	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	советовать	LA}s@3Fgha	Verbs	Dative		Dative	ok	https://en.wiktionary.org/wiki/советовать#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/dative-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	наблюдать	e>!OQ6Y41A	Verbs	Accusative, Instrumental			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142; https://elon.io/grammar/russian/verbs/government/preposition-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	догадываться	Kioj8Is,`l	Verbs	Prepositional			empty	https://en.wiktionary.org/wiki/догадываться#Russian (Verb {{+obj}})
+mutable	Russian - Mutable Verbs (Ellis Version)	привыкать	ezh;h&g3r4	Verbs	Dative			empty	https://en.wiktionary.org/wiki/привыкать#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/preposition-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	мешать	Inq9}perZ{	Verbs	Dative		Dative	ok	https://en.wiktionary.org/wiki/мешать#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/dative-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	звонить	P[,6Rg1Sr8	Verbs	Dative		Dative	ok	https://en.wiktionary.org/wiki/звонить#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/dative-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	дышать	G~m]ldU7&s	Verbs	Instrumental			empty	https://en.wiktionary.org/wiki/дышать#Russian (Verb {{+obj}})
+mutable	Russian - Mutable Verbs (Ellis Version)	вешать	A9z.z;sc$o	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	останавливать	Ei(R7:B@y=	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	тратить	vh{6j:E6>`	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	зарабатывать	f2cKk]N([z	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	копить	d5^{t/#Omi	Verbs	Accusative			empty	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	бежать	RazB^I/87v	Verbs	Accusative		Accusative	ok	https://elon.io/grammar/russian/verbs/motion/ekhat-ezdit
+mutable	Russian - Mutable Verbs (Ellis Version)	быть	MNBh:x:#CZ	Verbs	Instrumental		Instrumental	ok	https://en.wiktionary.org/wiki/быть#Russian (Verb {{+obj}})
+mutable	Russian - Mutable Verbs (Ellis Version)	держать	H.ck=gTnn?	Verbs	Accusative		Accusative	ok	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	ехать	upa@NcF;x7	Verbs	Accusative, Prepositional		Accusative, Prepositional	ok	https://elon.io/grammar/russian/verbs/motion/ekhat-ezdit
+mutable	Russian - Mutable Verbs (Ellis Version)	иметь	OCc!r[-%_/	Verbs	Accusative		Accusative	ok	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	нравиться	c5~C~$g8+m	Verbs	Dative		Dative	ok	https://en.wiktionary.org/wiki/нравиться#Russian (Verb {{+obj}})
+mutable	Russian - Mutable Verbs (Ellis Version)	оставлять	b_?~h%4K<X	Verbs	Accusative		Accusative	ok	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	подходить	v8r*HeWk59	Verbs	Dative		Dative	ok	https://en.wiktionary.org/wiki/подходить#Russian (Verb {{+obj}})
+mutable	Russian - Mutable Verbs (Ellis Version)	попадать	oV+nk`:YGW	Verbs	Accusative		Accusative	ok	https://elon.io/grammar/russian/verbs/motion/ekhat-ezdit; https://en.wiktionary.org/wiki/попасть#Russian (example: попасть в цель, в + accusative)
+mutable	Russian - Mutable Verbs (Ellis Version)	приезжать	E_d<HR-KTB	Verbs	Accusative, Genitive		Accusative, Genitive	ok	https://elon.io/grammar/russian/verbs/motion/ekhat-ezdit
+mutable	Russian - Mutable Verbs (Ellis Version)	приходиться	dY4#^vv?;:	Verbs	Dative		Dative	ok	https://en.wiktionary.org/wiki/приходиться#Russian (Verb {{+obj}})
+mutable	Russian - Mutable Verbs (Ellis Version)	садиться	rz^xy4&-Lj	Verbs	Accusative		Accusative	ok	https://elon.io/grammar/russian/verbs/motion/ekhat-ezdit; https://en.wiktionary.org/wiki/сесть#Russian (example: Я сел на диван, на + accusative)
+mutable	Russian - Mutable Verbs (Ellis Version)	становиться	m<ByTC4uI[	Verbs	Instrumental		Instrumental	ok	https://en.wiktionary.org/wiki/становиться#Russian (Verb {{+obj}})
+mutable	Russian - Mutable Verbs (Ellis Version)	удаваться	uoUO_Z9y`;	Verbs	Dative		Dative	ok	https://elon.io/grammar/russian/verbs/modality/ability-past-future (удалось takes a dative experiencer + infinitive)
+mutable	Russian - Mutable Verbs (Ellis Version)	хотеть	JeGY?#Cbq@	Verbs	Genitive, Accusative		Accusative, Genitive	ok	https://en.wiktionary.org/wiki/хотеть#Russian (Verb {{+obj}}); OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	разговаривать	C??,R;L)T9	Verbs	Instrumental		Instrumental	ok	https://ru.wiktionary.org/wiki/разговаривать (def. 2: общаться с кем-либо); https://ru.wiktionary.org/wiki/поговорить (def. 2: беседуя с кем-либо)
+mutable	Russian - Mutable Verbs (Ellis Version)	ненавидеть	L/jI(~6_0!	Verbs	Accusative		Accusative	ok	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	звать	d*8(i9%SGj	Verbs	Accusative		Accusative	ok	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	задавать	D)D1M@q=oo	Verbs	Accusative, Dative		Accusative, Dative	ok	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142; https://en.wiktionary.org/wiki/задавать#Russian (Verb {{+obj}}); https://en.wiktionary.org/wiki/задать#Russian (example: Нам задали три упражнения, dative of the person)
+mutable	Russian - Mutable Verbs (Ellis Version)	вызывать	b3j~cuJ,nZ	Verbs	Accusative		Accusative	ok	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	рассказывать	O!JE!rqy?h	Verbs	Accusative, Dative, Prepositional		Dative, Prepositional	wrong	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142; https://elon.io/grammar/russian/verbs/government/preposition-verbs; https://ru.wiktionary.org/wiki/рассказать (def. 1: что, о ком-чём, про кого-что); https://ru.wiktionary.org/wiki/рассказывать (quote: рассказывал нам сказки, dative of the person)
+mutable	Russian - Mutable Verbs (Ellis Version)	стоить	MfwkO!5eKA	Verbs	Accusative		Accusative	ok	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142; WEAK: https://ru.wiktionary.org/wiki/стоить (иметь определённую цену); the accusative of the price is not stated by an explicit source and OpenCorpora tags the verb both intr and tran
+mutable	Russian - Mutable Verbs (Ellis Version)	следовать	lE-g:#HKcU	Verbs	Dative, Instrumental		Dative, Instrumental	ok	https://en.wiktionary.org/wiki/следовать#Russian (Verb {{+obj}}); https://elon.io/grammar/russian/verbs/government/dative-verbs
+mutable	Russian - Mutable Verbs (Ellis Version)	знакомиться	ALx$4*=g6p	Verbs	Instrumental		Instrumental	ok	https://ru.wiktionary.org/wiki/познакомиться (def.: вступить в знакомство с кем-либо)
+mutable	Russian - Mutable Verbs (Ellis Version)	ходить	tnDl6St~=]	Verbs	Accusative		Accusative	ok	https://elon.io/grammar/russian/verbs/motion/ekhat-ezdit
+mutable	Russian - Mutable Verbs (Ellis Version)	встречаться	o]Pc$U1FQ0	Verbs	Instrumental		Instrumental	ok	https://en.wiktionary.org/wiki/встречаться#Russian (Verb {{+obj}})
+mutable	Russian - Mutable Verbs (Ellis Version)	подозревать	flnGPF/(L0	Verbs	Accusative, Prepositional		Accusative, Prepositional	ok	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142; https://en.wiktionary.org/wiki/подозревать#Russian (Verb {{+obj}}); https://ru.wiktionary.org/wiki/подозревать (def. 1: кого-либо в чём-либо)
+mutable	Russian - Mutable Verbs (Ellis Version)	игнорировать	GwH>/JCJBI	Verbs	Accusative		Accusative	ok	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	повторять	I.RDBQ@VAK	Verbs	Accusative		Accusative	ok	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+mutable	Russian - Mutable Verbs (Ellis Version)	фотографировать	z}EM|6(5IA	Verbs	Accusative		Accusative	ok	OpenCorpora transitivity (grammeme tran) via pymorphy3-dicts-ru 2.4.417150.4580142
+immutable	Russian - Immutable Words (Ellis Version)	и	J0hh-,p/i)	Conjunctions				none	https://en.wiktionary.org/wiki/и#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	что	s-(vnZ$JU=	Conjunctions				none	https://en.wiktionary.org/wiki/что#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	а	P]Po{iL%`D	Conjunctions				none	https://en.wiktionary.org/wiki/а#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	но	M&4s,:lO9h	Conjunctions				none	https://en.wiktionary.org/wiki/но#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	как (conjunction)	rMK!oN+,fY	Conjunctions				none	https://en.wiktionary.org/wiki/как#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	если	l].z|^o[ca	Conjunctions				none	https://en.wiktionary.org/wiki/если#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	или	P0sxWzDEqM	Conjunctions				none	https://en.wiktionary.org/wiki/или#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	чтобы / чтоб	l,,#bWA*.5	Conjunctions				none	https://en.wiktionary.org/wiki/чтобы#Russian; https://en.wiktionary.org/wiki/чтоб#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	когда (conjunction)	j^<Rt&~%@c	Conjunctions				none	https://en.wiktionary.org/wiki/когда#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	хотя	m3;|nl#jxl	Conjunctions				none	https://en.wiktionary.org/wiki/хотя#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	потому что	p{/=PG)PR.	Conjunctions				none	https://en.wiktionary.org/wiki/потому что#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	так как	m{H^(BT,jV	Conjunctions				none	https://en.wiktionary.org/wiki/так как#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	то есть	BJhrY3L-}P	Conjunctions				none	https://en.wiktionary.org/wiki/то есть#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	однако	DR%AFOgPoc	Conjunctions				none	https://en.wiktionary.org/wiki/однако#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	поэтому	dqMq8S)LUF	Conjunctions				none	https://en.wiktionary.org/wiki/поэтому#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	словно	K*W;,!;IHN	Conjunctions				none	https://en.wiktionary.org/wiki/словно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	зато	z_5x(+uD8L	Conjunctions				none	https://en.wiktionary.org/wiki/зато#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	тоже	t$z,GwVd&R	Conjunctions				none	https://en.wiktionary.org/wiki/тоже#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	также	G~C~b9nh&,	Conjunctions				none	https://en.wiktionary.org/wiki/также#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	либо	x[v:~eI0jL	Conjunctions				none	https://en.wiktionary.org/wiki/либо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	пока (conjunction)	dpu^rGACeg	Conjunctions				none	https://en.wiktionary.org/wiki/пока#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	чем	ekK$Z9-T+-	Conjunctions				none	https://en.wiktionary.org/wiki/чем#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	ни... ни...	Q(b8F?nt^#	Conjunctions				none	https://en.wiktionary.org/wiki/ни... ни...#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	то... то...	DTS&{h6A)U	Conjunctions				none	https://en.wiktionary.org/wiki/то... то...#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	как только	qbA/z$a+Rg	Conjunctions				none	https://en.wiktionary.org/wiki/как только#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	несмотря на то, что	G,NZbr!zQV	Conjunctions				none	https://en.wiktionary.org/wiki/несмотря на то, что#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	для того, чтобы	dxy;`QRj>|	Conjunctions				none	https://en.wiktionary.org/wiki/для того, чтобы#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	с тех пор, как	z5{49uFqt2	Conjunctions				none	https://en.wiktionary.org/wiki/с тех пор, как#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	до того, как	KZ0$8wKKm*	Conjunctions				none	https://en.wiktionary.org/wiki/до того, как#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	перед тем, как	kG8yJ:e3vA	Conjunctions				none	https://en.wiktionary.org/wiki/перед тем, как#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	оттого что	frWpR?(=>O	Conjunctions				none	https://en.wiktionary.org/wiki/оттого что#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	причём	I!6EXg{nQ<	Conjunctions				none	https://en.wiktionary.org/wiki/причём#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	притом	L0GbKNq&#U	Conjunctions				none	https://en.wiktionary.org/wiki/притом#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	как будто	ryo}FdxMS[	Conjunctions				none	https://en.wiktionary.org/wiki/как будто#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	пускай	u]I&eN3T=v	Conjunctions				none	https://en.wiktionary.org/wiki/пускай#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	не	K[K^R[ZIJj	Particles				none	https://en.wiktionary.org/wiki/не#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	же	fB]voros#k	Particles				none	https://en.wiktionary.org/wiki/же#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	бы	n+Vp?5WPNT	Particles				none	https://en.wiktionary.org/wiki/бы#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	вот	yx]Kz^MCcv	Particles				none	https://en.wiktionary.org/wiki/вот#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	только	bsi}rvLD%7	Particles				none	https://en.wiktionary.org/wiki/только#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	даже	uPc8)MWx5L	Particles				none	https://en.wiktionary.org/wiki/даже#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	ли	xh#4ye,.e+	Particles				none	https://en.wiktionary.org/wiki/ли#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	ни	wSCO$p>D+4	Particles				none	https://en.wiktionary.org/wiki/ни#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	ну	t(*AwWb/o<	Particles				none	https://en.wiktionary.org/wiki/ну#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	ведь	kuBkBn+pK#	Particles				none	https://en.wiktionary.org/wiki/ведь#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	разве	x&9)-|f_Bi	Particles				none	https://en.wiktionary.org/wiki/разве#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	неужели	xd<pz27WOx	Particles				none	https://en.wiktionary.org/wiki/неужели#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	именно	fd`w{/Wj5O	Particles				none	https://en.wiktionary.org/wiki/именно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	просто (particle)	e?fXscN7<r	Particles				none	https://en.wiktionary.org/wiki/просто#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	пусть / пускай	Oy}R4$*3)M	Particles				none	https://en.wiktionary.org/wiki/пусть#Russian; https://en.wiktionary.org/wiki/пускай#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	всё-таки	n=4qsC6t$H	Particles				none	https://en.wiktionary.org/wiki/всё-таки#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	вон	nq3AND0i]e	Particles				none	https://en.wiktionary.org/wiki/вон#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	уж	y|}Z%;W[[x	Particles				none	https://en.wiktionary.org/wiki/уж#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	да	g>=gl|eU~n	Particles				none	https://en.wiktionary.org/wiki/да#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	лишь	t;<l]F;$;j	Particles				none	https://en.wiktionary.org/wiki/лишь#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	всё	Lg%gNBJ$6m	Particles				none	https://en.wiktionary.org/wiki/всё#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	-то	L:sBP8ffq)	Particles				none	https://en.wiktionary.org/wiki/-то#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	-ка	QfFm4-sN./	Particles				none	https://en.wiktionary.org/wiki/-ка#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	таки	o1^HC[$JRF	Particles				none	https://en.wiktionary.org/wiki/таки#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	пожалуй	h`2nSd[R6E	Particles				none	https://en.wiktionary.org/wiki/пожалуй#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	будто	d?2C9Uq6jr	Particles				none	https://en.wiktionary.org/wiki/будто#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	мол	I@5YQBFJ1Z	Particles				none	https://en.wiktionary.org/wiki/мол#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	дескать	GzoPl`NFmi	Particles				none	https://en.wiktionary.org/wiki/дескать#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	во	yl>Di.+#$H	Particles				none	https://en.wiktionary.org/wiki/во#Russian (no government stated; en.wiktionary {{+obj}}: Accusative/Nominative/Prepositional)
+immutable	Russian - Immutable Words (Ellis Version)	ну и	chvNUCm+C:	Particles				none	https://en.wiktionary.org/wiki/ну и#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	здравствуйте	pr|F;}q03B	Particles				none	https://en.wiktionary.org/wiki/здравствуйте#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	спасибо	Q*9Ljk9m/J	Particles				none	https://en.wiktionary.org/wiki/спасибо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	пожалуйста	viYS?K?&S}	Particles				none	https://en.wiktionary.org/wiki/пожалуйста#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	извините	7Ot+7zw-c	Particles				none	https://en.wiktionary.org/wiki/извините#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	простите	L{5wT&Hlua	Particles				none	https://en.wiktionary.org/wiki/простите#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	привет	L*-Rb-sgRr	Particles				none	https://en.wiktionary.org/wiki/привет#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	конечно	xTSeU&+R4#	Particles				none	https://en.wiktionary.org/wiki/конечно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	ладно	muKAcAp),i	Particles				none	https://en.wiktionary.org/wiki/ладно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	ничего	d:/Oppcf(9	Particles				none	https://en.wiktionary.org/wiki/ничего#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	поздравляю	Qlb+to54d<	Particles				none	https://en.wiktionary.org/wiki/поздравляю#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	помогите	Q`Yd{lX^6b	Particles				none	https://en.wiktionary.org/wiki/помогите#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	это	wl)uQ86OIg	Particles				none	https://en.wiktionary.org/wiki/это#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	так (particle)	zrbEss%Xjc	Particles				none	https://en.wiktionary.org/wiki/так#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	кино	h-4Zx0O*R/	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/кино#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	метро	p##v>((%2-	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/метро#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	кофе	phd`}u{G>g	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/кофе#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	пальто	NC[s={i{Dn	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/пальто#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	кафе	ii+&15IM[F	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/кафе#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	такси	qhSAQgh./M	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/такси#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	радио	b?:K#9Ku3+	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/радио#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	меню	tC7-=/1Z0=	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/меню#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	шоссе	f`^7mh+24l	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/шоссе#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	жюри	bqV!bHD>4t	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/жюри#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	хобби	Jg{$0McG%f	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/хобби#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	интервью	DVLu?BGUno	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/интервью#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	резюме	jfQe}%~<R:	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/резюме#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	пианино	y,YkX]3|rq	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/пианино#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	пюре	Fo7TR|A4C_	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/пюре#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	желе	t^RCG1IM=!	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/желе#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	авокадо	tvi@qLyaU(	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/авокадо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	кенгуру	yYC~^c@j0f	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/кенгуру#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	шимпанзе	htD[ayittn	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/шимпанзе#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	фойе	j!ZrHp&eIY	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/фойе#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	шоу	BP5Be`XLG=	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/шоу#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	эссе	Q4EFACSbpq	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/эссе#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	какао	ynaU>H[=?S	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/какао#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	турне	j3sG(t=B?	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/турне#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	бюро	jBe5]*ih.e	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/бюро#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	купе	fsXSZ.~e)_	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/купе#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	пари	Q?Q;$U7?fl	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/пари#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	алиби	tExAm9UP3z	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/алиби#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	жалюзи	mVb6i3``Gx	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/жалюзи#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	рагу	ELw-j7gp,y	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/рагу#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	депо	Ha;M4bSu}(	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/депо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	маэстро	m&nRHoti^Y	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/маэстро#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	пенальти	QQeA8@x}?*	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/пенальти#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	соло	pO[z7b@p+o	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/соло#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	табло	ndHI6=_v`B	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/табло#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	фортепиано	y|GXV=Rs/.	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/фортепиано#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	бра	A;98H:p9+z	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/бра#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	регби	N6#)VP.d>%	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/регби#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	цунами	x[Rpvqb&*{	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/цунами#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	хаки	I]-W~zq0I*	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/хаки#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	киви	i==nDkX:b0	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/киви#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	манго	dy$aua`tfm	Indeclinable Nouns				none	https://en.wiktionary.org/wiki/манго#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	где	pFIpm1z@jf	Base Adverbs				none	https://en.wiktionary.org/wiki/где#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	здесь	zv)&R+`i*Y	Base Adverbs				none	https://en.wiktionary.org/wiki/здесь#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	тут	wmy:XK4zOr	Base Adverbs				none	https://en.wiktionary.org/wiki/тут#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	там	u+brF|9v(n	Base Adverbs				none	https://en.wiktionary.org/wiki/там#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	везде	ogN&>5GQ^V	Base Adverbs				none	https://en.wiktionary.org/wiki/везде#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	нигде	xA_I0&ZQ(^	Base Adverbs				none	https://en.wiktionary.org/wiki/нигде#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	дома	cLYL)r@*`w	Base Adverbs				none	https://en.wiktionary.org/wiki/дома#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	куда	ww)-n;c~:J	Base Adverbs				none	https://en.wiktionary.org/wiki/куда#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	сюда	l2OWS{-V#~	Base Adverbs				none	https://en.wiktionary.org/wiki/сюда#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	туда	mgo}%NpWKp	Base Adverbs				none	https://en.wiktionary.org/wiki/туда#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	домой	niqY,-8?pd	Base Adverbs				none	https://en.wiktionary.org/wiki/домой#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	откуда	B>I^luw1uC	Base Adverbs				none	https://en.wiktionary.org/wiki/откуда#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	отсюда	m(*NTx>Lyq	Base Adverbs				none	https://en.wiktionary.org/wiki/отсюда#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	оттуда	P<9YH|0xj	Base Adverbs				none	https://en.wiktionary.org/wiki/оттуда#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	назад	jYn.7J2(Hf	Base Adverbs				none	https://en.wiktionary.org/wiki/назад#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	вперёд	m:9me%[M:K	Base Adverbs				none	https://en.wiktionary.org/wiki/вперёд#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	когда (adverb)	PK!!ts-EGZ	Base Adverbs				none	https://en.wiktionary.org/wiki/когда#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	тогда	K<{qZoGx~*	Base Adverbs				none	https://en.wiktionary.org/wiki/тогда#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	сейчас	za~1W_cg:}	Base Adverbs				none	https://en.wiktionary.org/wiki/сейчас#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	теперь	N)(W$NIB@s	Base Adverbs				none	https://en.wiktionary.org/wiki/теперь#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	сегодня	E-$|]Xb%2(	Base Adverbs				none	https://en.wiktionary.org/wiki/сегодня#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	завтра	nfE4AZNq55	Base Adverbs				none	https://en.wiktionary.org/wiki/завтра#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	вчера	BZ(M#N.;k>	Base Adverbs				none	https://en.wiktionary.org/wiki/вчера#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	потом	FX#O]4i)CQ	Base Adverbs				none	https://en.wiktionary.org/wiki/потом#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	всегда	P`m!;$%:+C	Base Adverbs				none	https://en.wiktionary.org/wiki/всегда#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	иногда	ux(9Suvgq[	Base Adverbs				none	https://en.wiktionary.org/wiki/иногда#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	никогда	kSyj8d6Z^0	Base Adverbs				none	https://en.wiktionary.org/wiki/никогда#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	уже	Q4])vvWb`M	Base Adverbs				none	https://en.wiktionary.org/wiki/уже#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	ещё	q%D_>XJ0Z:	Base Adverbs				none	https://en.wiktionary.org/wiki/ещё#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	пока (adverb)	d/(bEQ_U/Y	Base Adverbs				none	https://en.wiktionary.org/wiki/пока#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	опять	y6*:x+GMxL	Base Adverbs				none	https://en.wiktionary.org/wiki/опять#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	снова	A`~3%d)pW#	Base Adverbs				none	https://en.wiktionary.org/wiki/снова#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	вдруг	EhUZdahS^L	Base Adverbs				none	https://en.wiktionary.org/wiki/вдруг#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	сразу	b=$e,o>V;C	Base Adverbs				none	https://en.wiktionary.org/wiki/сразу#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	наконец	A6#?,kK/uv	Base Adverbs				none	https://en.wiktionary.org/wiki/наконец#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	очень	fvd9K63@tP	Base Adverbs				none	https://en.wiktionary.org/wiki/очень#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	слишком	QYEN$vo=,	Base Adverbs				none	https://en.wiktionary.org/wiki/слишком#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	почти	ltx;9H]mR/	Base Adverbs				none	https://en.wiktionary.org/wiki/почти#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	совсем	sb+Y6Z>6vA	Base Adverbs				none	https://en.wiktionary.org/wiki/совсем#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	вовсе	t/VA#e`jAz	Base Adverbs				none	https://en.wiktionary.org/wiki/вовсе#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	едва	JwVq]^Weu]	Base Adverbs				none	https://en.wiktionary.org/wiki/едва#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	вместе	OA/it09@>Z	Base Adverbs				none	https://en.wiktionary.org/wiki/вместе#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	почему	c43%|Oh?Fw	Base Adverbs				none	https://en.wiktionary.org/wiki/почему#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	зачем	t}Q|v*`L*F	Base Adverbs				none	https://en.wiktionary.org/wiki/зачем#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	как (adverb)	B!s$bTdC60	Base Adverbs				none	https://en.wiktionary.org/wiki/как#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	так (adverb)	f)^X@TkXxV	Base Adverbs				none	https://en.wiktionary.org/wiki/так#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	пешком	Mu,W;78B5{	Base Adverbs				none	https://en.wiktionary.org/wiki/пешком#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	зря	rTUaCTAu5+	Base Adverbs				none	https://en.wiktionary.org/wiki/зря#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	наоборот	bd:ap_Ra7+	Base Adverbs				none	https://en.wiktionary.org/wiki/наоборот#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	наверняка	c?yViv}ZT.	Base Adverbs				none	https://en.wiktionary.org/wiki/наверняка#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	нарочно	Pc^VZ(.UD*	Base Adverbs				none	https://en.wiktionary.org/wiki/нарочно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	вслух	o_<{V-,~(A	Base Adverbs				none	https://en.wiktionary.org/wiki/вслух#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	наизусть	H+Af#.;(~;	Base Adverbs				none	https://en.wiktionary.org/wiki/наизусть#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	вообще	m#Q2ZQaCci	Base Adverbs				none	https://en.wiktionary.org/wiki/вообще#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	затем	Gck@rD(%WD	Base Adverbs				none	https://en.wiktionary.org/wiki/затем#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	иначе	lIEmV7~1)i	Base Adverbs				none	https://en.wiktionary.org/wiki/иначе#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	можно	hvk)J!3XtL	Base Adverbs				none	https://en.wiktionary.org/wiki/можно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	надо	QT*;XCgS!i	Base Adverbs				none	https://en.wiktionary.org/wiki/надо#Russian (no government stated; en.wiktionary {{+obj}}: Instrumental)
+immutable	Russian - Immutable Words (Ellis Version)	однажды	Qy)j?kW`EV	Base Adverbs				none	https://en.wiktionary.org/wiki/однажды#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	сначала	xh#pwSP)^,	Base Adverbs				none	https://en.wiktionary.org/wiki/сначала#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	правда (adverb)	kaU+d{l/fy	Base Adverbs				none	https://en.wiktionary.org/wiki/правда#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	поблизости	q|MokZpJ!`	Base Adverbs				none	https://en.wiktionary.org/wiki/поблизости#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	по-новому	KZT?k`N_v!	Adverbs				none	https://en.wiktionary.org/wiki/по-новому#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	по-старому	sSb+F<i8yP	Adverbs				none	https://en.wiktionary.org/wiki/по-старому#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	хорошо	C<)HiOya^>	Adverbs				none	https://en.wiktionary.org/wiki/хорошо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	плохо	vA1O3(U,!?	Adverbs				none	https://en.wiktionary.org/wiki/плохо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	высоко	*~2bh<!H@	Adverbs				none	https://en.wiktionary.org/wiki/высоко#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	низко	iIKh<x5)?R	Adverbs				none	https://en.wiktionary.org/wiki/низко#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	сильно	OBOl,TVEi9	Adverbs				none	https://en.wiktionary.org/wiki/сильно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	слабо	l}L=PLZmk`	Adverbs				none	https://en.wiktionary.org/wiki/слабо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	тяжело	Ey+.:];C}[	Adverbs				none	https://en.wiktionary.org/wiki/тяжело#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	легко	CP[fhKkf~H	Adverbs				none	https://en.wiktionary.org/wiki/легко#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	коротко	KPqC>BdE]N	Adverbs				none	https://en.wiktionary.org/wiki/коротко#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	быстро	J_>lvPX{T,	Adverbs				none	https://en.wiktionary.org/wiki/быстро#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	медленно	le4xDK%fsi	Adverbs				none	https://en.wiktionary.org/wiki/медленно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	трудно	k8ATmLIQ@F	Adverbs				none	https://en.wiktionary.org/wiki/трудно#Russian (no government stated; en.wiktionary {{+obj}}: Dative)
+mutable	Russian - Mutable Adverbs (Ellis Version)	просто (adverb)	v*^Y^8o93j	Adverbs				none	https://en.wiktionary.org/wiki/просто#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	сложно	g!(%[kS]<a	Adverbs				none	https://en.wiktionary.org/wiki/сложно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	чисто	jvd{Oh,E++	Adverbs				none	https://en.wiktionary.org/wiki/чисто#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	грязно	M`y>i/mA.B	Adverbs				none	https://en.wiktionary.org/wiki/грязно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	дорого	kKp)hzxvRs	Adverbs				none	https://en.wiktionary.org/wiki/дорого#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	дёшево	c=<{xFjbeZ	Adverbs				none	https://en.wiktionary.org/wiki/дёшево#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	красиво	dgO8&}XzI[	Adverbs				none	https://en.wiktionary.org/wiki/красиво#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	уродливо	Nu)Iat!=|!	Adverbs				none	https://en.wiktionary.org/wiki/уродливо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	ужасно	qcpr]]R4D*	Adverbs				none	https://en.wiktionary.org/wiki/ужасно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	правильно	B(e@M?,i+P	Adverbs				none	https://en.wiktionary.org/wiki/правильно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	неправильно	N]wWjzkHL3	Adverbs				none	https://en.wiktionary.org/wiki/неправильно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	серьёзно	onWk{%pc)U	Adverbs				none	https://en.wiktionary.org/wiki/серьёзно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	холодно	Go<r;KwL5U	Adverbs				none	https://en.wiktionary.org/wiki/холодно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	тепло	rD}7l|Qntg	Adverbs				none	https://en.wiktionary.org/wiki/тепло#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	жарко	K^|k)PmgKt	Adverbs				none	https://en.wiktionary.org/wiki/жарко#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	горячо	o-~%TYf-s/	Adverbs				none	https://en.wiktionary.org/wiki/горячо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	прохладно	I&eN@lwr4y	Adverbs				none	https://en.wiktionary.org/wiki/прохладно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	тихо	x02Ei$p0/`	Adverbs				none	https://en.wiktionary.org/wiki/тихо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	громко	pe9VS/gr}j	Adverbs				none	https://en.wiktionary.org/wiki/громко#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	часто	F~,msW69/B	Adverbs				none	https://en.wiktionary.org/wiki/часто#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	редко	cQ`-LBkcfs	Adverbs				none	https://en.wiktionary.org/wiki/редко#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	внимательно	k>@%Xa/*D`	Adverbs				none	https://en.wiktionary.org/wiki/внимательно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	странно	CsCi/F0(+v	Adverbs				none	https://en.wiktionary.org/wiki/странно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	умно	x)HpqVY%^T	Adverbs				none	https://en.wiktionary.org/wiki/умно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	глупо	t9&/>mzoWY	Adverbs				none	https://en.wiktionary.org/wiki/глупо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	по-доброму	Rf&{VBNUPr	Adverbs				none	https://en.wiktionary.org/wiki/по-доброму#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	зло	EsD+YgsXnc	Adverbs				none	https://en.wiktionary.org/wiki/зло#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	смело	sN(~K?IFR.	Adverbs				none	https://en.wiktionary.org/wiki/смело#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	богато	bD/75w:7xp	Adverbs				none	https://en.wiktionary.org/wiki/богато#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	бедно	l.%dc:HB@E	Adverbs				none	https://en.wiktionary.org/wiki/бедно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	здорово	P`HF6to?-7	Adverbs				none	https://en.wiktionary.org/wiki/здорово#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	больно	L;RLpf9z1Y	Adverbs				none	https://en.wiktionary.org/wiki/больно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	молодо	w/E.lL%{AW	Adverbs				none	https://en.wiktionary.org/wiki/молодо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	весело	J[J3a97=1:	Adverbs				none	https://en.wiktionary.org/wiki/весело#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	грустно	QI~]/~Kp$}	Adverbs				none	https://en.wiktionary.org/wiki/грустно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	счастливо	H,&)kL/_;U	Adverbs				none	https://en.wiktionary.org/wiki/счастливо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	радостно	eboF.+R2I6	Adverbs				none	https://en.wiktionary.org/wiki/радостно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	честно	O}6q.*j]NT	Adverbs				none	https://en.wiktionary.org/wiki/честно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	хитро	G-(n|^(Ns2	Adverbs				none	https://en.wiktionary.org/wiki/хитро#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	строго	jn(SzMqpX~	Adverbs				none	https://en.wiktionary.org/wiki/строго#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	жестоко	Fev/:iPDMx	Adverbs				none	https://en.wiktionary.org/wiki/жестоко#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	нежно	yvoHH|[uE0	Adverbs				none	https://en.wiktionary.org/wiki/нежно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	спокойно	G**0Hn6>tF	Adverbs				none	https://en.wiktionary.org/wiki/спокойно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	нервно	d)SyB@nt}(	Adverbs				none	https://en.wiktionary.org/wiki/нервно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	нормально	B;u<f@s2oZ	Adverbs				none	https://en.wiktionary.org/wiki/нормально#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	лениво	Da:!$yn|1,	Adverbs				none	https://en.wiktionary.org/wiki/лениво#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	интересно	QtyeEa6D!	Adverbs				none	https://en.wiktionary.org/wiki/интересно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	скучно	p|(qB6dt*%	Adverbs				none	https://en.wiktionary.org/wiki/скучно#Russian (no government stated; en.wiktionary {{+obj}}: Dative)
+mutable	Russian - Mutable Adverbs (Ellis Version)	смешно	pW2WntfdxD	Adverbs				none	https://en.wiktionary.org/wiki/смешно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	во-первых	Jy{PsES=2n	Adverbs				none	https://en.wiktionary.org/wiki/во-первых#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	рано	scb[Qy99v/	Adverbs				none	https://en.wiktionary.org/wiki/рано#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	поздно	QKctRyx#^K	Adverbs				none	https://en.wiktionary.org/wiki/поздно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	утром	l1Z_PA]YJ7	Adverbs				none	https://en.wiktionary.org/wiki/утром#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	вечером	xD-puPX.vJ	Adverbs				none	https://en.wiktionary.org/wiki/вечером#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	ночью	N}BOn%#zg=	Adverbs				none	https://en.wiktionary.org/wiki/ночью#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	днём	iKj[$9@z,Q	Adverbs				none	https://en.wiktionary.org/wiki/днём#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	зимой	o|^i*@-j#.	Adverbs				none	https://en.wiktionary.org/wiki/зимой#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	весной	ce>;*t}~`>	Adverbs				none	https://en.wiktionary.org/wiki/весной#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	летом	Ed>^Gi1r;c	Adverbs				none	https://en.wiktionary.org/wiki/летом#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	осенью	C}YC0YPY%u	Adverbs				none	https://en.wiktionary.org/wiki/осенью#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	по-настоящему	N;f9bAy*z[	Adverbs				none	https://en.wiktionary.org/wiki/по-настоящему#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	по-современному	e(K>,*Ms62	Adverbs				none	https://en.wiktionary.org/wiki/по-современному#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	по-русски	Q1&TdpI@9*	Adverbs				none	https://en.wiktionary.org/wiki/по-русски#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	по-разному	x4wrG</67u	Adverbs				none	https://en.wiktionary.org/wiki/по-разному#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	одинаково	w1Og+JYAvM	Adverbs				none	https://en.wiktionary.org/wiki/одинаково#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	похоже	f}v/n@784)	Adverbs				none	https://en.wiktionary.org/wiki/похоже#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	полностью	F/(SfY%[MG	Adverbs				none	https://en.wiktionary.org/wiki/полностью#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	пусто	k{/D23=GRs	Adverbs				none	https://en.wiktionary.org/wiki/пусто#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	свободно	c]7rWJXakK	Adverbs				none	https://en.wiktionary.org/wiki/свободно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	открыто	y0Q)~(WnKc	Adverbs				none	https://en.wiktionary.org/wiki/открыто#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	закрыто	e+h,`bw<]b	Adverbs				none	https://en.wiktionary.org/wiki/закрыто#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	направо	xyB*#`T]Eg	Adverbs				none	https://en.wiktionary.org/wiki/направо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	справа	yq3_>Bp=>?	Adverbs				none	https://en.wiktionary.org/wiki/справа#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	налево	MEH^0+3x<#	Adverbs				none	https://en.wiktionary.org/wiki/налево#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	слева	E^vtYuA8G#	Adverbs				none	https://en.wiktionary.org/wiki/слева#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	прямо	M>/J-AS^i9	Adverbs				none	https://en.wiktionary.org/wiki/прямо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	остро	wNV`n1szsb	Adverbs				none	https://en.wiktionary.org/wiki/остро#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	тупо	EM?q{8gZ7x	Adverbs				none	https://en.wiktionary.org/wiki/тупо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	твёрдо	CfVL}JmC+u	Adverbs				none	https://en.wiktionary.org/wiki/твёрдо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	мягко	FDRQiS(hpv	Adverbs				none	https://en.wiktionary.org/wiki/мягко#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	сладко	c^H/.KCikV	Adverbs				none	https://en.wiktionary.org/wiki/сладко#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	горько	wbpcVvM;0n	Adverbs				none	https://en.wiktionary.org/wiki/горько#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	кисло	bbV[P2PZf-	Adverbs				none	https://en.wiktionary.org/wiki/кисло#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	солоно	bV#GCsUs(h	Adverbs				none	https://en.wiktionary.org/wiki/солоно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	вкусно	eO$&C)|_J/	Adverbs				none	https://en.wiktionary.org/wiki/вкусно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	свежо	oy$:=^&J*=	Adverbs				none	https://en.wiktionary.org/wiki/свежо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	сухо	f9M%^C7$G4	Adverbs				none	https://en.wiktionary.org/wiki/сухо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	мокро	AjtpaF~YuN	Adverbs				none	https://en.wiktionary.org/wiki/мокро#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	влажно	x[[QxMQ(9I	Adverbs				none	https://en.wiktionary.org/wiki/влажно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	живо	Fqw]4pI4,6	Adverbs				none	https://en.wiktionary.org/wiki/живо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	мёртво	jaO4llp2/Z	Adverbs				none	https://en.wiktionary.org/wiki/мёртво#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	целиком	f.D/yrMqJ:	Adverbs				none	https://en.wiktionary.org/wiki/целиком#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	глубоко	QA2wRW8MW_	Adverbs				none	https://en.wiktionary.org/wiki/глубоко#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	мелко	tB}L}Qyp/|	Adverbs				none	https://en.wiktionary.org/wiki/мелко#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	широко	wV(GtS.Nni	Adverbs				none	https://en.wiktionary.org/wiki/широко#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	узко	uK32];1V.C	Adverbs				none	https://en.wiktionary.org/wiki/узко#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	толсто	xnHG2Y0ra^	Adverbs				none	https://en.wiktionary.org/wiki/толсто#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	тонко	sU_5>Q+dow	Adverbs				none	https://en.wiktionary.org/wiki/тонко#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	известно	m%T|`qQM>@	Adverbs				none	https://en.wiktionary.org/wiki/известно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	популярно	f/{R<MeL~;	Adverbs				none	https://en.wiktionary.org/wiki/популярно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	важно	Bd+wbHDE.5	Adverbs				none	https://en.wiktionary.org/wiki/важно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	нужно	P*&Yv=[}6!	Adverbs				none	https://en.wiktionary.org/wiki/нужно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	уверенно	E{&S_hX-Q0	Adverbs				none	https://en.wiktionary.org/wiki/уверенно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	опасно	P<Ji&3fHyk	Adverbs				none	https://en.wiktionary.org/wiki/опасно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	безопасно	dDp3@}`z+4	Adverbs				none	https://en.wiktionary.org/wiki/безопасно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	прекрасно	N@=/LqB4{w	Adverbs				none	https://en.wiktionary.org/wiki/прекрасно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	отлично	k,3q,+?Mbq	Adverbs				none	https://en.wiktionary.org/wiki/отлично#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	обычно	e=+-!rF0I8	Adverbs				none	https://en.wiktionary.org/wiki/обычно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	необычно	zv4)mZ04$)	Adverbs				none	https://en.wiktionary.org/wiki/необычно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	возможно	sj,q7Fhl[}	Adverbs				none	https://en.wiktionary.org/wiki/возможно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	невозможно	zQA:nU)O&z	Adverbs				none	https://en.wiktionary.org/wiki/невозможно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	знакомо	kB6**@o&U8	Adverbs				none	https://en.wiktionary.org/wiki/знакомо#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	понятно	rIH{r~Fs.Z	Adverbs				none	https://en.wiktionary.org/wiki/понятно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	полезно	fkSMtmEoIv	Adverbs				none	https://en.wiktionary.org/wiki/полезно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	вредно	NI2^Djj.10	Adverbs				none	https://en.wiktionary.org/wiki/вредно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	удобно	,]Tm{{8^7	Adverbs				none	https://en.wiktionary.org/wiki/удобно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	виновато	fD|h%al{X3	Adverbs				none	https://en.wiktionary.org/wiki/виновато#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	приятно	t#syU{BydR	Adverbs				none	https://en.wiktionary.org/wiki/приятно#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Adverbs (Ellis Version)	по-английски	v[o0x?|n0`	Adverbs				none	https://en.wiktionary.org/wiki/по-английски#Russian (no government stated; en.wiktionary {{+obj}}: none)
+mutable	Russian - Mutable Verbs (Ellis Version)	мочь	l0h2|)9iQ>	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/мочь#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	жить	Ib[bD6Zj6.	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/жить#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	сидеть	h~Yx2[R>ie	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/сидеть#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	работать	J5qFBgzpaw	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/работать#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	лежать	eJ]W{(q&z9	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/лежать#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	стоять	jB2If%r+,g	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/стоять#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	уходить	e%R9#[fEj,	Verbs				none	OpenCorpora transitivity intr/tran (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/уходить#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	выходить	I#fs{:i0MB	Verbs				none	OpenCorpora transitivity intr/tran (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/выходить#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	спать	EgE_w$ZR^f	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/спать#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	улыбаться	rWps/|6H,:	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/улыбаться#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	смеяться	RiY:l/AUtz	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/смеяться#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	плакать	NAcLBrTvJy	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/плакать#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	падать	skl/D@zy@Z	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/падать#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	болеть	k34hhy*Xk(	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/болеть#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	отдыхать	mrHB*hxn5a	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/отдыхать#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	уставать	A+m{jMq^tf	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/уставать#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	просыпаться	ztnAwnU4Nn	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/просыпаться#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	засыпать	BtTAXdH[1:	Verbs				none	OpenCorpora transitivity intr/tran (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/засыпать#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	казаться	J(;54=T@m9	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/казаться#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	оставаться	IZiCd,Wa]h	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/оставаться#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	происходить	ke.SV%JrlJ	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/происходить#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	получаться	o#JqmxPaYJ	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/получаться#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	вставать	bcx]ezJW#M	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/вставать#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	умирать	JA^$;UA6Y<	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/умирать#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	существовать	uM22X!U6$:	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/существовать#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	оказываться	bikByxol9%	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/оказываться#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	собираться	GBiTp(PMx~	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/собираться#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	ошибаться	vVP1QGsr$J	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/ошибаться#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	молчать	m/ZD1c44G2	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/молчать#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	кричать	I26kjnRO[n	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/кричать#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	соглашаться	HK{TC0TW3Z	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/соглашаться#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	нападать	de/IoeC6o	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/нападать#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	лгать	esDklbM:Tq	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/лгать#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	шутить	e.CL8K@(5R	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/шутить#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	надоедать	Nx=)[|;ah~	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/надоедать#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	двигаться	KiqK2=3|bO	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/двигаться#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	останавливаться	h!Lw,@7o)&	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/останавливаться#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	делиться	IMO[k2!5_o	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/делиться#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	значить	qo^aYORRt6	Verbs				none	OpenCorpora transitivity tran (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/значить#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	уметь	bSs#W{j+?-	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/уметь#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	находиться	InXV3hf}F*	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/находиться#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	заблуждаться	x0i2#t!aaF	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/заблуждаться#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	заблудиться	d6W;_P15DI	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/заблудиться#Russian (no case government stated)
