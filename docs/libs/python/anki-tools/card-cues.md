@@ -15,7 +15,8 @@ and drift tools.
 - **Meaning text is frozen.** Only parentheticals and separators may be removed from `Translation`.
   `tests/data/meaning-freeze-baseline.tsv` holds every Translation (1,474 rows) as the baseline;
   `tests/test_qualifier_classification.py` compares the built values against it with tint markup and
-  parentheticals stripped. A seeded edit ("thanks to" to "thanks too") fails it.
+  parentheticals stripped. A seeded edit ("thanks to" to "thanks too") fails it. The glosses edited under
+  this rule are listed in [gloss-edit-report.md](gloss-edit-report.md).
 - **No case names in free text.** `Additional Info`, the distinctions and `Case / Preposition` never
   name a case, in full or abbreviated ("acc.", "D/I/P"), nor describe one roundabout ("takes object").
   The case lives in the `Case` field and renders as a pill. Three words keep a government note
