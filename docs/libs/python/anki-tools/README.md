@@ -10,7 +10,7 @@ A grab-bag of small standalone scripts for working with the Anki spaced-repetiti
 - Python `>=3.11`, managed with [uv](https://docs.astral.sh/uv/) and built with hatchling (`pyproject.toml`, PEP 621 `[project]`). Dependencies resolve from the workspace-root `uv.lock`; there is no per-package lockfile.
 - Runtime dependency: `anki`, unpinned — the resolved version comes from the root `uv.lock`. The tool is not tied to a specific Anki release; the suite is verified against whatever version the lock resolves.
 - Runtime dependency: `requests` (`>=2.28.0`), for `elevenlabs_tts.py`'s HTTP calls.
-- Runtime dependency: `openpyxl` (`>=3.1`, resolved to `3.1.5`), for `vocabulary_source.py` — the only module in this package allowed to import it. In `[project] dependencies`, not the dev group, because it's a shipped CLI module's module-level import, not a test-only concern.
+- Dev dependency: `playwright` (pinned `==1.61.0`, the release whose bundled WebKit revision 2311 matches the local browser cache), for the WebKit layout check (see [`card-cues.md`](card-cues.md#the-three-mechanical-checks)). Needs the host's WebKit system libraries; on a fresh machine run `playwright install-deps`.
 - Dev dependency: `pytest`, declared in this package's `[dependency-groups] dev`. Declaring it there is load-bearing — without it the runner falls through to an ambient interpreter's pytest. Wired to `pnpm test` via `package.json`'s `"test": "py-test"`.
 
 ## Structure / entry points
@@ -27,8 +27,11 @@ A grab-bag of small standalone scripts for working with the Anki spaced-repetiti
 - `anki_tools/audio_naming.py` — shared filename/spoken-text conventions (`build_filename`, `spoken_text_for`, `get_anki_media_dir`) used by both the immutable and mutable audio pipelines.
 - `anki_tools/anki_identity.py` — pure, `hashlib`-only deterministic Anki GUID/notetype-id helpers (`base91`, `guid_for_row`, `notetype_id_for_name`), hoisted out of `immutable_words*.py` so both the immutable and mutable decks share one implementation.
 - `anki_tools/card_audio.py` — pure, parameterized random-audio-picker template block (`audio_block`), hoisted out of `immutable_words_plan.py` for the same reason.
-- `anki_tools/vocabulary_source.py`, `anki_tools/mutable_words_plan.py`, `anki_tools/mutable_words.py`, `anki_tools/mutable_words_audio.py`, `anki_tools/renumber_russian_decks.py` — the `Languages::Russian::3. Mutable Words` deck package pipeline (workbook → TSV → deck build → audio → live renumber/import). See [`mutable-words.md`](mutable-words.md) for the full design and [`mutable-words-runbook.md`](mutable-words-runbook.md) for its live-collection execution record.
-- `package.json` `bin` entries: `anki-build-deck`, `anki-get-deck-info`, `anki-mp3-filename-update`, `anki-rebalance-due`, `anki-due-stats`, `anki-immutable-words`, `anki-elevenlabs-tts`, `anki-vocabulary-source`, `anki-mutable-words`, `anki-mutable-words-audio`, `anki-renumber-russian-decks`.
+- `anki_tools/mutable_words_plan.py`, `anki_tools/mutable_words.py`, `anki_tools/mutable_words_audio.py`, `anki_tools/renumber_russian_decks.py` — the `Languages::Russian::3. Mutable Words` deck package pipeline (committed TSVs → deck build → audio → live renumber/import). The TSVs under `anki_tools/data/russian-vocabulary/` are the only source. See [`mutable-words.md`](mutable-words.md) for the full design and [`mutable-words-runbook.md`](mutable-words-runbook.md) for its live-collection execution record.
+- `anki_tools/case_field.py`, `anki_tools/case_pill.py`, `anki_tools/case_ban.py`, `anki_tools/prompt_hint.py`, `anki_tools/card_dedup.py`, `anki_tools/collisions.py`, `anki_tools/form_census.py`, `anki_tools/form_fill.py` — case pills, cue handling, the mechanical card checks, and the form fill. See [`card-cues.md`](card-cues.md).
+- `anki_tools/source_drift.py` / `anki_tools/source_drift_cli.py` — the source-drift tool. See [`anki-source-drift`](#anki-source-drift).
+- `anki_sync_and_restore.py` (package root) — the staged AnkiWeb sync. See [`anki_sync_and_restore.py`](#anki_sync_and_restorepy).
+- `package.json` `bin` entries: `anki-build-deck`, `anki-get-deck-info`, `anki-mp3-filename-update`, `anki-rebalance-due`, `anki-due-stats`, `anki-immutable-words`, `anki-elevenlabs-tts`, `anki-mutable-words`, `anki-mutable-words-audio`, `anki-renumber-russian-decks`, `anki-word-audio`, `anki-source-drift`.
 - `tests/test_due_plan.py`, `tests/test_rebalance_due.py`, `tests/test_due_stats.py`, `tests/test_followup_fixes.py` — pytest suites, 192 tests total. See [`mutable-words.md`](mutable-words.md#testing) for the mutable/immutable-words test suites.
 
 ## `anki-rebalance-due`
@@ -157,6 +160,55 @@ trailing space typo (`"Russian - Common Words (Ellis Version) "`). The audio-pic
 this deck's cards use lives in `anki_tools/card_audio.py` (shared with the Mutable Words deck); the
 GUID/notetype-id derivation lives in `anki_tools/anki_identity.py` (same).
 
+## `anki-source-drift`
+
+```
+anki-source-drift [--collection PATH] [--format {text,tsv}] ...
+```
+
+Read-only report of where the collection's word notes differ from what the committed sources
+(the word-list markdown, the six TSVs, `case-government.tsv`) would build. The collection file is
+copied to a temp dir and the copy is read; the tool asserts the original's hash and mtime are
+unchanged. It reports three things:
+
+- **drift** — fields whose collection value differs from the source value, one row per field with
+  the note GUID, note type, headword, field, collection value and source value;
+- **orphans** — collection notes with no source row (a GUID the source does not build);
+- **missing** — source rows with no note in the collection.
+
+Zero drift, zero orphans, zero missing is the "collection and source agree" state. Run it after every
+pull, before editing sources: a value the user changed on a device shows up as drift and is adopted
+into the source (the collection value wins), so the next rebuild does not overwrite it.
+
+## `anki_sync_and_restore.py`
+
+Pulls reviews down from AnkiWeb, re-imports the rebuilt packages, and pushes up. Adding fields bumps
+the collection schema, so AnkiWeb forces a one-sided full sync: a download alone loses the new
+fields and an upload alone loses reviews done elsewhere, which is why the flow is pull, rebuild,
+push. It aborts rather than guess whenever the server asks for a direction it was not told to take.
+
+| `--stage` | Does |
+|---|---|
+| `pull` | Download only, under the refuse-if-upload guard. Backs up before and after. |
+| `rebuild` | Re-import both packages (`mutable-words.apkg`, `immutable-words.apkg`) into the local collection and record the review-state snapshot. No login. |
+| `push` | Upload. Refuses (exit 2, nothing sent) if Anki is running, the packages are missing, or the collection no longer matches the snapshot. |
+| `all` (default) | The three in one pass; aborts before the push if review state drifted after the snapshot. |
+
+**Snapshot guard.** `rebuild` records `(revlog count, studied count, suspended count)` to a snapshot
+file. `push` recomputes it and refuses on any difference, so a review done between rebuild and push
+(on a phone, or by opening Anki desktop) cannot be silently overwritten by the upload. Re-run
+`--stage rebuild` after any such change. The no-study window therefore runs from the pull until the
+push completes.
+
+Credentials come from `ANKI_SYNC_USER`/`ANKI_SYNC_PASS` or an interactive prompt and stay in memory.
+
+**Anki-desktop route.** The prompt cannot be answered non-interactively. When the script's login is
+unavailable, do the network steps through Anki desktop instead: open it with auto-sync on to pull,
+close it, run `--stage rebuild` (it needs no login), reopen it and choose Upload on the full-sync
+prompt. Verify direction afterwards: the collection's `ls` equals `mod` and the revlog count is
+unchanged; a re-run of `anki-source-drift` still shows zero. The 11-05-26 cues-rework run used this
+route for the pull and the upload.
+
 ## `anki-elevenlabs-tts`
 
 Standalone ElevenLabs text-to-speech CLI — Anki-agnostic, no deck/note/`.apkg` knowledge. Given a
@@ -216,7 +268,7 @@ printed.
 
 ## Testing
 
-`tests/test_due_plan.py`, `tests/test_rebalance_due.py`, `tests/test_due_stats.py`, and `tests/test_followup_fixes.py` — 192 tests total (pytest, run via `uv run --group dev pytest` inside this package, or `pnpm --filter lib.python.anki-tools test` from the repo root). The `due_plan` suite is table-driven, hand-built distributions asserting on move counts and card *identity* (not just final counts) for the one-day-cascade and untouched-first-selection rules, plus the feasibility precheck, the sliding target line, and the cap-aware reachability bisection. The `rebalance_due` suite drives a synthetic temporary Anki collection end to end — subdeck inclusion, skip-report correctness, real (non-dry-run) apply, `--dry-run` no-op, `--set-earlier` rescue, `--max-shift` capping, `--range` containment, `--sliding`/`--strict-sliding`, and default-mode infeasibility (both the precheck failure and a mid-plan `InfeasibleRebalance`) leaving the real collection byte-for-byte unchanged, with backup presence asserted differently for each failure mode. `test_due_stats.py` covers the read-only report end to end, including that it never creates a backup or changes the collection's mtime. No test opens the user's real collection.
+`tests/test_due_plan.py`, `tests/test_rebalance_due.py`, `tests/test_due_stats.py`, and `tests/test_followup_fixes.py` — the original 192 rebalance tests (the whole package suite is now about 2,700 tests; see [`card-cues.md`](card-cues.md#the-three-mechanical-checks) for the card checks) (pytest, run via `uv run --group dev pytest` inside this package, or `pnpm --filter lib.python.anki-tools test` from the repo root). The `due_plan` suite is table-driven, hand-built distributions asserting on move counts and card *identity* (not just final counts) for the one-day-cascade and untouched-first-selection rules, plus the feasibility precheck, the sliding target line, and the cap-aware reachability bisection. The `rebalance_due` suite drives a synthetic temporary Anki collection end to end — subdeck inclusion, skip-report correctness, real (non-dry-run) apply, `--dry-run` no-op, `--set-earlier` rescue, `--max-shift` capping, `--range` containment, `--sliding`/`--strict-sliding`, and default-mode infeasibility (both the precheck failure and a mid-plan `InfeasibleRebalance`) leaving the real collection byte-for-byte unchanged, with backup presence asserted differently for each failure mode. `test_due_stats.py` covers the read-only report end to end, including that it never creates a backup or changes the collection's mtime. No test opens the user's real collection.
 
 ## Notes
 

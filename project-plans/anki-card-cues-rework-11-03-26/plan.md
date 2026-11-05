@@ -34,41 +34,41 @@ Screenshot: /home/icarus64/.claude/uploads/5175e9a8-4915-4172-9ce3-ab7ad3c07e8e/
 
 ## Phase syllabus
 - [ ] Phase 1: Sync down and adopt the user's edits
-  - [ ] 1.1: Split the sync script into pull / rebuild / push stages          (lane 1)
-  - [ ] 1.2: Source-drift tool: collection fields vs what the sources build   (lane 1)
-  - [ ] 1.3: Pull from AnkiWeb, run the drift tool, adopt the user's edits as source  (after: 1.1, 1.2)
+  - [x] 1.1: Split the sync script into pull / rebuild / push stages          (lane 1)
+  - [x] 1.2: Source-drift tool: collection fields vs what the sources build   (lane 1)
+  - [x] 1.3: Pull from AnkiWeb, run the drift tool, adopt the user's edits as source  (after: 1.1, 1.2)
 - [ ] Phase 2: Reports, audits, and the review gate
-  - [ ] 2.1: Report of English meaning text changed by agent commits          (lane 2, after: 1.3)
-  - [ ] 2.2: Collision analysis: what the case pill, deck header, and cues each separate  (after: 1.3)
-  - [ ] 2.3: Per-word qualifier classification artifact                        (after: 2.2)
-  - [ ] 2.4: Case-government audit with the meaning-to-case table, cited      (after: 1.3)
-  - [ ] 2.5: Case-text routing list for every free-text field                 (after: 2.4)
-  - [ ] 2.6: Draft the пожаловать row                                          (after: 1.3)
-  - [ ] 2.7: User review gate on every artifact before any write              (after: 2.1, 2.3, 2.5, 2.6, 6.3)
+  - [x] 2.1: Report of English meaning text changed by agent commits          (lane 2, after: 1.3)
+  - [x] 2.2: Collision analysis: what the case pill, deck header, and cues each separate  (after: 1.3)
+  - [x] 2.3: Per-word qualifier classification artifact                        (after: 2.2)
+  - [x] 2.4: Case-government audit with the meaning-to-case table, cited      (after: 1.3)
+  - [x] 2.5: Case-text routing list for every free-text field                 (after: 2.4)
+  - [x] 2.6: Draft the пожаловать row                                          (after: 1.3)
+  - [x] 2.7: User review gate on every artifact before any write              (after: 2.1, 2.3, 2.5, 2.6, 6.3)
 - [ ] Phase 3: Case pills on the immutable deck
-  - [ ] 3.1: Case field values from the audited case table                    (lane 3)
-  - [ ] 3.2: Pill block, textbook palette, meaning-line tint                  (lane 3, after: 3.1)
-  - [ ] 3.3: Immutable templates per the card spec; remove the case cue and the labelled Case row  (lane 3, after: 3.2)
+  - [x] 3.1: Case field values from the audited case table                    (lane 3)
+  - [x] 3.2: Pill block, textbook palette, meaning-line tint                  (lane 3, after: 3.1)
+  - [x] 3.3: Immutable templates per the card spec; remove the case cue and the labelled Case row  (lane 3, after: 3.2)
 - [ ] Phase 4: Mutable layouts, data apply, checks, deletions
-  - [ ] 4.1: Mutable templates per the card spec: centred label/value block, no empty rows, distinction rows removed, Case pill on Verbs and Adverbs  (lane 4, after: 1.3, 3.2)
-  - [ ] 4.2: Layout render harness dev dependency                             (after: 4.1)
-  - [ ] 4.3: Apply the approved artifacts to the sources                      (after: 2.7, 3.3, 4.1)
-  - [ ] 4.4: Generate audio for пожаловать                                     (after: 4.3)
-  - [ ] 4.5: Rendered-card duplicate check across every note type and template  (after: 4.3)
-  - [ ] 4.6: Case checks: name and roundabout ban, coverage, exclusion        (after: 4.3)
-  - [ ] 4.7: Centre-line render assertion on every mutable answer side        (after: 4.2, 4.3)
-  - [ ] 4.8: Retire the workbook importer                                     (after: 4.2, 4.3)
-  - [ ] 4.9: Delete the shared replaced paths, with a dangling-reference sweep  (after: 4.5, 4.6, 4.7, 4.8)
+  - [x] 4.1: Mutable templates per the card spec: centred label/value block, no empty rows, distinction rows removed, Case pill on Verbs and Adverbs  (lane 4, after: 1.3, 3.2)
+  - [x] 4.2: Layout render harness dev dependency                             (after: 4.1)
+  - [x] 4.3: Apply the approved artifacts to the sources                      (after: 2.7, 3.3, 4.1)
+  - [done] 4.4: Generate audio for пожаловать                                     (after: 4.3)
+  - [x] 4.5: Rendered-card duplicate check across every note type and template  (after: 4.3)
+  - [x] 4.6: Case checks: name and roundabout ban, coverage, exclusion        (after: 4.3)
+  - [x] 4.7: Centre-line render assertion on every mutable answer side        (after: 4.2, 4.3)
+  - [x] 4.8: Retire the workbook importer                                     (after: 4.2, 4.3)
+  - [x] 4.9: Delete the shared replaced paths, with a dangling-reference sweep  (after: 4.5, 4.6, 4.7, 4.8)
 - [ ] Phase 5: Integration, serialized
-  - [ ] 5.1: Re-pull, rebuild both packages, verify GUIDs, import locally     (after: 4.9, 6.4)
-  - [ ] 5.2: Regenerate audio for flagged cards                               (after: 5.1)
-  - [ ] 5.3: Verify the live collection                                       (after: 5.2)
-  - [ ] 5.4: Push to AnkiWeb, gated on the user's explicit confirmation       (after: 5.3)
+  - [x] 5.1: Re-pull, rebuild both packages, verify GUIDs, import locally     (after: 4.9, 6.4)
+  - [done] 5.2: Regenerate audio for flagged cards                               (after: 5.1)
+  - [x] 5.3: Verify the live collection                                       (after: 5.2)
+  - [x] 5.4: Push to AnkiWeb, gated on the user's explicit confirmation       (after: 5.3)
 - [ ] Phase 6: Fill the empty mutable form fields
-  - [ ] 6.1: Field census per mutable note type, with a positive control     (lane 5)
-  - [ ] 6.2: Reference spike: stressed-form source, license, coverage         (lane 5, after: 6.1)
-  - [ ] 6.3: Form generator and the reviewable fill artifact                  (lane 5, after: 6.2, 1.3)
-  - [ ] 6.4: Write the approved fills into the TSVs                           (after: 2.7, 4.3)
+  - [x] 6.1: Field census per mutable note type, with a positive control     (lane 5)
+  - [x] 6.2: Reference spike: stressed-form source, license, coverage         (lane 5, after: 6.1)
+  - [x] 6.3: Form generator and the reviewable fill artifact                  (lane 5, after: 6.2, 1.3)
+  - [x] 6.4: Write the approved fills into the TSVs                           (after: 2.7, 4.3)
 
 ## Goal & scope
 
@@ -787,6 +787,7 @@ gloss-front cards are Card 2, and Card 4 on Verbs.)
   covers it.
 - **Acceptance.** Every audio filename the пожаловать row predicts exists and is non-empty.
 - **Test oracle:** `existing implementation` (the word_audio tool's own output is the check).
+- **Outcome (11-05-26): done differently.** No `ELEVENLABS_API_KEY` in the session, so no audio was generated (lane l14, needs-input). The user runs `.venv/bin/python -m anki_tools.word_audio пожаловать --mode single` themselves in a shell with the key exported. The 4 жаловать/пожаловать audio refs in the built mutable package are unattached until then.
 
 ### 4.5: Rendered-card duplicate check
 - **File scope:**
@@ -926,6 +927,7 @@ gloss-front cards are Card 2, and Card 4 on Verbs.)
 - **Acceptance.** Every flagged word reported has a regenerated file, and its archived predecessor
   exists.
 - **Test oracle:** `existing implementation`.
+- **Outcome (11-05-26): done differently.** Deferred to the user for the same reason as 4.4 (no `ELEVENLABS_API_KEY`); flagged-audio regeneration was not run.
 
 ### 5.3: Verify the live collection
 - **File scope:** none.
