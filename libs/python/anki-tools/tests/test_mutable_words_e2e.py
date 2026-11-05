@@ -22,12 +22,7 @@ import requests
 from anki.collection import Collection
 from anki.import_export_pb2 import ImportAnkiPackageOptions, ImportAnkiPackageRequest
 
-from anki_tools import (
-    elevenlabs_tts,
-    mutable_words,
-    mutable_words_audio,
-    vocabulary_source,
-)
+from anki_tools import elevenlabs_tts, mutable_words, mutable_words_audio
 from anki_tools import mutable_words_plan as plan
 from anki_tools.audio_naming import (
     get_anki_collection_path,
@@ -39,7 +34,6 @@ from anki_tools.immutable_words import assert_unmodified
 _DATA_DIR = (
     Path(__file__).resolve().parents[1] / "anki_tools" / "data" / "russian-vocabulary"
 )
-_REAL_WORKBOOK = Path("~/Downloads/russian_vocabulary.xlsx").expanduser()
 
 # Only the two genuine homonyms remain: просто and согласно each exist as
 # two different parts of speech. The five indeclinable nouns that used to
@@ -69,21 +63,6 @@ _PER_DECK_CARDS = {
 }
 _FILENAME_RE = re.compile(r"^[^/]+_(?:f1|m2)\.mp3$")
 
-# Raw TSV row counts before hand-appended new rows were added to these four
-# sheets (see the data dir's README); a workbook regeneration reproduces only
-# that original prefix, never the hand-appended tail.
-_ORIGINAL_ROW_COUNTS = {
-    "Nouns": 536,
-    "Verbs": 179,
-    "Adjectives": 152,
-    "Adverbs": 152,
-}
-
-# Adjective rows whose empty Short Form cell was filled by hand after the
-# workbook export; everything else on these rows must still match it.
-_HAND_FILLED_SHORT_FORM_WORDS = {"готовый", "занятой", "закрытый"}
-_ADJECTIVE_SHORT_FORM_COLUMN = 7
-
 # See test_mutable_words_plan.py's identically-named table for why these
 # are legitimate shared audio, not collisions.
 _EXPECTED_DUPLICATE_SLUGS = {"побежать", "поехать", "значить", "иметь", "первый"}
@@ -97,82 +76,6 @@ def _parse_all_rows():
     pronouns = plan.parse_pronouns(str(_DATA_DIR / "pronouns.tsv"))
     numerals = plan.parse_numerals(str(_DATA_DIR / "numerals.tsv"))
     return nouns, verbs, adjectives, adverbs, pronouns, numerals
-
-
-def _blank_hand_filled_short_forms(lines):
-    blanked = []
-    for line in lines:
-        cells = line.decode("utf-8").split("\t")
-        if cells[1] in _HAND_FILLED_SHORT_FORM_WORDS:
-            cells[_ADJECTIVE_SHORT_FORM_COLUMN] = ""
-        blanked.append("\t".join(cells).encode("utf-8"))
-    return blanked
-
-
-# Workbook-backed rows hand-edited when examples moved to the Examples column.
-_EXAMPLES_MIGRATED_ROWS = {
-    ("Adjectives", "155"),
-    ("Adjectives", "156"),
-    ("Adjectives", "158"),
-    ("Adverbs", "26"),
-    ("Verbs", "131"),
-    ("Verbs", "135"),
-}
-
-
-def _comparable_to_workbook(lines, sheet):
-    """Drop the hand-authored Examples column and blank the English /
-    Additional Info cells of rows migrated into it, so the remainder can be
-    compared byte-for-byte with a workbook regeneration.
-    """
-    header = lines[0].decode("utf-8").rstrip("\n").split("\t")
-    examples_index = header.index("Examples") if "Examples" in header else None
-    english_index = header.index("English")
-    info_index = header.index("Additional Info")
-    normalized = []
-    for line in lines:
-        cells = line.decode("utf-8").rstrip("\n").split("\t")
-        if (sheet, cells[0]) in _EXAMPLES_MIGRATED_ROWS:
-            cells[english_index] = cells[info_index] = ""
-        if examples_index is not None:
-            del cells[examples_index]
-        normalized.append(("\t".join(cells) + "\n").encode("utf-8"))
-    return normalized
-
-
-@pytest.mark.skip(reason="workbook retired (D8); the importer is deleted in 4.8")
-def test_full_pipeline_regenerates_byte_identical_tsvs(tmp_path):
-    """Pronouns/Numerals are hand-authored (not workbook sheets, see the
-    data dir's README) so this only covers the four workbook-backed sheets,
-    and only up to the ORIGINAL row count each had before lane
-    missing-base-words hand-appended its own new rows to the committed
-    file -- a workbook regeneration reproduces that original prefix
-    byte-for-byte, never the hand-appended tail.
-    """
-    if not _REAL_WORKBOOK.exists():
-        pytest.skip("real workbook absent on this machine")
-    for sheet in vocabulary_source.SHEETS:
-        rows = vocabulary_source.read_sheet(str(_REAL_WORKBOOK), sheet)
-        out_path = tmp_path / f"{sheet.lower()}.tsv"
-        vocabulary_source.write_tsv(
-            rows, vocabulary_source.EXPECTED_HEADERS[sheet], str(out_path)
-        )
-        regenerated_lines = _comparable_to_workbook(
-            out_path.read_bytes().splitlines(keepends=True), sheet
-        )
-        committed_lines = _comparable_to_workbook(
-            (_DATA_DIR / f"{sheet.lower()}.tsv").read_bytes().splitlines(keepends=True),
-            sheet,
-        )
-        if sheet in _ORIGINAL_ROW_COUNTS:
-            original_line_count = _ORIGINAL_ROW_COUNTS[sheet] + 1  # header + rows
-            assert len(regenerated_lines) == original_line_count
-            committed_prefix = committed_lines[:original_line_count]
-            if sheet == "Adjectives":
-                committed_prefix = _blank_hand_filled_short_forms(committed_prefix)
-            assert regenerated_lines == committed_prefix
-        else:
-            assert regenerated_lines == committed_lines
 
 
 def test_full_pipeline_note_and_card_totals():

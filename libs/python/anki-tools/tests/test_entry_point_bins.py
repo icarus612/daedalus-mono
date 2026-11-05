@@ -13,11 +13,11 @@ import pytest
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 
 ENTRY_POINTS = [
-    ("anki-vocabulary-source", "vocabulary_source"),
     ("anki-mutable-words", "mutable_words"),
     ("anki-mutable-words-audio", "mutable_words_audio"),
     ("anki-renumber-russian-decks", "renumber_russian_decks"),
     ("anki-word-audio", "word_audio"),
+    ("anki-source-drift", "source_drift_cli"),
 ]
 
 

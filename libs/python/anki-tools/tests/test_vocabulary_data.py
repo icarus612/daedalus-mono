@@ -185,11 +185,10 @@ def test_dash_only_cell_census():
             assert count == 0, f"unexpected dash-only cells at {key}: {count}"
 
 
-def test_readme_mentions_source_and_files():
+def test_readme_states_tsvs_are_only_source():
     readme_path = DATA_DIR / "README.md"
     text = readme_path.read_text(encoding="utf-8")
-    assert "russian_vocabulary.xlsx" in text
-    assert "vocabulary_source" in text
+    assert "only source" in text
     for filename in FILENAMES:
         assert filename in text
 
