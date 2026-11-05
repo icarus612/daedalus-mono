@@ -71,18 +71,20 @@ class RebalanceResult:
     end_day: int  # final horizon (reverse pass may have extended it)
     sink_overflow: int  # how far start_day exceeded max_per_day after the
     # earlier-only max pass; 0 otherwise
-    short_days: list[int]  # days left below min_per_day, excluding the exempt tail
+    short_days: list[int]  # flat: always []; sliding: days under the soft ramp target
     reverse_pass_used: bool  # whether --set-earlier actually fired
     over_target_days: list[int]  # days left above T(d) in sliding mode; [] in flat mode
 
 
 class InfeasibleRebalance(Exception):
-    """Raised when --max cannot be satisfied without violating the earlier-only
-    invariant and set_earlier is False (or, in the set_earlier=True case, the reverse
-    pass still leaves days over max - typically because --range's ceiling refuses
-    the reverse pass, or a bug signal if no --range was given). Carries the
-    offending days, their counts, and the reason (sink overflow vs min separation
-    vs range ceiling vs shift cap).
+    """Raised when a hard bound cannot be met: --max cannot be satisfied without
+    violating the earlier-only invariant and set_earlier is False (or, in the
+    set_earlier=True case, the reverse pass still leaves days over max -
+    typically because --range's ceiling refuses the reverse pass, or a bug
+    signal if no --range was given). Carries the offending days, their counts,
+    and the reason (sink overflow vs min separation vs range ceiling vs shift
+    cap vs "min unmet" / "max unmet", raised when a day is left outside the hard
+    --min / --max bounds after all passes).
 
     "min separation" (Phase 7): either excess left on a day after the
     max/reverse-max pass was refused every candidate specifically by the
@@ -100,8 +102,9 @@ class InfeasibleRebalance(Exception):
         self.days = days
         self.counts = counts
         self.reason = reason
+        flag = "--min" if reason == "min unmet" else "--max"
         super().__init__(
-            f"cannot satisfy --max on day(s) {days} ({reason}); counts: {counts}"
+            f"cannot satisfy {flag} on day(s) {days} ({reason}); counts: {counts}"
         )
 
 
@@ -539,39 +542,47 @@ def apply_reverse_max_pass(state: RunState, ceiling: DayTargets) -> None:
         d += 1
 
 
-def _reached_exempt_tail(state: RunState, d: int) -> bool:
-    """True once every day beyond d is empty - the trailing tail where the
-    min pass (and the short_days report) stop enforcing --min (D6.1's "the
-    tail is exempt" rule). Shared by apply_min_pass and _short_days so the
-    two never drift out of sync."""
-    return all(
-        len(state.buckets.get(day, [])) == 0 for day in range(d + 1, state.end_day + 1)
-    )
-
-
-def apply_min_pass(state: RunState, floor: DayTargets) -> None:
-    for d in range(state.start_day, state.end_day + 1):
-        if _reached_exempt_tail(state, d):
-            break
-        deficit = floor[d] - len(state.buckets[d])
-        if deficit <= 0:
+def _pull_from_later(d: int, state: RunState) -> bool:
+    for s in range(d + 1, state.end_day + 1):
+        source = state.buckets.get(s)
+        if not source:
             continue
-        for _ in range(deficit):
-            picked: tuple[int, int] | None = None
-            for s in range(d + 1, state.end_day + 1):
-                source = state.buckets.get(s)
-                if not source:
-                    continue
-                for cid in min_move_order(source, state):
-                    if may_move_to(cid, d, state):
-                        picked = (cid, s)
-                        break
-                if picked is not None:
-                    break
-            if picked is None:
-                break
-            cid, s = picked
-            move_card(cid, s, d, state)
+        for cid in min_move_order(source, state):
+            if may_move_to(cid, d, state):
+                move_card(cid, s, d, state)
+                return True
+    return False
+
+
+def _push_from_earlier(d: int, floor: DayTargets, state: RunState) -> bool:
+    if not may_move_later_to(d, state):
+        return False
+    for s in range(d - 1, state.start_day - 1, -1):
+        source = state.buckets.get(s, [])
+        if len(source) <= floor[s]:
+            continue
+        for cid in max_move_order(source, state):
+            if separation_ok(cid, d, state):
+                move_card(cid, s, d, state)
+                return True
+    return False
+
+
+def apply_min_pass(state: RunState, floor: DayTargets, set_earlier: bool) -> bool:
+    """Raises every day in [start_day, end_day] toward `floor`. Pulls from
+    later days first; only with `set_earlier` does it also push cards later
+    from earlier days that stay at or above their own floor. Returns True iff
+    a card moved later."""
+    moved_later = False
+    for d in range(state.start_day, state.end_day + 1):
+        for _ in range(max(0, floor[d] - len(state.buckets[d]))):
+            if _pull_from_later(d, state):
+                continue
+            if set_earlier and _push_from_earlier(d, floor, state):
+                moved_later = True
+                continue
+            break
+    return moved_later
 
 
 def apply_shape_pass(
@@ -717,16 +728,30 @@ def _infeasible_reason(
     return "shift cap"
 
 
-def _short_days(state: RunState, floor: DayTargets | None) -> list[int]:
-    if floor is None:
-        return []
-    short: list[int] = []
-    for d in range(state.start_day, state.end_day + 1):
-        if _reached_exempt_tail(state, d):
-            break
-        if len(state.buckets.get(d, [])) < floor[d]:
-            short.append(d)
-    return short
+def _short_days(state: RunState, floor: DayTargets) -> list[int]:
+    return [
+        d
+        for d in range(state.start_day, state.end_day + 1)
+        if len(state.buckets.get(d, [])) < floor[d]
+    ]
+
+
+def _enforce_hard_bounds(
+    state: RunState, min_per_day: int | None, max_per_day: int | None
+) -> None:
+    days = range(state.start_day, state.end_day + 1)
+    if min_per_day is not None:
+        under = [d for d in days if len(state.buckets.get(d, [])) < min_per_day]
+        if under:
+            raise InfeasibleRebalance(
+                under, {d: len(state.buckets.get(d, [])) for d in under}, "min unmet"
+            )
+    if max_per_day is not None:
+        over = [d for d in days if len(state.buckets.get(d, [])) > max_per_day]
+        if over:
+            raise InfeasibleRebalance(
+                over, {d: len(state.buckets.get(d, [])) for d in over}, "max unmet"
+            )
 
 
 def _check_post_conditions(
@@ -779,13 +804,6 @@ def _check_post_conditions(
                 f"card {cid} moved later without a sanctioned later-mover "
                 "(reverse pass or separation repair)"
             )
-
-    if max_per_day is not None:
-        for d in range(state.start_day, state.end_day + 1):
-            if len(state.buckets.get(d, [])) > max_per_day:
-                raise AssertionError(
-                    f"day {d} holds more than max_per_day {max_per_day}"
-                )
 
     if max_shift is not None:
         for cid, origin in state.origin_by_id.items():
@@ -919,7 +937,12 @@ def plan_rebalance(
         target = fit_target_line(target, in_scope, max_per_day)
         hard_ceiling = constant_targets(state.start_day, state.end_day, max_per_day)
         apply_shape_pass(state, target, hard_ceiling)
-        apply_min_pass(state, target)
+        later_move_used |= apply_min_pass(state, target, set_earlier)
+        later_move_used |= apply_min_pass(
+            state,
+            constant_targets(state.start_day, state.end_day, min_per_day),
+            set_earlier,
+        )
         over_target_days = [
             d
             for d in range(state.start_day, state.end_day + 1)
@@ -936,12 +959,13 @@ def plan_rebalance(
                 f"sliding target: {detail}",
             )
         short_days = _short_days(state, target)
-    elif min_per_day is not None:
-        min_floor = constant_targets(state.start_day, state.end_day, min_per_day)
-        apply_min_pass(state, min_floor)
-        short_days = _short_days(state, min_floor)
     else:
-        short_days = _short_days(state, None)
+        short_days = []
+        if min_per_day is not None:
+            min_floor = constant_targets(state.start_day, state.end_day, min_per_day)
+            later_move_used |= apply_min_pass(state, min_floor, set_earlier)
+
+    _enforce_hard_bounds(state, min_per_day, max_per_day)
 
     after = {day: len(ids) for day, ids in state.buckets.items()}
     moves = {
@@ -1076,6 +1100,47 @@ def window_violations(
     return violations
 
 
+def min_window_violations(
+    counts: Mapping[int, int],
+    start_day: int,
+    end_day: int,
+    min_per_day: int,
+    max_shift: int | None,
+    set_earlier: bool,
+) -> list[tuple[int, int, int, int]]:
+    """Min-side Hall condition. For every window [a, b] other than the full
+    horizon (covered by the global lower bound), report (a, b, demand, supply)
+    where demand = (b - a + 1) * min_per_day exceeds the cards whose origin
+    lies in [lo, hi]: hi = b + max_shift (end_day when uncapped), lo = a, or
+    start_day with `set_earlier`."""
+    if end_day < start_day:
+        return []
+    n = end_day - start_day + 1
+    prefix = [0] * (n + 1)
+    for i in range(n):
+        prefix[i + 1] = prefix[i] + counts.get(start_day + i, 0)
+    violations: list[tuple[int, int, int, int]] = []
+    for a_idx in range(n):
+        lo_idx = 0 if set_earlier else a_idx
+        for b_idx in range(a_idx, n):
+            if a_idx == 0 and b_idx == n - 1:
+                continue
+            hi_idx = n - 1 if max_shift is None else min(n - 1, b_idx + max_shift)
+            supply = prefix[hi_idx + 1] - prefix[lo_idx]
+            demand = (b_idx - a_idx + 1) * min_per_day
+            if supply < demand:
+                violations.append(
+                    (start_day + a_idx, start_day + b_idx, demand, supply)
+                )
+    return violations
+
+
+def _window_label(a: int, b: int, day_offset_base: int | None) -> str:
+    if day_offset_base is None:
+        return f"window [{a}, {b}]"
+    return f"window [day offset {a - day_offset_base}..{b - day_offset_base}]"
+
+
 def check_hard_feasibility(
     cards: Sequence[CardDue],
     start_day: int,
@@ -1118,7 +1183,7 @@ def check_hard_feasibility(
                 f"{horizon_days} day window, capacity {capacity_total} "
                 f"at max={max_per_day}/day"
             )
-            if set_earlier:
+            if set_earlier and end_day is None:
                 violations.append(
                     msg + " (downgraded to warning: --set-earlier can extend "
                     "the horizon to absorb the excess)"
@@ -1136,6 +1201,17 @@ def check_hard_feasibility(
                 f"at min={min_per_day}/day"
             )
             feasible = False
+        min_hits = min_window_violations(
+            counts, start_day, resolved_end_day, min_per_day, max_shift, set_earlier
+        )
+        if min_hits:
+            worst_min = max(min_hits, key=lambda w: (w[2] - w[3], -w[1]))
+            label = _window_label(worst_min[0], worst_min[1], day_offset_base)
+            violations.append(
+                f"{label} under minimum: {worst_min[2]} slots required vs "
+                f"{worst_min[3]} reachable cards (gap {worst_min[2] - worst_min[3]})"
+            )
+            feasible = False
 
     if max_per_day is not None:
         ceiling = constant_targets(start_day, resolved_end_day, max_per_day)
@@ -1144,13 +1220,7 @@ def check_hard_feasibility(
         )
         if window_hits:
             worst = max(window_hits, key=lambda w: (w[2] - w[3], -w[1]))
-            if day_offset_base is None:
-                window_label = f"window [{worst[0]}, {worst[1]}]"
-            else:
-                window_label = (
-                    f"window [day offset {worst[0] - day_offset_base}"
-                    f"..{worst[1] - day_offset_base}]"
-                )
+            window_label = _window_label(worst[0], worst[1], day_offset_base)
             msg = (
                 f"{window_label} over capacity: "
                 f"{worst[2]} cards confined vs {worst[3]} slots "
@@ -1180,7 +1250,13 @@ def check_hard_feasibility(
                 running += counts.get(d, 0)
                 suggested_max = max(suggested_max, math.ceil(running / (offset + 1)))
         if min_per_day is not None:
-            suggested_min = total // horizon_days
+            suggested_min = next(
+                m
+                for m in range(total // horizon_days, -1, -1)
+                if not min_window_violations(
+                    counts, start_day, resolved_end_day, m, max_shift, set_earlier
+                )
+            )
 
     return HardFeasibility(
         feasible=feasible,

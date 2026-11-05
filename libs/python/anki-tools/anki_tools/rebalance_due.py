@@ -54,8 +54,9 @@ def resolve_deck_ids(col, deck_name):
 def parse_range(raw: str) -> tuple[int, int]:
     """Parse a `--range` argument: `LO-HI` or a bare `N` meaning `N-N`.
 
-    Both `LO` and `HI` are day offsets from today. Raises `ValueError` with
-    a message naming the specific problem (malformed, `LO < 1`, `HI < LO`)
+    Both `LO` and `HI` are day offsets from today; offset 0 is today and any
+    start >= 0 is accepted. Raises `ValueError` with a message naming the
+    specific problem (malformed, `HI < LO`)
     -- callers turn that into `parser.error(...)`. Shared by `due_stats.py`
     so `--range` is parsed identically on both surfaces.
     """
@@ -71,8 +72,6 @@ def parse_range(raw: str) -> tuple[int, int]:
         raise ValueError(
             f"--range must be LO-HI or a bare N (e.g. 8-30 or 12), got {raw!r}"
         )
-    if lo < 1:
-        raise ValueError(f"--range LO must be >= 1 (today or the past), got {lo}")
     if hi < lo:
         raise ValueError(f"--range HI must be >= LO, got HI={hi} < LO={lo}")
     return lo, hi
@@ -358,11 +357,12 @@ def build_parser():
         "--start-offset",
         dest="start_offset",
         type=int,
-        default=1,
+        default=0,
         help=(
-            "Days after today where the rebalance window begins. Default: "
-            "1 (tomorrow) -- cards due today or overdue are never touched. "
-            "Mutually exclusive with --range."
+            "Days after today where the rebalance window begins. Offset 0 "
+            "is today and the default, so cards due today are included; "
+            "overdue cards (due before today) are never touched. Mutually "
+            "exclusive with --range."
         ),
     )
     window_group.add_argument(
@@ -371,8 +371,8 @@ def build_parser():
         type=str,
         default=None,
         help=(
-            "Day-offset window LO-HI (e.g. 8-30), or a bare N meaning "
-            "N-N. Cards outside the window are left untouched. Mutually "
+            "Day-offset window START-STOP (e.g. 8-30; 0 = today), or a "
+            "bare N meaning N-N. Cards outside the window are left untouched. Mutually "
             "exclusive with --start-offset."
         ),
     )
@@ -574,6 +574,20 @@ def main():
                     "Try re-running with --set-earlier, or a larger "
                     "--max-shift (or --max-shift none)."
                 )
+            elif exc.reason == "min unmet":
+                days = ", ".join(str(d - today) for d in exc.days)
+                print(
+                    f"--min cannot be met on day offset(s): {days}. Lower "
+                    "--min, pass --set-earlier so surplus may move later, "
+                    "raise --max-shift, or narrow/shift --range."
+                )
+            elif exc.reason == "max unmet":
+                days = ", ".join(str(d - today) for d in exc.days)
+                print(
+                    f"--max cannot be met on day offset(s): {days}. Raise "
+                    "--max, pass --set-earlier so surplus may move later, "
+                    "raise --max-shift, or widen --range."
+                )
             elif exc.reason == "min separation":
                 print(
                     "Try a smaller --min-separation, relax --min/--max, pass "
@@ -611,12 +625,10 @@ def main():
             )
 
         if result.short_days:
-            label = (
-                "Days under the sliding ramp target"
-                if args.sliding
-                else "Days still below --min after the shift cap"
+            print(
+                "Days under the sliding ramp target: "
+                + ", ".join(str(d - today) for d in result.short_days)
             )
-            print(label + ": " + ", ".join(str(d - today) for d in result.short_days))
 
         if result.over_target_days:
             print(

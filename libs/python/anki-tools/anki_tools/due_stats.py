@@ -83,10 +83,12 @@ def build_parser():
         "--start-offset",
         dest="start_offset",
         type=int,
-        default=1,
+        default=0,
         help=(
-            "Days after today where the window begins. Default: 1 "
-            "(tomorrow). Mutually exclusive with --range."
+            "Days after today where the window begins. Offset 0 is today "
+            "and the default, so cards due today are included; overdue "
+            "cards (due before today) are never touched. Mutually "
+            "exclusive with --range."
         ),
     )
     window_group.add_argument(
@@ -95,8 +97,8 @@ def build_parser():
         type=str,
         default=None,
         help=(
-            "Day-offset window LO-HI (e.g. 8-30), or a bare N meaning "
-            "N-N. Reports on this slice alone. Mutually exclusive with "
+            "Day-offset window START-STOP (e.g. 8-30; 0 = today), or a "
+            "bare N meaning N-N. Reports on this slice alone. Mutually exclusive with "
             "--start-offset."
         ),
     )
