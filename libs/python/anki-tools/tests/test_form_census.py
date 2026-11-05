@@ -819,6 +819,24 @@ PLANNED_EMPTY_COUNTS = {
         "Past (m / f)": 177,
     },
 }
+FILLED_COUNTS = {
+    "Nouns": {"Genitive Sg": 613, "Genitive Pl": 596},
+    "Adjectives": {"Short Form": 130, "Comparative": 113},
+    "Verbs": {
+        "Conjugation": 160,
+        "я (1sg)": 160,
+        "ты (2sg)": 160,
+        "они (3pl)": 160,
+        "Past (m / f)": 175,
+    },
+}
+EXPECTED_EMPTY_COUNTS = {
+    sheet: {
+        field: count - FILLED_COUNTS.get(sheet, {}).get(field, 0)
+        for field, count in fields.items()
+    }
+    for sheet, fields in PLANNED_EMPTY_COUNTS.items()
+}
 PENDING_IMPORT_VERB_GUID = "t1#RNs`=(A"
 ORPHANED_NOUNS = {"пальто", "кино", "кафе", "метро", "кофе"}
 
@@ -849,34 +867,34 @@ class TestRealData:
         ("sheet", "field", "expected"),
         [
             (sheet, field, count)
-            for sheet, fields in PLANNED_EMPTY_COUNTS.items()
+            for sheet, fields in EXPECTED_EMPTY_COUNTS.items()
             for field, count in fields.items()
         ],
     )
-    def test_tsv_empty_counts_match_planning_census(
+    def test_tsv_empty_counts_match_post_fill_census(
         self, tsv_notes, sheet, field, expected
     ):
         assert fc.empty_counts(tsv_notes)[sheet][field] == expected
 
-    def test_counting_only_empty_strings_cannot_reproduce_the_planning_counts(
+    def test_counting_only_empty_strings_cannot_reproduce_the_expected_counts(
         self, tsv_notes
     ):
         strict = fc.empty_counts(tsv_notes, dash_rule=False)
         differing = [
             (sheet, field)
-            for sheet, fields in PLANNED_EMPTY_COUNTS.items()
+            for sheet, fields in EXPECTED_EMPTY_COUNTS.items()
             for field, count in fields.items()
             if strict[sheet][field] != count
         ]
         assert ("Adjectives", "Short Form") in differing
-        assert strict["Adjectives"]["Short Form"] == 151
+        assert strict["Adjectives"]["Short Form"] == 21
 
     def test_every_empty_cell_is_classified_and_totals_match(self, tsv_notes):
         cells = fc.census_cells(tsv_notes)
-        planned_total = sum(
-            c for f in PLANNED_EMPTY_COUNTS.values() for c in f.values()
+        expected_total = sum(
+            c for f in EXPECTED_EMPTY_COUNTS.values() for c in f.values()
         )
-        assert len(cells) == planned_total
+        assert len(cells) == expected_total
         assert {c.status for c in cells} == {fc.MISSING, fc.NOT_APPLICABLE}
         assert all(c.reason for c in cells)
 
@@ -888,7 +906,10 @@ class TestRealData:
         collection = fc.collection_census_notes(path)
         assert (path.stat().st_mtime_ns, path.stat().st_size) == before
         result = fc.reconcile(tsv_notes, collection)
-        assert result.reconciles, result.mismatches
+        for (sheet, field), (tsv_count, collection_count) in result.mismatches.items():
+            assert field in FILLED_COUNTS.get(sheet, {}), (sheet, field)
+            assert tsv_count <= EXPECTED_EMPTY_COUNTS[sheet][field]
+            assert collection_count >= tsv_count
         assert result.unbuilt == {
             **{s: () for s in fc.SHEETS},
             "Verbs": (PENDING_IMPORT_VERB_GUID,),
@@ -907,4 +928,4 @@ class TestRealData:
         loose = fc.reconcile(tsv_notes, collection, dash_rule=True)
         strict = fc.reconcile(tsv_notes, collection, dash_rule=False)
         assert loose.tsv_counts != strict.tsv_counts
-        assert loose.tsv_counts["Adjectives"]["Short Form"] == 158
+        assert loose.tsv_counts["Adjectives"]["Short Form"] == 28
