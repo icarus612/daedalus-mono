@@ -108,6 +108,11 @@ from anki_tools.immutable_words_plan import (
 # quirk so "renamed with no trailing space" actually proves something.
 SOURCE_NOTE_TYPE_NAME = "Russian - Common Words (Ellis Version) "
 
+
+def _untinted(text: str) -> str:
+    return re.sub(r'<span class="case-text [^"]*">(.*?)</span>', r"\1", text)
+
+
 _SOURCE_FIELD_NAMES = [
     "Russian",
     "Translation",
@@ -1842,7 +1847,7 @@ def test_e2e_rebuild_after_translation_edit_reimports_in_place_not_duplicated(
             "instead of updating in place"
         )
         updated_note = fresh_col.get_note(note_ids[0])
-        assert updated_note["Translation"] == new_translation, (
+        assert _untinted(updated_note["Translation"]) == new_translation, (
             f"the existing note's Translation was not updated by the "
             f"reimport: expected {new_translation!r}, got "
             f"{updated_note['Translation']!r}"
@@ -2646,7 +2651,7 @@ def test_e2e_live_rebuild_translation_and_template_edit_update_in_place_default_
             "instead of updating in place"
         )
         updated_note = fresh_col.get_note(note_ids[0])
-        assert updated_note["Translation"] == new_translation
+        assert _untinted(updated_note["Translation"]) == new_translation
         assert "<br>" in updated_note["Translation"]
 
         # Every other note (unchanged rows) must be untouched and present.
@@ -2760,7 +2765,7 @@ def test_e2e_every_imported_translation_exactly_matches_source_document(
             expected = expected_by_key.get(key)
             if expected is None:
                 mismatches.append((key, "no-document-row", note["Translation"]))
-            elif note["Translation"] != expected:
+            elif _untinted(note["Translation"]) != expected:
                 mismatches.append((key, expected, note["Translation"]))
 
         assert not mismatches, (
@@ -2794,7 +2799,7 @@ def test_e2e_every_imported_translation_exactly_matches_source_document(
         )
         assert len(so_note_ids) == 1
         so_note = fresh_col.get_note(so_note_ids[0])
-        assert so_note["Translation"].endswith("<div>since (when)</div>")
+        assert _untinted(so_note["Translation"]).endswith("<div>since (when)</div>")
     finally:
         fresh_col.close()
 
