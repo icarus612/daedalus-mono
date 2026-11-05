@@ -52,7 +52,8 @@ STRUCTURAL_REASONS = {
         "a headword is the question, a label names a row, examples quote usage"
     ),
     "inflection cells (phrase_words.INFLECTION_FIELDS) are dropped entirely": (
-        "forms legitimately coincide (Plural == Genitive Sg) and are filled concurrently"
+        "forms legitimately coincide (Plural == Genitive Sg) "
+        "and are filled concurrently"
     ),
     "Stem Type is not compared for equality": (
         "'hard' there is a grammar class, not the gloss 'hard'"
@@ -60,13 +61,18 @@ STRUCTURAL_REASONS = {
     "sense/sense and paren/paren pairs inside one gloss are not compared": (
         "two senses may share a head word or qualifier: 'take (exam) / pass (exam)'"
     ),
-    "stop words are ignored when comparing content words": "grammar words carry no information",
+    "stop words are ignored when comparing content words": (
+        "grammar words carry no information"
+    ),
 }
 
 _APPROVED_KEEP = (
     "approved qualifier-classification.tsv decision (keep / move-to-distinction)"
 )
-_ELABORATES = "the longer segment adds content beyond the short label, so the label is not the same information"
+_ELABORATES = (
+    "the longer segment adds content beyond the short label, "
+    "so the label is not the same information"
+)
 
 _CATEGORY_LABEL = "Category is a classification label"
 
@@ -113,7 +119,10 @@ ALLOWED = {
         dedup.RULE_CONTAINED,
         (
             "this is linking word",
-            "subject less linking word это книга this is a book invariable unlike the pronoun этот эта это эти which agrees with its noun",
+            (
+                "subject less linking word это книга this is a book invariable "
+                "unlike the pronoun этот эта это эти which agrees with its noun"
+            ),
         ),
     ): _ELABORATES,
     (
@@ -122,7 +131,10 @@ ALLOWED = {
         dedup.RULE_CONTAINED,
         (
             "asserts the whole clause",
-            "asserts the truth of the whole clause not the manner of the verb also a noun правда truth",
+            (
+                "asserts the truth of the whole clause not the manner of the verb "
+                "also a noun правда truth"
+            ),
         ),
     ): _ELABORATES,
     (
@@ -195,7 +207,8 @@ _CARD2_QFMT = (
 )
 _CARD2_AFMT = (
     '{{FrontSide}}\n<hr id=answer>\n<div id="part-of-speech">{{Part of Speech}}</div>\n'
-    '<div id="russian">{{Russian}}</div>\n<div id="additional-info">{{Additional Info}}</div>\n'
+    '<div id="russian">{{Russian}}</div>\n'
+    '<div id="additional-info">{{Additional Info}}</div>\n'
     '<script>\naddTitle("additional-info", "&#9432;");\n</script>'
 )
 
@@ -365,7 +378,8 @@ def test_inflection_cells_play_no_part_in_the_verdict():
     html = (
         '<div id="translation">house</div>'
         '<div class="detail-label">Plural</div><div class="detail-value">дома</div>'
-        '<div class="detail-label">Genitive Sg</div><div class="detail-value">дома</div>'
+        '<div class="detail-label">Genitive Sg</div>'
+        '<div class="detail-value">дома</div>'
     )
     assert dedup.violations(html, STRUCTURAL) == []
     assert dedup.violations(
@@ -456,7 +470,10 @@ def test_the_distinction_table_is_untouched_by_the_seeded_runs():
     assert distinction.english_distinction("до") != "Genitive"
 
 
-_PILLS = '<div class="case-pills" data-case="Accusative, Prepositional"><span class="case-pill">Accusative</span></div>'
+_PILLS = (
+    '<div class="case-pills" data-case="Accusative, Prepositional">'
+    '<span class="case-pill">Accusative</span></div>'
+)
 
 
 @pytest.mark.parametrize(
@@ -464,11 +481,14 @@ _PILLS = '<div class="case-pills" data-case="Accusative, Prepositional"><span cl
     [
         ('<div id="translation">hot</div>', []),
         (
-            '<div id="translation">hot (weather)</div><div id="prompt-hint">(weather)</div>',
+            '<div id="translation">hot (weather)</div>'
+            '<div id="prompt-hint">(weather)</div>',
             ["equal", "contained"],
         ),
         (
-            '<div id="translation">still / yet (ongoing)<br>more (asking for more)</div><div id="prompt-hint">(ongoing, or asking for more)</div>',
+            '<div id="translation">still / yet (ongoing)'
+            "<br>more (asking for more)</div>"
+            '<div id="prompt-hint">(ongoing, or asking for more)</div>',
             ["union"],
         ),
         ('<div id="translation">stay</div>' + _PILLS, []),
@@ -477,12 +497,13 @@ _PILLS = '<div class="case-pills" data-case="Accusative, Prepositional"><span cl
             ["equal", "equal", "case-name", "case-name"],
         ),
         (
-            '<div id="translation">stay</div><div id="additional-info">takes accusative</div>'
-            + _PILLS,
+            '<div id="translation">stay</div>'
+            '<div id="additional-info">takes accusative</div>' + _PILLS,
             ["case-name"],
         ),
         (
-            '<div id="translation">hot</div><script>var x = "hot";</script><span class="hidden">hot</span>',
+            '<div id="translation">hot</div><script>var x = "hot";</script>'
+            '<span class="hidden">hot</span>',
             [],
         ),
         ('<div id="translation">hot</div><div id="examples">hot hot</div>', []),

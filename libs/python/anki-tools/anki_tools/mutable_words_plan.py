@@ -988,7 +988,8 @@ _ASPECT_LINE_CSS = (
 def _build_extra_css() -> str:
     """CSS appended to the cloned source note type's CSS (never rewritten in
     place -- see `mutable_words.build_note_types`). Lays the `#details` rows
-    out as a centred two-column label/value grid; `#audio-imperfective`/`#audio-perfective` close the
+    out as a centred two-column label/value grid;
+    `#audio-imperfective`/`#audio-perfective` close the
     same coverage gap for the Verbs sheet's two audio containers, mirroring
     `#audio`; `.aspect` styles the Verbs reverse fronts' inline aspect
     qualifier.
