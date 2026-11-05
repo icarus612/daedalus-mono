@@ -1,3 +1,4 @@
+import copy
 import json
 import os
 import unicodedata
@@ -1596,14 +1597,25 @@ class TestRealArtifact:
         assert counts == {ff.STATUS_FILLED: 2267, ff.STATUS_UNRESOLVED: 88}
         assert len(rows) == 2355
 
-    def test_every_row_targets_a_missing_cell(self, rows, tsv_notes):
+    def test_unresolved_rows_target_missing_cells_and_filled_rows_are_written(
+        self, rows, tsv_notes
+    ):
         missing = {
             (c.sheet, c.guid, c.field)
             for c in fc.census_cells(tsv_notes)
             if c.status == fc.MISSING
         }
-        assert {(r.note_type, r.guid, r.field) for r in rows} == missing
-        ff.assert_targets_empty(rows, tsv_notes, {})
+        unresolved = {
+            (r.note_type, r.guid, r.field)
+            for r in rows
+            if r.status == ff.STATUS_UNRESOLVED
+        }
+        assert unresolved == missing
+        ff.assert_targets_empty(
+            [r for r in rows if r.status == ff.STATUS_UNRESOLVED], tsv_notes, {}
+        )
+        filled = [r for r in rows if r.status == ff.STATUS_FILLED]
+        assert all(tsv_notes[r.note_type][r.guid][r.field] == r.value for r in filled)
 
     def test_no_row_targets_an_excluded_cell(self, rows):
         excluded, _ = ff.plan_exclusions(None)
@@ -1644,6 +1656,13 @@ class TestRealArtifact:
 
     @pytest.mark.skipif(KAIKKI_ENV not in os.environ, reason="needs the kaikki dump")
     def test_oracle_against_the_dump_is_pinned(self, tsv_notes):
+        committed = ff.parse_artifact(
+            (REAL_DATA_DIR / "form-fill.tsv").read_text(encoding="utf-8")
+        )
+        tsv_notes = copy.deepcopy(tsv_notes)
+        for r in committed:
+            if r.status == ff.STATUS_FILLED:
+                tsv_notes[r.note_type][r.guid][r.field] = ""
         lemmas = {ff.lemma_for(s, f) for s, n in tsv_notes.items() for f in n.values()}
         entries = ff.extract_entries(os.environ[KAIKKI_ENV], lemmas)
         result = ff.check_oracle(tsv_notes, entries)
@@ -1654,9 +1673,6 @@ class TestRealArtifact:
         assert got == PINNED_ORACLE
         assert all(len(r.disagreements) == r.differs for r in result.values())
         rebuilt = ff.build_rows(tsv_notes, {}, entries, ff.plan_exclusions(None)[0])
-        committed = ff.parse_artifact(
-            (REAL_DATA_DIR / "form-fill.tsv").read_text(encoding="utf-8")
-        )
         assert [(r.guid, r.field, r.value, r.status) for r in rebuilt] == [
             (r.guid, r.field, r.value, r.status) for r in committed
         ]
