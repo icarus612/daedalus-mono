@@ -837,8 +837,6 @@ EXPECTED_EMPTY_COUNTS = {
     }
     for sheet, fields in PLANNED_EMPTY_COUNTS.items()
 }
-PENDING_IMPORT_VERB_GUID = "t1#RNs`=(A"
-ORPHANED_NOUNS = {"пальто", "кино", "кафе", "метро", "кофе"}
 
 
 def _live_collection_path():
@@ -906,19 +904,21 @@ class TestRealData:
         collection = fc.collection_census_notes(path)
         assert (path.stat().st_mtime_ns, path.stat().st_size) == before
         result = fc.reconcile(tsv_notes, collection)
-        for (sheet, field), (tsv_count, collection_count) in result.mismatches.items():
-            assert field in FILLED_COUNTS.get(sheet, {}), (sheet, field)
-            assert tsv_count <= EXPECTED_EMPTY_COUNTS[sheet][field]
-            assert collection_count >= tsv_count
-        assert result.unbuilt == {
-            **{s: () for s in fc.SHEETS},
-            "Verbs": (PENDING_IMPORT_VERB_GUID,),
+        assert result.mismatches == {}
+        assert result.unbuilt == {s: () for s in fc.SHEETS}
+        assert result.orphans == {s: () for s in fc.SHEETS}
+        assert sum(len(notes) for notes in collection.values()) > 0
+        dropped_sheet = "Verbs"
+        dropped_guid = next(iter(collection[dropped_sheet]))
+        perturbed = {
+            **collection,
+            dropped_sheet: {
+                g: n for g, n in collection[dropped_sheet].items() if g != dropped_guid
+            },
         }
-        orphan_names = {
-            collection["Nouns"][g]["Russian"] for g in result.orphans["Nouns"]
-        }
-        assert orphan_names == ORPHANED_NOUNS
-        assert all(not result.orphans[s] for s in fc.SHEETS if s != "Nouns")
+        assert fc.reconcile(tsv_notes, perturbed).unbuilt[dropped_sheet] == (
+            dropped_guid,
+        )
 
     def test_dash_rule_is_load_bearing_for_the_reconciliation_inputs(self, tsv_notes):
         path = _live_collection_path()
