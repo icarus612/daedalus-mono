@@ -1,5 +1,7 @@
 # 88 inflection cells with no source (left blank)
 
+> These 88 inflection cells had no citable source and are left blank for hand-filling.
+
 columns: ['note type', 'headword', 'guid', 'field', 'generated value', 'reference (source + entry URL)', 'status'] 
 
 ## Adjectives — Comparative (41)

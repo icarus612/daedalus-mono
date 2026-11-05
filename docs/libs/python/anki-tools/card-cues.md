@@ -143,7 +143,7 @@ Adjectives (Short Form, Comparative) were filled from a reviewed artifact, never
 - Applied: 2,267 cells (nouns 1,209, verbs 815, adjectives 243), each checked as previously empty and
   equal to the approved value, GUIDs and row order unchanged.
 - **88 cells stay blank** (72 covered by neither source, 16 covered only by OpenRussian, which the
-  source rule leaves unresolved). They are listed in the plan record `blank-cells.md` for hand-citing:
+  source rule leaves unresolved). They are listed in [form-fill-blank-cells.md](form-fill-blank-cells.md) for hand-citing:
   fill the cell in the TSV with a cited value, then rebuild.
 
 ## Source drift as a gate
