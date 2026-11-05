@@ -187,18 +187,14 @@ def test_shift_cap_blocking_fill_raises_min_unmet():
 
 def test_sliding_never_returns_a_day_below_min():
     cards = cards_from_counts([10] * 6, start_day=1)
-    try:
-        result = plan_rebalance(
-            cards,
-            start_day=1,
-            min_per_day=8,
-            max_per_day=16,
-            max_shift=14,
-            sliding=True,
-        )
-    except InfeasibleRebalance as exc:
-        assert "min unmet" in exc.reason
-        return
+    result = plan_rebalance(
+        cards,
+        start_day=1,
+        min_per_day=8,
+        max_per_day=16,
+        max_shift=14,
+        sliding=True,
+    )
     final = _final_counts(cards, result)
     for day in range(1, result.end_day + 1):
         assert 8 <= final[day] <= 16

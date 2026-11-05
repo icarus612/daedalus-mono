@@ -542,10 +542,12 @@ def apply_reverse_max_pass(state: RunState, ceiling: DayTargets) -> None:
         d += 1
 
 
-def _pull_from_later(d: int, state: RunState) -> bool:
+def _pull_from_later(d: int, state: RunState, keep: DayTargets | None) -> bool:
     for s in range(d + 1, state.end_day + 1):
         source = state.buckets.get(s)
         if not source:
+            continue
+        if keep is not None and len(source) <= keep[s]:
             continue
         for cid in min_move_order(source, state):
             if may_move_to(cid, d, state):
@@ -568,15 +570,21 @@ def _push_from_earlier(d: int, floor: DayTargets, state: RunState) -> bool:
     return False
 
 
-def apply_min_pass(state: RunState, floor: DayTargets, set_earlier: bool) -> bool:
+def apply_min_pass(
+    state: RunState,
+    floor: DayTargets,
+    set_earlier: bool,
+    keep: DayTargets | None = None,
+) -> bool:
     """Raises every day in [start_day, end_day] toward `floor`. Pulls from
     later days first; only with `set_earlier` does it also push cards later
-    from earlier days that stay at or above their own floor. Returns True iff
-    a card moved later."""
+    from earlier days that stay at or above their own floor. With `keep`, no
+    later day is drawn below its `keep` level. Returns True iff a card moved
+    later."""
     moved_later = False
     for d in range(state.start_day, state.end_day + 1):
         for _ in range(max(0, floor[d] - len(state.buckets[d]))):
-            if _pull_from_later(d, state):
+            if _pull_from_later(d, state, keep):
                 continue
             if set_earlier and _push_from_earlier(d, floor, state):
                 moved_later = True
@@ -586,10 +594,15 @@ def apply_min_pass(state: RunState, floor: DayTargets, set_earlier: bool) -> boo
 
 
 def apply_shape_pass(
-    state: RunState, target: DayTargets, hard_ceiling: DayTargets
+    state: RunState,
+    target: DayTargets,
+    hard_ceiling: DayTargets,
+    hard_floor: DayTargets,
 ) -> None:
     """Sliding only. Shapes DOWNWARD toward `target` without ever breaching
-    `hard_ceiling`. The break on a full receiver is a REFUSAL that stops
+    `hard_ceiling` or taking a day below `hard_floor` (the ramp is soft,
+    `--min`/`--max` are hard; a day left above target is reported as
+    `over_target_days`). The break on a full receiver is a REFUSAL that stops
     shaping day `d` and moves the sweep on - it never looks at `d - 2`.
     Never raises; days still above `target[d]` on exit become
     `over_target_days`.
@@ -603,6 +616,8 @@ def apply_shape_pass(
     documented as best-effort."""
     for d in range(state.end_day, state.start_day, -1):
         while len(state.buckets[d]) > target[d]:
+            if len(state.buckets[d]) <= hard_floor[d]:
+                break
             if len(state.buckets[d - 1]) >= hard_ceiling[d - 1]:
                 break  # receiver is AT the hard cap -> refusal, not a skip
             mover: int | None = None
@@ -936,13 +951,10 @@ def plan_rebalance(
         in_scope = sum(len(state.buckets[d]) for d in state.buckets)
         target = fit_target_line(target, in_scope, max_per_day)
         hard_ceiling = constant_targets(state.start_day, state.end_day, max_per_day)
-        apply_shape_pass(state, target, hard_ceiling)
-        later_move_used |= apply_min_pass(state, target, set_earlier)
-        later_move_used |= apply_min_pass(
-            state,
-            constant_targets(state.start_day, state.end_day, min_per_day),
-            set_earlier,
-        )
+        hard_floor = constant_targets(state.start_day, state.end_day, min_per_day)
+        apply_shape_pass(state, target, hard_ceiling, hard_floor)
+        later_move_used |= apply_min_pass(state, target, set_earlier, keep=hard_floor)
+        later_move_used |= apply_min_pass(state, hard_floor, set_earlier)
         over_target_days = [
             d
             for d in range(state.start_day, state.end_day + 1)

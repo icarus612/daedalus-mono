@@ -566,7 +566,7 @@ def test_apply_reverse_max_pass_multiset_preserved_and_deterministic():
 
 def test_apply_min_pass_basic_pull_from_nearest_day():
     state = state_from_counts([3, 20, 20, 20], start_day=1)
-    apply_min_pass(state, wide_ceiling(state, 8))
+    apply_min_pass(state, wide_ceiling(state, 8), set_earlier=True)
     assert [len(state.buckets[d]) for d in (1, 2, 3, 4)] == [8, 15, 20, 20]
 
 
@@ -574,7 +574,7 @@ def test_apply_min_pass_cascades_through_and_disturbs_an_at_minimum_day():
     state = state_from_counts([0, 8, 20], start_day=1)
     day2_originals = set(state.buckets[2])
 
-    apply_min_pass(state, wide_ceiling(state, 8))
+    apply_min_pass(state, wide_ceiling(state, 8), set_earlier=True)
 
     assert [len(state.buckets[d]) for d in (1, 2, 3)] == [8, 8, 12]
     # Day 2 gave up its original cards to day 1 and refilled from day 3 --
@@ -585,21 +585,27 @@ def test_apply_min_pass_cascades_through_and_disturbs_an_at_minimum_day():
 
 def test_apply_min_pass_no_surplus_cascade():
     state = state_from_counts([0, 8, 8], start_day=1)
-    apply_min_pass(state, wide_ceiling(state, 8))
+    apply_min_pass(state, wide_ceiling(state, 8), set_earlier=True)
     assert [len(state.buckets[d]) for d in (1, 2, 3)] == [8, 8, 0]
 
 
-def test_apply_min_pass_exempts_the_trailing_days():
+def test_min_pass_leaves_day_2_short_and_plan_rebalance_raises_min_unmet():
     state = state_from_counts([8, 3], start_day=1)
-    before = {day: list(ids) for day, ids in state.buckets.items()}
-    apply_min_pass(state, wide_ceiling(state, 8))
-    after = {day: list(ids) for day, ids in state.buckets.items()}
-    assert before == after
+    assert apply_min_pass(state, wide_ceiling(state, 8), set_earlier=True) is False
+    assert [len(state.buckets[d]) for d in (1, 2)] == [8, 3]
+    with pytest.raises(InfeasibleRebalance) as excinfo:
+        plan_rebalance(
+            cards_from_counts([8, 3], start_day=1),
+            start_day=1,
+            min_per_day=8,
+            max_per_day=20,
+        )
+    assert "min unmet" in str(excinfo.value)
 
 
 def test_apply_min_pass_shift_cap_leaves_a_day_short_without_raising():
     state = state_from_counts([0, 20], start_day=1, max_shift=0)
-    apply_min_pass(state, wide_ceiling(state, 8))
+    apply_min_pass(state, wide_ceiling(state, 8), set_earlier=True)
     assert len(state.buckets[1]) == 0
     assert len(state.buckets[2]) == 20
 
@@ -626,7 +632,7 @@ def test_apply_min_pass_keeps_hunting_past_a_cap_blocked_source():
         max_shift=14,
     )
 
-    apply_min_pass(state, wide_ceiling(state, 8))
+    apply_min_pass(state, wide_ceiling(state, 8), set_earlier=True)
 
     assert len(state.buckets[1]) == 8
     assert set(state.buckets[1]) <= set(range(201, 209))
@@ -642,7 +648,7 @@ def test_apply_min_pass_prefers_untouched_source_cards():
         origin_by_id={1: 2, 2: 2, 3: 2, 4: 2},
         moved={1, 2},
     )
-    apply_min_pass(state, wide_ceiling(state, 2))
+    apply_min_pass(state, wide_ceiling(state, 2), set_earlier=True)
     assert set(state.buckets[1]) == {3, 4}
     assert set(state.buckets[2]) == {1, 2}
 
@@ -652,7 +658,7 @@ def test_apply_min_pass_invariants_no_later_moves_no_floor_breach_multiset():
     before_ids = all_ids(state.buckets)
     before_days = {cid: day for day, ids in state.buckets.items() for cid in ids}
 
-    apply_min_pass(state, wide_ceiling(state, 8))
+    apply_min_pass(state, wide_ceiling(state, 8), set_earlier=True)
 
     after_days = {cid: day for day, ids in state.buckets.items() for cid in ids}
     for card_id, day in after_days.items():
@@ -664,7 +670,7 @@ def test_apply_min_pass_invariants_no_later_moves_no_floor_breach_multiset():
 def test_apply_min_pass_deterministic():
     def run():
         state = state_from_counts([3, 20, 20, 20], start_day=1)
-        apply_min_pass(state, wide_ceiling(state, 8))
+        apply_min_pass(state, wide_ceiling(state, 8), set_earlier=True)
         return {day: sorted(ids) for day, ids in state.buckets.items()}
 
     assert run() == run()
@@ -761,8 +767,8 @@ def test_plan_rebalance_flagship_trace_requires_set_earlier_true():
         16,
         10,
         9,
-        16,
-        1,
+        9,
+        8,
     ]
     assert result.short_days == []
     # sink_overflow is retained from the earlier-only max pass even though
@@ -806,13 +812,11 @@ def test_plan_rebalance_set_earlier_extends_horizon_when_needed():
     assert sum(result.after.values()) == 50
 
 
-def test_plan_rebalance_cap_induced_shortfall_is_reported_not_raised():
+def test_plan_rebalance_cap_induced_shortfall_raises_min_unmet():
     cards = cards_from_counts([0, 20], start_day=1)
-    result = plan_rebalance(
-        cards, start_day=1, min_per_day=8, max_per_day=None, max_shift=0
-    )
-    assert result.short_days != []
-    assert 1 in result.short_days
+    with pytest.raises(InfeasibleRebalance) as exc_info:
+        plan_rebalance(cards, start_day=1, min_per_day=8, max_per_day=None, max_shift=0)
+    assert "min unmet" in str(exc_info.value)
 
 
 def test_plan_rebalance_deterministic():
@@ -1057,7 +1061,7 @@ def test_apply_shape_pass_refusal_is_not_a_skip_to_the_next_day():
     target = {1: 2, 2: 2, 3: 1, 4: 5}
     hard_ceiling = {1: 2, 2: 2, 3: 5, 4: 5}
 
-    apply_shape_pass(state, target, hard_ceiling)
+    apply_shape_pass(state, target, hard_ceiling, constant_targets(1, 4, 0))
 
     assert state.buckets[3] == [1, 2, 3, 4, 5]  # refused; nothing moved out
     assert state.buckets[1] == [100, 101]  # nothing skipped past the full day
@@ -1075,7 +1079,7 @@ def test_apply_shape_pass_shift_cap_blocks_candidates_without_raising():
     target = {1: 0, 2: 0}
     hard_ceiling = {1: 5, 2: 5}
 
-    apply_shape_pass(state, target, hard_ceiling)
+    apply_shape_pass(state, target, hard_ceiling, constant_targets(1, 2, 0))
 
     assert state.buckets[2] == [1, 2, 3]  # every candidate was shift-blocked
     assert state.buckets[1] == []
@@ -1086,10 +1090,22 @@ def test_apply_shape_pass_shapes_down_toward_target_when_unobstructed():
     target = {1: 4, 2: 1}
     hard_ceiling = {1: 4, 2: 4}
 
-    apply_shape_pass(state, target, hard_ceiling)
+    apply_shape_pass(state, target, hard_ceiling, constant_targets(1, 2, 0))
 
     assert len(state.buckets[2]) == 1
     assert len(state.buckets[1]) == 3
+
+
+def test_apply_shape_pass_never_drains_a_day_below_its_hard_floor():
+    state = make_state({1: [], 2: [1, 2, 3, 4]}, start_day=1, end_day=2)
+    target = {1: 4, 2: 1}
+    hard_ceiling = {1: 4, 2: 4}
+    hard_floor = {1: 0, 2: 3}
+
+    apply_shape_pass(state, target, hard_ceiling, hard_floor)
+
+    assert len(state.buckets[2]) >= 3
+    assert len(state.buckets[1]) + len(state.buckets[2]) == 4
 
 
 @pytest.mark.parametrize(
@@ -1119,7 +1135,9 @@ def test_apply_shape_pass_never_breaches_the_hard_ceiling(
     hard_ceiling = constant_targets(start_day, state.end_day, max_per_day)
     target = build_target_line(start_day, state.end_day, min_per_day, max_per_day)
 
-    apply_shape_pass(state, target, hard_ceiling)
+    apply_shape_pass(
+        state, target, hard_ceiling, constant_targets(start_day, state.end_day, 0)
+    )
 
     for day in range(start_day, state.end_day + 1):
         assert len(state.buckets.get(day, [])) <= max_per_day
@@ -1173,13 +1191,13 @@ def test_flat_mode_is_bit_identical_through_the_shared_daytargets_path():
         sliding=False,
     )
     assert result.over_target_days == []  # always empty in flat mode
-    assert [result.after.get(d, 0) for d in range(1, 7)] == [16, 16, 10, 9, 16, 1]
+    assert [result.after.get(d, 0) for d in range(1, 7)] == [16, 16, 10, 9, 9, 8]
 
 
 def test_sliding_cap_blocked_reports_over_target_days_without_raising():
     """DP-F: a merely shape-unreachable (not hard-infeasible) sliding run
     proceeds and reports over_target_days -- it is not a failure."""
-    cards = cards_from_counts([0] * 9 + [45], start_day=1)  # 45 cards, day 10
+    cards = cards_from_counts([8] * 9 + [30], start_day=1)
     result = plan_rebalance(
         cards,
         start_day=1,
@@ -1189,6 +1207,8 @@ def test_sliding_cap_blocked_reports_over_target_days_without_raising():
         sliding=True,
     )
     assert result.over_target_days != []
+    for day in range(1, result.end_day + 1):
+        assert result.after.get(day, 0) >= 8
     for day in range(1, result.end_day + 1):
         assert result.after.get(day, 0) <= 16
 
@@ -1877,7 +1897,7 @@ def test_plan_rebalance_actively_repairs_pre_existing_violations_untouched_by_lo
     result = plan_rebalance(
         cards,
         start_day=1,
-        min_per_day=1,
+        min_per_day=None,
         max_per_day=1000,
         max_shift=20,
         set_earlier=True,
@@ -1903,7 +1923,7 @@ def test_plan_rebalance_honours_max_after_repair_with_genuine_overflow_pressure(
     result = plan_rebalance(
         cards,
         start_day=1,
-        min_per_day=1,
+        min_per_day=None,
         max_per_day=4,
         max_shift=30,
         set_earlier=True,
@@ -1989,7 +2009,7 @@ def test_plan_rebalance_reproducible_with_active_separation_repair():
         return plan_rebalance(
             cards,
             start_day=1,
-            min_per_day=1,
+            min_per_day=None,
             max_per_day=1000,
             max_shift=20,
             set_earlier=True,
@@ -2015,7 +2035,7 @@ def test_plan_rebalance_omitting_horizon_ceiling_is_backward_compatible():
     )
     assert result.reverse_pass_used is True
     assert result.end_day == 6
-    assert [result.after.get(d, 0) for d in range(1, 7)] == [16, 16, 10, 9, 16, 1]
+    assert [result.after.get(d, 0) for d in range(1, 7)] == [16, 16, 10, 9, 9, 8]
 
 
 # --- _infeasible_reason's broadened "range ceiling" branch

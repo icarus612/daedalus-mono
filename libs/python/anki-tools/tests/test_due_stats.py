@@ -337,11 +337,6 @@ def test_reports_feasible_flat_and_sliding_ranges_when_bounds_supplied(
 def test_reports_required_vs_cap_achievable_profile_and_min_feasible_max_shift(
     tmp_path, monkeypatch, capsys
 ):
-    # Block-shaped fixture verified directly against due_plan before writing
-    # this test: 1 card anchoring offset 1, 100 cards spiked on offset 60,
-    # min=1 max=16 --sliding gives feasible=True, shape_reachable=False,
-    # min_feasible_max_shift=24 -- a TENS-of-days figure, not single digits
-    # (plan.md line 1287's own pinned distinction).
     col_path = os.path.join(str(tmp_path), "test.anki2")
     col = Collection(col_path)
     coding_id = col.decks.id("programming::coding")
@@ -349,8 +344,9 @@ def test_reports_required_vs_cap_achievable_profile_and_min_feasible_max_shift(
     start_day = today + 1
 
     origin_by_id = {}
-    anchor = _add_card(col, coding_id, due=start_day, ivl=10)
-    origin_by_id[anchor.id] = anchor.due
+    for offset in range(59):
+        anchor = _add_card(col, coding_id, due=start_day + offset, ivl=10)
+        origin_by_id[anchor.id] = anchor.due
     for i in range(100):
         card = _add_card(col, coding_id, due=start_day + 59, ivl=10 + (i % 20))
         origin_by_id[card.id] = card.due
@@ -382,6 +378,8 @@ def test_reports_required_vs_cap_achievable_profile_and_min_feasible_max_shift(
             "--max",
             "16",
             "--sliding",
+            "--start-offset",
+            "1",
             "--collection",
             col_path,
         ],
