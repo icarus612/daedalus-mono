@@ -48,10 +48,8 @@ def qualifier_of(text: str) -> str:
 
 _QUALIFIER = __import__("re").compile(r"\(([^()]*)\)\s*$")
 
-# The English-side cue, one entry per headword, keyed by the `Russian` text
-# exactly as stored (qualifier included: `первый (numeral)` and
-# `первый (adjective)` are different entries). A cue never names a case; the
-# `Case` pill carries it. Values follow `qualifier-classification.tsv`.
+# Keyed by the `Russian` text as stored, qualifier included. A cue never names
+# a case; values follow `qualifier-classification.tsv`.
 ENGLISH_DISTINCTIONS: dict[str, str] = {
     "-то": "indefinite",
     "адрес": "the postal kind",

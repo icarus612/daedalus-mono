@@ -1231,9 +1231,7 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
         if additional_info:
             populated += 1
 
-    # 48 of the 68 rows carry info; the rest are em-dash rows or info the
-    # classification dropped as a restatement. Asserted exactly so that silently
-    # losing the column fails here rather than passing with 0.
+    # Exact count: the rest are em-dash rows or restatements the classification dropped.
     assert populated == 48
 
 
