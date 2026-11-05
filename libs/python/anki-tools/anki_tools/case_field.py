@@ -19,35 +19,12 @@ from functools import lru_cache
 from pathlib import Path
 
 CASE_FIELD = "Case"
-CASE_ID = "case"
 
 GOVERNING_SECTION = "Prepositions"
 
 CASE_GOVERNMENT_PATH = Path(__file__).parent / "data" / "case-government.tsv"
 LINE_CASE_SEPARATOR = " || "
 LINE_CASE_ARROW = " => "
-
-CASE_CSS = (
-    "#case {\n"
-    "\tpadding: 5px 0;\n"
-    "\tdisplay: inline-flex;\n"
-    "\ttext-align: left;\n"
-    "\twidth: 100%;\n"
-    "\tword-break: break-word;\n"
-    "\thyphens: auto;\n"
-    "\talign-items: start;\n"
-    "}\n\n"
-    "#case .title {\n"
-    "\tfont-size: 1.2rem;\n"
-    "\tdisplay: inline-flex;\n"
-    "\tcolor: #656565;\n"
-    "}\n\n"
-    "#case .body {\n"
-    "\tfont-size: 1.2rem;\n"
-    "\tcolor: #656565;\n"
-    "\tpadding-top: 2px;\n"
-    "}"
-)
 
 
 # Spelled out, never abbreviated: "prep." is reference-book shorthand that

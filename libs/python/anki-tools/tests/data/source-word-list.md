@@ -105,7 +105,7 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 2 | же | but / then / after all (adds emphasis) | — | — |
 | 3 | бы | would | — | — |
 | 4 | вот | here (is) / there (is) (pointing something out) | — | — |
-| 5 | только | only | Restrictive — "only, just" | — |
+| 5 | только | only | — | — |
 | 6 | даже | even | Marks something unexpected | — |
 | 7 | ли | whether / if (turns a statement into a question) | — | — |
 | 8 | ни | neither / not a single / not one | Reinforces a negation; needs не or нет in the clause | — |

@@ -88,10 +88,6 @@ def test_every_row_supplies_a_value_for_every_field(real_rows):
         assert len(row.fields()) == len(FIELD_NAMES)
 
 
-def test_case_css_styles_the_row_the_template_emits():
-    assert f"#{case_field.CASE_ID} {{" in case_field.CASE_CSS
-
-
 HEADER = "guid\tcases\tmeaning→case\tfamily\theadword"
 
 

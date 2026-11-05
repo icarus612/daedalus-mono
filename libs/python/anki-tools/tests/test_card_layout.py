@@ -10,7 +10,6 @@ from anki.utils import to_json_bytes
 
 from anki_tools import (
     card_audio,
-    case_field,
     case_pill,
     examples_field,
     mutable_words_plan,
@@ -111,7 +110,6 @@ def _note_type_css(plan, sheet):
         BASE_CSS,
         card_audio.AUDIO_BUTTON_CSS,
         examples_field.EXAMPLES_CSS,
-        case_field.CASE_CSS,
         word_qualifier.QUALIFIER_CSS,
         word_stack.WORD_STACK_CSS,
         prompt_hint.PROMPT_HINT_CSS,

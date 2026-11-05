@@ -18,7 +18,6 @@ from anki.import_export_pb2 import ImportAnkiPackageOptions, ImportAnkiPackageRe
 
 from anki_tools import (
     card_audio,
-    case_field,
     case_pill,
     examples_field,
     mutable_words_plan,
@@ -611,8 +610,6 @@ def test_build_note_types_css_extends_source_with_extra_css(cloned_note_types):
         + card_audio.AUDIO_BUTTON_CSS
         + "\n\n"
         + examples_field.EXAMPLES_CSS
-        + "\n\n"
-        + case_field.CASE_CSS
         + "\n\n"
         + word_qualifier.QUALIFIER_CSS
         + "\n\n"

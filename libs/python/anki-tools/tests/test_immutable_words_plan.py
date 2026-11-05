@@ -1244,7 +1244,7 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
 EXPECTED_INFO_COUNTS = {
     "Prepositions": (44, 44),
     "Conjunctions": (35, 20),
-    "Particles": (44, 31),
+    "Particles": (44, 30),
     "Indeclinable Nouns": (42, 42),
     "Base Adverbs": (68, 48),
 }

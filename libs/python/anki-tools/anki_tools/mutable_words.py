@@ -25,7 +25,6 @@ from anki.utils import to_json_bytes
 from anki_tools import (
     audio_naming,
     card_audio,
-    case_field,
     case_pill,
     examples_field,
     mutable_words_plan,
@@ -77,7 +76,6 @@ def build_note_types(
             cloned["css"],
             card_audio.AUDIO_BUTTON_CSS,
             examples_field.EXAMPLES_CSS,
-            case_field.CASE_CSS,
             word_qualifier.QUALIFIER_CSS,
             word_stack.WORD_STACK_CSS,
             prompt_hint.PROMPT_HINT_CSS,

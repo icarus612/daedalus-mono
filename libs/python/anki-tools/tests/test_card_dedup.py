@@ -8,8 +8,8 @@ data steer the verdict and are all listed here, none hidden in the helper:
   inflection cells, stop words, gloss-internal repeats).
 - ALLOWED: note-level pairs that overlap by approved decision or because one
   segment elaborates the other. Each carries its reason.
-- OPEN: real repeats the approved artifacts did not cover. They are not fixed
-  here; a guard test fails when one stops reproducing so the list cannot rot.
+- OPEN: real repeats not yet resolved. Empty now; a guard test fails when an
+  entry stops reproducing so the list cannot rot.
 """
 
 import dataclasses
@@ -68,6 +68,8 @@ _APPROVED_KEEP = (
 )
 _ELABORATES = "the longer segment adds content beyond the short label, so the label is not the same information"
 
+_CATEGORY_LABEL = "Category is a classification label"
+
 ALLOWED = {
     (
         "Immutable Words",
@@ -92,12 +94,6 @@ ALLOWED = {
         "скучно",
         dedup.RULE_CONTAINED,
         ("i m bored", "мне скучно i m bored"),
-    ): _ELABORATES,
-    (
-        "Immutable Words",
-        "только",
-        dedup.RULE_CONTAINED,
-        ("restrictive", "restrictive only just"),
     ): _ELABORATES,
     (
         "Immutable Words",
@@ -153,157 +149,30 @@ ALLOWED = {
         dedup.RULE_CONTAINED,
         ("of a person", "занятои busy person занятыи occupied seat line"),
     ): _ELABORATES,
-}
-
-_CATEGORY_IS_GLOSS = "Category row restates the gloss word"
-_TYPE_IS_CUE = "Pronoun Type row restates the cue"
-_CUE_IS_CUE = "English cue restates the Russian cue"
-
-OPEN = {
-    ("Mutable Nouns", "время", dedup.RULE_EQUAL, ("time", "time")): _CATEGORY_IS_GLOSS,
+    ("Mutable Nouns", "время", dedup.RULE_EQUAL, ("time", "time")): _CATEGORY_LABEL,
     (
         "Mutable Nouns",
         "люди",
         dedup.RULE_EQUAL,
         ("people", "people"),
-    ): _CATEGORY_IS_GLOSS,
+    ): _CATEGORY_LABEL,
     (
         "Mutable Nouns",
         "семья",
         dedup.RULE_EQUAL,
         ("family", "family"),
-    ): _CATEGORY_IS_GLOSS,
-    ("Mutable Nouns", "тело", dedup.RULE_EQUAL, ("body", "body")): _CATEGORY_IS_GLOSS,
+    ): _CATEGORY_LABEL,
+    ("Mutable Nouns", "тело", dedup.RULE_EQUAL, ("body", "body")): _CATEGORY_LABEL,
     (
         "Mutable Nouns",
         "здоровье",
         dedup.RULE_EQUAL,
         ("health", "health"),
-    ): _CATEGORY_IS_GLOSS,
-    ("Mutable Nouns", "раз", dedup.RULE_EQUAL, ("time", "time")): _CATEGORY_IS_GLOSS,
-    (
-        "Mutable Pronouns",
-        "ты",
-        dedup.RULE_UNION,
-        ("singular informal personal 2nd sg",),
-    ): "cue repeats the Pronoun Type row and the info row",
-    (
-        "Mutable Pronouns",
-        "вы",
-        dedup.RULE_UNION,
-        ("plural formal singular personal 2nd pl formal",),
-    ): "cue repeats the Pronoun Type row",
-    (
-        "Mutable Pronouns",
-        "кто",
-        dedup.RULE_EQUAL,
-        ("interrogative relative", "interrogative relative"),
-    ): _TYPE_IS_CUE,
-    (
-        "Mutable Pronouns",
-        "кто",
-        dedup.RULE_CONTAINED,
-        ("interrogative relative", "interrogative relative"),
-    ): _TYPE_IS_CUE,
-    (
-        "Mutable Pronouns",
-        "себя",
-        dedup.RULE_EQUAL,
-        ("reflexive", "reflexive"),
-    ): _TYPE_IS_CUE,
-    (
-        "Mutable Pronouns",
-        "себя",
-        dedup.RULE_CONTAINED,
-        ("reflexive", "reflexive"),
-    ): _TYPE_IS_CUE,
-    (
-        "Mutable Pronouns",
-        "тот",
-        dedup.RULE_EQUAL,
-        ("demonstrative", "demonstrative"),
-    ): _TYPE_IS_CUE,
-    (
-        "Mutable Pronouns",
-        "тот",
-        dedup.RULE_CONTAINED,
-        ("demonstrative", "demonstrative"),
-    ): _TYPE_IS_CUE,
-    (
-        "Mutable Pronouns",
-        "твой",
-        dedup.RULE_EQUAL,
-        ("possessive 2nd sg", "possessive 2nd sg"),
-    ): _TYPE_IS_CUE,
-    (
-        "Mutable Pronouns",
-        "твой",
-        dedup.RULE_CONTAINED,
-        ("possessive 2nd sg", "possessive 2nd sg"),
-    ): _TYPE_IS_CUE,
-    (
-        "Mutable Pronouns",
-        "ваш",
-        dedup.RULE_EQUAL,
-        ("possessive 2nd pl formal", "possessive 2nd pl formal"),
-    ): _TYPE_IS_CUE,
-    (
-        "Mutable Pronouns",
-        "ваш",
-        dedup.RULE_CONTAINED,
-        ("possessive 2nd pl formal", "possessive 2nd pl formal"),
-    ): _TYPE_IS_CUE,
-    (
-        "Mutable Pronouns",
-        "свой",
-        dedup.RULE_CONTAINED,
-        ("reflexive possessive", "possessive reflexive"),
-    ): _TYPE_IS_CUE,
-    (
-        "Mutable Pronouns",
-        "какой",
-        dedup.RULE_EQUAL,
-        ("interrogative exclamative", "interrogative exclamative"),
-    ): _TYPE_IS_CUE,
-    (
-        "Mutable Pronouns",
-        "какой",
-        dedup.RULE_CONTAINED,
-        ("interrogative exclamative", "interrogative exclamative"),
-    ): _TYPE_IS_CUE,
-    (
-        "Mutable Pronouns",
-        "который",
-        dedup.RULE_EQUAL,
-        ("relative interrogative", "relative interrogative"),
-    ): _TYPE_IS_CUE,
-    (
-        "Mutable Pronouns",
-        "который",
-        dedup.RULE_CONTAINED,
-        ("relative interrogative", "relative interrogative"),
-    ): _TYPE_IS_CUE,
-    (
-        "Mutable Pronouns",
-        "весь",
-        dedup.RULE_EQUAL,
-        ("determinative", "determinative"),
-    ): _TYPE_IS_CUE,
-    (
-        "Mutable Pronouns",
-        "весь",
-        dedup.RULE_CONTAINED,
-        ("determinative", "determinative"),
-    ): _TYPE_IS_CUE,
-    (
-        "Mutable Verbs",
-        "жаловать",
-        dedup.RULE_CONTAINED,
-        ("добро пожаловать welcome", "to grant bestow as in добро пожаловать welcome"),
-    ): "info row restates the quotation inside the gloss",
-    ("Immutable Words", "притом", dedup.RULE_UNION, ("besides bookish",)): _CUE_IS_CUE,
-    ("Immutable Words", "пускай", dedup.RULE_UNION, ("colloquial let",)): _CUE_IS_CUE,
+    ): _CATEGORY_LABEL,
+    ("Mutable Nouns", "раз", dedup.RULE_EQUAL, ("time", "time")): _CATEGORY_LABEL,
 }
+
+OPEN: dict = {}
 
 _SOURCE_FIELDS = [
     "Russian",

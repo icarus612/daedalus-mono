@@ -11,7 +11,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import ClassVar
 
-from anki_tools import card_audio, case_pill, distinction, prompt_hint
+from anki_tools import card_audio, card_dedup, case_pill, distinction, prompt_hint
 from anki_tools.anki_identity import guid_for_row, notetype_id_for_name
 from anki_tools.audio_naming import (
     audio_field_value,
@@ -407,6 +407,25 @@ class AdverbRow:
         ]
 
 
+_CUE_CARRIES_TYPE = frozenset({"ты", "вы"})
+
+
+def _pronoun_type_shown(russian: str, pronoun_type: str, cue: str) -> str:
+    """The Pronoun Type row's value, empty when the English cue already says it.
+
+    An empty field leaves no row on the answer side; the cue stays on the
+    English-prompt front untouched. The cue says it when the two are equal, or
+    for `ты` and `вы`, whose cue is the type plus the register.
+    """
+    type_words = card_dedup.content_words(pronoun_type)
+    cue_words = card_dedup.content_words(cue)
+    if type_words and type_words == cue_words:
+        return ""
+    if russian in _CUE_CARRIES_TYPE and type_words <= cue_words:
+        return ""
+    return pronoun_type
+
+
 @dataclass(frozen=True)
 class PronounRow:
     rank: int
@@ -435,11 +454,12 @@ class PronounRow:
 
     def fields(self) -> list[str]:
         names = audio_names(self.russian)
+        cue = distinction.english_distinction(self.russian)
         return [
             headword_text(self.russian),
             self.translation,
             self.stress,
-            self.pronoun_type,
+            _pronoun_type_shown(self.russian, self.pronoun_type, cue),
             self.gender_forms,
             self.oblique_forms,
             self.additional_info,
@@ -447,7 +467,7 @@ class PronounRow:
             str(self.rank),
             audio_field_value(names),
             distinction.qualifier_of(self.russian),
-            distinction.english_distinction(self.russian),
+            cue,
         ]
 
 
@@ -1107,9 +1127,7 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
     if audio_side:
         front = _wrap("front", _DECK_HEADER_HTML, audio_html, russian_div)
         qfmt = _add_russian_cue(front + _DECK_HEADER_SCRIPT)
-        back = _wrap(
-            "back", translation_div, aspect_div, details_html, standalone_html
-        )
+        back = _wrap("back", translation_div, aspect_div, details_html, standalone_html)
         back = prompt_hint.add_prompt_hint(back, distinction.ENGLISH_FIELD)
         if has_case:
             back = case_pill.add_pill_block(back)

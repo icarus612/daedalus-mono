@@ -1231,3 +1231,57 @@ def test_rows_without_a_case_argument_still_construct():
     )
     assert row.case == ""
     assert row.fields()[-1] == ""
+
+
+def _pronoun_row(russian, pronoun_type):
+    return mutable_words_plan.PronounRow(
+        rank=1,
+        russian=russian,
+        translation="x",
+        stress=russian,
+        pronoun_type=pronoun_type,
+        gender_forms="",
+        oblique_forms="",
+        additional_info="",
+        examples="",
+    )
+
+
+PRONOUN_TYPE_FIELD = mutable_words_plan.FIELD_NAMES["Pronouns"].index("Pronoun Type")
+
+
+@pytest.mark.parametrize(
+    "russian,pronoun_type",
+    [
+        ("кто", "interrogative / relative"),
+        ("себя", "reflexive"),
+        ("ты", "personal (2nd sg.)"),
+        ("вы", "personal (2nd pl./formal)"),
+    ],
+)
+def test_pronoun_type_row_is_empty_when_the_cue_says_it(russian, pronoun_type):
+    fields = _pronoun_row(russian, pronoun_type).fields()
+    assert fields[PRONOUN_TYPE_FIELD] == ""
+    assert fields[-1] != ""
+
+
+def test_pronoun_type_row_is_kept_when_the_cue_adds_to_it():
+    fields = _pronoun_row("ничто", "negative").fields()
+    assert fields[PRONOUN_TYPE_FIELD] == "negative"
+
+
+def test_pronoun_type_row_is_kept_when_there_is_no_cue():
+    fields = _pronoun_row("я", "personal (1st sg.)").fields()
+    assert fields[-1] == ""
+    assert fields[PRONOUN_TYPE_FIELD] == "personal (1st sg.)"
+
+
+def test_exactly_the_eleven_restating_pronouns_lose_their_type_row(pronouns):
+    emptied = sorted(
+        row.russian
+        for row in pronouns
+        if row.pronoun_type and row.fields()[PRONOUN_TYPE_FIELD] == ""
+    )
+    assert emptied == sorted(
+        "ты вы кто себя тот какой который весь твой ваш свой".split()
+    )
