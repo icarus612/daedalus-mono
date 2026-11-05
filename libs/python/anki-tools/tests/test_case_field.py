@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from anki_tools import case_field
+from anki_tools import case_field, distinction
 from anki_tools.immutable_words_plan import FIELD_NAMES, WordRow, parse_word_list
 
 REAL_SOURCE_PATH = Path(__file__).resolve().parent / "data" / "source-word-list.md"
@@ -324,23 +324,13 @@ def test_row_fields_case_value_comes_from_the_government_not_the_section(tmp_pat
         ("Dative", ""),
         ("Genitive — always", "always"),
         ("Dative — always", "always"),
-        (
-            "Accusative for motion in; Prepositional for location",
-            "Accusative for motion in; Prepositional for location",
-        ),
-        (
-            'Instrumental for "with"; Genitive for "from / since"',
-            'Instrumental for "with"; Genitive for "from / since"',
-        ),
-        (
-            "Dative — one of the few Genitive-looking ones that takes Dative",
-            "one of the few Genitive-looking ones that takes Dative",
-        ),
+        ("Accusative for motion in; Prepositional for location", ""),
+        ('Instrumental for "with"; Genitive for "from / since"', ""),
         ("", ""),
     ],
 )
 def test_residual_info(info, expected):
-    assert case_field.residual_info(info) == expected
+    assert case_field.residual_info_for_row("Prepositions", info) == expected
 
 
 def test_residual_info_only_applies_to_prepositions():
@@ -350,50 +340,43 @@ def test_residual_info_only_applies_to_prepositions():
 
 
 def test_no_preposition_states_its_case_twice(real_rows):
-    """The whole point: the tag renders the case, so the prose must not."""
+    """The whole point: the pill renders the case, so the prose must not."""
     for row in (r for r in real_rows if r.pos == "Prepositions"):
-        residual = case_field.residual_info(row.info)
-        tag = case_field.case_name(row.info)
-        assert tag, row.russian
-        if residual and "—" not in row.info:
-            # kept only because it says WHEN each case applies
-            assert "for" in residual, (row.russian, residual)
+        residual = case_field.residual_info_for_row(row.pos, row.info)
+        assert case_field.case_name(row.info), row.russian
+        assert not case_field.case_name(residual), (row.russian, residual)
 
 
-def test_bare_case_cells_collapse_and_informative_ones_survive(real_rows):
+def test_bare_case_cells_collapse_and_commentary_survives(real_rows):
     preps = [r for r in real_rows if r.pos == "Prepositions"]
-    residual = {r.russian: case_field.residual_info(r.info) for r in preps}
+    residual = {
+        r.russian: case_field.residual_info_for_row(r.pos, r.info) for r in preps
+    }
     assert residual["о / об"] == ""
     assert residual["из"] == ""
     assert residual["для"] == "always"
-    assert residual["в / во"].startswith("Accusative for motion in")
-    assert sum(1 for v in residual.values() if not v) == 36
-    assert sum(1 for v in residual.values() if v) == 8
+    assert residual["в / во"] == ""
+    assert sum(1 for v in residual.values() if v) == 2
 
 
 def test_additional_info_field_carries_the_residual(real_rows):
     index = FIELD_NAMES.index("Additional Info")
     for row in real_rows:
-        expected = (
-            case_field.residual_info(row.info)
-            if row.pos == "Prepositions"
-            else row.info
-        )
+        expected = case_field.residual_info_for_row(row.pos, row.info)
         assert row.fields()[index] == expected
 
 
-def test_no_two_rows_share_an_identical_english_gloss(real_rows):
+def test_no_two_rows_share_an_identical_english_gloss_and_cue(real_rows):
     """An English prompt must name exactly one Russian word.
 
-    `about` cannot ask for `о / об` rather than `насчёт`, and `now` cannot
-    ask for `сейчас` rather than `теперь`. Every row carries a parenthetical
-    sense in its own English column, prepositions included, which is why
-    this holds for the whole document without the `Case` row being involved.
+    Two rows may share a gloss only when their English Distinction cues differ
+    (`because` is `потому что` / `оттого что (less common)`).
     """
-    seen: dict[str, str] = {}
+    seen: dict[tuple[str, str], str] = {}
     clashes = []
     for row in real_rows:
-        key = re.sub(r"\s+", " ", row.english.strip().lower())
+        gloss = re.sub(r"\s+", " ", row.english.strip().lower())
+        key = (gloss, distinction.english_distinction(row.russian))
         if key in seen:
             clashes.append((key, seen[key], row.russian))
         seen[key] = row.russian

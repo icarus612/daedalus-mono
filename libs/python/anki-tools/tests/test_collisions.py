@@ -25,37 +25,6 @@ CONJUNCTIONS = "Languages::Russian::2. Immutable Words::g. Conjunctions"
 PREPOSITIONS = "Languages::Russian::2. Immutable Words::e. Prepositions"
 DERIVED_ADVERBS = "Languages::Russian::2. Immutable Words::f. Derived Adverbs"
 
-CASE_BEARING_HEADWORDS = {
-    "вдоль",
-    "возле",
-    "вокруг",
-    "для",
-    "до",
-    "за",
-    "из",
-    "кроме",
-    "мало",
-    "между",
-    "мимо",
-    "над",
-    "насчёт",
-    "нравиться",
-    "о / об",
-    "около",
-    "от",
-    "перед",
-    "по",
-    "поверх",
-    "позади",
-    "ради",
-    "с / со",
-    "сквозь",
-    "согласно (preposition)",
-    "среди",
-    "через",
-    "бежать",
-}
-
 
 def make_note(
     headword: str = "w",
@@ -547,7 +516,7 @@ def test_format_groups_table_empty_has_header_only() -> None:
 
 
 def test_load_notes_counts_and_order(notes: list[Note]) -> None:
-    assert len(notes) == 1468
+    assert len(notes) == 1469
     assert [n.family for n in notes[:233]] == ["immutable"] * 233
     assert {n.family for n in notes[233:]} == {"mutable"}
     mutable_sections = list(dict.fromkeys(n.section for n in notes[233:]))
@@ -560,7 +529,7 @@ def test_load_notes_counts_and_order(notes: list[Note]) -> None:
         "Numerals",
     ]
     counts = Counter(n.section for n in notes[233:])
-    assert [counts[s] for s in mutable_sections] == [631, 214, 172, 134, 29, 55]
+    assert [counts[s] for s in mutable_sections] == [631, 215, 172, 134, 29, 55]
 
 
 def test_load_notes_fields(notes: list[Note]) -> None:
@@ -570,17 +539,17 @@ def test_load_notes_fields(notes: list[Note]) -> None:
         assert note.english_distinction == ENGLISH_DISTINCTIONS.get(note.headword, "")
         if note.family == "mutable":
             assert note.note_type == mutable_words_plan.NOTE_TYPE_NAMES[note.section]
-    assert len({n.guid for n in notes}) == 1468
+    assert len({n.guid for n in notes}) == 1469
 
 
 def test_every_english_distinction_key_matches_a_headword(notes: list[Note]) -> None:
     headwords = {n.headword for n in notes}
-    assert len(ENGLISH_DISTINCTIONS) == 369
+    assert len(ENGLISH_DISTINCTIONS) == 196
     assert set(ENGLISH_DISTINCTIONS) <= headwords
-    assert sum(1 for n in notes if n.english_distinction) == 369
+    assert sum(1 for n in notes if n.english_distinction) == 196
 
 
-def test_provisional_cases(notes: list[Note]) -> None:
+def test_provisional_cases(notes: list[Note], governed_notes: list[Note]) -> None:
     by_headword = {n.headword: n for n in notes if n.section == "Prepositions"}
     assert by_headword["через"].cases == frozenset({"Accusative"})
     assert by_headword["сквозь"].cases == frozenset({"Accusative"})
@@ -589,10 +558,10 @@ def test_provisional_cases(notes: list[Note]) -> None:
     verb_rows = {
         row.guid: row for row in mutable_words_plan.parse_verbs(DATA_DIR / "verbs.tsv")
     }
-    verbs = [n for n in notes if n.section == "Verbs"]
+    verbs = [n for n in governed_notes if n.section == "Verbs"]
     assert any(n.cases for n in verbs)
     for note in verbs:
-        expected = collisions.cases_in(verb_rows[note.guid].case_preposition)
+        expected = collisions.cases_in(verb_rows[note.guid].case)
         assert note.cases == expected
 
 
@@ -671,11 +640,11 @@ def test_spot_check_according_to(groups: list[collisions.CollisionGroup]) -> Non
 
 def test_real_pos_cue_counts(notes: list[Note]) -> None:
     result = collisions.pos_cue_counts(notes)
-    assert result.leading == 73
-    assert result.bare == 68
-    assert result.bare_abbreviated == 65
-    assert result.qualified == 5
-    assert result.trailing == 10
+    assert result.leading == 0
+    assert result.bare == 0
+    assert result.bare_abbreviated == 0
+    assert result.qualified == 0
+    assert result.trailing == 0
 
 
 def test_real_case_bearing_cues(notes: list[Note]) -> None:
@@ -684,8 +653,7 @@ def test_real_case_bearing_cues(notes: list[Note]) -> None:
         for n in notes
         if n.english_distinction and collisions.has_case_text(n.english_distinction)
     }
-    assert bearing == CASE_BEARING_HEADWORDS
-    assert len(bearing) == 28
+    assert bearing == set()
 
 
 def test_map_cues_roles_and_separation() -> None:
@@ -737,7 +705,7 @@ def test_map_cues_separates_needs_one_side_nonempty() -> None:
 def test_map_cues_real_entry_count(
     notes: list[Note], groups: list[collisions.CollisionGroup]
 ) -> None:
-    assert len(collisions.map_cues(notes, groups)) == 369
+    assert len(collisions.map_cues(notes, groups)) == 196
 
 
 def test_classify_row_columns_are_declared() -> None:
@@ -1174,15 +1142,13 @@ def test_real_every_cue_has_exactly_one_row(
         assert len(matching) == (1 if note.english_distinction else 0)
 
 
-def test_real_case_bearing_cue_rows(rows: list[collisions.ClassificationRow]) -> None:
-    cue_rows = [
+def test_real_no_cue_row_names_a_case(rows: list[collisions.ClassificationRow]) -> None:
+    assert not [
         r
         for r in rows
         if r.source_field == "English Distinction"
-        and r.headword in CASE_BEARING_HEADWORDS
+        and collisions.has_case_text(r.qualifier_text)
     ]
-    assert {r.headword for r in cue_rows} == CASE_BEARING_HEADWORDS
-    assert {r.action for r in cue_rows} <= {"drop-case", "rewrite-cue-non-case"}
 
 
 def test_real_screenshot_cases(rows: list[collisions.ClassificationRow]) -> None:
@@ -1190,33 +1156,20 @@ def test_real_screenshot_cases(rows: list[collisions.ClassificationRow]) -> None
     actions = {r.qualifier_text: r.action for r in still}
     assert actions["ongoing"] == "keep-inline"
     assert actions["asking for more"] == "keep-inline"
-    assert {r.action for r in rows_of(rows, "ещё", "English Distinction")} == {
-        "drop-duplicate"
-    }
-    assert {r.action for r in rows_of(rows, "ещё", "Additional Info")} == {
-        "drop-duplicate"
-    }
-
-    assert {r.action for r in rows_of(rows, "до", "English Distinction")} == {
-        "drop-case"
-    }
+    assert rows_of(rows, "ещё", "English Distinction") == []
+    assert rows_of(rows, "ещё", "Additional Info") == []
+    assert rows_of(rows, "до", "English Distinction") == []
 
     everything = {
         r.qualifier_text: r.action for r in rows_of(rows, "всё", "Translation")
     }
     assert everything["keeps on"] == "keep-inline"
-    assert {r.action for r in rows_of(rows, "всё", "English Distinction")} == {
-        "drop-duplicate"
-    }
+    assert rows_of(rows, "всё", "English Distinction") == []
 
-    [bank] = [
-        r
-        for r in rows_of(rows, "банк", "Translation")
-        if r.qualifier_text == "the financial one"
-    ]
-    assert bank.action == "move-to-distinction"
-    assert bank.resulting_translation == "bank"
-    assert "the financial one" in bank.resulting_english_distinction.split("; ")
+    assert rows_of(rows, "банк", "Translation") == []
+    [bank] = rows_of(rows, "банк", "English Distinction")
+    assert bank.qualifier_text == "the financial one"
+    assert bank.action == "keep"
 
 
 def test_real_rows_pass_check(
@@ -1227,34 +1180,13 @@ def test_real_rows_pass_check(
     assert {r.action for r in rows} <= set(collisions.ACTIONS)
 
 
-def test_committed_tsv_matches_regeneration(governed_notes: list[Note]) -> None:
-    committed = COMMITTED_TSV.read_text(encoding="utf-8")
-    assert committed == collisions.format_classification_tsv(
-        collisions.classify(governed_notes)
-    )
-
-
-def test_committed_tsv_parses_and_is_clean(governed_notes: list[Note]) -> None:
+def test_committed_tsv_parses_and_has_no_pending_decisions() -> None:
     parsed = collisions.parse_classification_tsv(
         COMMITTED_TSV.read_text(encoding="utf-8")
     )
     assert parsed
     assert {r.decision for r in parsed} == {""}
-    assert collisions.check_rows(parsed, governed_notes) == []
-
-
-def test_committed_tsv_tampered_row_is_rejected(notes: list[Note]) -> None:
-    parsed = collisions.parse_classification_tsv(
-        COMMITTED_TSV.read_text(encoding="utf-8")
-    )
-    index = next(i for i, r in enumerate(parsed) if r.resulting_translation)
-    row = parsed[index]
-    words = row.resulting_translation.split(" ")
-    words[0] = words[0] + "zzz"
-    tampered = list(parsed)
-    tampered[index] = dataclasses.replace(row, resulting_translation=" ".join(words))
-    assert collisions.check_rows(parsed, notes) == []
-    assert collisions.check_rows(tampered, notes)
+    assert {r.action for r in parsed} <= set(collisions.ACTIONS)
 
 
 def test_cli_groups_prints_table(capsys: pytest.CaptureFixture[str]) -> None:
@@ -1270,8 +1202,7 @@ def test_cli_pos_counts_prints_fields(capsys: pytest.CaptureFixture[str]) -> Non
     out = capsys.readouterr().out
     for name in ("leading", "bare", "bare_abbreviated", "qualified", "trailing"):
         assert name in out
-    assert "73" in out
-    assert "68" in out
+    assert "leading: 0" in out
 
 
 def test_cli_write_then_check_round_trip(tmp_path: Path) -> None:

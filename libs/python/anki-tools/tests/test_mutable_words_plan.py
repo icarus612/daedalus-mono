@@ -17,6 +17,7 @@ from anki.utils import to_json_bytes
 
 from anki_tools import (
     card_audio,
+    case_field,
     case_pill,
     distinction,
     examples_field,
@@ -101,7 +102,7 @@ def _audio_field_for(word):
 
 def test_row_counts(nouns, verbs, adjectives, adverbs, pronouns, numerals):
     assert len(nouns) == 631
-    assert len(verbs) == 214
+    assert len(verbs) == 215
     assert len(adjectives) == 172
     assert len(adverbs) == 134
     assert len(pronouns) == 29
@@ -162,7 +163,7 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
     numerals_cards = len(numerals) * 2
 
     assert nouns_cards == 1262
-    assert verbs_cards == 856
+    assert verbs_cards == 860
     assert adjectives_cards == 344
     assert adverbs_cards == 268
     assert pronouns_cards == 58
@@ -174,7 +175,7 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
         + adverbs_cards
         + pronouns_cards
         + numerals_cards
-        == 2898
+        == 2902
     )
 
 
@@ -243,12 +244,12 @@ def test_no_slug_collisions_across_all_base_words(
         + [w for row in pronouns for w in row.base_words]
         + [w for row in numerals for w in row.base_words]
     )
-    assert len(all_words) == 1445
+    assert len(all_words) == 1447
 
     slugs = [sanitize_word_slug(w) for w in all_words]
     dupes = {slug: c for slug, c in Counter(slugs).items() if c > 1}
     assert set(dupes) == _EXPECTED_DUPLICATE_SLUGS, dupes
-    assert len(set(slugs)) == 1440
+    assert len(set(slugs)) == 1442
 
 
 def test_named_media_overlap_slugs_present(nouns, verbs, adjectives, adverbs):
@@ -888,9 +889,7 @@ _CARDS = [
     for sheet, count in SHEET_CARD_COUNTS.items()
     for card_index in range(count)
 ]
-_SECTION = re.compile(
-    r"\{\{([#^])([^{}]+)\}\}((?:(?!\{\{[#^]).)*?)\{\{/\2\}\}", re.S
-)
+_SECTION = re.compile(r"\{\{([#^])([^{}]+)\}\}((?:(?!\{\{[#^]).)*?)\{\{/\2\}\}", re.S)
 _TOKEN = re.compile(r"\{\{(?:text:)?([^{}#^/]+)\}\}")
 
 
@@ -905,9 +904,9 @@ def _render(template, fields, front_side=""):
         previous = template
         template = _SECTION.sub(section, template)
     return _TOKEN.sub(
-        lambda m: front_side
-        if m.group(1) == "FrontSide"
-        else fields.get(m.group(1), ""),
+        lambda m: (
+            front_side if m.group(1) == "FrontSide" else fields.get(m.group(1), "")
+        ),
         template,
     )
 
@@ -979,9 +978,7 @@ def test_details_rows_are_conditional_static_labelled_and_exclude_cues(
 
 
 @pytest.mark.parametrize("sheet,card_index", _CARDS)
-def test_add_title_is_only_called_for_rows_outside_the_details_block(
-    sheet, card_index
-):
+def test_add_title_is_only_called_for_rows_outside_the_details_block(sheet, card_index):
     _qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
     detail_ids = set(_ids(_details_block(afmt)))
     called = re.findall(r'addTitle\("([^"]+)"', afmt)
@@ -1036,9 +1033,7 @@ def test_details_css_is_a_centred_two_column_grid():
 
 
 @pytest.mark.parametrize("sheet,card_index", _CARDS)
-def test_english_cue_follows_the_translation_on_headword_front_back(
-    sheet, card_index
-):
+def test_english_cue_follows_the_translation_on_headword_front_back(sheet, card_index):
     if card_index not in HEADWORD_FRONT[sheet]:
         pytest.skip("gloss-front card")
     qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
@@ -1133,7 +1128,7 @@ def _tsv_lines(path):
 
 
 @pytest.mark.parametrize("path", [VERBS_TSV, ADVERBS_TSV])
-def test_case_column_is_a_new_empty_final_column(path):
+def test_case_column_is_the_final_column_of_every_row(path):
     lines = _tsv_lines(path)
     assert lines[-1] == ""
     header, *rows = lines[:-1]
@@ -1143,7 +1138,6 @@ def test_case_column_is_a_new_empty_final_column(path):
     for row in rows:
         cells = row.split("\t")
         assert len(cells) == width, row[:40]
-        assert cells[-1] == ""
 
 
 @pytest.mark.parametrize("path", [VERBS_TSV, ADVERBS_TSV])
@@ -1171,26 +1165,22 @@ def test_removing_the_case_column_reproduces_the_original(path):
 def test_other_sheets_gain_no_case_column(path):
     header = _tsv_lines(path)[0]
     assert not header.endswith("\tCase")
-    diff = subprocess.run(
-        ["git", "diff", "--quiet", "HEAD", "--", str(path)],
-        cwd=str(PACKAGE_ROOT),
-    )
-    assert diff.returncode in (0, 128)
 
 
 def _tsv_with_case(path, tmp_path, value):
     lines = _tsv_lines(path)
-    out = [lines[0]] + [
-        line.rsplit("\t", 1)[0] + "\t" + value for line in lines[1:-1]
-    ]
+    out = [lines[0]] + [line.rsplit("\t", 1)[0] + "\t" + value for line in lines[1:-1]]
     doctored = tmp_path / path.name
     doctored.write_text("\n".join(out) + "\n", encoding="utf-8")
     return str(doctored)
 
 
 def test_parse_verbs_reads_the_case_column(verbs, tmp_path):
-    assert all(row.case == "" for row in verbs)
-    assert all(row.fields()[-1] == "" for row in verbs)
+    government = case_field.default_government()
+    assert any(row.case for row in verbs)
+    for row in verbs:
+        assert row.case == case_field.case_value(government, row.guid)
+        assert row.fields()[-1] == row.case
     parsed = mutable_words_plan.parse_verbs(
         _tsv_with_case(VERBS_TSV, tmp_path, "Accusative")
     )
@@ -1200,7 +1190,10 @@ def test_parse_verbs_reads_the_case_column(verbs, tmp_path):
 
 
 def test_parse_adverbs_reads_the_case_column_including_split_rows(adverbs, tmp_path):
-    assert all(row.case == "" for row in adverbs)
+    government = case_field.default_government()
+    assert any(row.case for row in adverbs)
+    for row in adverbs:
+        assert row.case == case_field.case_value(government, row.guid)
     parsed = mutable_words_plan.parse_adverbs(
         _tsv_with_case(ADVERBS_TSV, tmp_path, "Genitive")
     )

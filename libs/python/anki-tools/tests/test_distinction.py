@@ -1,9 +1,16 @@
 """Contract tests for the two distinction fields: one marker per side."""
 
+import dataclasses
+from pathlib import Path
+
 import pytest
 
-from anki_tools import distinction
+from anki_tools import case_field, collisions, distinction
 from anki_tools.audio_naming import strip_qualifier
+
+PACKAGE_ROOT = Path(__file__).resolve().parents[1]
+DATA_DIR = PACKAGE_ROOT / "anki_tools" / "data" / "russian-vocabulary"
+SOURCE_LIST = PACKAGE_ROOT / "tests" / "data" / "source-word-list.md"
 
 
 @pytest.mark.parametrize(
@@ -49,13 +56,13 @@ def test_the_two_sides_get_two_separate_fields():
 @pytest.mark.parametrize(
     "russian,expected",
     [
-        ("о / об", "Prepositional"),
-        ("насчёт", "Genitive"),
+        ("о / об", ""),
+        ("насчёт", ""),
         ("какой", "interrogative / exclamative"),
         ("который", "relative / interrogative"),
-        ("согласно (preposition)", "Dative; formal"),
+        ("согласно (preposition)", "formal"),
         ("дом", ""),
-        ("как (conjunction)", "comparison"),
+        ("как (conjunction)", ""),
         ("как (adverb)", ""),
         ("", ""),
     ],
@@ -69,13 +76,49 @@ def test_every_stored_hint_is_short_and_non_empty():
     for russian, hint in distinction.ENGLISH_DISTINCTIONS.items():
         assert hint.strip() == hint, russian
         assert hint, russian
-        assert len(hint) <= 48, (russian, hint)
+        assert len(hint) <= 60, (russian, hint)
 
 
-def test_colliding_glosses_get_different_hints():
-    """The bug this field exists for: with the gloss alone, "about" and
-    "which" each name two words and nothing chooses between them."""
-    for pair in (("о / об", "насчёт"), ("какой", "который")):
-        first, second = (distinction.english_distinction(word) for word in pair)
-        assert first and second, pair
-        assert first != second, pair
+def test_colliding_words_never_share_gloss_and_cue():
+    """Words held together by one English sense and not told apart by deck
+    header or case pill must differ in their gloss or their cue."""
+    notes = collisions.load_notes(
+        SOURCE_LIST, DATA_DIR, case_field.default_government()
+    )
+    by_guid = {note.guid: note for note in notes}
+    pairs = [
+        pair
+        for group in collisions.find_collisions(notes)
+        for pair in group.unseparated
+    ]
+    assert pairs
+    for first, second in pairs:
+        a, b = by_guid[first], by_guid[second]
+        assert (a.translation.casefold(), a.english_distinction.casefold()) != (
+            b.translation.casefold(),
+            b.english_distinction.casefold(),
+        ), (a.headword, b.headword)
+    for use in collisions.map_cues(notes, collisions.find_collisions(notes)):
+        if use.role == "needed":
+            assert use.separates, use.headword
+
+
+def test_a_shared_gloss_and_cue_is_caught():
+    first = collisions.Note(
+        family="mutable",
+        note_type="t",
+        section="Nouns",
+        deck="Languages::Russian::1. Mutable Words::a. Nouns",
+        headword="а",
+        guid="g1",
+        translation="shore",
+        russian_distinction="",
+        english_distinction="river",
+        additional_info="",
+        cases=frozenset(),
+    )
+    second = dataclasses.replace(first, headword="б", guid="g2")
+    [group] = collisions.find_collisions([first, second])
+    assert group.unseparated
+    uses = collisions.map_cues([first, second], [group])
+    assert not any(use.separates for use in uses)

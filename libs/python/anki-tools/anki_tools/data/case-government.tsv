@@ -387,7 +387,7 @@ immutable	Russian - Immutable Words (Ellis Version)	вместе	OA/it09@>Z	Base
 immutable	Russian - Immutable Words (Ellis Version)	почему	c43%|Oh?Fw	Base Adverbs				none	https://en.wiktionary.org/wiki/почему#Russian (no government stated; en.wiktionary {{+obj}}: none)
 immutable	Russian - Immutable Words (Ellis Version)	зачем	t}Q|v*`L*F	Base Adverbs				none	https://en.wiktionary.org/wiki/зачем#Russian (no government stated; en.wiktionary {{+obj}}: none)
 immutable	Russian - Immutable Words (Ellis Version)	как (adverb)	B!s$bTdC60	Base Adverbs				none	https://en.wiktionary.org/wiki/как#Russian (no government stated; en.wiktionary {{+obj}}: none)
-immutable	Russian - Immutable Words (Ellis Version)	так (adverb)	f)^X@TkXxV	Base Adverbs				none	https://en.wiktionary.org/wiki/так#Russian (no government stated; en.wiktionary {{+obj}}: none)
+immutable	Russian - Immutable Words (Ellis Version)	так (adverb)	p[f.<aMxja	Base Adverbs				none	https://en.wiktionary.org/wiki/так#Russian (no government stated; en.wiktionary {{+obj}}: none)
 immutable	Russian - Immutable Words (Ellis Version)	пешком	Mu,W;78B5{	Base Adverbs				none	https://en.wiktionary.org/wiki/пешком#Russian (no government stated; en.wiktionary {{+obj}}: none)
 immutable	Russian - Immutable Words (Ellis Version)	зря	rTUaCTAu5+	Base Adverbs				none	https://en.wiktionary.org/wiki/зря#Russian (no government stated; en.wiktionary {{+obj}}: none)
 immutable	Russian - Immutable Words (Ellis Version)	наоборот	bd:ap_Ra7+	Base Adverbs				none	https://en.wiktionary.org/wiki/наоборот#Russian (no government stated; en.wiktionary {{+obj}}: none)
@@ -580,3 +580,4 @@ mutable	Russian - Mutable Verbs (Ellis Version)	уметь	bSs#W{j+?-	Verbs				n
 mutable	Russian - Mutable Verbs (Ellis Version)	находиться	InXV3hf}F*	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/находиться#Russian (no case government stated)
 mutable	Russian - Mutable Verbs (Ellis Version)	заблуждаться	x0i2#t!aaF	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/заблуждаться#Russian (no case government stated)
 mutable	Russian - Mutable Verbs (Ellis Version)	заблудиться	d6W;_P15DI	Verbs				none	OpenCorpora transitivity intr (pymorphy3-dicts-ru 2.4.417150.4580142); https://en.wiktionary.org/wiki/заблудиться#Russian (no case government stated)
+mutable	Russian - Mutable Verbs (Ellis Version)	жаловать	t1#RNs`=(A	Verbs				none	user-approved draft row (2.6): fixed expression добро пожаловать; no case government stated

@@ -5,8 +5,8 @@ The field holds the canonical case names alone, comma-joined in the order
 (`case_pill`). The TSV is the only source of which words govern which cases,
 and optionally which gloss line of the translation goes with which case.
 
-`residual_info` still serves the Prepositions section, whose `Info` column
-names the governed case by construction.
+`residual_info_for_row` strips the governed case from the Prepositions section's
+`Info` column, which names it by construction.
 
 Pure text -- no Anki imports.
 """
@@ -86,32 +86,17 @@ def case_name(info: str) -> str:
     return " or ".join(name for _, name in sorted(found))
 
 
-# Everything the `Case` field already carries. What survives its removal is
-# the only part `Additional Info` still has to say.
-_CASE_WORDS = re.compile("|".join(full for full, _ in CASE_NAMES), re.I)
-_ONLY_FILLER = re.compile(r"^[\s;,/()&.–—-]*(?:and|or)?[\s;,/()&.–—-]*$", re.I)
-
-
-def residual_info(info: str) -> str:
-    """What `Additional Info` should still say once `Case` renders the case.
-
-    A cell that names the case and NOTHING else is wholly redundant with the
-    `Case` row -- "Prepositional" under `о / об` states the same fact twice --
-    so it reduces to "". A cell that also says WHEN each case applies
-    ("Accusative for motion in; Prepositional for location") keeps its
-    wording, because the field can only list the cases, never choose between
-    them. Dash commentary is always kept.
-    """
-    parts = _COMMENTARY.split(info, maxsplit=1)
-    head = parts[0]
-    tail = parts[1] if len(parts) > 1 else ""
-    kept = "" if _ONLY_FILLER.match(_CASE_WORDS.sub("", head)) else head.strip()
-    return "; ".join(p for p in (kept, tail.strip()) if p)
-
-
 def residual_info_for_row(pos: str, info: str) -> str:
-    """`residual_info` for a governing section's row, `info` for every other."""
-    return residual_info(info) if pos == GOVERNING_SECTION else info
+    """The `Additional Info` a row keeps once `Case` renders the case.
+
+    The Prepositions section's `Info` column leads with the governed case (the
+    pill renders it, and routing deletes any when-clause), so only the dash
+    commentary after it survives. Every other section's `info` is unchanged.
+    """
+    if pos != GOVERNING_SECTION:
+        return info
+    parts = _COMMENTARY.split(info, maxsplit=1)
+    return parts[1].strip() if len(parts) > 1 else ""
 
 
 @dataclass(frozen=True)

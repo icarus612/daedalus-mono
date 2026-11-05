@@ -205,6 +205,11 @@ class SourceDocumentError(Exception):
     """The source document did not contain the expected four word-list sections."""
 
 
+GUID_PINS: dict[tuple[str, str], str] = {
+    ("Base Adverbs", "так (adverb)"): "p[f.<aMxja",
+}
+
+
 @dataclass(frozen=True)
 class WordRow:
     pos: str  # section heading, e.g. "Prepositions" - a SUBDECK_LEAVES key
@@ -228,7 +233,9 @@ class WordRow:
     @property
     def guid(self) -> str:
         """This row's deterministic Anki note GUID -- see `guid_for_row`."""
-        return guid_for_row(self.russian, self.pos)
+        return GUID_PINS.get((self.pos, self.russian)) or guid_for_row(
+            self.russian, self.pos
+        )
 
     def fields(
         self, government: Mapping[str, case_field.CaseGovernment] | None = None
