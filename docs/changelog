@@ -1,0 +1,10 @@
+# Changelog
+
+## 2026-11-05 — anki-tools: `anki-rebalance-due` --min/--max are hard bounds
+
+- `--min` and `--max` now hold on every day of the window in every mode (flat and `--sliding`); the exempt trailing-days tail is removed.
+- Unmet bounds fail with `min unmet` / `max unmet` and write nothing; the backup is still taken first.
+- With `--set-earlier`, the min pass borrows surplus from earlier days.
+- Day 0 = today: `--range` accepts `0-N` and the window start (`--start-offset`) now defaults to 0. Overdue cards are still excluded.
+- Runs without `--range` span to the last card, so `--min` without `--set-earlier` will often fail.
+- Sliding mode: the ramp pass never drains a day below `--min`.

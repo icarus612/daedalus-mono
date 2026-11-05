@@ -36,7 +36,7 @@ A grab-bag of small standalone scripts for working with the Anki spaced-repetiti
 
 ## `anki-rebalance-due`
 
-Rebalances the due dates of review cards in an Anki deck **and all of its subdecks** (Anki's `::` hierarchy) so that no scheduled day holds more than `--max` or fewer than `--min` cards.
+Rebalances the due dates of review cards in an Anki deck **and all of its subdecks** (Anki's `::` hierarchy) so that **every day of the window** holds between `--min` and `--max` cards. Both bounds are hard in every mode: if they cannot be met the run fails and writes nothing.
 
 ```
 anki-rebalance-due DECK [--min N] [--max N] [--max-shift N] [--set-earlier]
@@ -49,30 +49,30 @@ anki-rebalance-due DECK [--min N] [--max N] [--max-shift N] [--set-earlier]
 | Flag | Default | Meaning |
 |---|---|---|
 | `DECK` (positional) | — required | Full deck name including `::` separators, e.g. `programming::coding`. Subdecks are always included. |
-| `--min N` | none | Minimum cards per day. At least one of `--min`/`--max` is required. |
-| `--max N` | none | Maximum cards per day — the hard cap, never exceeded regardless of mode. |
-| `--max-shift N` | `14` | Furthest a card may move **earlier** than its original day, measured cumulatively from where it started. `--max-shift 0` disables all earlier movement; `--max-shift none` disables the cap entirely. Days that can't reach `--min` (or the sliding target) under the cap are reported, not errored. |
-| `--set-earlier` | off | Enables a mirrored push-later rescue pass when `--max` can't be satisfied by moving cards earlier alone (see Invariant below). The only mode in which a card can move to a later date. |
+| `--min N` | none | Hard minimum cards per day on every day of the window (no exempt tail). Unmet → fails with `min unmet`. At least one of `--min`/`--max` is required. |
+| `--max N` | none | Maximum cards per day — the hard cap, never exceeded regardless of mode. Unmet → fails with `max unmet`. |
+| `--max-shift N` | `14` | Furthest a card may move **earlier** than its original day, measured cumulatively from where it started. `--max-shift 0` disables all earlier movement; `--max-shift none` disables the cap entirely. A `--min` that cannot be reached under the cap fails with `min unmet`; only the sliding *ramp target* is best-effort. |
+| `--set-earlier` | off | Enables a mirrored push-later rescue pass when `--max` can't be satisfied by moving cards earlier alone, and lets the `--min` pass borrow surplus from earlier days (see Invariant below). The only mode in which a card can move to a later date. |
 | `--sliding` | off | Replace the flat `--min`/`--max` band with a per-day *target* that ramps linearly from `--max` at the window start down to `--min` at the horizon — the user's "slide" shape. `--max` stays the hard cap regardless. Requires both `--min` and `--max`. |
 | `--strict-sliding` | off | With `--sliding`, fail (`InfeasibleRebalance`) instead of best-effort when `--max-shift` prevents the ramp from being fully reached. No effect without `--sliding`. |
 | `--dry-run` | off | Prints the plan (day-by-day histogram) and writes nothing. A backup is still taken first (see Safety). |
 | `--yes` / `-y` | off | Skips the interactive `y/N` confirmation before writing. |
-| `--start-offset N` | `1` | Days after today where the rebalance window begins. Cards due today or overdue are never touched, in either mode. Mutually exclusive with `--range`. |
-| `--range LO-HI` | none (full window) | Anki-style day-offset slice, e.g. `8-30` (or a bare `N` for `N-N`). Only cards due in `[today+LO, today+HI]` are in scope; moves are contained inside that window in both directions and the horizon never extends past `HI`. `--max-shift` is additionally clamped by `LO`. Mutually exclusive with `--start-offset`. Omit for the full window (unchanged default behavior). |
+| `--start-offset N` | `0` | Day offset where the rebalance window begins; day 0 = today, so today is part of the window. Overdue cards are never touched, in either mode. Mutually exclusive with `--range`. |
+| `--range LO-HI` | none (full window) | Anki-style day-offset slice, e.g. `8-30` (or a bare `N` for `N-N`), with day 0 = today (`0-30` is valid). Only cards due in `[today+LO, today+HI]` are in scope; moves are contained inside that window in both directions and the horizon never extends past `HI`. `--max-shift` is additionally clamped by `LO`. Mutually exclusive with `--start-offset`. Omit for the full window, which spans to the last card — so `--min` without `--set-earlier` will often fail there, since sparse far-future days cannot be filled; narrow with `--range` or pass `--set-earlier`. |
 | `--collection PATH` | auto-detected | Override the Anki collection path (`~/.local/share/Anki2/User 1/collection.anki2` on POSIX, the `%AppData%` equivalent on Windows). |
 | `--backup-dir PATH` | `<collection dir>/backups` | Where the pre-write `.colpkg` backup is written. |
 | `--no-backup` | off | Skip the pre-write backup. |
 
 ### Core invariant
 
-**A card's due date only ever moves earlier, never later — by default.** Max enforcement sweeps from the latest day backward, pushing overflow one day earlier at a time; min enforcement pulls cards forward from later days to fill underfull ones. When `--max` cannot be satisfied without moving something later, the default behavior is to **exit non-zero having written nothing** rather than violate the invariant. `--set-earlier` is the single, explicit escape hatch: after the earlier-only pass runs and comes up short, a mirrored pass may push excess cards **later** (extending the horizon past the last day if needed, unless `--range` pins it) so the run succeeds. Even with `--set-earlier`, no card is ever placed on today or earlier — the window start (`--start-offset`, default tomorrow, or `--range`'s `LO`) is untouchable in both directions.
+**A card's due date only ever moves earlier, never later — by default.** Max enforcement sweeps from the latest day backward, pushing overflow one day earlier at a time; min enforcement pulls cards forward from later days to fill underfull ones, and with `--set-earlier` the min pass may also borrow surplus from earlier days. When `--max` cannot be satisfied without moving something later, the default behavior is to **exit non-zero having written nothing** rather than violate the invariant. `--set-earlier` is the single, explicit escape hatch: after the earlier-only pass runs and comes up short, a mirrored pass may push excess cards **later** (extending the horizon past the last day if needed, unless `--range` pins it) so the run succeeds. Even with `--set-earlier`, no card is ever placed before the window start (`--start-offset`, default 0 = today, or `--range`'s `LO`), and overdue cards are never touched.
 
 ### Move mechanics
 
 - **One-day cascade.** Overflow from an over-max day always moves to exactly one day earlier (or, in the reverse pass, one day later) — never a search for the nearest day with free capacity. The receiving day's own excess is handled when the sweep reaches it.
 - **Untouched-cards-first selection.** Within a day, cards that haven't moved yet this run are chosen before cards that have already moved, as the primary sort key. Only once untouched cards run out does an already-moved card get picked again (moves can legitimately cascade two or more days this way).
 - **Tiebreakers by interval (`ivl`).** After the untouched-first key, the max passes prefer the largest-`ivl` card (a one-day nudge is proportionally smallest for a long-interval card); the min pass prefers the smallest-`ivl` card (cheapest to advance a longer distance). Final tiebreak is ascending card id, for determinism.
-- **Card scope.** Only review-queue cards (`queue == 2 and type == 2`) that are not in a filtered deck and are not already due today or overdue (and, under `--range`, are inside the window). New, learning, relearning, suspended, buried, filtered-deck, and out-of-range cards are left untouched and counted in a skip report.
+- **Card scope.** Only review-queue cards (`queue == 2 and type == 2`) that are not in a filtered deck and are not overdue (and, under `--range`, are inside the window). New, learning, relearning, suspended, buried, filtered-deck, and out-of-range cards are left untouched and counted in a skip report.
 - **Interval preserved.** Moves go through `col.sched.set_due_date(cids, "N")` (non-bang form), which changes `due` and leaves `ivl` — and therefore the card's memory state — untouched. This tool moves *when* a card is seen next, not its scheduling strength.
 
 ### Feasibility precheck
@@ -90,13 +90,13 @@ In `--sliding` mode the precheck's hard gate is always against the flat `--max`/
 
 Instead of a flat `[--min, --max]` band, the per-day target ramps linearly from `--max` at the window start down to `--min` at the horizon. `--max` remains the **hard cap** throughout — sliding never allows a day to exceed it — the ramp is a **soft target**: the algorithm first guarantees the hard cap exactly as in flat mode, then shapes downward toward the ramp as far as `--max-shift` allows.
 
-Days that cannot be brought down to the ramp under the shift cap are left where they legally can be (still at or under `--max`) and reported as **over-target days**, plus the minimum `--max-shift` that *would* reach the full shape — this is `anki-due-stats`' best-effort default (DP-F). Pass `--strict-sliding` to turn that into a hard failure instead.
+Days that cannot be brought down to the ramp under the shift cap are left where they legally can be (still within `--min`..`--max`; the ramp pass never drains a day below `--min`) and reported as **over-target days**, plus the minimum `--max-shift` that *would* reach the full shape — this is `anki-due-stats`' best-effort default (DP-F). Pass `--strict-sliding` to turn that into a hard failure instead.
 
 **On a back-loaded deck, the far end of the window may stay above the ramp under the default 14-day `--max-shift`** — moving a card scheduled eight months out down to a day-10 target is outside that budget. `anki-due-stats --sliding` reports the actual minimum `--max-shift` that would close the gap, so raising the cap (at the cost of moving mature cards further) is a deliberate choice rather than a discovery.
 
 ### Safety
 
-The order is fixed and load-bearing: **open collection → collect in-scope cards → feasibility precheck → (pass) backup → plan → confirm → apply**. A failed precheck writes nothing and creates **no backup** — there is nothing to roll back, since nothing was touched. Once the precheck passes, a `.colpkg` backup is taken **on every run, including `--dry-run`** (unless `--no-backup`), before planning starts — so an `InfeasibleRebalance` raised later by planning itself still leaves a backup behind. After backup: `plan_rebalance` runs, the day-by-day histogram prints, and the run pauses for a `y/N` confirmation (unless `--yes` or `--dry-run`).
+The order is fixed and load-bearing: **open collection → collect in-scope cards → feasibility precheck → (pass) backup → plan → confirm → apply**. A failed precheck writes nothing and creates **no backup** — there is nothing to roll back, since nothing was touched. Once the precheck passes, a `.colpkg` backup is taken **on every run, including `--dry-run`** (unless `--no-backup`), before planning starts — so an `InfeasibleRebalance` raised later by planning itself (`min unmet` / `max unmet`) still leaves a backup behind and writes nothing to the collection. After backup: `plan_rebalance` runs, the day-by-day histogram prints, and the run pauses for a `y/N` confirmation (unless `--yes` or `--dry-run`).
 
 ### Examples
 

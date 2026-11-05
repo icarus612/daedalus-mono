@@ -16,17 +16,17 @@ Context: repro on deck "Languages::Russian::4. Sentences (lingo llama)": `--rang
 
 ## Phase syllabus
 - [ ] Phase 1: Regression tests
-  - [ ] 1.1: Failing regression tests for the min tail, hard min failure, and today-inclusive window
+  - [x] 1.1: Failing regression tests for the min tail, hard min failure, and today-inclusive window
 - [ ] Phase 2: Planner core (`due_plan.py`)
-  - [ ] 2.1: Delete the exempt tail, borrow-later min pass, hard-bounds gate  (after: 1.1)
-  - [ ] 2.2: Feasibility precheck agrees with the planner on `--min`  (after: 2.1)
+  - [x] 2.1: Delete the exempt tail, borrow-later min pass, hard-bounds gate  (after: 1.1)
+  - [x] 2.2: Feasibility precheck agrees with the planner on `--min`  (after: 2.1)
 - [ ] Phase 3: CLI window and messaging
-  - [ ] 3.1: Day 0 = today: `--range` LO >= 0 and `--start-offset` default 0 in both CLIs  (after: 1.1)
-  - [ ] 3.2: `rebalance_due` reports `min unmet` / `max unmet` and drops the dead flat short-day line  (after: 2.1, 3.1)
+  - [x] 3.1: Day 0 = today: `--range` LO >= 0 and `--start-offset` default 0 in both CLIs  (after: 1.1)
+  - [x] 3.2: `rebalance_due` reports `min unmet` / `max unmet` and drops the dead flat short-day line  (after: 2.1, 3.1)
 - [ ] Phase 4: Existing tests rewritten to the new behaviour
-  - [ ] 4.1: Rewrite every test that pins the exempt tail, the soft min, or the start-offset-1 default  (after: 2.2, 3.2)
+  - [x] 4.1: Rewrite every test that pins the exempt tail, the soft min, or the start-offset-1 default  (after: 2.2, 3.2)
 - [ ] Phase 5: Verify
-  - [ ] 5.1: Full suite, lint, and the repro shape  (after: 4.1)
+  - [x] 5.1: Full suite, lint, and the repro shape  (after: 4.1)
 
 ## Goal & scope
 
@@ -94,6 +94,8 @@ Acceptance (from the brief): the repro shape — 32 cards distributed 9,6,5,5,3,
 ## Phase 2: Planner core (`due_plan.py`)
 
 ### 2.1: Delete the exempt tail, borrow-later min pass, hard-bounds gate
+
+- **Amendment (shipped differently, 11-05-26):** the build added an unplanned sliding-mode fix found by e2e: `apply_shape_pass` drained tail days below `--min` (60 cards, 10/day over 6 days, min 8, max 16 raised `min unmet`). `apply_shape_pass` now takes a `hard_floor` and `apply_min_pass` takes an optional `keep`, so the soft ramp pass never takes from days at the hard floor. Result `{1:16,2:12,3:8,4:8,5:8,6:8}`. Source: `l1-exit.md`.
 
 - **File scope:** `libs/python/anki-tools/anki_tools/due_plan.py` only.
 - **Pattern to follow:** `apply_reverse_max_pass` (due_plan.py:520-539) for later-direction moves gated by `_resolve_later_target` / `may_move_later_to`; `apply_separation_repair_pass` (392-429) for returning a "moved later" flag that feeds `later_move_used` (908); `_days_over_max` (672-677) for the gate's day scan.
