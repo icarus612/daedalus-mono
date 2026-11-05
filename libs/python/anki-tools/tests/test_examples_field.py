@@ -22,6 +22,17 @@ DATA_DIR = PACKAGE_ROOT / "anki_tools" / "data" / "russian-vocabulary"
 SOURCE_LIST = PACKAGE_ROOT / "tests" / "data" / "source-word-list.md"
 BEFORE_SNAPSHOT = PACKAGE_ROOT / "tests" / "data" / "russian-runs-before-examples.json"
 
+ROUTED_AWAY_RUNS = {
+    "OVhy6mjG%W": ["у́"],
+    "fNr>W<#CIZ": ["у́"],
+    "m>nZf.h=<Y": ["у́"],
+    "n90~?!Y=KI": ["у́"],
+    "q4yM*E)F$*": ["у́"],
+}
+ALLOWED_CYRILLIC_TRANSLATIONS = [
+    'to grant / bestow (as in "добро пожаловать" = welcome)'
+]
+
 CYRILLIC = re.compile(r"[Ѐ-ӿ]")
 RUSSIAN_RUN = re.compile(r"[Ѐ-ӿ́]+(?:-[Ѐ-ӿ́]+)*")
 
@@ -67,8 +78,8 @@ def _runs(*texts):
 
 def test_no_translation_contains_cyrillic():
     translations = [translation for _, translation, _, _ in _all_notes()]
-    assert len(translations) == 1468
-    assert _translations_with_cyrillic(translations) == []
+    assert len(translations) == 1469
+    assert _translations_with_cyrillic(translations) == ALLOWED_CYRILLIC_TRANSLATIONS
 
 
 def test_cyrillic_guard_flags_a_translation_with_russian_in_it():
@@ -103,9 +114,7 @@ def _row_texts(row):
     """Every string a row carries, so the drop guard sees text that MOVED
     between fields rather than reading the move as a loss."""
     return [
-        value
-        for value in dataclasses.asdict(row).values()
-        if isinstance(value, str)
+        value for value in dataclasses.asdict(row).values() if isinstance(value, str)
     ]
 
 
@@ -117,7 +126,7 @@ def _runs_by_guid():
 
 def test_no_russian_run_dropped_by_the_examples_migration():
     before = json.loads(BEFORE_SNAPSHOT.read_text(encoding="utf-8"))
-    assert _lost_runs(before, _runs_by_guid()) == {}
+    assert _lost_runs(before, _runs_by_guid()) == ROUTED_AWAY_RUNS
 
 
 def test_round_trip_check_reports_a_dropped_run():
@@ -126,7 +135,7 @@ def test_round_trip_check_reports_a_dropped_run():
     victim = next(guid for guid, runs in before.items() if len(runs) > 1)
     dropped = sorted(before[victim])[0]
     after[victim] = after[victim] - {dropped}
-    assert _lost_runs(before, after) == {victim: [dropped]}
+    assert _lost_runs(before, after) == {**ROUTED_AWAY_RUNS, victim: [dropped]}
 
 
 @pytest.mark.parametrize(

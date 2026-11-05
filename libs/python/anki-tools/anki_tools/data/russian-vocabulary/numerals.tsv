@@ -4,7 +4,7 @@
 3	два	two	два	cardinal	+ genitive singular (два стола́)	два (m./n.) / дв́е (f.)	двух	also declines for D/I/P: двум, двумя, о двух		New
 4	три	three	три	cardinal	+ genitive singular (три стола́)	—	трёх			New
 5	четыре	four	четы́ре	cardinal	+ genitive singular (четыре стола́)	—	четырёх			New
-6	пять	five	пять	cardinal	+ genitive plural (пять столо́в)	—	пяти́	пять and every numeral from here up governs the genitive plural		New
+6	пять	five	пять	cardinal	+ genitive plural (пять столо́в)	—	пяти́			New
 7	шесть	six	шесть	cardinal	+ genitive plural	—	шести́			New
 8	семь	seven	семь	cardinal	+ genitive plural	—	семи́			New
 9	восемь	eight	во́семь	cardinal	+ genitive plural	—	восьми́	loses its vowel in the oblique cases: восьми́, восьмью́		New
@@ -14,12 +14,12 @@
 13	двенадцать	twelve	двена́дцать	cardinal	+ genitive plural	—	двена́дцати			New
 14	двадцать	twenty	два́дцать	cardinal	+ genitive plural (agrees by its own value)	—	два́дцати			New
 15	тридцать	thirty	три́дцать	cardinal	+ genitive plural	—	три́дцати			New
-16	сорок	forty	со́рок	cardinal	+ genitive plural	—	со́рока (same form for every oblique case)	defective: only two forms exist -- со́рок (nom./acc.) and сорока́ (every other case)		New
+16	сорок	forty	со́рок	cardinal	+ genitive plural	—	со́рока (same form for every oblique case)	defective: only two forms exist -- со́рок and сорока́		New
 17	пятьдесят	fifty	пятьдеся́т	cardinal	+ genitive plural	—	пятидеся́ти	both halves decline		New
 18	шестьдесят	sixty	шестьдеся́т	cardinal	+ genitive plural	—	шестидеся́ти	both halves decline		New
 19	семьдесят	seventy	се́мьдесят	cardinal	+ genitive plural	—	се́мидесяти	stress falls on the FIRST half, unlike пятьдеся́т/шестьдеся́т		New
 20	восемьдесят	eighty	во́семьдесят	cardinal	+ genitive plural	—	во́сьмидесяти	stress on the first half, like се́мьдесят		New
-21	девяносто	ninety	девяно́сто	cardinal	+ genitive plural	—	девяно́ста (same form for every oblique case)	defective like сорок: nom./acc. девяно́сто vs. oblique девяно́ста		New
+21	девяносто	ninety	девяно́сто	cardinal	+ genitive plural	—	девяно́ста (same form for every oblique case)	defective like сорок: девяно́сто and девяно́ста		New
 22	двадцать один	twenty-one	двадцать один	compound cardinal	by the LAST element (один -> agrees like an adjective, nom. sg.)	last element один/одна/одно agrees with the noun's gender	два́дцати одного́ (m./n.) / одно́й (f.)	both parts decline in careful speech; only the last part in casual speech		New
 23	двадцать два	twenty-two	двадцать два	compound cardinal	by the LAST element (два/две -> + genitive singular)	два (m./n.) / дв́е (f.)	два́дцати двух			New
 24	тридцать три	thirty-three	тридцать три	compound cardinal	by the LAST element (три -> + genitive singular)	—	три́дцати трёх			New
@@ -31,7 +31,7 @@
 30	девяносто девять	ninety-nine	девяносто девять	compound cardinal	by the LAST element (девять -> + genitive plural)	—	девяно́ста девяти́			New
 31	сто один	one hundred one	сто один	compound cardinal	by the LAST element (один -> agrees like an adjective)	last element один/одна/одно agrees	ста одного́			New
 32	девятьсот девяносто девять	nine hundred ninety-nine	девятьсот девяносто девять	compound cardinal	by the LAST element (девять -> + genitive plural)	—	девятисо́т девяно́ста девяти́	a fully-declining compound: all three parts change in the oblique cases		New
-33	сто	one hundred	сто	cardinal	+ genitive plural (сто рубле́й)	—	ста (same form for every oblique case)	defective like сорок/девяносто: nom./acc. сто vs. oblique ста		New
+33	сто	one hundred	сто	cardinal	+ genitive plural (сто рубле́й)	—	ста (same form for every oblique case)	defective like сорок/девяносто: сто and ста		New
 34	двести	two hundred	две́сти	cardinal	+ genitive plural	—	двухсо́т	both parts decline: двухсо́т, двумста́м, двумяста́ми		New
 35	триста	three hundred	три́ста	cardinal	+ genitive plural	—	трёхсот	both parts decline: трёхсо́т, трёмста́м		New
 36	четыреста	four hundred	четы́реста	cardinal	+ genitive plural	—	четырёхсот	both parts decline		New
@@ -51,6 +51,6 @@
 50	девять тысяч	nine thousand	девять тысяч	compound cardinal	девять + genitive plural of тысяча	—	девяти́ ты́сяч			New
 51	десять тысяч	ten thousand	десять тысяч	compound cardinal	десять + genitive plural of тысяча	—	десяти́ ты́сяч			New
 52	первый (numeral)	first	пе́рвый	ordinal	declines/agrees like an adjective	первый / первая / первое / первые (m/f/n/pl)	пе́рвого (m./n.), пе́рвой (f.)	hard-stem adjective declension		New
-53	второй	second (2nd in order)	второ́й	ordinal	declines like an adjective	второй / вторая / второе / вторые (m/f/n/pl)	второ́го (m./n.), второ́й (f.)	stressed-ending adjective declension (-ой)		New
+53	второй	second	второ́й	ordinal	declines like an adjective	второй / вторая / второе / вторые (m/f/n/pl)	второ́го (m./n.), второ́й (f.)	stressed-ending adjective declension (-ой)		New
 54	третий	third	тре́тий	ordinal	declines like a soft possessive-type adjective	третий / третья / третье / третьи (m/f/n/pl)	тре́тьего (m./n.), тре́тьей (f.)	irregular soft declension with an inserted ь, unlike the regular ordinals around it		New
 55	четвёртый	fourth	четвёртый	ordinal	declines like an adjective	четвёртый / четвёртая / четвёртое / четвёртые (m/f/n/pl)	четвёртого (m./n.), четвёртой (f.)	hard-stem adjective declension		New

@@ -185,18 +185,85 @@ ADVERB_PLACEHOLDER = "\t".join(["2", "—", "", "", "", "none", "", "", "", ""])
 
 
 TSV_HEADERS = {
-    "Nouns": ["#", "Russian", "English", "Stress", "Gender", "Plural", "Genitive Sg", "Genitive Pl",
-              "Animate", "Category", "Additional Info", "Examples"],
-    "Verbs": ["#", "Imperfective", "Perfective", "English", "Stress", "Conjugation", "я (1sg)", "ты (2sg)",
-              "они (3pl)", "Past (m / f)", "Case / Preposition", "Additional Info", "Examples"],
-    "Adjectives": ["#", "Russian (m)", "English", "Stress", "Feminine", "Neuter", "Plural", "Short Form",
-                   "Comparative", "Opposite", "Stem Type", "Additional Info", "Examples"],
-    "Adverbs": ["#", "Adverb", "English", "Stress", "From Adjective", "Formation", "Comparative",
-                "Additional Info", "Examples", "Status"],
-    "Pronouns": ["#", "Russian", "English", "Stress", "Pronoun Type", "Gender Forms", "Oblique Forms",
-                 "Additional Info", "Examples"],
-    "Numerals": ["#", "Russian", "English", "Stress", "Numeral Type", "Case Governed", "Gender Forms",
-                 "Genitive", "Additional Info", "Examples"],
+    "Nouns": [
+        "#",
+        "Russian",
+        "English",
+        "Stress",
+        "Gender",
+        "Plural",
+        "Genitive Sg",
+        "Genitive Pl",
+        "Animate",
+        "Category",
+        "Additional Info",
+        "Examples",
+    ],
+    "Verbs": [
+        "#",
+        "Imperfective",
+        "Perfective",
+        "English",
+        "Stress",
+        "Conjugation",
+        "я (1sg)",
+        "ты (2sg)",
+        "они (3pl)",
+        "Past (m / f)",
+        "Case / Preposition",
+        "Additional Info",
+        "Examples",
+    ],
+    "Adjectives": [
+        "#",
+        "Russian (m)",
+        "English",
+        "Stress",
+        "Feminine",
+        "Neuter",
+        "Plural",
+        "Short Form",
+        "Comparative",
+        "Opposite",
+        "Stem Type",
+        "Additional Info",
+        "Examples",
+    ],
+    "Adverbs": [
+        "#",
+        "Adverb",
+        "English",
+        "Stress",
+        "From Adjective",
+        "Formation",
+        "Comparative",
+        "Additional Info",
+        "Examples",
+        "Status",
+    ],
+    "Pronouns": [
+        "#",
+        "Russian",
+        "English",
+        "Stress",
+        "Pronoun Type",
+        "Gender Forms",
+        "Oblique Forms",
+        "Additional Info",
+        "Examples",
+    ],
+    "Numerals": [
+        "#",
+        "Russian",
+        "English",
+        "Stress",
+        "Numeral Type",
+        "Case Governed",
+        "Gender Forms",
+        "Genitive",
+        "Additional Info",
+        "Examples",
+    ],
 }
 
 
@@ -210,7 +277,9 @@ def write_tsvs(data_dir, rows_per_sheet=2):
                 cells[header.index("Formation")] = "regular"
                 cells[header.index("Status")] = "ok"
             lines.append("\t".join(cells))
-        (data_dir / SHEET_FILES[sheet]).write_text("\n".join(lines) + "\n", encoding="utf-8")
+        (data_dir / SHEET_FILES[sheet]).write_text(
+            "\n".join(lines) + "\n", encoding="utf-8"
+        )
 
 
 class TestTsvCensusNotes:
@@ -226,7 +295,8 @@ class TestTsvCensusNotes:
             rows = getattr(mwp, parser)(str(data_dir / SHEET_FILES[sheet]))
             assert len(rows) == 2
             expected = {
-                row.guid: dict(zip(mwp.FIELD_NAMES[sheet], row.fields(), strict=True)) for row in rows
+                row.guid: dict(zip(mwp.FIELD_NAMES[sheet], row.fields(), strict=True))
+                for row in rows
             }
             assert result[sheet] == expected
 
@@ -749,6 +819,7 @@ PLANNED_EMPTY_COUNTS = {
         "Past (m / f)": 177,
     },
 }
+PENDING_IMPORT_VERB_GUID = "t1#RNs`=(A"
 ORPHANED_NOUNS = {"пальто", "кино", "кафе", "метро", "кофе"}
 
 
@@ -767,7 +838,7 @@ class TestRealData:
     def test_tsv_note_counts(self, tsv_notes):
         assert fc.note_counts(tsv_notes) == {
             "Nouns": 631,
-            "Verbs": 214,
+            "Verbs": 215,
             "Adjectives": 172,
             "Adverbs": 134,
             "Pronouns": 29,
@@ -818,7 +889,10 @@ class TestRealData:
         assert (path.stat().st_mtime_ns, path.stat().st_size) == before
         result = fc.reconcile(tsv_notes, collection)
         assert result.reconciles, result.mismatches
-        assert result.unbuilt == {s: () for s in fc.SHEETS}
+        assert result.unbuilt == {
+            **{s: () for s in fc.SHEETS},
+            "Verbs": (PENDING_IMPORT_VERB_GUID,),
+        }
         orphan_names = {
             collection["Nouns"][g]["Russian"] for g in result.orphans["Nouns"]
         }

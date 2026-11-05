@@ -301,8 +301,13 @@ def test_every_source_hit_has_a_routing_row(routing, immutable_rows):
     assert hits <= keys
 
 
-def test_a_hit_without_a_row_is_caught(routing, immutable_rows):
+def test_source_hits_are_all_routed_away(immutable_rows):
+    assert set(source_hits(immutable_rows)) == set()
+
+
+def test_a_hit_without_a_row_is_caught(routing):
     keys = {(r["note type"], r["headword"], r["field"]) for r in routing}
-    hits = set(source_hits(immutable_rows))
-    assert hits
-    assert not hits <= (keys - {next(iter(hits))})
+    unrouted = {
+        ("Russian - Immutable Words (Ellis Version)", "нет-такого", "Additional Info")
+    }
+    assert not unrouted <= keys
