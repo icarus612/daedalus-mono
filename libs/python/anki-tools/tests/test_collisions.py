@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from anki_tools import collisions, mutable_words_plan
+from anki_tools import case_field, collisions, mutable_words_plan
 from anki_tools.case_field import CaseGovernment
 from anki_tools.collisions import Note
 from anki_tools.distinction import ENGLISH_DISTINCTIONS, qualifier_of
@@ -87,6 +87,11 @@ def make_note(
 @pytest.fixture(scope="module")
 def notes() -> list[Note]:
     return collisions.load_notes(SOURCE_LIST, DATA_DIR)
+
+
+@pytest.fixture(scope="module")
+def governed_notes() -> list[Note]:
+    return collisions.load_notes(SOURCE_LIST, DATA_DIR, case_field.default_government())
 
 
 @pytest.fixture(scope="module")
@@ -1222,20 +1227,20 @@ def test_real_rows_pass_check(
     assert {r.action for r in rows} <= set(collisions.ACTIONS)
 
 
-def test_committed_tsv_matches_regeneration(
-    notes: list[Note], rows: list[collisions.ClassificationRow]
-) -> None:
+def test_committed_tsv_matches_regeneration(governed_notes: list[Note]) -> None:
     committed = COMMITTED_TSV.read_text(encoding="utf-8")
-    assert committed == collisions.format_classification_tsv(rows)
+    assert committed == collisions.format_classification_tsv(
+        collisions.classify(governed_notes)
+    )
 
 
-def test_committed_tsv_parses_and_is_clean(notes: list[Note]) -> None:
+def test_committed_tsv_parses_and_is_clean(governed_notes: list[Note]) -> None:
     parsed = collisions.parse_classification_tsv(
         COMMITTED_TSV.read_text(encoding="utf-8")
     )
     assert parsed
     assert {r.decision for r in parsed} == {""}
-    assert collisions.check_rows(parsed, notes) == []
+    assert collisions.check_rows(parsed, governed_notes) == []
 
 
 def test_committed_tsv_tampered_row_is_rejected(notes: list[Note]) -> None:
