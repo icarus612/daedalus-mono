@@ -23,6 +23,7 @@
     "anki-mutable-words-audio": "anki_tools/mutable_words_audio.py",
     "anki-renumber-russian-decks": "anki_tools/renumber_russian_decks.py",
     "anki-word-audio": "anki_tools/word_audio.py",
-    "anki-source-drift": "anki_tools/source_drift_cli.py"
+    "anki-source-drift": "anki_tools/source_drift_cli.py",
+    "anki-grammar-deck": "anki_tools/grammar_deck.py"
   }
 }

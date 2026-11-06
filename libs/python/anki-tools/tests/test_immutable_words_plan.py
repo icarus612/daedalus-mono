@@ -72,13 +72,13 @@ EXPECTED_SECTION_COUNTS = [
 EXPECTED_TOTAL_ROWS = sum(count for _, count in EXPECTED_SECTION_COUNTS)
 
 EXPECTED_SUBDECK_PATHS = {
-    "Prepositions": "Languages::Russian::2. Immutable Words::a. Prepositions",
-    "Conjunctions": "Languages::Russian::2. Immutable Words::b. Conjunctions",
-    "Particles": "Languages::Russian::2. Immutable Words::c. Particles",
+    "Prepositions": "Languages::Russian::3. Immutable Words::a. Prepositions",
+    "Conjunctions": "Languages::Russian::3. Immutable Words::b. Conjunctions",
+    "Particles": "Languages::Russian::3. Immutable Words::c. Particles",
     "Indeclinable Nouns": (
-        "Languages::Russian::2. Immutable Words::d. Indeclinable Nouns"
+        "Languages::Russian::3. Immutable Words::d. Indeclinable Nouns"
     ),
-    "Base Adverbs": "Languages::Russian::2. Immutable Words::e. Base Adverbs",
+    "Base Adverbs": "Languages::Russian::3. Immutable Words::e. Base Adverbs",
 }
 
 # The 15 multi-form rows SURVIVING the l3 split/transform pass (contract
@@ -271,7 +271,7 @@ def test_parse_missing_section_raises_on_small_fixture():
 
 
 def test_deck_root_constant():
-    assert DECK_ROOT == "Languages::Russian::2. Immutable Words"
+    assert DECK_ROOT == "Languages::Russian::3. Immutable Words"
 
 
 def test_subdeck_leaves_order():

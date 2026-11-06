@@ -42,12 +42,12 @@ def _seed_subtree(col):
     layout = [
         (full_deck_name("1. Alphabet"), 1),
         (full_deck_name("2. Immutable Words"), 2),
-        (full_deck_name("2. Immutable Words") + "::a. Listening", 3),
-        (full_deck_name("3. Sentences (lingo llama)"), 4),
-        (full_deck_name("3. Sentences (lingo llama)") + "::a. Listening", 5),
-        (full_deck_name("3. Sentences (lingo llama)") + "::b. Recall", 6),
-        (full_deck_name("4. 100 Words & Phrases"), 7),
-        (full_deck_name("5. Master Russian 300+"), 8),
+        (full_deck_name("2. Immutable Words") + "::a. Prepositions", 3),
+        (full_deck_name("3. Mutable Words"), 4),
+        (full_deck_name("3. Mutable Words") + "::a. Nouns", 5),
+        (full_deck_name("3. Mutable Words") + "::b. Verbs", 6),
+        (full_deck_name("4. Sentences (lingo llama)"), 7),
+        (full_deck_name("5. Russian Phrases"), 8),
     ]
     for name, n_cards in layout:
         did = col.decks.id(name)
@@ -86,16 +86,17 @@ def test_deck_prefix_is_the_russian_subtree_path():
 
 
 def test_full_deck_name_prefixes_the_short_name():
-    assert full_deck_name("3. Sentences (lingo llama)") == (
-        DECK_PREFIX + "3. Sentences (lingo llama)"
+    assert full_deck_name("2. Immutable Words") == (
+        DECK_PREFIX + "2. Immutable Words"
     )
 
 
 def test_renames_tuple_matches_the_contracted_pairs_and_order():
     assert RENAMES == (
-        ("3. Sentences (lingo llama)", "4. Sentences (lingo llama)"),
-        ("4. 100 Words & Phrases", "5. 100 Words & Phrases"),
-        ("5. Master Russian 300+", "6. Master Russian 300+"),
+        ("2. Immutable Words", "3. Immutable Words"),
+        ("3. Mutable Words", "4. Mutable Words"),
+        ("4. Sentences (lingo llama)", "5. Sentences (lingo llama)"),
+        ("5. Russian Phrases", "6. Russian Phrases"),
     )
 
 
@@ -120,7 +121,7 @@ def test_precheck_passes_when_every_target_name_is_free(collection):
 
 def test_precheck_raises_when_a_target_name_already_exists(collection):
     _seed_subtree(collection)
-    collection.decks.id(full_deck_name("6. Master Russian 300+"))
+    collection.decks.id(full_deck_name("5. Sentences (lingo llama)"))
     with pytest.raises(PrecheckError):
         precheck(collection, build_plan(revert=False))
 
@@ -249,16 +250,16 @@ def test_verify_renumber_passes_when_names_counts_and_ids_match_the_plan():
     plan = build_plan(revert=False)
     before = _plan_snapshot(
         [
-            ("3. Sentences (lingo llama)", 4),
-            ("4. 100 Words & Phrases", 7),
-            ("5. Master Russian 300+", 8),
+            ("2. Immutable Words", 4),
+            ("3. Mutable Words", 7),
+            ("4. Sentences (lingo llama)", 8),
         ]
     )
     after = _plan_snapshot(
         [
-            ("4. Sentences (lingo llama)", 4),
-            ("5. 100 Words & Phrases", 7),
-            ("6. Master Russian 300+", 8),
+            ("3. Immutable Words", 4),
+            ("4. Mutable Words", 7),
+            ("5. Sentences (lingo llama)", 8),
         ]
     )
     verify_renumber(before, after, plan)
@@ -267,12 +268,12 @@ def test_verify_renumber_passes_when_names_counts_and_ids_match_the_plan():
 def test_verify_renumber_passes_when_a_child_deck_name_carries_the_new_prefix():
     plan = build_plan(revert=False)
     before = {
-        1: (full_deck_name("3. Sentences (lingo llama)"), 4),
-        2: (full_deck_name("3. Sentences (lingo llama)") + "::a. Listening", 5),
+        1: (full_deck_name("2. Immutable Words"), 4),
+        2: (full_deck_name("2. Immutable Words") + "::a. Prepositions", 5),
     }
     after = {
-        1: (full_deck_name("4. Sentences (lingo llama)"), 4),
-        2: (full_deck_name("4. Sentences (lingo llama)") + "::a. Listening", 5),
+        1: (full_deck_name("3. Immutable Words"), 4),
+        2: (full_deck_name("3. Immutable Words") + "::a. Prepositions", 5),
     }
     verify_renumber(before, after, plan)
 
@@ -281,16 +282,16 @@ def test_verify_renumber_raises_when_a_rename_silently_did_not_take():
     plan = build_plan(revert=False)
     before = _plan_snapshot(
         [
-            ("3. Sentences (lingo llama)", 4),
-            ("4. 100 Words & Phrases", 7),
-            ("5. Master Russian 300+", 8),
+            ("2. Immutable Words", 4),
+            ("3. Mutable Words", 7),
+            ("4. Sentences (lingo llama)", 8),
         ]
     )
     after = _plan_snapshot(
         [
-            ("3. Sentences (lingo llama)", 4),
-            ("5. 100 Words & Phrases", 7),
-            ("6. Master Russian 300+", 8),
+            ("2. Immutable Words", 4),
+            ("4. Mutable Words", 7),
+            ("5. Sentences (lingo llama)", 8),
         ]
     )
     with pytest.raises(AssertionError, match=r"deck id 1"):
@@ -300,12 +301,12 @@ def test_verify_renumber_raises_when_a_rename_silently_did_not_take():
 def test_verify_renumber_raises_when_a_child_deck_rename_did_not_take():
     plan = build_plan(revert=False)
     before = {
-        1: (full_deck_name("3. Sentences (lingo llama)"), 4),
-        2: (full_deck_name("3. Sentences (lingo llama)") + "::a. Listening", 5),
+        1: (full_deck_name("2. Immutable Words"), 4),
+        2: (full_deck_name("2. Immutable Words") + "::a. Prepositions", 5),
     }
     after = {
-        1: (full_deck_name("4. Sentences (lingo llama)"), 4),
-        2: (full_deck_name("3. Sentences (lingo llama)") + "::a. Listening", 5),
+        1: (full_deck_name("3. Immutable Words"), 4),
+        2: (full_deck_name("2. Immutable Words") + "::a. Prepositions", 5),
     }
     with pytest.raises(AssertionError, match=r"deck id 2"):
         verify_renumber(before, after, plan)
@@ -313,16 +314,16 @@ def test_verify_renumber_raises_when_a_child_deck_rename_did_not_take():
 
 def test_verify_renumber_still_raises_on_deck_set_change():
     plan = build_plan(revert=False)
-    before = {1: (full_deck_name("3. Sentences (lingo llama)"), 4)}
-    after = {2: (full_deck_name("4. Sentences (lingo llama)"), 4)}
+    before = {1: (full_deck_name("2. Immutable Words"), 4)}
+    after = {2: (full_deck_name("3. Immutable Words"), 4)}
     with pytest.raises(AssertionError, match=r"deck set changed"):
         verify_renumber(before, after, plan)
 
 
 def test_verify_renumber_still_raises_on_card_count_change():
     plan = build_plan(revert=False)
-    before = {1: (full_deck_name("3. Sentences (lingo llama)"), 4)}
-    after = {1: (full_deck_name("4. Sentences (lingo llama)"), 3)}
+    before = {1: (full_deck_name("2. Immutable Words"), 4)}
+    after = {1: (full_deck_name("3. Immutable Words"), 3)}
     with pytest.raises(AssertionError, match=r"card count changed"):
         verify_renumber(before, after, plan)
 
@@ -338,7 +339,7 @@ def test_e2e_precheck_failure_makes_no_backup_and_no_rename(tmp_path, monkeypatc
     col_path = str(tmp_path / "test.anki2")
     col = Collection(col_path)
     _seed_subtree(col)
-    col.decks.id(full_deck_name("6. Master Russian 300+"))
+    col.decks.id(full_deck_name("5. Sentences (lingo llama)"))
     before = _full_snapshot(col)
     col.close()
 
@@ -365,7 +366,7 @@ def test_collection_is_closed_even_when_precheck_fails(tmp_path, monkeypatch):
     col_path = str(tmp_path / "test.anki2")
     col = Collection(col_path)
     _seed_subtree(col)
-    col.decks.id(full_deck_name("6. Master Russian 300+"))
+    col.decks.id(full_deck_name("5. Sentences (lingo llama)"))
     col.close()
 
     exit_code = _run_cli(["--yes", "--collection", col_path], monkeypatch)
@@ -449,8 +450,9 @@ def test_confirmation_prompt_accepted_variants_apply_renames(
 
     col2 = Collection(col_path)
     try:
-        assert col2.decks.by_name(full_deck_name("6. Master Russian 300+")) is not None
-        assert col2.decks.by_name(full_deck_name("5. Master Russian 300+")) is None
+        renamed = full_deck_name("5. Sentences (lingo llama)")
+        assert col2.decks.by_name(renamed) is not None
+        assert col2.decks.by_name(full_deck_name("4. Sentences (lingo llama)")) is None
     finally:
         col2.close()
 

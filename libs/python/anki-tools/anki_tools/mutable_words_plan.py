@@ -1,7 +1,7 @@
 """Pure core for the mutable-words deck: Nouns, Verbs, Adjectives, Adverbs.
 
 Turns the four `russian-vocabulary` TSV source sheets into note rows, deck
-names, and card templates for `Languages::Russian::3. Mutable Words`. No
+names, and card templates for `Languages::Russian::4. Mutable Words`. No
 Anki imports, no `requests`, no filesystem access beyond the TSV paths
 passed in.
 """
@@ -20,7 +20,7 @@ from anki_tools.audio_naming import (
 )
 from anki_tools.examples_field import EXAMPLES_FIELD
 
-DECK_ROOT = "Languages::Russian::3. Mutable Words"
+DECK_ROOT = "Languages::Russian::4. Mutable Words"
 
 # The lettered subdecks of this tree, in order. Adverbs is absent on
 # purpose: it builds into the Immutable tree below, and leaving a hole here
@@ -37,7 +37,7 @@ SUBDECK_LEAVES = {
 # a letter here. Base and derived stay separate decks: `e. Base Adverbs` holds
 # the primitives (тут, вчера), this leaf holds the ones built off an adjective.
 SUBDECK_OVERRIDES = {
-    "Adverbs": "Languages::Russian::2. Immutable Words::f. Derived Adverbs",
+    "Adverbs": "Languages::Russian::3. Immutable Words::f. Derived Adverbs",
 }
 
 VOICE_SLOTS: tuple[str, ...] = ("f1", "m2")

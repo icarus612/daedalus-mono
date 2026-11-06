@@ -1,7 +1,7 @@
 """Pure core for `anki-immutable-words`.
 
 Turns the Russian invariable-words source document into the note rows and deck
-names that make up `Languages::Russian::2. Immutable Words`, and derives the new
+names that make up `Languages::Russian::3. Immutable Words`, and derives the new
 note type's templates from an existing one. Everything here is plain text and
 data manipulation - no Anki imports, no collection access, no filesystem access.
 `anki_tools/immutable_words.py` is the only caller and owns all Anki plumbing.
@@ -35,7 +35,7 @@ from anki_tools.audio_naming import (
 
 # Deck the four part-of-speech subdecks hang off. The `2. ` prefix is the user's
 # choice; they renumber the sibling Russian decks themselves.
-DECK_ROOT = "Languages::Russian::2. Immutable Words"
+DECK_ROOT = "Languages::Russian::3. Immutable Words"
 
 # Source-document section heading (the English part, before the Russian gloss)
 # -> the subdeck leaf name. Order here is the document's order and fixes the

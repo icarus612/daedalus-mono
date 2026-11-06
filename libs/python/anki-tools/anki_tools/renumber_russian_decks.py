@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Renumber three sibling Russian decks to free up the '3.' slot.
+"""Renumber four sibling Russian decks to free up the '2.' slot for Grammar.
 
 Mutates the real Anki collection. A backup is taken before applying, and
 `--revert` applies the inverse renaming to undo a previous run.
@@ -17,9 +17,10 @@ from anki_tools.immutable_words import assert_unmodified
 DECK_PREFIX = "Languages::Russian::"
 
 RENAMES = (
-    ("3. Sentences (lingo llama)", "4. Sentences (lingo llama)"),
-    ("4. 100 Words & Phrases", "5. 100 Words & Phrases"),
-    ("5. Master Russian 300+", "6. Master Russian 300+"),
+    ("2. Immutable Words", "3. Immutable Words"),
+    ("3. Mutable Words", "4. Mutable Words"),
+    ("4. Sentences (lingo llama)", "5. Sentences (lingo llama)"),
+    ("5. Russian Phrases", "6. Russian Phrases"),
 )
 
 
@@ -97,7 +98,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="anki-renumber-russian-decks",
         description=(
-            "Renumber the Languages::Russian sibling decks to free up the '3.' slot."
+            "Renumber the Languages::Russian sibling decks to free up the '2.' slot."
         ),
     )
     parser.add_argument(

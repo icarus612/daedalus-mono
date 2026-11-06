@@ -44,7 +44,7 @@ def test_reporting_is_the_default():
 
 def test_phrase_deck_defaults_to_the_consolidated_deck():
     assert build_parser().parse_args([]).deck == PHRASE_DECK
-    assert PHRASE_DECK == "Languages::Russian::5. Russian Phrases"
+    assert PHRASE_DECK == "Languages::Russian::6. Russian Phrases"
 
 
 def test_due_today_keeps_the_interval_and_never_rewrites_it():
@@ -327,7 +327,7 @@ def test_end_to_end_against_a_real_collection(tmp_path, monkeypatch, capsys):
         taught_model = _taught_model(col, NOUNS)
         basic = col.models.by_name("Basic")
         phrase_deck = col.decks.id(PHRASE_DECK, create=True)
-        taught_deck = col.decks.id("Languages::Russian::3. Mutable Words", create=True)
+        taught_deck = col.decks.id("Languages::Russian::4. Mutable Words", create=True)
 
         _add(col, basic, phrase_deck, "Где туалет?", "Where is the bathroom?")
         _add(col, basic, phrase_deck, "Чек, пожалуйста", "The check, please")

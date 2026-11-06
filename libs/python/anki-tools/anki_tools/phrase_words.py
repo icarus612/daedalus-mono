@@ -36,7 +36,7 @@ from collections.abc import Iterable, Mapping, Sequence
 from typing import NamedTuple
 
 PHRASE_NOTE_TYPE = "Russian - Common Words (Ellis Version)"
-PHRASE_DECK = "Languages::Russian::5. Russian Phrases"
+PHRASE_DECK = "Languages::Russian::6. Russian Phrases"
 
 NEW_TYPE = 0
 SUSPENDED_QUEUE = -1

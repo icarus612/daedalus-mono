@@ -1,6 +1,6 @@
 """Tests for the AnkiMobile FSRS-stability floor.
 
-The real values come from `Languages::Russian::4. Sentences (lingo llama)`,
+The real values come from `Languages::Russian::5. Sentences (lingo llama)`,
 where six cards sat below the floor and the deck would not open on an
 iPhone while loading fine on desktop.
 """

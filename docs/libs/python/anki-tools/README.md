@@ -22,16 +22,17 @@ A grab-bag of small standalone scripts for working with the Anki spaced-repetiti
 - `anki_tools/due_plan.py` — pure due-date rebalancing algorithm and feasibility analysis, zero Anki imports, fully unit-testable. See below.
 - `anki_tools/rebalance_due.py` — CLI that resolves a deck against a real Anki collection and applies `due_plan`'s result. See below.
 - `anki_tools/due_stats.py` — read-only CLI that reports `due_plan`'s feasibility/shape analysis for a deck without planning or writing anything. See below.
-- `anki_tools/immutable_words_plan.py` / `anki_tools/immutable_words.py` — pure core + CLI for the `Languages::Russian::2. Immutable Words` deck package. See [`anki-immutable-words`](#anki-immutable-words) below.
+- `anki_tools/immutable_words_plan.py` / `anki_tools/immutable_words.py` — pure core + CLI for the `Languages::Russian::3. Immutable Words` deck package. See [`anki-immutable-words`](#anki-immutable-words) below.
 - `anki_tools/elevenlabs_tts.py` — standalone ElevenLabs text-to-speech CLI, Anki-agnostic. See [`anki-elevenlabs-tts`](#anki-elevenlabs-tts) below.
 - `anki_tools/audio_naming.py` — shared filename/spoken-text conventions (`build_filename`, `spoken_text_for`, `get_anki_media_dir`) used by both the immutable and mutable audio pipelines.
 - `anki_tools/anki_identity.py` — pure, `hashlib`-only deterministic Anki GUID/notetype-id helpers (`base91`, `guid_for_row`, `notetype_id_for_name`), hoisted out of `immutable_words*.py` so both the immutable and mutable decks share one implementation.
 - `anki_tools/card_audio.py` — pure, parameterized random-audio-picker template block (`audio_block`), hoisted out of `immutable_words_plan.py` for the same reason.
-- `anki_tools/mutable_words_plan.py`, `anki_tools/mutable_words.py`, `anki_tools/mutable_words_audio.py`, `anki_tools/renumber_russian_decks.py` — the `Languages::Russian::3. Mutable Words` deck package pipeline (committed TSVs → deck build → audio → live renumber/import). The TSVs under `anki_tools/data/russian-vocabulary/` are the only source. See [`mutable-words.md`](mutable-words.md) for the full design and [`mutable-words-runbook.md`](mutable-words-runbook.md) for its live-collection execution record.
+- `anki_tools/mutable_words_plan.py`, `anki_tools/mutable_words.py`, `anki_tools/mutable_words_audio.py`, `anki_tools/renumber_russian_decks.py` — the `Languages::Russian::4. Mutable Words` deck package pipeline (committed TSVs → deck build → audio → live renumber/import). The TSVs under `anki_tools/data/russian-vocabulary/` are the only source. See [`mutable-words.md`](mutable-words.md) for the full design and [`mutable-words-runbook.md`](mutable-words-runbook.md) for its live-collection execution record.
 - `anki_tools/case_field.py`, `anki_tools/case_pill.py`, `anki_tools/case_ban.py`, `anki_tools/prompt_hint.py`, `anki_tools/card_dedup.py`, `anki_tools/collisions.py`, `anki_tools/form_census.py`, `anki_tools/form_fill.py` — case pills, cue handling, the mechanical card checks, and the form fill. See [`card-cues.md`](card-cues.md).
+- `anki_tools/grammar_deck.py` — installs the `Languages::Russian::2. Grammar` deck from `anki_tools/data/russian-grammar/case-endings.tsv`. See [`anki-grammar-deck`](#anki-grammar-deck).
 - `anki_tools/source_drift.py` / `anki_tools/source_drift_cli.py` — the source-drift tool. See [`anki-source-drift`](#anki-source-drift).
 - `anki_sync_and_restore.py` (package root) — the staged AnkiWeb sync. See [`anki_sync_and_restore.py`](#anki_sync_and_restorepy).
-- `package.json` `bin` entries: `anki-build-deck`, `anki-get-deck-info`, `anki-mp3-filename-update`, `anki-rebalance-due`, `anki-due-stats`, `anki-immutable-words`, `anki-elevenlabs-tts`, `anki-mutable-words`, `anki-mutable-words-audio`, `anki-renumber-russian-decks`, `anki-word-audio`, `anki-source-drift`.
+- `package.json` `bin` entries: `anki-build-deck`, `anki-get-deck-info`, `anki-mp3-filename-update`, `anki-rebalance-due`, `anki-due-stats`, `anki-immutable-words`, `anki-elevenlabs-tts`, `anki-mutable-words`, `anki-mutable-words-audio`, `anki-renumber-russian-decks`, `anki-word-audio`, `anki-source-drift`, `anki-grammar-deck`.
 - `tests/test_due_plan.py`, `tests/test_rebalance_due.py`, `tests/test_due_stats.py`, `tests/test_followup_fixes.py` — pytest suites, 192 tests total. See [`mutable-words.md`](mutable-words.md#testing) for the mutable/immutable-words test suites.
 
 ## `anki-rebalance-due`
@@ -136,7 +137,7 @@ anki-due-stats programming::coding --min 8 --max 16 --sliding
 
 ## `anki-immutable-words`
 
-Builds the `Languages::Russian::2. Immutable Words` `.apkg` package (five subdecks — Prepositions,
+Builds the `Languages::Russian::3. Immutable Words` `.apkg` package (five subdecks — Prepositions,
 Conjunctions, Particles, Indeclinable Nouns, Base Adverbs — one note type,
 `Russian - Immutable Words (Ellis Version)`) from a source word-list markdown document, without ever
 touching the live Anki collection.
@@ -159,6 +160,20 @@ The source note type is looked up by id (`1698803891108`), never by name — its
 trailing space typo (`"Russian - Common Words (Ellis Version) "`). The audio-picker template block
 this deck's cards use lives in `anki_tools/card_audio.py` (shared with the Mutable Words deck); the
 GUID/notetype-id derivation lives in `anki_tools/anki_identity.py` (same).
+
+## `anki-grammar-deck`
+
+```
+anki-grammar-deck [--collection PATH] [--source TSV] [--no-backup] [--dry-run]
+```
+
+Writes the grammar-rule deck straight into the collection (Anki must be closed): note type
+`Russian - Grammar Rules (Ellis Version)` (fields Type, Front, Target, Example, Notes; one card),
+deck `Languages::Russian::2. Grammar` with one subdeck per source table — `a. Singular Noun Endings`
+(36), `b. Plural Noun Endings` (24), `c. Adjective Endings` (48, hard and soft split), `d. Personal
+Pronouns` (42). The TSV's `Table` column picks the subdeck. Notes are keyed by a GUID derived from
+`Front`, so a re-run updates changed fields in place and never touches scheduling; new decks take
+the `Languages::Russian` deck's options. The TSV is hand-edited — nothing regenerates it.
 
 ## `anki-source-drift`
 

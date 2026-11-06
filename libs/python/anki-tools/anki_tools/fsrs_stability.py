@@ -7,7 +7,7 @@ values more strictly than the desktop client: a stability small enough to
 round toward zero is rejected outright, and the whole deck then fails to
 open on the phone with "invalid params" while loading fine on desktop.
 
-Six cards in `Languages::Russian::4. Sentences (lingo llama)` reached that
+Six cards in `Languages::Russian::5. Sentences (lingo llama)` reached that
 state (stabilities around 0.003, 0.0018 and 0.0) and made the deck
 unopenable on an iPhone. Raising each to MIN_STABILITY fixed it. The
 numbers are already tiny -- a card at 0.003 is due immediately either way

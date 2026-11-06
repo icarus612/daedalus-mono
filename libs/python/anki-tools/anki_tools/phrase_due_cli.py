@@ -24,7 +24,7 @@ from anki_tools.phrase_due import (
 )
 from anki_tools.rebalance_due import get_anki_collection_path, resolve_deck_ids
 
-PHRASE_DECK = "Languages::Russian::5. Russian Phrases"
+PHRASE_DECK = "Languages::Russian::6. Russian Phrases"
 
 TAUGHT_TYPE_PREFIXES = ("Russian - Mutable", "Russian - Immutable")
 VERB_TYPE_SUFFIX = "Verbs (Ellis Version)"

@@ -182,12 +182,12 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
 def test_all_subdeck_names():
     names = mutable_words_plan.all_subdeck_names()
     assert names == [
-        "Languages::Russian::3. Mutable Words::a. Nouns",
-        "Languages::Russian::3. Mutable Words::b. Verbs",
-        "Languages::Russian::3. Mutable Words::c. Adjectives",
-        "Languages::Russian::2. Immutable Words::f. Derived Adverbs",
-        "Languages::Russian::3. Mutable Words::d. Pronouns",
-        "Languages::Russian::3. Mutable Words::e. Numerals",
+        "Languages::Russian::4. Mutable Words::a. Nouns",
+        "Languages::Russian::4. Mutable Words::b. Verbs",
+        "Languages::Russian::4. Mutable Words::c. Adjectives",
+        "Languages::Russian::3. Immutable Words::f. Derived Adverbs",
+        "Languages::Russian::4. Mutable Words::d. Pronouns",
+        "Languages::Russian::4. Mutable Words::e. Numerals",
     ]
     for name in names:
         assert ". " in name
