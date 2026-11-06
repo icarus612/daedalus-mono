@@ -40,6 +40,7 @@ ASPECT_SPLIT_RUNS = {
     "nGuzyLiKzQ": ["бежать", "по"],
     "u.A920{X_Z": ["нести", "понести"],
     "w],J){q5o7": ["вести", "повести"],
+    "upa@NcF;x7": ["ездить"],
 }
 EXPECTED_LOST_RUNS = {**ROUTED_AWAY_RUNS, **ASPECT_SPLIT_RUNS}
 ALLOWED_CYRILLIC_TRANSLATIONS: list[str] = []
