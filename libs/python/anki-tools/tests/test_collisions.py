@@ -544,9 +544,9 @@ def test_load_notes_fields(notes: list[Note]) -> None:
 
 def test_every_english_distinction_key_matches_a_headword(notes: list[Note]) -> None:
     headwords = {n.headword for n in notes}
-    assert len(ENGLISH_DISTINCTIONS) == 196
+    assert len(ENGLISH_DISTINCTIONS) == 207
     assert set(ENGLISH_DISTINCTIONS) <= headwords
-    assert sum(1 for n in notes if n.english_distinction) == 196
+    assert sum(1 for n in notes if n.english_distinction) == 207
 
 
 def test_provisional_cases(notes: list[Note], governed_notes: list[Note]) -> None:
@@ -584,12 +584,12 @@ def test_government_overrides_cases_for_any_section(notes: list[Note]) -> None:
 
 
 def test_collision_totals(groups: list[collisions.CollisionGroup]) -> None:
-    assert len(groups) == 213
-    assert sum(len(g.members) for g in groups) == 468
-    assert len({m.guid for g in groups for m in g.members}) == 386
+    assert len(groups) == 217
+    assert sum(len(g.members) for g in groups) == 475
+    assert len({m.guid for g in groups for m in g.members}) == 389
     assert Counter(g.mechanism for g in groups) == {
-        "cue": 123,
-        "header": 82,
+        "cue": 126,
+        "header": 83,
         "pill": 7,
         "header+pill": 1,
     }
@@ -705,7 +705,7 @@ def test_map_cues_separates_needs_one_side_nonempty() -> None:
 def test_map_cues_real_entry_count(
     notes: list[Note], groups: list[collisions.CollisionGroup]
 ) -> None:
-    assert len(collisions.map_cues(notes, groups)) == 196
+    assert len(collisions.map_cues(notes, groups)) == 207
 
 
 def test_classify_row_columns_are_declared() -> None:
@@ -1194,7 +1194,7 @@ def test_cli_groups_prints_table(capsys: pytest.CaptureFixture[str]) -> None:
     out = capsys.readouterr().out
     assert code == 0
     assert out.splitlines()[0].split("\t")[:3] == ["sense", "mechanism", "members"]
-    assert len(out.splitlines()) == 214
+    assert len(out.splitlines()) == 218
 
 
 def test_cli_pos_counts_prints_fields(capsys: pytest.CaptureFixture[str]) -> None:

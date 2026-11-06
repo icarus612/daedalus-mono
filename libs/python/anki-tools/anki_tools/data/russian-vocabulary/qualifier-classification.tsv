@@ -459,12 +459,6 @@ mutable	Russian - Mutable Verbs (Ellis Version)	поднимать	A;&SihXm$v	Tr
 mutable	Russian - Mutable Verbs (Ellis Version)	поднимать	A;&SihXm$v	English Distinction	lift physically	whole word	keep	lift / raise / pick up (lift up)	lift physically		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	готовить	sc`&_PWs2w	English Distinction	prepare, incl. food	whole word	keep	prepare / cook&nbsp;	prepare, incl. food		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	учить	y2IJ(V:J(b	Translation	memorize	sense 1 of 2	keep-inline	learn (memorize) / teach		учить что = learn/memorize; учить кого чему = teach	qualifies one sense of several	
-mutable	Russian - Mutable Verbs (Ellis Version)	ездить	EpzJvDrgXi	Translation	by vehicle, round trips / in general	sense 2 of 2	keep-inline	go / ride (by vehicle, round trips / in general)	by vehicle, habitually		attaches by position to the last synonym; may cover all senses	
-mutable	Russian - Mutable Verbs (Ellis Version)	ездить	EpzJvDrgXi	English Distinction	by vehicle, habitually	whole word	keep	go / ride (by vehicle, round trips / in general)	by vehicle, habitually		separates a collision	
-mutable	Russian - Mutable Verbs (Ellis Version)	водить	w],J){q5o7	Translation	a car	sense 2 of 2	keep-inline	lead (round trips / in general) / drive (a car)	drive a car, habitually		attaches by position to the last synonym; may cover all senses	
-mutable	Russian - Mutable Verbs (Ellis Version)	водить	w],J){q5o7	English Distinction	drive a car, habitually	whole word	keep	lead (round trips / in general) / drive (a car)	drive a car, habitually		separates a collision	
-mutable	Russian - Mutable Verbs (Ellis Version)	возить	QbH#J}_yw+	Translation	someone	sense 2 of 2	keep-inline	transport / drive (someone) (round trips / in general)	carry someone, habitually		prompt word for one sense	
-mutable	Russian - Mutable Verbs (Ellis Version)	возить	QbH#J}_yw+	English Distinction	carry someone, habitually	whole word	keep	transport / drive (someone) (round trips / in general)	carry someone, habitually		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	варить	Ekx6PsmdX/	Translation	by boiling	sense 2 of 2	keep-inline	boil / cook (by boiling)			attaches by position to the last synonym; may cover all senses	
 mutable	Russian - Mutable Verbs (Ellis Version)	варить	Ekx6PsmdX/	English Distinction	by boiling	whole word	drop-duplicate	boil / cook (by boiling)			restates the Translation	
 mutable	Russian - Mutable Verbs (Ellis Version)	встречать	NSEY7c<J$r	Translation	encounter someone	whole word	move-to-distinction	meet	encounter someone; run into someone		single sense; qualifies the whole word	
@@ -759,5 +753,23 @@ mutable	Russian - Mutable Numerals (Ellis Version)	первый (numeral)	B.OZ`5
 mutable	Russian - Mutable Numerals (Ellis Version)	первый (numeral)	B.OZ`5x]dH	English Distinction	numeral	whole word	drop-header-duplicate	first		hard-stem adjective declension	repeats the deck header	
 mutable	Russian - Mutable Numerals (Ellis Version)	второй	Ii8k1Ha0|?	Translation	2nd in order	whole word	move-to-distinction	second	2nd in order; declines like an adjective	stressed-ending adjective declension (-ой)	single sense; qualifies the whole word	
 mutable	Russian - Mutable Numerals (Ellis Version)	второй	Ii8k1Ha0|?	English Distinction	declines like an adjective	whole word	keep	second	2nd in order; declines like an adjective	stressed-ending adjective declension (-ой)	serves no pair (covered)	
-mutable	Russian - Mutable Verbs (Ellis Version)	узнавать	dySqA/93B)	English Distinction	know by sight	whole word	keep	find out / recognize	know by sight		separates a collision	
-mutable	Russian - Mutable Verbs (Ellis Version)	признавать	sXC)n4e>h1	English Distinction	acknowledge	whole word	keep	admit / recognize	acknowledge		separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	летать	e%mvv?LRZ,	English Distinction	habitually, round trips	whole word	keep	to fly	habitually, round trips		serves no pair (none)	
+mutable	Russian - Mutable Verbs (Ellis Version)	бегать	nGuzyLiKzQ	English Distinction	habitually, round trips	whole word	keep	run	habitually, round trips		serves no pair (none)	
+mutable	Russian - Mutable Verbs (Ellis Version)	плавать	LX/H9V6`h$	English Distinction	habitually, round trips	whole word	keep	swim / sail	habitually, round trips		separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	ездить	EpzJvDrgXi	Translation	by vehicle	sense 1 of 2	keep-inline	go (by vehicle) / ride	by vehicle, habitually		qualifies one sense of several	
+mutable	Russian - Mutable Verbs (Ellis Version)	ездить	EpzJvDrgXi	English Distinction	by vehicle, habitually	whole word	keep	go (by vehicle) / ride	by vehicle, habitually		separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	водить	w],J){q5o7	Translation	a car	sense 2 of 2	keep-inline	lead / drive (a car)	drive a car, habitually		attaches by position to the last synonym; may cover all senses	
+mutable	Russian - Mutable Verbs (Ellis Version)	водить	w],J){q5o7	English Distinction	drive a car, habitually	whole word	keep	lead / drive (a car)	drive a car, habitually		separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	носить	u.A920{X_Z	English Distinction	habitually, round trips	whole word	keep	carry / wear	habitually, round trips		separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	возить	QbH#J}_yw+	Translation	someone	sense 2 of 2	keep-inline	transport / drive (someone)	carry someone, habitually		prompt word for one sense	
+mutable	Russian - Mutable Verbs (Ellis Version)	возить	QbH#J}_yw+	English Distinction	carry someone, habitually	whole word	keep	transport / drive (someone)	carry someone, habitually		separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	признавать	sXC)n4e>h1	English Distinction	acknowledge	whole word	keep	admit / recognize	acknowledge		serves no pair (none)	
+mutable	Russian - Mutable Verbs (Ellis Version)	узнавать	dySqA/93B)	English Distinction	also recognize	whole word	keep	know / find out	also recognize		separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	вспоминать	m~qoowsBR<	English Distinction	bring to mind	whole word	keep	remember / recall	bring to mind		separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	пугаться	xj2l,%`iYV	English Distinction	become frightened	whole word	keep	get scared / be frightened	become frightened		separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	лететь	OnPCSj;>a)	English Distinction	one way	whole word	keep	fly	one way		serves no pair (covered)	
+mutable	Russian - Mutable Verbs (Ellis Version)	плыть	pycJf3!{tS	English Distinction	one way	whole word	keep	swim / sail	one way		separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	вести	KgQT`v5*PL	English Distinction	on foot, one way	whole word	keep	lead / take	on foot, one way		separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	нести	sxAnd4z7We	English Distinction	on foot, one way	whole word	keep	carry	on foot, one way		separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	везти	DtxU&fFpS>	Translation	someone	sense 2 of 2	keep-inline	transport / drive (someone)	by vehicle, one way		prompt word for one sense	
+mutable	Russian - Mutable Verbs (Ellis Version)	везти	DtxU&fFpS>	English Distinction	by vehicle, one way	whole word	keep	transport / drive (someone)	by vehicle, one way		separates a collision	
