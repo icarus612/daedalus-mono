@@ -1153,13 +1153,9 @@ class TestBuildRows:
         tsv = all_sheets(Verbs={"v1": verb_fields(**EMPTY_GENERATED_VERB)})
         rows = self.rows(tsv)
         by_field = {r.field: r for r in rows}
-        assert by_field["Perfective"].status == ff.STATUS_UNRESOLVED
-        assert (by_field["Perfective"].value, by_field["Perfective"].reference) == (
-            "",
-            "",
-        )
+        assert "Perfective" not in by_field
         assert by_field["Conjugation"].status == ff.STATUS_FILLED
-        assert by_field["Perfective"].note_type == "Verbs"
+        assert by_field["Conjugation"].note_type == "Verbs"
 
     def test_reference_uses_normalized_lemma(self):
         tsv = all_sheets(Verbs={"v1": verb_fields(**EMPTY_GENERATED_VERB)})

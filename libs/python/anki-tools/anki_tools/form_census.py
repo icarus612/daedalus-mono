@@ -225,6 +225,8 @@ def _structural_reason(sheet: str, field: str, fields: dict[str, str]) -> str | 
             return "noun has no plural (singular-only or uncountable)"
         if field == "Genitive Sg" and fields.get("Gender", "").strip() == "pl-only":
             return "plural-only noun has no singular"
+    if sheet == "Verbs" and field == "Perfective":
+        return "verb has no perfective partner (no perfective cards)"
     if sheet == "Adjectives" and field in ("Short Form", "Comparative"):
         base = fields.get("Russian (m)", "").strip().replace("́", "")
         if base.endswith(_RELATIONAL_ENDINGS):

@@ -55,7 +55,7 @@ _PER_DECK_NOTES = {
 }
 _PER_DECK_CARDS = {
     "Nouns": 1262,
-    "Verbs": 860,
+    "Verbs": 848,
     "Adjectives": 344,
     "Adverbs": 268,
     "Pronouns": 58,
@@ -65,7 +65,7 @@ _FILENAME_RE = re.compile(r"^[^/]+_(?:f1|m2)\.mp3$")
 
 # See test_mutable_words_plan.py's identically-named table for why these
 # are legitimate shared audio, not collisions.
-_EXPECTED_DUPLICATE_SLUGS = {"побежать", "поехать", "значить", "иметь", "первый"}
+_EXPECTED_DUPLICATE_SLUGS = {"побежать", "поехать", "первый"}
 
 
 def _parse_all_rows():
@@ -100,14 +100,14 @@ def test_full_pipeline_note_and_card_totals():
 
     cards_by_sheet = {
         "Nouns": len(nouns) * 2,
-        "Verbs": len(verbs) * 4,
+        "Verbs": sum(4 if v.perfective.strip() else 2 for v in verbs),
         "Adjectives": len(adjectives) * 2,
         "Adverbs": len(adverbs) * 2,
         "Pronouns": len(pronouns) * 2,
         "Numerals": len(numerals) * 2,
     }
     assert cards_by_sheet == _PER_DECK_CARDS
-    assert sum(cards_by_sheet.values()) == 2902
+    assert sum(cards_by_sheet.values()) == 2890
 
 
 def test_full_pipeline_base_word_and_slug_totals():
@@ -117,12 +117,12 @@ def test_full_pipeline_base_word_and_slug_totals():
     for row in (*nouns, *verbs, *adjectives, *adverbs, *pronouns, *numerals):
         all_base_words.extend(row.base_words)
 
-    assert len(all_base_words) == 1447
+    assert len(all_base_words) == 1444
 
     slugs = [sanitize_word_slug(word) for word in all_base_words]
     dupes = {s: c for s, c in Counter(slugs).items() if c > 1}
     assert set(dupes) == _EXPECTED_DUPLICATE_SLUGS, dupes
-    assert len(set(slugs)) == 1442
+    assert len(set(slugs)) == 1441
 
     assert _KNOWN_OVERLAP_SLUGS <= set(slugs)
 
@@ -271,7 +271,7 @@ def test_real_source_reimport_is_idempotent_no_duplicate_notetypes(
         fresh_col.close()
 
 
-def test_real_source_predicted_audio_filenames_well_formed_and_number_2884():
+def test_real_source_predicted_audio_filenames_well_formed_and_number_2882():
     nouns, verbs, adjectives, adverbs, pronouns, numerals = _parse_all_rows()
 
     filenames: set[str] = set()
@@ -279,7 +279,7 @@ def test_real_source_predicted_audio_filenames_well_formed_and_number_2884():
         for base_word in row.base_words:
             filenames.update(plan.audio_names(base_word))
 
-    assert len(filenames) == 2884
+    assert len(filenames) == 2882
     malformed = [name for name in filenames if not _FILENAME_RE.match(name)]
     assert malformed == []
 
@@ -319,7 +319,7 @@ def test_audio_dry_run_over_real_media_dir_reports_exact_pending_count(
     match = re.match(r"total (\d+) / present (\d+) / pending (\d+)$", lines[0])
     assert match is not None
     total, present, pending = (int(g) for g in match.groups())
-    assert total == 2894
+    assert total == 2888
     assert present + pending == total
     assert (
         lines[1]

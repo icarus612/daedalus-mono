@@ -586,11 +586,15 @@ class TestClassifyCells:
         assert cells[0].marker == marker
         assert cells[0].reason.strip()
 
+    def test_blank_verb_perfective_is_not_applicable(self):
+        cells = self.classify("Verbs", {"Perfective": ""})
+        assert [(c.field, c.status) for c in cells] == [("Perfective", fc.NOT_APPLICABLE)]
+
     @pytest.mark.parametrize(
         "sheet", ["Nouns", "Verbs", "Adjectives", "Adverbs", "Pronouns", "Numerals"]
     )
     def test_blank_with_no_rule_is_missing_control(self, sheet):
-        name = fc.INFLECTION_FIELDS[sheet][0]
+        name = fc.INFLECTION_FIELDS[sheet][1 if sheet == "Verbs" else 0]
         cells = self.classify(sheet, {name: ""})
         assert len(cells) == 1
         assert cells[0].status == fc.MISSING
@@ -762,6 +766,8 @@ class TestClassifyCells:
             }
         )
         for cell in self.classify(sheet, overrides):
+            if (sheet, cell.field) == ("Verbs", "Perfective"):
+                continue
             assert cell.status == fc.MISSING
 
 
@@ -811,7 +817,7 @@ PLANNED_EMPTY_COUNTS = {
     "Pronouns": {"Gender Forms": 11},
     "Numerals": {"Gender Forms": 44},
     "Verbs": {
-        "Perfective": 4,
+        "Perfective": 7,
         "Conjugation": 160,
         "я (1sg)": 162,
         "ты (2sg)": 162,

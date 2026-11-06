@@ -113,7 +113,7 @@ DASH_VALUES = {"—", "–", "-", "--"}
 
 EXPECTED_DASH_COUNTS = {
     ("nouns.tsv", "Plural"): 134,
-    ("verbs.tsv", "Perfective"): 4,
+    ("verbs.tsv", "Perfective"): 1,
     ("verbs.tsv", "я (1sg)"): 2,
     ("verbs.tsv", "ты (2sg)"): 2,
     ("verbs.tsv", "они (3pl)"): 2,

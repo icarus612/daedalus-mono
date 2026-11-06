@@ -29,9 +29,7 @@ ROUTED_AWAY_RUNS = {
     "n90~?!Y=KI": ["у́"],
     "q4yM*E)F$*": ["у́"],
 }
-ALLOWED_CYRILLIC_TRANSLATIONS = [
-    'to grant / bestow (as in "добро пожаловать" = welcome)'
-]
+ALLOWED_CYRILLIC_TRANSLATIONS: list[str] = []
 
 CYRILLIC = re.compile(r"[Ѐ-ӿ]")
 RUSSIAN_RUN = re.compile(r"[Ѐ-ӿ́]+(?:-[Ѐ-ӿ́]+)*")

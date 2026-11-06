@@ -1117,6 +1117,7 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
                 f'class="{card_audio.TAPPABLE_CLASS}" onclick="{ASPECT_PLAY_FN}(event)"'
             ),
         )
+        aspect_div = f"{{{{#{counterpart}}}}}{aspect_div}{{{{/{counterpart}}}}}"
         extra_titles.append((word_id, counterpart))
     details_html, standalone_html, detail_script = _detail_block(
         sheet, primary_field, extra_titles
@@ -1142,5 +1143,8 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
             "back", audio_html, russian_div, aspect_div, details_html, standalone_html
         )
         back = _add_russian_cue(back)
+
+    if sheet == "Verbs" and primary_field == "Perfective":
+        qfmt = f"{{{{#Perfective}}}}{qfmt}{{{{/Perfective}}}}"
 
     return qfmt, "\n".join(p for p in ("{{FrontSide}}", back, detail_script) if p)

@@ -156,14 +156,14 @@ def test_no_slash_in_base_words(nouns, verbs, adjectives, adverbs):
 
 def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, numerals):
     nouns_cards = len(nouns) * 2
-    verbs_cards = len(verbs) * 4
+    verbs_cards = sum(4 if v.perfective.strip() else 2 for v in verbs)
     adjectives_cards = len(adjectives) * 2
     adverbs_cards = len(adverbs) * 2
     pronouns_cards = len(pronouns) * 2
     numerals_cards = len(numerals) * 2
 
     assert nouns_cards == 1262
-    assert verbs_cards == 860
+    assert verbs_cards == 848
     assert adjectives_cards == 344
     assert adverbs_cards == 268
     assert pronouns_cards == 58
@@ -175,7 +175,7 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
         + adverbs_cards
         + pronouns_cards
         + numerals_cards
-        == 2902
+        == 2890
     )
 
 
@@ -230,7 +230,7 @@ def test_no_duplicate_ids_or_addtitle_per_side():
 
 # Legitimate shared-audio slugs: same real word reused across rows/decks,
 # not a collision. See each row's Additional Info for why.
-_EXPECTED_DUPLICATE_SLUGS = {"побежать", "поехать", "значить", "иметь", "первый"}
+_EXPECTED_DUPLICATE_SLUGS = {"побежать", "поехать", "первый"}
 
 
 def test_no_slug_collisions_across_all_base_words(
@@ -244,12 +244,12 @@ def test_no_slug_collisions_across_all_base_words(
         + [w for row in pronouns for w in row.base_words]
         + [w for row in numerals for w in row.base_words]
     )
-    assert len(all_words) == 1447
+    assert len(all_words) == 1444
 
     slugs = [sanitize_word_slug(w) for w in all_words]
     dupes = {slug: c for slug, c in Counter(slugs).items() if c > 1}
     assert set(dupes) == _EXPECTED_DUPLICATE_SLUGS, dupes
-    assert len(set(slugs)) == 1442
+    assert len(set(slugs)) == 1441
 
 
 def test_named_media_overlap_slugs_present(nouns, verbs, adjectives, adverbs):
@@ -484,7 +484,11 @@ def test_structure_mirrors_reference_wrapper_divs_and_addtitle(tmp_path):
 
     for sheet, card_index, side_name, content in _all_sides():
         if side_name == "qfmt":
-            assert content.startswith('<div id="front">'), (sheet, card_index)
+            if sheet == "Verbs" and card_index >= 2:
+                assert content.startswith('{{#Perfective}}<div id="front">')
+                assert content.endswith("{{/Perfective}}")
+            else:
+                assert content.startswith('<div id="front">'), (sheet, card_index)
         else:
             assert re.search(r'<div id="back">.*?</div>\s*<script>', content, re.S), (
                 sheet,
