@@ -584,11 +584,11 @@ def test_government_overrides_cases_for_any_section(notes: list[Note]) -> None:
 
 
 def test_collision_totals(groups: list[collisions.CollisionGroup]) -> None:
-    assert len(groups) == 217
-    assert sum(len(g.members) for g in groups) == 475
-    assert len({m.guid for g in groups for m in g.members}) == 389
+    assert len(groups) == 214
+    assert sum(len(g.members) for g in groups) == 469
+    assert len({m.guid for g in groups for m in g.members}) == 387
     assert Counter(g.mechanism for g in groups) == {
-        "cue": 126,
+        "cue": 123,
         "header": 83,
         "pill": 7,
         "header+pill": 1,
@@ -1194,7 +1194,7 @@ def test_cli_groups_prints_table(capsys: pytest.CaptureFixture[str]) -> None:
     out = capsys.readouterr().out
     assert code == 0
     assert out.splitlines()[0].split("\t")[:3] == ["sense", "mechanism", "members"]
-    assert len(out.splitlines()) == 218
+    assert len(out.splitlines()) == 215
 
 
 def test_cli_pos_counts_prints_fields(capsys: pytest.CaptureFixture[str]) -> None:
