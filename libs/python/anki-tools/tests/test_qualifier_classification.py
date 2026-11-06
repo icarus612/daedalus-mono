@@ -24,7 +24,17 @@ UNBUILT_BASELINE_GUIDS = {
     "B9<ldHd%Q|",
     "uGCt-H97.M",
 }
-NEW_VERB_HEADWORD = "жаловать"
+NEW_VERB_HEADWORDS = {
+    "жаловать",
+    "узнавать",
+    "вспоминать",
+    "пугаться",
+    "лететь",
+    "плыть",
+    "вести",
+    "нести",
+    "везти",
+}
 CUE_SUPERSEDED_BY_CLASSIFICATION = {
     "по",
     "из",
@@ -254,12 +264,12 @@ def read_baseline() -> dict[str, str]:
     return {r["guid"]: r["Translation"] for r in read_tsv(BASELINE)}
 
 
-def test_guid_set_changes_only_by_the_pin_and_the_new_verb(notes):
+def test_guid_set_changes_only_by_the_pin_and_the_new_verbs(notes):
     baseline = read_baseline()
     assert len(baseline) == 1474
     assert set(baseline) - set(notes) == UNBUILT_BASELINE_GUIDS
     added = set(notes) - set(baseline)
-    assert {notes[g]["headword"] for g in added} == {NEW_VERB_HEADWORD}
+    assert {notes[g]["headword"] for g in added} == NEW_VERB_HEADWORDS
 
 
 def test_meaning_freeze_against_the_captured_baseline(notes):

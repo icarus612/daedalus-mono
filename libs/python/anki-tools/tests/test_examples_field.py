@@ -29,6 +29,19 @@ ROUTED_AWAY_RUNS = {
     "n90~?!Y=KI": ["у́"],
     "q4yM*E)F$*": ["у́"],
 }
+ASPECT_SPLIT_RUNS = {
+    "HZM.2*$v>c": ["узнать"],
+    "s<s/rL*ifK": ["вспомнить"],
+    "uUg8fQDUSY": ["испугаться"],
+    "EpzJvDrgXi": ["ехать", "по"],
+    "LX/H9V6`h$": ["плыть", "по"],
+    "QbH#J}_yw+": ["везти", "повезти"],
+    "e%mvv?LRZ,": ["лететь", "по"],
+    "nGuzyLiKzQ": ["бежать", "по"],
+    "u.A920{X_Z": ["нести", "понести"],
+    "w],J){q5o7": ["вести", "повести"],
+}
+EXPECTED_LOST_RUNS = {**ROUTED_AWAY_RUNS, **ASPECT_SPLIT_RUNS}
 ALLOWED_CYRILLIC_TRANSLATIONS: list[str] = []
 
 CYRILLIC = re.compile(r"[Ѐ-ӿ]")
@@ -76,7 +89,7 @@ def _runs(*texts):
 
 def test_no_translation_contains_cyrillic():
     translations = [translation for _, translation, _, _ in _all_notes()]
-    assert len(translations) == 1469
+    assert len(translations) == 1477
     assert _translations_with_cyrillic(translations) == ALLOWED_CYRILLIC_TRANSLATIONS
 
 
@@ -124,7 +137,7 @@ def _runs_by_guid():
 
 def test_no_russian_run_dropped_by_the_examples_migration():
     before = json.loads(BEFORE_SNAPSHOT.read_text(encoding="utf-8"))
-    assert _lost_runs(before, _runs_by_guid()) == ROUTED_AWAY_RUNS
+    assert _lost_runs(before, _runs_by_guid()) == EXPECTED_LOST_RUNS
 
 
 def test_round_trip_check_reports_a_dropped_run():
@@ -133,7 +146,7 @@ def test_round_trip_check_reports_a_dropped_run():
     victim = next(guid for guid, runs in before.items() if len(runs) > 1)
     dropped = sorted(before[victim])[0]
     after[victim] = after[victim] - {dropped}
-    assert _lost_runs(before, after) == {**ROUTED_AWAY_RUNS, victim: [dropped]}
+    assert _lost_runs(before, after) == {**EXPECTED_LOST_RUNS, victim: [dropped]}
 
 
 @pytest.mark.parametrize(

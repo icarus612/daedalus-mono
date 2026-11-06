@@ -102,7 +102,7 @@ EXPECTED_HEADERS = {
 
 EXPECTED_LINE_COUNTS = {
     "nouns.tsv": 632,
-    "verbs.tsv": 216,
+    "verbs.tsv": 224,
     "adjectives.tsv": 173,
     "adverbs.tsv": 155,
     "pronouns.tsv": 30,
@@ -113,7 +113,6 @@ DASH_VALUES = {"—", "–", "-", "--"}
 
 EXPECTED_DASH_COUNTS = {
     ("nouns.tsv", "Plural"): 134,
-    ("verbs.tsv", "Perfective"): 1,
     ("verbs.tsv", "я (1sg)"): 2,
     ("verbs.tsv", "ты (2sg)"): 2,
     ("verbs.tsv", "они (3pl)"): 2,

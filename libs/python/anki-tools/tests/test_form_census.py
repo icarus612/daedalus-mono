@@ -817,7 +817,7 @@ PLANNED_EMPTY_COUNTS = {
     "Pronouns": {"Gender Forms": 11},
     "Numerals": {"Gender Forms": 44},
     "Verbs": {
-        "Perfective": 7,
+        "Perfective": 18,
         "Conjugation": 160,
         "я (1sg)": 162,
         "ты (2sg)": 162,
@@ -860,7 +860,7 @@ class TestRealData:
     def test_tsv_note_counts(self, tsv_notes):
         assert fc.note_counts(tsv_notes) == {
             "Nouns": 631,
-            "Verbs": 215,
+            "Verbs": 223,
             "Adjectives": 172,
             "Adverbs": 134,
             "Pronouns": 29,

@@ -516,7 +516,7 @@ def test_format_groups_table_empty_has_header_only() -> None:
 
 
 def test_load_notes_counts_and_order(notes: list[Note]) -> None:
-    assert len(notes) == 1469
+    assert len(notes) == 1477
     assert [n.family for n in notes[:233]] == ["immutable"] * 233
     assert {n.family for n in notes[233:]} == {"mutable"}
     mutable_sections = list(dict.fromkeys(n.section for n in notes[233:]))
@@ -529,7 +529,7 @@ def test_load_notes_counts_and_order(notes: list[Note]) -> None:
         "Numerals",
     ]
     counts = Counter(n.section for n in notes[233:])
-    assert [counts[s] for s in mutable_sections] == [631, 215, 172, 134, 29, 55]
+    assert [counts[s] for s in mutable_sections] == [631, 223, 172, 134, 29, 55]
 
 
 def test_load_notes_fields(notes: list[Note]) -> None:
@@ -539,7 +539,7 @@ def test_load_notes_fields(notes: list[Note]) -> None:
         assert note.english_distinction == ENGLISH_DISTINCTIONS.get(note.headword, "")
         if note.family == "mutable":
             assert note.note_type == mutable_words_plan.NOTE_TYPE_NAMES[note.section]
-    assert len({n.guid for n in notes}) == 1469
+    assert len({n.guid for n in notes}) == 1477
 
 
 def test_every_english_distinction_key_matches_a_headword(notes: list[Note]) -> None:
@@ -584,11 +584,11 @@ def test_government_overrides_cases_for_any_section(notes: list[Note]) -> None:
 
 
 def test_collision_totals(groups: list[collisions.CollisionGroup]) -> None:
-    assert len(groups) == 206
-    assert sum(len(g.members) for g in groups) == 451
-    assert len({m.guid for g in groups for m in g.members}) == 375
+    assert len(groups) == 213
+    assert sum(len(g.members) for g in groups) == 468
+    assert len({m.guid for g in groups for m in g.members}) == 386
     assert Counter(g.mechanism for g in groups) == {
-        "cue": 116,
+        "cue": 123,
         "header": 82,
         "pill": 7,
         "header+pill": 1,
@@ -1194,7 +1194,7 @@ def test_cli_groups_prints_table(capsys: pytest.CaptureFixture[str]) -> None:
     out = capsys.readouterr().out
     assert code == 0
     assert out.splitlines()[0].split("\t")[:3] == ["sense", "mechanism", "members"]
-    assert len(out.splitlines()) == 207
+    assert len(out.splitlines()) == 214
 
 
 def test_cli_pos_counts_prints_fields(capsys: pytest.CaptureFixture[str]) -> None:

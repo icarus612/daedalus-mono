@@ -102,7 +102,7 @@ def _audio_field_for(word):
 
 def test_row_counts(nouns, verbs, adjectives, adverbs, pronouns, numerals):
     assert len(nouns) == 631
-    assert len(verbs) == 215
+    assert len(verbs) == 223
     assert len(adjectives) == 172
     assert len(adverbs) == 134
     assert len(pronouns) == 29
@@ -163,7 +163,7 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
     numerals_cards = len(numerals) * 2
 
     assert nouns_cards == 1262
-    assert verbs_cards == 848
+    assert verbs_cards == 856
     assert adjectives_cards == 344
     assert adverbs_cards == 268
     assert pronouns_cards == 58
@@ -175,7 +175,7 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
         + adverbs_cards
         + pronouns_cards
         + numerals_cards
-        == 2890
+        == 2898
     )
 
 
@@ -230,7 +230,7 @@ def test_no_duplicate_ids_or_addtitle_per_side():
 
 # Legitimate shared-audio slugs: same real word reused across rows/decks,
 # not a collision. See each row's Additional Info for why.
-_EXPECTED_DUPLICATE_SLUGS = {"побежать", "поехать", "первый"}
+_EXPECTED_DUPLICATE_SLUGS = {"первый"}
 
 
 def test_no_slug_collisions_across_all_base_words(
@@ -244,12 +244,12 @@ def test_no_slug_collisions_across_all_base_words(
         + [w for row in pronouns for w in row.base_words]
         + [w for row in numerals for w in row.base_words]
     )
-    assert len(all_words) == 1444
+    assert len(all_words) == 1449
 
     slugs = [sanitize_word_slug(w) for w in all_words]
     dupes = {slug: c for slug, c in Counter(slugs).items() if c > 1}
     assert set(dupes) == _EXPECTED_DUPLICATE_SLUGS, dupes
-    assert len(set(slugs)) == 1441
+    assert len(set(slugs)) == 1448
 
 
 def test_named_media_overlap_slugs_present(nouns, verbs, adjectives, adverbs):
