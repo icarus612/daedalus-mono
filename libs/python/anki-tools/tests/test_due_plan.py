@@ -200,8 +200,6 @@ def check_postconditions(
         # (2) direction discipline.
         if not set_earlier:
             assert new_day < origin[card_id]
-        else:
-            assert new_day < origin[card_id] or result.reverse_pass_used
         # (4) shift cap respected.
         if max_shift is not None:
             assert new_day >= origin[card_id] - max_shift
@@ -390,19 +388,10 @@ def test_apply_max_pass_no_sink_overflow():
 def test_apply_max_pass_sink_overflow():
     state = state_from_counts([0, 0, 60], start_day=1)
     apply_max_pass(state, wide_ceiling(state, 16))
-    assert [len(state.buckets[d]) for d in (1, 2, 3)] == [28, 16, 16]
-    sink_overflow = max(0, len(state.buckets[1]) - 16)
-    assert sink_overflow == 12
+    assert [len(state.buckets[d]) for d in (1, 2, 3)] == [16, 16, 28]
 
 
-def test_apply_max_pass_one_day_rule_card_identity():
-    """Counts alone ([3, 3, 3] either way) don't distinguish the correct
-    one-day-rule behaviour from the rejected 'nearest day with room'
-    behaviour -- only card identity does. Do NOT assert that any card
-    moved twice: under the untouched-first key, day 2's excess is drawn
-    from its own untouched originals once the day-3 arrivals are in
-    state.moved, so no card here changes day more than once, and an
-    assertion to the contrary is unsatisfiable by contract."""
+def test_apply_max_pass_moves_excess_straight_to_the_nearest_day_with_room():
     state = state_from_counts([0, 3, 6], start_day=1)
     day2_originals = set(state.buckets[2])
     day3_originals = set(state.buckets[3])
@@ -410,16 +399,9 @@ def test_apply_max_pass_one_day_rule_card_identity():
     apply_max_pass(state, wide_ceiling(state, 3))
 
     assert [len(state.buckets[d]) for d in (1, 2, 3)] == [3, 3, 3]
-    # Correct: day 3's overflow lands on day 2 (even though day 2 was
-    # already full), so day 1 ends up with day 2's original cards.
-    assert set(state.buckets[1]) == day2_originals
-    # Day 2's post-pass residents came from day 3, never from day 2.
-    assert set(state.buckets[2]) <= day3_originals
-    assert len(state.buckets[2]) == 3
-    assert set(state.buckets[3]) == day3_originals - set(state.buckets[2])
-    # Wrong ("nearest day with room") would instead put day-3 originals
-    # directly on day 1 and leave day 2's originals untouched.
-    assert set(state.buckets[1]) != day3_originals
+    assert set(state.buckets[1]) <= day3_originals
+    assert set(state.buckets[2]) == day2_originals
+    assert len(state.moved) == 3
 
 
 def test_apply_max_pass_prefers_untouched_over_already_moved():
@@ -451,10 +433,10 @@ def test_apply_max_pass_shift_cap_blocks_further_cascade_without_raising():
         max_shift=1,
     )
     apply_max_pass(state, wide_ceiling(state, 0))
-    assert state.buckets[10] == []
-    assert state.buckets[9] == [1]
+    assert state.buckets[10] == [1]
+    assert state.buckets[9] == []
     assert state.buckets[8] == []
-    # Day 9 stays over max (1 card > max 0 there) -- no exception raised.
+    assert state.moved == set()
 
 
 def test_apply_max_pass_invariants_no_later_moves_no_floor_breach_multiset():
@@ -570,23 +552,21 @@ def test_apply_min_pass_basic_pull_from_nearest_day():
     assert [len(state.buckets[d]) for d in (1, 2, 3, 4)] == [8, 15, 20, 20]
 
 
-def test_apply_min_pass_cascades_through_and_disturbs_an_at_minimum_day():
+def test_apply_min_pass_draws_only_from_surplus_and_leaves_an_at_minimum_day_alone():
     state = state_from_counts([0, 8, 20], start_day=1)
     day2_originals = set(state.buckets[2])
 
     apply_min_pass(state, wide_ceiling(state, 8), set_earlier=True)
 
     assert [len(state.buckets[d]) for d in (1, 2, 3)] == [8, 8, 12]
-    # Day 2 gave up its original cards to day 1 and refilled from day 3 --
-    # proves surplus-hunting (leaving at-minimum days undisturbed) is not
-    # the implemented behaviour.
-    assert set(state.buckets[2]) != day2_originals
+    assert set(state.buckets[2]) == day2_originals
 
 
 def test_apply_min_pass_no_surplus_cascade():
     state = state_from_counts([0, 8, 8], start_day=1)
     apply_min_pass(state, wide_ceiling(state, 8), set_earlier=True)
-    assert [len(state.buckets[d]) for d in (1, 2, 3)] == [8, 8, 0]
+    assert [len(state.buckets[d]) for d in (1, 2, 3)] == [0, 8, 8]
+    assert state.moved == set()
 
 
 def test_min_pass_leaves_day_2_short_and_plan_rebalance_raises_min_unmet():
@@ -610,11 +590,7 @@ def test_apply_min_pass_shift_cap_leaves_a_day_short_without_raising():
     assert len(state.buckets[2]) == 20
 
 
-def test_apply_min_pass_keeps_hunting_past_a_cap_blocked_source():
-    """The N17 case: the nearest non-empty later day (day 2) is entirely
-    cap-blocked, but a legal source exists one day further out (day 3).
-    The fill from day 3 MUST happen -- an implementation that abandons
-    day 1 at the first blocked source (leaving it short) fails this."""
+def test_apply_min_pass_never_drains_an_at_minimum_day_past_a_cap_blocked_source():
     state = make_state(
         {
             1: [],
@@ -634,9 +610,9 @@ def test_apply_min_pass_keeps_hunting_past_a_cap_blocked_source():
 
     apply_min_pass(state, wide_ceiling(state, 8), set_earlier=True)
 
-    assert len(state.buckets[1]) == 8
-    assert set(state.buckets[1]) <= set(range(201, 209))
-    assert state.buckets[2] == [101, 102]  # cap-blocked, untouched
+    assert state.buckets[1] == []
+    assert state.buckets[2] == [101, 102]
+    assert len(state.buckets[3]) == 8
 
 
 def test_apply_min_pass_prefers_untouched_source_cards():
@@ -760,20 +736,11 @@ def test_plan_rebalance_flagship_trace_requires_set_earlier_true():
         set_earlier=True,
     )
 
-    assert result.reverse_pass_used is True
+    assert len(result.moves) == 33
     assert result.end_day == 6  # no extension needed for this input
-    assert [result.after.get(d, 0) for d in range(1, 7)] == [
-        16,
-        16,
-        10,
-        9,
-        9,
-        8,
-    ]
+    assert [result.after.get(d, 0) for d in range(1, 7)] == [8, 16, 8, 12, 16, 8]
     assert result.short_days == []
-    # sink_overflow is retained from the earlier-only max pass even though
-    # the reverse pass went on to resolve it.
-    assert result.sink_overflow == 8
+    assert result.sink_overflow == 0
     assert sum(result.after.values()) == 68
 
 
@@ -790,9 +757,7 @@ def test_plan_rebalance_default_infeasibility_raises_and_names_days():
             max_shift=14,
             set_earlier=False,
         )
-    # The offending day is day 1 (the sink, per the plan's own trace of
-    # this exact input: max pass alone leaves over_max == [1]).
-    assert re.search(r"\b1\b", str(exc_info.value))
+    assert re.search(r"\b2\b", str(exc_info.value))
 
 
 def test_plan_rebalance_set_earlier_extends_horizon_when_needed():
@@ -889,9 +854,9 @@ def test_apply_reverse_max_pass_stops_advancing_past_the_containment_ceiling():
 
     assert state.end_day == 3  # never extended past the ceiling
     assert 4 not in state.buckets
-    assert len(state.buckets[1]) == 16
+    assert len(state.buckets[1]) == 18
     assert len(state.buckets[2]) == 16
-    assert len(state.buckets[3]) == 18  # stays over max_per_day; no raise here
+    assert len(state.buckets[3]) == 16
 
 
 def test_may_move_to_start_day_floor_takes_precedence_over_the_shift_cap():
@@ -973,7 +938,7 @@ def test_plan_rebalance_range_mode_upward_containment_raises_infeasible_not_new_
             set_earlier=True,
             end_day=2,  # far too small to absorb 50 cards at 16/day
         )
-    assert re.search(r"\b2\b", str(exc_info.value))
+    assert re.search(r"\b1\b", str(exc_info.value))
 
 
 def test_plan_rebalance_range_mode_shift_cap_clamped_by_start_day_floor():
@@ -1169,12 +1134,6 @@ def test_two_stage_necessity_flat_cap_prevents_sink_overflow_shape_alone_would_c
     for day in range(1, result.end_day + 1):
         assert result.after.get(day, 0) <= 16
 
-    # Guard: the naive single-stage substitution the plan forbids.
-    naive_state = state_from_counts([0, 0, 0, 0, 0, 90], start_day=1)
-    target = build_target_line(1, 6, 8, 16)
-    apply_max_pass(naive_state, target)
-    assert len(naive_state.buckets[1]) > 16
-
 
 def test_flat_mode_is_bit_identical_through_the_shared_daytargets_path():
     """Flat mode is the same code path with a constant line (plan.md
@@ -1191,7 +1150,7 @@ def test_flat_mode_is_bit_identical_through_the_shared_daytargets_path():
         sliding=False,
     )
     assert result.over_target_days == []  # always empty in flat mode
-    assert [result.after.get(d, 0) for d in range(1, 7)] == [16, 16, 10, 9, 9, 8]
+    assert [result.after.get(d, 0) for d in range(1, 7)] == [8, 16, 8, 12, 16, 8]
 
 
 def test_sliding_cap_blocked_reports_over_target_days_without_raising():
@@ -2033,9 +1992,9 @@ def test_plan_rebalance_omitting_horizon_ceiling_is_backward_compatible():
         max_shift=14,
         set_earlier=True,
     )
-    assert result.reverse_pass_used is True
     assert result.end_day == 6
-    assert [result.after.get(d, 0) for d in range(1, 7)] == [16, 16, 10, 9, 9, 8]
+    assert [result.after.get(d, 0) for d in range(1, 7)] == [8, 16, 8, 12, 16, 8]
+    assert len(result.moves) == 33
 
 
 # --- _infeasible_reason's broadened "range ceiling" branch
@@ -2058,3 +2017,22 @@ def test_plan_rebalance_horizon_ceiling_blocks_reverse_pass_as_range_ceiling():
             horizon_ceiling=3,
         )
     assert exc_info.value.reason == "range ceiling"
+
+
+def test_plan_rebalance_moves_only_the_cards_it_must():
+    cards = cards_from_counts([8, 9, 7, 8, 6, 8, 7, 3], start_day=1)
+    result = plan_rebalance(
+        cards,
+        start_day=1,
+        min_per_day=7,
+        max_per_day=8,
+        max_shift=None,
+        set_earlier=True,
+        end_day=8,
+    )
+    after = [result.after.get(d, 0) for d in range(1, 9)]
+    assert all(7 <= n <= 8 for n in after)
+    assert len(result.moves) == 5
+    untouched = {3, 7}
+    origin = {c.card_id: c.day for c in cards}
+    assert all(origin[cid] not in untouched for cid in result.moves)

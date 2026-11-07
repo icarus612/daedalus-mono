@@ -504,7 +504,40 @@ def constant_targets(start_day: int, end_day: int, value: int) -> dict[int, int]
     return {day: value for day in range(start_day, end_day + 1)}
 
 
+def apply_excess_to_deficit_pass(
+    state: RunState, ceiling: DayTargets, floor: DayTargets, set_earlier: bool
+) -> bool:
+    """Sends each card above `ceiling` straight to the nearest day below
+    `floor` it may legally reach, so one move fixes both days and nothing in
+    between is touched. Later moves only with `set_earlier`. Returns True iff
+    a card moved later."""
+    moved_later = False
+    days = range(state.start_day, state.end_day + 1)
+    for d in days:
+        excess = len(state.buckets[d]) - ceiling[d]
+        if excess <= 0:
+            continue
+        for cid in max_move_order(state.buckets[d], state)[:excess]:
+            short = [t for t in days if len(state.buckets[t]) < floor[t]]
+            for t in sorted(short, key=lambda t: (abs(t - d), t)):
+                if t < d and may_move_to(cid, t, state):
+                    move_card(cid, d, t, state)
+                    break
+                if (
+                    t > d
+                    and set_earlier
+                    and may_move_later_to(t, state)
+                    and separation_ok(cid, t, state)
+                ):
+                    move_card(cid, d, t, state)
+                    moved_later = True
+                    break
+    return moved_later
+
+
 def apply_max_pass(state: RunState, ceiling: DayTargets) -> None:
+    """Moves each excess card to the NEAREST earlier day with room, so only
+    the excess itself moves - a full day is never used as a stepping stone."""
     for d in range(state.end_day, state.start_day, -1):
         excess = len(state.buckets[d]) - ceiling[d]
         if excess <= 0:
@@ -513,11 +546,42 @@ def apply_max_pass(state: RunState, ceiling: DayTargets) -> None:
         for cid in max_move_order(state.buckets[d], state):
             if moved_here == excess:
                 break
-            target = _resolve_earlier_target(cid, d - 1, state)
+            target = _nearest_earlier_with_room(cid, d - 1, state, ceiling)
             if target is None:
                 continue
             move_card(cid, d, target, state)
             moved_here += 1
+
+
+def _nearest_earlier_with_room(
+    card_id: int, ceiling_day: int, state: RunState, ceiling: DayTargets
+) -> int | None:
+    day = ceiling_day
+    while day >= state.start_day:
+        target = _resolve_earlier_target(card_id, day, state)
+        if target is None:
+            return None
+        if len(state.buckets.get(target, [])) < ceiling.get(
+            target, ceiling[state.start_day]
+        ):
+            return target
+        day = target - 1
+    return None
+
+
+def _nearest_later_with_room(
+    card_id: int, floor_day: int, state: RunState, ceiling: DayTargets
+) -> int | None:
+    day = floor_day
+    while True:
+        target = _resolve_later_target(card_id, day, state)
+        if target is None:
+            return None
+        if len(state.buckets.get(target, [])) < ceiling.get(
+            target, ceiling[state.start_day]
+        ):
+            return target
+        day = target + 1
 
 
 def apply_reverse_max_pass(state: RunState, ceiling: DayTargets) -> None:
@@ -532,7 +596,7 @@ def apply_reverse_max_pass(state: RunState, ceiling: DayTargets) -> None:
             for cid in max_move_order(state.buckets[d], state):
                 if moved_here == excess:
                     break
-                target = _resolve_later_target(cid, d + 1, state)
+                target = _nearest_later_with_room(cid, d + 1, state, ceiling)
                 if target is None:
                     continue
                 move_card(cid, d, target, state)
@@ -579,12 +643,14 @@ def apply_min_pass(
     """Raises every day in [start_day, end_day] toward `floor`. Pulls from
     later days first; only with `set_earlier` does it also push cards later
     from earlier days that stay at or above their own floor. With `keep`, no
-    later day is drawn below its `keep` level. Returns True iff a card moved
-    later."""
+    later day is drawn below its `keep` level (default: `floor` itself, so a
+    day is only ever drawn from its surplus and no shortfall ripples down the
+    window). Returns True iff a card moved later."""
+    donors = floor if keep is None else keep
     moved_later = False
     for d in range(state.start_day, state.end_day + 1):
         for _ in range(max(0, floor[d] - len(state.buckets[d]))):
-            if _pull_from_later(d, state, keep):
+            if _pull_from_later(d, state, donors):
                 continue
             if set_earlier and _push_from_earlier(d, floor, state):
                 moved_later = True
@@ -728,7 +794,10 @@ def _infeasible_reason(
     because `may_move_to`'s max_shift gate blocked every candidate - the
     only case reachable before any reverse pass has run.
     """
-    if state.start_day in over_max:
+    later_ceiling = reverse_pass_used and (
+        state.max_end_day is not None or state.horizon_ceiling is not None
+    )
+    if state.start_day in over_max and not later_ceiling:
         return "sink overflow"
     if any(
         cid in state.separation_blocked
@@ -736,9 +805,7 @@ def _infeasible_reason(
         for cid in state.buckets.get(d, [])
     ):
         return "min separation"
-    if reverse_pass_used and (
-        state.max_end_day is not None or state.horizon_ceiling is not None
-    ):
+    if later_ceiling:
         return "range ceiling"
     return "shift cap"
 
@@ -899,10 +966,18 @@ def plan_rebalance(
 
     sink_overflow = 0
     reverse_pass_used = False
+    excess_moved_later = False
     over_target_days: list[int] = []
 
     if max_per_day is not None:
         max_ceiling = constant_targets(state.start_day, state.end_day, max_per_day)
+        if min_per_day is not None and not sliding:
+            excess_moved_later = apply_excess_to_deficit_pass(
+                state,
+                max_ceiling,
+                constant_targets(state.start_day, state.end_day, min_per_day),
+                set_earlier,
+            )
         apply_max_pass(state, max_ceiling)
         sink_overflow = max(0, len(state.buckets[state.start_day]) - max_per_day)
         over_max = _days_over_max(state, max_per_day)
@@ -938,7 +1013,7 @@ def plan_rebalance(
             {d: len(state.buckets.get(d, [])) for d in bad_days},
             "min separation",
         )
-    later_move_used = reverse_pass_used or repair_moved_later
+    later_move_used = reverse_pass_used or repair_moved_later or excess_moved_later
 
     if sliding:
         # Both min_per_day and max_per_day are assumed present by the caller

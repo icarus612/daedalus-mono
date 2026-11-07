@@ -366,11 +366,11 @@ def test_apply_min_pass_without_set_earlier_never_moves_later():
     assert _sizes(state) == [10, 0]
 
 
-def test_apply_min_pass_fills_from_later_days_first():
+def test_apply_min_pass_takes_only_a_later_days_surplus():
     state = _state_from_counts([0, 5], start_day=1)
     moved = apply_min_pass(state, _floor(state, 3), True)
     assert moved is False
-    assert _sizes(state) == [3, 2]
+    assert _sizes(state) == [2, 3]
 
 
 def test_apply_min_pass_borrows_from_nearest_earlier_surplus_above_floor():

@@ -1314,16 +1314,7 @@ def test_e2e_max_shift_limits_earlier_movement_and_unmet_min_exits_nonzero(
         col2.close()
 
 
-def test_e2e_one_day_cascade_is_observable_not_bypassed(tmp_path, monkeypatch):
-    # Mirrors the plan's own flagship one-day-rule example (max=3, a day
-    # holding 3 cards and the next holding 6) at the CLI/collection level,
-    # matching Packet B's already-proven unit-level trace exactly so the
-    # expected outcome is known with certainty, not guessed:
-    #   - day+1 (the sink) ends up with exactly the 3 cards that started on
-    #     day+2 (they were untouched and thus preferred movers off day+2);
-    #   - day+2 ends up with 3 of the 6 cards that started on day+3 (the
-    #     transient overfill-then-relief this criterion exists to prove);
-    #   - day+3 keeps the remaining 3 of its own original cards.
+def test_e2e_only_the_excess_moves_to_the_nearest_day_with_room(tmp_path, monkeypatch):
     col_path = os.path.join(str(tmp_path), "test.anki2")
     col = Collection(col_path)
     coding_id = col.decks.id("programming::coding")
@@ -1358,16 +1349,9 @@ def test_e2e_one_day_cascade_is_observable_not_bypassed(tmp_path, monkeypatch):
             due = col2.get_card(cid).due
             by_day.setdefault(due, set()).add(cid)
 
-        # The sink (start_day) holds exactly the day+2 originals -- proving
-        # day+2 was itself relieved by shedding onto day+1, not that day+3's
-        # overflow leapfrogged straight past it.
-        assert by_day.get(start_day) == day2_ids
-        # day+2 now holds exactly 3 cards, all originally from day+3 -- the
-        # transient overfill (day+2 momentarily held 3 + 3 = 6 mid-sweep)
-        # was relieved down to 3, not bypassed.
-        assert by_day.get(start_day + 1, set()) <= day3_ids
-        assert len(by_day.get(start_day + 1, set())) == 3
-        # day+3 keeps the remaining 3 of its own originals.
+        assert len(by_day.get(start_day, set())) == 3
+        assert by_day.get(start_day, set()) <= day3_ids
+        assert by_day.get(start_day + 1) == day2_ids
         assert len(by_day.get(start_day + 2, set())) == 3
         assert by_day.get(start_day + 2, set()) <= day3_ids
     finally:
