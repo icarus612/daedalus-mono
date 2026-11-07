@@ -100,7 +100,10 @@ def test_full_pipeline_note_and_card_totals():
 
     cards_by_sheet = {
         "Nouns": len(nouns) * 2,
-        "Verbs": sum(4 if v.perfective.strip() else 2 for v in verbs),
+        "Verbs": sum(
+            2 * (bool(v.imperfective.strip()) + bool(v.perfective.strip()))
+            for v in verbs
+        ),
         "Adjectives": len(adjectives) * 2,
         "Adverbs": len(adverbs) * 2,
         "Pronouns": len(pronouns) * 2,

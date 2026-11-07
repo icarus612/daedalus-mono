@@ -156,7 +156,9 @@ def test_no_slash_in_base_words(nouns, verbs, adjectives, adverbs):
 
 def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, numerals):
     nouns_cards = len(nouns) * 2
-    verbs_cards = sum(4 if v.perfective.strip() else 2 for v in verbs)
+    verbs_cards = sum(
+        2 * (bool(v.imperfective.strip()) + bool(v.perfective.strip())) for v in verbs
+    )
     adjectives_cards = len(adjectives) * 2
     adverbs_cards = len(adverbs) * 2
     pronouns_cards = len(pronouns) * 2
@@ -484,9 +486,10 @@ def test_structure_mirrors_reference_wrapper_divs_and_addtitle(tmp_path):
 
     for sheet, card_index, side_name, content in _all_sides():
         if side_name == "qfmt":
-            if sheet == "Verbs" and card_index >= 2:
-                assert content.startswith('{{#Perfective}}<div id="front">')
-                assert content.endswith("{{/Perfective}}")
+            if sheet == "Verbs":
+                own = "Perfective" if card_index >= 2 else "Imperfective"
+                assert content.startswith(f'{{{{#{own}}}}}<div id="front">')
+                assert content.endswith(f"{{{{/{own}}}}}")
             else:
                 assert content.startswith('<div id="front">'), (sheet, card_index)
         else:
@@ -508,12 +511,17 @@ def test_pairwise_distinct_qfmt_per_sheet():
                 assert qfmts[i] != qfmts[j], (sheet, i, j)
 
 
+def _only(aspect):
+    other = "Perfective" if aspect == "imperfective" else "Imperfective"
+    return f"{{{{^{other}}}}} only{{{{/{other}}}}}"
+
+
 def test_verbs_reverse_front_carries_inline_aspect_qualifier():
     for card_index, aspect in ((1, "imperfective"), (3, "perfective")):
         qfmt = mutable_words_plan.build_template("Verbs", card_index)[0]
         expected = (
             '<div id="translation">{{Translation}}'
-            f' <span class="aspect aspect-{aspect}">({aspect})</span></div>'
+            f' <span class="aspect aspect-{aspect}">({aspect}{_only(aspect)})</span></div>'
         )
         assert expected in qfmt, (card_index, qfmt)
 
@@ -688,7 +696,7 @@ def test_every_verb_card_names_the_headwords_own_aspect():
     ):
         qfmt, afmt = mutable_words_plan.build_template("Verbs", card_index)
         side = qfmt if 'id="translation"' in qfmt else afmt
-        assert f'<span class="aspect aspect-{aspect}">({aspect})</span>' in side, (
+        assert f'<span class="aspect aspect-{aspect}">({aspect}{_only(aspect)})</span>' in side, (
             card_index
         )
 
@@ -700,7 +708,7 @@ def test_the_headword_aspect_never_contradicts_the_counterpart_line():
     ):
         qfmt, afmt = mutable_words_plan.build_template("Verbs", card_index)
         whole = qfmt + afmt
-        assert f'aspect-{own}">({own})</span>' in whole, card_index
+        assert f'aspect-{own}">({own}{_only(own)})</span>' in whole, card_index
         assert f'aspect-{other}">({other})</span>' not in whole, card_index
         assert f'<div id="{other}" ' in afmt, card_index
 

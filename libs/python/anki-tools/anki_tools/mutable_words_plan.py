@@ -1048,9 +1048,11 @@ def _translation_div(sheet: str, primary_field: str) -> str:
     if sheet != "Verbs":
         return '<div id="translation">{{Translation}}</div>'
     aspect = _slug_for_field_name(primary_field)
+    counterpart = _ASPECT_COUNTERPART[primary_field][0]
     return (
         '<div id="translation">{{Translation}}'
-        f' <span class="aspect aspect-{aspect}">({aspect})</span></div>'
+        f' <span class="aspect aspect-{aspect}">'
+        f"({aspect}{{{{^{counterpart}}}}} only{{{{/{counterpart}}}}})</span></div>"
     )
 
 
@@ -1144,7 +1146,7 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
         )
         back = _add_russian_cue(back)
 
-    if sheet == "Verbs" and primary_field == "Perfective":
-        qfmt = f"{{{{#Perfective}}}}{qfmt}{{{{/Perfective}}}}"
+    if sheet == "Verbs":
+        qfmt = f"{{{{#{primary_field}}}}}{qfmt}{{{{/{primary_field}}}}}"
 
     return qfmt, "\n".join(p for p in ("{{FrontSide}}", back, detail_script) if p)

@@ -817,7 +817,7 @@ PLANNED_EMPTY_COUNTS = {
     "Pronouns": {"Gender Forms": 11},
     "Numerals": {"Gender Forms": 44},
     "Verbs": {
-        "Perfective": 18,
+        "Perfective": 17,
         "Conjugation": 160,
         "я (1sg)": 162,
         "ты (2sg)": 162,

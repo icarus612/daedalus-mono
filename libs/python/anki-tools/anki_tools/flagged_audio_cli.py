@@ -5,9 +5,8 @@ Reports by default. `--fix` hands the words to `word_audio --replace`, which
 archives each old file before writing the new one, so a regeneration is
 reversible from the archive directory.
 
-The collection is opened READ-ONLY and the flags are left alone: clearing
-them is the user's signal that a word now sounds right, not this tool's to
-spend.
+Once every regeneration succeeds, `--fix` clears the flags on the cards it
+regenerated, so a flag still standing means the audio still needs work.
 """
 
 import argparse
@@ -20,9 +19,11 @@ from anki.errors import AnkiException, DBError
 from anki_tools.audio_naming import get_anki_collection_path
 from anki_tools.flagged_audio import (
     FLAG_NAMES,
+    UNFLAGGED,
     MODE_DOUBLE,
     MODE_SINGLE,
     count_by_flag,
+    flag_of,
     words_to_regenerate,
 )
 
@@ -80,6 +81,24 @@ def scan(col):
     return rows
 
 
+def picked_card_ids(col, flags_wanted):
+    wanted = set(flags_wanted) if flags_wanted is not None else None
+    picked = []
+    for card_id in col.db.list("select id from cards where (flags & 7) != 0"):
+        flag = flag_of(col.get_card(card_id).flags)
+        if flag != UNFLAGGED and (wanted is None or flag in wanted):
+            picked.append(card_id)
+    return picked
+
+
+def clear_flags(path, card_ids):
+    col = Collection(path)
+    try:
+        col.set_user_flag_for_cards(0, card_ids)
+    finally:
+        col.close()
+
+
 def regenerate(mode, words):
     command = [
         sys.executable,
@@ -107,6 +126,7 @@ def main(argv=None):
         return 2
     try:
         rows = scan(col)
+        card_ids = picked_card_ids(col, args.flags)
     finally:
         col.close()
 
@@ -137,9 +157,8 @@ def main(argv=None):
     if failed:
         print(f"\nregeneration failed for: {', '.join(failed)}", file=sys.stderr)
         return 1
-    print(
-        "\nflags left as they were -- clear them yourself once the audio sounds right"
-    )
+    clear_flags(path, card_ids)
+    print(f"\ncleared the flag on {len(card_ids)} regenerated card(s)")
     return 0
 
 

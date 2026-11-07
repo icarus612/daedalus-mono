@@ -87,7 +87,7 @@ def test_main_with_fix_drives_word_audio_once_per_mode(monkeypatch, capsys):
         flagged_audio.MODE_SINGLE: ["школа"],
         flagged_audio.MODE_DOUBLE: ["как (conjunction)"],
     }
-    assert "flags left as they were" in capsys.readouterr().out
+    assert "cleared the flag on 2 regenerated card(s)" in capsys.readouterr().out
 
 
 def test_main_returns_nonzero_when_a_regeneration_fails(monkeypatch):
@@ -97,6 +97,27 @@ def test_main_returns_nonzero_when_a_regeneration_fails(monkeypatch):
     )
     monkeypatch.setattr("anki_tools.flagged_audio_cli.regenerate", lambda m, w: 1)
     assert main(["--collection", "ignored", "--fix"]) == 1
+
+
+def test_fix_clears_only_the_picked_flags_after_success(monkeypatch):
+    rows = [(4, MUTABLE_NOUNS, ["школа"]), (1, IMMUTABLE, ["как (conjunction)"])]
+    collection = _FakeCollection(rows)
+    monkeypatch.setattr(
+        "anki_tools.flagged_audio_cli.Collection", lambda path: collection
+    )
+    monkeypatch.setattr("anki_tools.flagged_audio_cli.regenerate", lambda m, w: 0)
+    assert main(["--collection", "ignored", "--fix", "--flag", "4"]) == 0
+    assert collection.cleared == (0, [0])
+
+
+def test_failed_regeneration_leaves_flags(monkeypatch):
+    collection = _FakeCollection([(4, MUTABLE_NOUNS, ["школа"])])
+    monkeypatch.setattr(
+        "anki_tools.flagged_audio_cli.Collection", lambda path: collection
+    )
+    monkeypatch.setattr("anki_tools.flagged_audio_cli.regenerate", lambda m, w: 1)
+    assert main(["--collection", "ignored", "--fix"]) == 1
+    assert not hasattr(collection, "cleared")
 
 
 def test_main_closes_the_collection_even_when_the_scan_raises(monkeypatch):
@@ -177,6 +198,9 @@ class _FakeCollection:
             raise RuntimeError("scan blew up")
         flags, note_type, headwords = self._rows[card_id]
         return _FakeCard(card_id, flags, _FakeNote(note_type, headwords))
+
+    def set_user_flag_for_cards(self, flag, card_ids):
+        self.cleared = (flag, list(card_ids))
 
     def close(self):
         self.closed = True

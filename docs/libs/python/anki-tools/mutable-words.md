@@ -29,6 +29,12 @@ imperfective, `Card 3` perfective → translation, `Card 4` translation → perf
 merging both aspects onto one two-card note. Each template side carries exactly one audio field, for
 the aspect that side is about.
 
+**One-aspect verbs.** A verb with no partner keeps its word in the field for its real aspect and leaves
+the other blank: an imperfective-only verb (`значить`, `ходить`) has a blank `Perfective`, a
+perfective-only verb (`заблудиться`) a blank `Imperfective`. Each pair of templates is wrapped in its
+own field, so only the cards for the aspect that exists are generated, and the aspect label then reads
+"(imperfective only)" / "(perfective only)" instead of "(imperfective)" / "(perfective)".
+
 **Adverbs split two slash-joined rows into four.** The source's `направо / справа` and `налево /
 слева` rows each name two distinct adverbs, not one with a shorthand slash. `mutable_words_plan.py`'s
 `ROW_SPLITS` table splits each into two independent notes (each getting its own GUID, its own audio),

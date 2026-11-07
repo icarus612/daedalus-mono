@@ -161,5 +161,6 @@ then were expected: the collection held cases the source did not yet derive.
   Mutable Nouns twins of indeclinable nouns) are deleted at that step after a backup.
 - Audio for `жаловать / пожаловать` and any flagged-audio regeneration need `ELEVENLABS_API_KEY`;
   run `python -m anki_tools.word_audio пожаловать --mode single` in a shell where it is exported,
-  and `python -m anki_tools.flagged_audio_cli --fix` for flagged cards. Until then the built mutable
+  and `python -m anki_tools.flagged_audio_cli --fix` for flagged cards (it clears each card's flag
+  once its audio is regenerated). Until then the built mutable
   package references four missing audio files.
