@@ -763,8 +763,6 @@ mutable	Russian - Mutable Verbs (Ellis Version)	водить	w],J){q5o7	English 
 mutable	Russian - Mutable Verbs (Ellis Version)	носить	u.A920{X_Z	English Distinction	habitually, round trips	whole word	keep	carry / wear	habitually, round trips		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	возить	QbH#J}_yw+	Translation	someone	sense 2 of 2	keep-inline	transport / drive (someone)	carry someone, habitually		prompt word for one sense	
 mutable	Russian - Mutable Verbs (Ellis Version)	возить	QbH#J}_yw+	English Distinction	carry someone, habitually	whole word	keep	transport / drive (someone)	carry someone, habitually		separates a collision	
-mutable	Russian - Mutable Verbs (Ellis Version)	признавать	sXC)n4e>h1	English Distinction	acknowledge	whole word	keep	admit / recognize	acknowledge		serves no pair (none)	
-mutable	Russian - Mutable Verbs (Ellis Version)	узнавать	dySqA/93B)	English Distinction	also recognize	whole word	keep	know / find out	also recognize		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	вспоминать	m~qoowsBR<	English Distinction	bring to mind	whole word	keep	remember / recall	bring to mind		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	пугаться	xj2l,%`iYV	English Distinction	become frightened	whole word	keep	get scared / be frightened	become frightened		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	лететь	OnPCSj;>a)	English Distinction	one way	whole word	keep	fly	one way		serves no pair (covered)	
@@ -773,3 +771,12 @@ mutable	Russian - Mutable Verbs (Ellis Version)	вести	KgQT`v5*PL	English Di
 mutable	Russian - Mutable Verbs (Ellis Version)	нести	sxAnd4z7We	English Distinction	on foot, one way	whole word	keep	carry	on foot, one way		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	везти	DtxU&fFpS>	Translation	someone	sense 2 of 2	keep-inline	transport / drive (someone)	by vehicle, one way		prompt word for one sense	
 mutable	Russian - Mutable Verbs (Ellis Version)	везти	DtxU&fFpS>	English Distinction	by vehicle, one way	whole word	keep	transport / drive (someone)	by vehicle, one way		separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	признавать	sXC)n4e>h1	English Distinction	acknowledge	whole word	keep	admit / recognize	acknowledge		separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	узнавать	dySqA/93B)	English Distinction	know by sight	whole word	keep	find out / recognize	know by sight		separates a collision	
+mutable	Russian - Mutable Adverbs (Ellis Version)	страшно	vk0z7hj#WV	Translation	it's scary	sense 1 of 2	keep-inline	scary (it's scary)<br>terribly (very)	frighteningly		qualifies one sense of several	
+mutable	Russian - Mutable Adverbs (Ellis Version)	страшно	vk0z7hj#WV	Translation	very	sense 2 of 2	keep-inline	scary (it's scary)<br>terribly (very)	frighteningly		qualifies one sense of several	
+mutable	Russian - Mutable Adverbs (Ellis Version)	страшно	vk0z7hj#WV	English Distinction	frighteningly	whole word	keep	scary (it's scary)<br>terribly (very)	frighteningly		separates a collision	
+mutable	Russian - Mutable Adverbs (Ellis Version)	по-другому	x!V0_xHX;s	English Distinction	conversational	whole word	keep	differently / another way	conversational		separates a collision	
+mutable	Russian - Mutable Adverbs (Ellis Version)	замечательно	P/>~xMzPP:	Translation	it's wonderful	sense 1 of 2	keep-inline	wonderful (it's wonderful)<br>wonderfully	remarkably		qualifies one sense of several	
+mutable	Russian - Mutable Adverbs (Ellis Version)	замечательно	P/>~xMzPP:	English Distinction	remarkably	whole word	keep	wonderful (it's wonderful)<br>wonderfully	remarkably		separates a collision	
+mutable	Russian - Mutable Adverbs (Ellis Version)	наивно	GWF*wWgd?{	Translation	it's naive	sense 1 of 2	keep-inline	naive (it's naive)<br>naively			qualifies one sense of several	

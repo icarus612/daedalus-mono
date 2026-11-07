@@ -25,6 +25,15 @@ UNBUILT_BASELINE_GUIDS = {
     "uGCt-H97.M",
 }
 NEW_VERB_HEADWORDS = {
+    "лично",
+    "страшно",
+    "по-другому",
+    "замечательно",
+    "наивно",
+    "активно",
+    "приятный",
+    "английский",
+    "позже",
     "жаловать",
     "узнавать",
     "вспоминать",
@@ -114,7 +123,7 @@ def routing():
 
 
 def test_artifact_sizes():
-    assert len(read_tsv(VOCAB / "qualifier-classification.tsv")) == 774
+    assert len(read_tsv(VOCAB / "qualifier-classification.tsv")) == 781
     assert len(read_tsv(DATA / "case-text-routing.tsv")) == 114
 
 

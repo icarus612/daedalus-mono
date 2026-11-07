@@ -48,16 +48,16 @@ _KNOWN_OVERLAP_SLUGS = {
 _PER_DECK_NOTES = {
     "Nouns": 631,
     "Verbs": 223,
-    "Adjectives": 172,
-    "Adverbs": 134,
+    "Adjectives": 174,
+    "Adverbs": 141,
     "Pronouns": 29,
     "Numerals": 55,
 }
 _PER_DECK_CARDS = {
     "Nouns": 1262,
     "Verbs": 856,
-    "Adjectives": 344,
-    "Adverbs": 268,
+    "Adjectives": 348,
+    "Adverbs": 282,
     "Pronouns": 58,
     "Numerals": 110,
 }
@@ -83,8 +83,8 @@ def test_full_pipeline_note_and_card_totals():
 
     assert len(nouns) == 631
     assert len(verbs) == 223
-    assert len(adjectives) == 172
-    assert len(adverbs) == 134
+    assert len(adjectives) == 174
+    assert len(adverbs) == 141
     assert len(pronouns) == 29
     assert len(numerals) == 55
 
@@ -96,7 +96,7 @@ def test_full_pipeline_note_and_card_totals():
         + len(pronouns)
         + len(numerals)
     )
-    assert total_notes == 1244
+    assert total_notes == 1253
 
     cards_by_sheet = {
         "Nouns": len(nouns) * 2,
@@ -107,7 +107,7 @@ def test_full_pipeline_note_and_card_totals():
         "Numerals": len(numerals) * 2,
     }
     assert cards_by_sheet == _PER_DECK_CARDS
-    assert sum(cards_by_sheet.values()) == 2898
+    assert sum(cards_by_sheet.values()) == 2916
 
 
 def test_full_pipeline_base_word_and_slug_totals():
@@ -117,12 +117,12 @@ def test_full_pipeline_base_word_and_slug_totals():
     for row in (*nouns, *verbs, *adjectives, *adverbs, *pronouns, *numerals):
         all_base_words.extend(row.base_words)
 
-    assert len(all_base_words) == 1449
+    assert len(all_base_words) == 1458
 
     slugs = [sanitize_word_slug(word) for word in all_base_words]
     dupes = {s: c for s, c in Counter(slugs).items() if c > 1}
     assert set(dupes) == _EXPECTED_DUPLICATE_SLUGS, dupes
-    assert len(set(slugs)) == 1448
+    assert len(set(slugs)) == 1457
 
     assert _KNOWN_OVERLAP_SLUGS <= set(slugs)
 
@@ -211,7 +211,7 @@ def test_real_source_builds_the_exact_deck_and_card_counts_unmodified(
                 package_path=out_path, options=ImportAnkiPackageOptions()
             )
         )
-        assert fresh_col.note_count() == 1244
+        assert fresh_col.note_count() == 1253
 
         for sheet, expected_notes in _PER_DECK_NOTES.items():
             deck_name = plan.subdeck_name(sheet)
@@ -256,7 +256,7 @@ def test_real_source_reimport_is_idempotent_no_duplicate_notetypes(
         fresh_col.import_anki_package(
             ImportAnkiPackageRequest(package_path=out2, options=options)
         )
-        assert fresh_col.note_count() == 1244
+        assert fresh_col.note_count() == 1253
         guids_after_second = {
             fresh_col.get_note(nid).guid for nid in fresh_col.find_notes("")
         }
@@ -279,7 +279,7 @@ def test_real_source_predicted_audio_filenames_well_formed_and_number_2896():
         for base_word in row.base_words:
             filenames.update(plan.audio_names(base_word))
 
-    assert len(filenames) == 2896
+    assert len(filenames) == 2914
     malformed = [name for name in filenames if not _FILENAME_RE.match(name)]
     assert malformed == []
 
@@ -319,7 +319,7 @@ def test_audio_dry_run_over_real_media_dir_reports_exact_pending_count(
     match = re.match(r"total (\d+) / present (\d+) / pending (\d+)$", lines[0])
     assert match is not None
     total, present, pending = (int(g) for g in match.groups())
-    assert total == 2898
+    assert total == 2916
     assert present + pending == total
     assert (
         lines[1]

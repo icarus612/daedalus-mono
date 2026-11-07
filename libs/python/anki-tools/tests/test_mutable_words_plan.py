@@ -103,8 +103,8 @@ def _audio_field_for(word):
 def test_row_counts(nouns, verbs, adjectives, adverbs, pronouns, numerals):
     assert len(nouns) == 631
     assert len(verbs) == 223
-    assert len(adjectives) == 172
-    assert len(adverbs) == 134
+    assert len(adjectives) == 174
+    assert len(adverbs) == 141
     assert len(pronouns) == 29
     assert len(numerals) == 55
 
@@ -164,8 +164,8 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
 
     assert nouns_cards == 1262
     assert verbs_cards == 856
-    assert adjectives_cards == 344
-    assert adverbs_cards == 268
+    assert adjectives_cards == 348
+    assert adverbs_cards == 282
     assert pronouns_cards == 58
     assert numerals_cards == 110
     assert (
@@ -175,7 +175,7 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
         + adverbs_cards
         + pronouns_cards
         + numerals_cards
-        == 2898
+        == 2916
     )
 
 
@@ -244,12 +244,12 @@ def test_no_slug_collisions_across_all_base_words(
         + [w for row in pronouns for w in row.base_words]
         + [w for row in numerals for w in row.base_words]
     )
-    assert len(all_words) == 1449
+    assert len(all_words) == 1458
 
     slugs = [sanitize_word_slug(w) for w in all_words]
     dupes = {slug: c for slug, c in Counter(slugs).items() if c > 1}
     assert set(dupes) == _EXPECTED_DUPLICATE_SLUGS, dupes
-    assert len(set(slugs)) == 1448
+    assert len(set(slugs)) == 1457
 
 
 def test_named_media_overlap_slugs_present(nouns, verbs, adjectives, adverbs):
@@ -1201,7 +1201,7 @@ def test_parse_adverbs_reads_the_case_column_including_split_rows(adverbs, tmp_p
     parsed = mutable_words_plan.parse_adverbs(
         _tsv_with_case(ADVERBS_TSV, tmp_path, "Genitive")
     )
-    assert len(parsed) == len(adverbs) == 134
+    assert len(parsed) == len(adverbs) == 141
     assert {row.case for row in parsed} == {"Genitive"}
     by_adverb = {row.adverb: row for row in parsed}
     for word in ("направо", "справа", "налево", "слева"):

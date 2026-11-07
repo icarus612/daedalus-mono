@@ -90,7 +90,7 @@ def _runs(*texts):
 
 def test_no_translation_contains_cyrillic():
     translations = [translation for _, translation, _, _ in _all_notes()]
-    assert len(translations) == 1477
+    assert len(translations) == 1486
     assert _translations_with_cyrillic(translations) == ALLOWED_CYRILLIC_TRANSLATIONS
 
 

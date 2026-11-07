@@ -812,8 +812,8 @@ REAL_DATA_DIR = Path(fc.__file__).resolve().parent / "data" / "russian-vocabular
 
 PLANNED_EMPTY_COUNTS = {
     "Nouns": {"Plural": 134, "Genitive Sg": 622, "Genitive Pl": 623},
-    "Adjectives": {"Short Form": 158, "Comparative": 165},
-    "Adverbs": {"Comparative": 40},
+    "Adjectives": {"Short Form": 159, "Comparative": 166},
+    "Adverbs": {"Comparative": 43},
     "Pronouns": {"Gender Forms": 11},
     "Numerals": {"Gender Forms": 44},
     "Verbs": {
@@ -861,8 +861,8 @@ class TestRealData:
         assert fc.note_counts(tsv_notes) == {
             "Nouns": 631,
             "Verbs": 223,
-            "Adjectives": 172,
-            "Adverbs": 134,
+            "Adjectives": 174,
+            "Adverbs": 141,
             "Pronouns": 29,
             "Numerals": 55,
         }
@@ -891,7 +891,7 @@ class TestRealData:
             if strict[sheet][field] != count
         ]
         assert ("Adjectives", "Short Form") in differing
-        assert strict["Adjectives"]["Short Form"] == 21
+        assert strict["Adjectives"]["Short Form"] == 22
 
     def test_every_empty_cell_is_classified_and_totals_match(self, tsv_notes):
         cells = fc.census_cells(tsv_notes)
@@ -934,4 +934,4 @@ class TestRealData:
         loose = fc.reconcile(tsv_notes, collection, dash_rule=True)
         strict = fc.reconcile(tsv_notes, collection, dash_rule=False)
         assert loose.tsv_counts != strict.tsv_counts
-        assert loose.tsv_counts["Adjectives"]["Short Form"] == 28
+        assert loose.tsv_counts["Adjectives"]["Short Form"] == 29
