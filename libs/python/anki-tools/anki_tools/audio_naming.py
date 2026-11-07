@@ -147,7 +147,16 @@ def spoken_text_for(source_text: str) -> str:
     "как" resolve through the same entry rather than needing one each.
     """
     stripped = strip_qualifier(source_text)
-    return SPOKEN_TEXT_OVERRIDES.get(stripped, stripped)
+    return _sentence_form(SPOKEN_TEXT_OVERRIDES.get(stripped, stripped))
+
+
+def _sentence_form(text: str) -> str:
+    """Capitalised and closed with a full stop: a bare lowercase word makes
+    the TTS model split it (a fragment, a gap, then the word)."""
+    if not text:
+        return text
+    text = text[0].upper() + text[1:]
+    return text if text[-1] in ".!?" else text + "."
 
 
 _AUDIO_SRC = re.compile(r'<audio[^>]*\bsrc="([^"]+)"', re.I)

@@ -116,16 +116,16 @@ def test_spoken_text_overrides_table_contents():
 
 @pytest.mark.parametrize("source,expected", list(SPOKEN_TEXT_OVERRIDES.items()))
 def test_spoken_text_for_returns_override_for_every_table_key(source, expected):
-    assert spoken_text_for(source) == expected
+    assert spoken_text_for(source) == expected[0].upper() + expected[1:] + "."
 
 
 def test_spoken_text_for_clitic_particles_do_not_collapse_with_their_examples():
     # The exact hazard named in the contract: "-то"/"-ка" must speak as
     # bare "то"/"ка", never as some example word the particle attaches to.
-    assert spoken_text_for("-то") == "то"
+    assert spoken_text_for("-то") == "То."
     assert spoken_text_for("-то") != "-то"
     assert "кто" not in spoken_text_for("-то")
-    assert spoken_text_for("-ка") == "ка"
+    assert spoken_text_for("-ка") == "Ка."
     assert spoken_text_for("-ка") != "-ка"
     assert "скажи" not in spoken_text_for("-ка")
 
@@ -135,7 +135,7 @@ def test_spoken_text_for_passthrough_for_unlisted_words(word):
     # словно/будто/тоже/также are split into standalone single-word rows
     # upstream and therefore never appear as combined strings here -- each
     # speaks itself.
-    assert spoken_text_for(word) == word
+    assert spoken_text_for(word) == word[0].upper() + word[1:] + "."
 
 
 # ---------------------------------------------------------------------------
@@ -163,7 +163,7 @@ def test_filename_and_spoken_text_diverge_for_documented_pairs(source, expected_
     # Filename is built from the SOURCE text's own slug -- never the spoken
     # form's slug.
     assert filename == f"{sanitize_word_slug(source)}_f1.mp3"
-    assert spoken == expected_spoken
+    assert spoken == expected_spoken[0].upper() + expected_spoken[1:] + "."
 
     # The two must be different strings for every one of these six pairs.
     assert filename != spoken

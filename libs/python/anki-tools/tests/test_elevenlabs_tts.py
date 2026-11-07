@@ -1151,7 +1151,7 @@ def test_spoken_text_diverges_from_filename_for_v_vo(tmp_path):
         budget=RequestBudget(1),
     )
     sent_json = session.post.call_args.kwargs["json"]
-    assert sent_json["text"] == "во"
+    assert sent_json["text"] == "Во."
     assert os.path.basename(results[0].path) == "в-во_f1.mp3"
 
 
@@ -1168,7 +1168,7 @@ def test_spoken_text_diverges_from_filename_for_clitic_to(tmp_path):
         budget=RequestBudget(1),
     )
     sent_json = session.post.call_args.kwargs["json"]
-    assert sent_json["text"] == "то"
+    assert sent_json["text"] == "То."
     assert os.path.basename(results[0].path) == f"{sanitize_word_slug('-то')}_f1.mp3"
 
 
