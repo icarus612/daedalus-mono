@@ -1,3 +1,5 @@
+import csv
+import dataclasses
 import re
 
 import pytest
@@ -12,6 +14,8 @@ from anki_tools.grammar_deck import (
     apply_rows,
     parse_rows,
 )
+
+VOCAB = DATA_PATH.parent.parent / "russian-vocabulary"
 
 EXPECTED_COUNTS = {
     "Singular Noun Endings": 36,
@@ -59,9 +63,55 @@ def test_pronoun_answers_match_table():
     assert by_front["Pronoun: 'He / It' (Он / Оно) → Prepositional?"] == "нём"
 
 
-def test_targets_and_examples_are_russian_only_where_expected():
+def test_example_words_are_russian():
     for row in parse_rows():
-        assert not re.search("[A-Za-z]", row.example), row.front
+        for example in row.examples:
+            assert not re.search("[A-Za-z]", example.base + example.form), row.front
+
+
+def _plain(word):
+    return word.replace("\u0301", "")
+
+
+def _vocab(name):
+    path = VOCAB / name
+    return list(csv.DictReader(path.open(encoding="utf-8"), delimiter="\t"))
+
+
+def test_example_bases_come_from_the_mutable_deck():
+    words = {_plain(r["Russian"]) for r in _vocab("nouns.tsv")}
+    words |= {_plain(r["Russian (m)"]) for r in _vocab("adjectives.tsv")}
+    words |= {_plain(r["Russian"]) for r in _vocab("pronouns.tsv")}
+    for row in parse_rows():
+        for example in row.examples:
+            assert _plain(example.base) in words, (row.front, example.base)
+
+
+def test_noun_example_forms_match_the_deck_columns():
+    nouns = {_plain(r["Russian"]): r for r in _vocab("nouns.tsv")}
+    columns = {
+        ("Singular", "Genitive"): "Genitive Sg",
+        ("Plural", "Nominative"): "Plural",
+        ("Plural", "Genitive"): "Genitive Pl",
+    }
+    checked = 0
+    for row in parse_rows():
+        number = row.front.split(" ", 1)[0]
+        case = re.search(r"→ (\w+)", row.front).group(1)
+        column = columns.get((number, case))
+        if column is None:
+            continue
+        for example in row.examples:
+            assert _plain(example.form) == _plain(nouns[example.base][column])
+            checked += 1
+    assert checked == 28
+
+
+def test_each_card_has_a_male_and_a_female_example_line():
+    for row in parse_rows():
+        html = row.fields()[3]
+        assert html.count('class="ex-line"') == 2
+        assert html.count("_m2.mp3") == 2 and html.count("_f1.mp3") == 2
 
 
 def test_rejects_duplicate_front(tmp_path):
@@ -90,7 +140,7 @@ def test_apply_builds_decks_and_is_idempotent(col):
 def test_apply_updates_changed_field_without_new_note(col):
     rows = parse_rows()
     apply_rows(col, rows)
-    changed = [rows[0].__class__(**{**rows[0].__dict__, "notes": "edited"})]
+    changed = [dataclasses.replace(rows[0], notes="edited")]
     result = apply_rows(col, changed + rows[1:])
     assert (result.added, result.updated) == (0, 1)
     assert col.note_count() == 150

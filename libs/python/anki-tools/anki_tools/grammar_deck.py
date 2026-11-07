@@ -17,7 +17,9 @@ from anki.collection import Collection
 from anki.errors import AnkiException, DBError
 from anki.utils import to_json_bytes
 
+from anki_tools import card_audio
 from anki_tools.anki_identity import guid_for_row, notetype_id_for_name
+from anki_tools.audio_naming import build_filename
 from anki_tools.audio_naming import get_anki_collection_path
 
 DATA_PATH = Path(__file__).parent / "data" / "russian-grammar" / "case-endings.tsv"
@@ -27,6 +29,8 @@ NOTE_TYPE_NAME = "Russian - Grammar Rules (Ellis Version)"
 NOTE_TYPE_ID = notetype_id_for_name(NOTE_TYPE_NAME)
 GUID_NAMESPACE = "Grammar"
 FIELD_NAMES = ("Type", "Front", "Target", "Example", "Notes")
+MALE_SLOT = "m2"
+FEMALE_SLOT = "f1"
 TABLE_SUBDECKS = {
     "Singular Noun Endings": "a. Singular Noun Endings",
     "Plural Noun Endings": "b. Plural Noun Endings",
@@ -48,10 +52,40 @@ CSS = """.card { font-family: arial; font-size: 22px; text-align: center;
 .target { font-size: 34px; font-weight: bold; margin: 12px 0; }
 .example { font-size: 22px; color: #1a5fb4; }
 .notes { font-size: 16px; color: #666; margin-top: 12px; }
+.ex-line { display: flex; align-items: center; justify-content: center; gap: 10px;
+  font-size: 22px; color: #1a5fb4; margin: 8px 0; }
+.ex-note { font-size: 15px; color: #888; }
 .nightMode .card, .card.nightMode { color: white; background-color: #2f2f31; }
 .nightMode .type, .nightMode .notes { color: #aaa; }
-.nightMode .example { color: #99c1f1; }
-"""
+.nightMode .example, .nightMode .ex-line { color: #99c1f1; }
+""" + card_audio.AUDIO_BUTTON_CSS
+
+
+@dataclass(frozen=True)
+class Example:
+    base: str
+    form: str
+    note: str
+    slot: str
+
+
+def _play(word: str, slot: str) -> str:
+    return (
+        f'<button class="{card_audio.BUTTON_CLASS} {card_audio.SMALL_BUTTON_CLASS}" '
+        'onclick="this.nextElementSibling.play()">&#9654;</button>'
+        f'<audio src="{build_filename(word, slot)}" preload="none"></audio>'
+    )
+
+
+def example_line(example: Example) -> str:
+    note = f' <span class="ex-note">({example.note})</span>' if example.note else ""
+    return (
+        '<div class="ex-line">'
+        f"{_play(example.base, example.slot)}<span>{example.base}</span>"
+        "<span>&rarr;</span>"
+        f"{_play(example.form, example.slot)}<span>{example.form}</span>{note}"
+        "</div>"
+    )
 
 
 @dataclass(frozen=True)
@@ -60,7 +94,7 @@ class GrammarRow:
     type: str
     front: str
     target: str
-    example: str
+    examples: tuple[Example, Example]
     notes: str
 
     @property
@@ -72,7 +106,8 @@ class GrammarRow:
         return f"{DECK_ROOT}::{TABLE_SUBDECKS[self.table]}"
 
     def fields(self) -> list[str]:
-        return [self.type, self.front, self.target, self.example, self.notes]
+        example = "".join(example_line(e) for e in self.examples)
+        return [self.type, self.front, self.target, example, self.notes]
 
 
 class SourceError(Exception):
@@ -89,7 +124,20 @@ def parse_rows(path: str | os.PathLike = DATA_PATH) -> list[GrammarRow]:
                 type=r["Type"],
                 front=r["Front"],
                 target=r["Target"],
-                example=r["Example"],
+                examples=(
+                    Example(
+                        r["Example 1 Base"],
+                        r["Example 1 Form"],
+                        r["Example 1 Note"],
+                        MALE_SLOT,
+                    ),
+                    Example(
+                        r["Example 2 Base"],
+                        r["Example 2 Form"],
+                        r["Example 2 Note"],
+                        FEMALE_SLOT,
+                    ),
+                ),
                 notes=r["Notes"],
             )
             for r in reader
@@ -100,6 +148,9 @@ def parse_rows(path: str | os.PathLike = DATA_PATH) -> list[GrammarRow]:
             raise SourceError(f"unknown table {row.table!r} for {row.front!r}")
         if not row.front.strip() or not row.target.strip():
             raise SourceError(f"blank front or target: {row!r}")
+        for example in row.examples:
+            if not example.base.strip() or not example.form.strip():
+                raise SourceError(f"blank example for {row.front!r}")
         if row.front in seen:
             raise SourceError(f"duplicate front: {row.front!r}")
         seen.add(row.front)
@@ -148,6 +199,15 @@ def ensure_decks(col: Collection) -> dict[str, int]:
             col.decks.save(deck)
         deck_ids[name] = deck_id
     return deck_ids
+
+
+def audio_words(rows: list[GrammarRow]) -> dict[str, set[str]]:
+    """Every word each voice must have a recording of, keyed by slot."""
+    needed: dict[str, set[str]] = {MALE_SLOT: set(), FEMALE_SLOT: set()}
+    for row in rows:
+        for example in row.examples:
+            needed[example.slot].update((example.base, example.form))
+    return needed
 
 
 @dataclass(frozen=True)
