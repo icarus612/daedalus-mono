@@ -64,9 +64,30 @@ def test_hint_goes_straight_after_the_headword_on_the_russian_anchor():
         prompt_hint.RUSSIAN_HINT_ID,
         prompt_hint.RUSSIAN_ANCHOR,
     )
-    assert out == RUSSIAN_DIV + "\n" + prompt_hint.hint_div(
-        distinction.RUSSIAN_FIELD, prompt_hint.RUSSIAN_HINT_ID
+    assert out == (
+        prompt_hint.CUE_ROW_OPEN
+        + RUSSIAN_DIV
+        + "\n"
+        + prompt_hint.hint_div(distinction.RUSSIAN_FIELD, prompt_hint.RUSSIAN_HINT_ID)
+        + "</div>"
+        + prompt_hint.FIT_HINT_SCRIPT
     )
+
+
+def test_word_and_hint_share_one_centred_row():
+    out = prompt_hint.add_prompt_hint(PROMPT_SIDE, FIELD)
+    assert (
+        prompt_hint.CUE_ROW_OPEN
+        + TRANSLATION_DIV
+        + "\n"
+        + prompt_hint.hint_div(FIELD)
+        + "</div>"
+    ) in out
+    css = prompt_hint.PROMPT_HINT_CSS
+    assert ".cue-row {" in css
+    for rule in ("display: flex", "justify-content: center", "align-items: center"):
+        assert rule in css
+    assert "\twidth:" not in css
 
 
 def test_an_inserted_russian_hint_is_never_its_own_anchor():
@@ -86,7 +107,7 @@ def test_an_inserted_russian_hint_is_never_its_own_anchor():
         )
         == bare
     )
-    assert once.count(prompt_hint.RUSSIAN_HINT_ID) == 1
+    assert once.count(f'id="{prompt_hint.RUSSIAN_HINT_ID}"') == 1
 
 
 def test_two_hints_on_one_anchor_stack_in_reverse_call_order():

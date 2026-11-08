@@ -49,7 +49,9 @@ MEASURE_JS = """
   } : null;
   const visible = (selector) => Array.from(document.querySelectorAll(selector))
     .filter(e => e.getBoundingClientRect().height > 0);
-  const russian = document.getElementById('russian');
+  const word = document.getElementById('russian');
+  const russian = word && word.parentElement.classList.contains('cue-row')
+    ? word.parentElement : word;
   const details = document.getElementById('details');
   const rowRects = rowIds.flatMap(
     id => document.getElementById(id) ? textRects(document.getElementById(id)) : []

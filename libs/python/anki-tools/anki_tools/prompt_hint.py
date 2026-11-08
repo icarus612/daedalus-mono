@@ -30,16 +30,48 @@ RUSSIAN_ANCHOR = "russian"
 
 HINT_IDS = (PROMPT_HINT_ID, RUSSIAN_HINT_ID)
 
-# Matches `.qualifier`'s grey, so a hint reads as
-# secondary to the word it sits under rather than as part of the answer.
-# One rule for every hint id, appended to BOTH families' CSS at the same
-# point, so the two trees keep identical base rules.
+CUE_ROW_CLASS = "cue-row"
+CUE_ROW_OPEN = f'<div class="{CUE_ROW_CLASS}">'
+
+# A wrapped flex item keeps the full leftover width, which pushes the row off
+# centre; shrink each hint's box to its widest rendered line.
+FIT_HINT_SCRIPT = (
+    "<script>(function () {"
+    'document.querySelectorAll(".cue-row > #prompt-hint, .cue-row > #russian-distinction")'
+    ".forEach(function (el) {"
+    "var range = document.createRange(); range.selectNodeContents(el); var w = 0;"
+    "Array.prototype.forEach.call(range.getClientRects(), function (r) {"
+    " w = Math.max(w, r.width); });"
+    'if (w) el.style.width = Math.ceil(w) + "px"; });'
+    "})();</script>"
+)
+
+# The word and its hint share one flex row, centred both ways; a hint too
+# long for the line wraps within its own box, still beside the word.
 PROMPT_HINT_CSS = (
-    ", ".join(f"#{hint_id}" for hint_id in HINT_IDS) + " {\n"
+    f".{CUE_ROW_CLASS} {{\n"
+    "\tdisplay: flex;\n"
+    "\tflex-wrap: nowrap;\n"
+    "\tjustify-content: center;\n"
+    "\talign-items: center;\n"
+    "\tcolumn-gap: .5rem;\n"
+    "}\n\n"
+    f".{CUE_ROW_CLASS} > :first-child {{\n"
+    "\tflex: 0 0 auto;\n"
+    "\tmax-width: 60%;\n"
+    "}\n\n"
+    + ", ".join(f"#{hint_id}" for hint_id in HINT_IDS)
+    + " {\n"
+    "\tflex: 0 1 auto;\n"
+    "\tmin-width: 0;\n"
+    "\ttext-wrap: balance;\n"
     "\ttext-align: center;\n"
     "\tfont-size: 1.2rem;\n"
     "\tcolor: #7f7f7f;\n"
-    "\tpadding-top: .2rem;\n"
+    "}\n\n"
+    + ", ".join(f"#{hint_id}:empty" for hint_id in HINT_IDS)
+    + " {\n"
+    "\tdisplay: none;\n"
     "}"
 )
 
@@ -74,7 +106,8 @@ def add_prompt_hint(
     element_id: str = PROMPT_HINT_ID,
     anchor_id: str = TRANSLATION_ANCHOR,
 ) -> str:
-    """Insert the hint straight after the `#<anchor_id>` div.
+    """Insert the hint straight after the `#<anchor_id>` div, both wrapped in one
+    `.cue-row` so the hint sits beside the word.
 
     Returns the template unchanged when that div is absent -- a listening
     card's question shows no translation, a recall card's question shows no
@@ -87,10 +120,20 @@ def add_prompt_hint(
     if f'id="{element_id}"' in template_html:
         return template_html
     anchor = _ANCHORS.get(anchor_id) or _anchor_pattern(anchor_id)
-    if not anchor.search(template_html):
+    match = anchor.search(template_html)
+    if match is None:
         return template_html
-    return anchor.sub(
-        lambda m: m.group(1) + "\n" + hint_div(field_name, element_id),
-        template_html,
-        count=1,
+    start, end = match.span(1)
+    hint = hint_div(field_name, element_id)
+    if template_html[:start].endswith(CUE_ROW_OPEN):
+        return template_html[:end] + "\n" + hint + template_html[end:]
+    return (
+        template_html[:start]
+        + CUE_ROW_OPEN
+        + match.group(1)
+        + "\n"
+        + hint
+        + "</div>"
+        + FIT_HINT_SCRIPT
+        + template_html[end:]
     )
