@@ -544,9 +544,9 @@ def test_load_notes_fields(notes: list[Note]) -> None:
 
 def test_every_english_distinction_key_matches_a_headword(notes: list[Note]) -> None:
     headwords = {n.headword for n in notes}
-    assert len(ENGLISH_DISTINCTIONS) == 210
+    assert len(ENGLISH_DISTINCTIONS) == 212
     assert set(ENGLISH_DISTINCTIONS) <= headwords
-    assert sum(1 for n in notes if n.english_distinction) == 210
+    assert sum(1 for n in notes if n.english_distinction) == 212
 
 
 def test_provisional_cases(notes: list[Note], governed_notes: list[Note]) -> None:
@@ -705,7 +705,7 @@ def test_map_cues_separates_needs_one_side_nonempty() -> None:
 def test_map_cues_real_entry_count(
     notes: list[Note], groups: list[collisions.CollisionGroup]
 ) -> None:
-    assert len(collisions.map_cues(notes, groups)) == 210
+    assert len(collisions.map_cues(notes, groups)) == 212
 
 
 def test_classify_row_columns_are_declared() -> None:
