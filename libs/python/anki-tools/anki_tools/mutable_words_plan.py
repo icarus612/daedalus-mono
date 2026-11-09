@@ -407,7 +407,7 @@ class AdverbRow:
         ]
 
 
-_CUE_CARRIES_TYPE = frozenset({"ты", "вы"})
+_CUE_CARRIES_TYPE = frozenset({"ты", "вы", "твой"})
 
 
 def _pronoun_type_shown(russian: str, pronoun_type: str, cue: str) -> str:
@@ -415,7 +415,7 @@ def _pronoun_type_shown(russian: str, pronoun_type: str, cue: str) -> str:
 
     An empty field leaves no row on the answer side; the cue stays on the
     English-prompt front untouched. The cue says it when the two are equal, or
-    for `ты` and `вы`, whose cue is the type plus the register.
+    for `ты`, `вы` and `твой`, whose cue is the type plus the register.
     """
     type_words = card_dedup.content_words(pronoun_type)
     cue_words = card_dedup.content_words(cue)

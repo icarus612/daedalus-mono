@@ -124,17 +124,17 @@ _AUDIO_DIV = re.compile(
 # the source document (verified against the real 151-row raw list).
 ROW_SPLITS: dict[str, list[tuple[str, str, str]]] = {
     "словно / будто": [
-        ("словно", "as if / like (literary — a poetic simile)", ""),
+        ("словно", "as if / like", ""),
     ],
     "тоже / также": [
         (
             "тоже",
-            'also / too (same action, different subject — "me too")',
+            "also / too",
             "Я тоже иду",
         ),
         (
             "также",
-            "also / in addition (same subject, an extra thing; more formal)",
+            "also / in addition",
             "Я также купил хлеб",
         ),
     ],

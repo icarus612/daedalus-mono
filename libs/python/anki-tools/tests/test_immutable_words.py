@@ -1592,7 +1592,8 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
         )
         assert len(budto_note_ids) == 1
         budto_note = fresh_col.get_note(budto_note_ids[0])
-        assert budto_note["Translation"] == "as if / as though (often implies doubt)"
+        assert budto_note["Translation"] == "as if / as though"
+        assert budto_note["English Distinction"] == "often implies doubt"
 
         # Audio field: the central "deck-before-audio" claim, on the
         # IMPORTED collection -- every one of the 152 notes carries its

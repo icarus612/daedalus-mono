@@ -51,6 +51,20 @@ CUE_SUPERSEDED_BY_CLASSIFICATION = {
     "ради",
     "бежать",
     "нравиться",
+    "вдоль",
+    "до",
+    "за",
+    "кроме",
+    "между",
+    "над",
+    "насчёт",
+    "о / об",
+    "перед",
+    "поверх",
+    "позади",
+    "с / со",
+    "согласно (preposition)",
+    "среди",
 }
 
 TINT = re.compile(r"</?span\b[^>]*>")
@@ -123,7 +137,7 @@ def routing():
 
 
 def test_artifact_sizes():
-    assert len(read_tsv(VOCAB / "qualifier-classification.tsv")) == 781
+    assert len(read_tsv(VOCAB / "qualifier-classification.tsv")) == 898
     assert len(read_tsv(DATA / "case-text-routing.tsv")) == 114
 
 

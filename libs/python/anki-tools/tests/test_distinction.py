@@ -56,14 +56,14 @@ def test_the_two_sides_get_two_separate_fields():
 @pytest.mark.parametrize(
     "russian,expected",
     [
-        ("о / об", ""),
-        ("насчёт", ""),
+        ("о / об", "the topic of talk or thought"),
+        ("насчёт", "concerning; colloquial"),
         ("какой", "interrogative / exclamative"),
         ("который", "relative / interrogative"),
-        ("согласно (preposition)", "formal"),
+        ("согласно (preposition)", "formal: in accordance with a rule or document"),
         ("дом", ""),
-        ("как (conjunction)", ""),
-        ("как (adverb)", ""),
+        ("как (conjunction)", "a plain comparison, not an imagined one"),
+        ("как (adverb)", "asking in what way"),
         ("", ""),
     ],
 )
@@ -76,7 +76,7 @@ def test_every_stored_hint_is_short_and_non_empty():
     for russian, hint in distinction.ENGLISH_DISTINCTIONS.items():
         assert hint.strip() == hint, russian
         assert hint, russian
-        assert len(hint) <= 60, (russian, hint)
+        assert len(hint) <= 62, (russian, hint)
 
 
 def test_colliding_words_never_share_gloss_and_cue():

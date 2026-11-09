@@ -8,8 +8,8 @@ data steer the verdict and are all listed here, none hidden in the helper:
   inflection cells, stop words, gloss-internal repeats).
 - ALLOWED: note-level pairs that overlap by approved decision or because one
   segment elaborates the other. Each carries its reason.
-- OPEN: real repeats not yet resolved. Empty now; a guard test fails when an
-  entry stops reproducing so the list cannot rot.
+- OPEN: real repeats not yet resolved. A guard test fails when an entry
+  stops reproducing so the list cannot rot.
 """
 
 import dataclasses
@@ -75,6 +75,9 @@ _ELABORATES = (
 )
 
 _CATEGORY_LABEL = "Category is a classification label"
+_CUE_RESTATES_TRANSLATION = (
+    "the cue-sweep cue restates a Translation parenthetical the source still carries"
+)
 
 ALLOWED = {
     (
@@ -82,12 +85,6 @@ ALLOWED = {
         "чтобы / чтоб",
         dedup.RULE_UNION,
         ("so that past or infinitive",),
-    ): _APPROVED_KEEP,
-    (
-        "Mutable Adverbs",
-        "смешно",
-        dedup.RULE_CONTAINED,
-        ("it s funny", "funny"),
     ): _APPROVED_KEEP,
     (
         "Mutable Adverbs",
@@ -182,9 +179,118 @@ ALLOWED = {
         ("health", "health"),
     ): _CATEGORY_LABEL,
     ("Mutable Nouns", "раз", dedup.RULE_EQUAL, ("time", "time")): _CATEGORY_LABEL,
+    (
+        "Immutable Words",
+        "во",
+        dedup.RULE_UNION,
+        ("colloquial exclamation wow look",),
+    ): _ELABORATES,
+    (
+        "Immutable Words",
+        "всё-таки",
+        dedup.RULE_CONTAINED,
+        (
+            "all the same",
+            "concessive all the same after all",
+        ),
+    ): _ELABORATES,
+    (
+        "Immutable Words",
+        "как только",
+        dedup.RULE_CONTAINED,
+        (
+            "the moment that",
+            "the moment that comma before it",
+        ),
+    ): _ELABORATES,
+    (
+        "Immutable Words",
+        "киви",
+        dedup.RULE_CONTAINED,
+        (
+            "the fruit",
+            "neuter as the fruit feminine as the bird",
+        ),
+    ): _ELABORATES,
+    (
+        "Immutable Words",
+        "поэтому",
+        dedup.RULE_CONTAINED,
+        (
+            "the result that s why",
+            "introduces the result that s why",
+        ),
+    ): _ELABORATES,
+    (
+        "Immutable Words",
+        "привет",
+        dedup.RULE_CONTAINED,
+        (
+            "informal",
+            "informal only do not use with strangers or superiors",
+        ),
+    ): _ELABORATES,
+    (
+        "Immutable Words",
+        "хаки",
+        dedup.RULE_CONTAINED,
+        (
+            "the colour",
+            "neuter as a noun also an invariable colour adjective",
+        ),
+    ): _ELABORATES,
+    (
+        "Mutable Adverbs",
+        "здорово",
+        dedup.RULE_CONTAINED,
+        (
+            "colloquial",
+            "здорово different stress great colloquial",
+        ),
+    ): _ELABORATES,
+    (
+        "Mutable Verbs",
+        "приходиться",
+        dedup.RULE_CONTAINED,
+        (
+            "impersonal",
+            (
+                "irregular impersonal used only in 3sg neuter "
+                "придется пришлось and the infinitive"
+            ),
+        ),
+    ): _ELABORATES,
 }
 
-OPEN: dict = {}
+OPEN: dict = {
+    (
+        "Immutable Words",
+        "вообще",
+        dedup.RULE_CONTAINED,
+        (
+            "generally or at all",
+            "in general at all generally speaking",
+        ),
+    ): _CUE_RESTATES_TRANSLATION,
+    (
+        "Immutable Words",
+        "лишь",
+        dedup.RULE_CONTAINED,
+        (
+            "bookish only merely",
+            "only merely bookish",
+        ),
+    ): _CUE_RESTATES_TRANSLATION,
+    (
+        "Immutable Words",
+        "тогда",
+        dedup.RULE_CONTAINED,
+        (
+            "at that time or in that case",
+            "then in that case at that time",
+        ),
+    ): _CUE_RESTATES_TRANSLATION,
+}
 
 _SOURCE_FIELDS = [
     "Russian",

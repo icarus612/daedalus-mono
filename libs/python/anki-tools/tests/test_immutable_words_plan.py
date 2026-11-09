@@ -1058,10 +1058,14 @@ def test_guid_pin_file_still_matches_the_real_source_rows(real_rows):
 # The exact override texts from l3.md section 3a's TRANSLATION_OVERRIDES /
 # ROW_SPLITS tables (transcribed verbatim from the contract, not read from
 # any implementation).
-SLOVNO_TRANSLATION = "as if / like (literary — a poetic simile)"
-TOZHE_TRANSLATION = 'also / too (same action, different subject — "me too")'
-TAKZHE_TRANSLATION = "also / in addition (same subject, an extra thing; more formal)"
-BUDTO_TRANSLATION = "as if / as though (often implies doubt)"
+SLOVNO_TRANSLATION = "as if / like"
+SLOVNO_CUE = "literary — a poetic simile"
+TOZHE_TRANSLATION = "also / too"
+TOZHE_CUE = 'same action, different subject — "me too"'
+TAKZHE_TRANSLATION = "also / in addition"
+TAKZHE_CUE = "same subject, an extra thing; more formal"
+BUDTO_TRANSLATION = "as if / as though"
+BUDTO_CUE = "often implies doubt"
 
 # The exact override texts for -то and -ка from lane l1's contract table
 # (transcribed verbatim from the contract, not from any implementation).
@@ -1079,6 +1083,7 @@ def test_slovno_row_present_standalone_with_literal_simile_translation(real_rows
     ]
     assert len(matches) == 1
     assert matches[0].english == SLOVNO_TRANSLATION
+    assert matches[0].fields()[-1] == SLOVNO_CUE
 
 
 def test_tozhe_row_present_standalone(real_rows):
@@ -1087,6 +1092,7 @@ def test_tozhe_row_present_standalone(real_rows):
     ]
     assert len(matches) == 1
     assert matches[0].english == TOZHE_TRANSLATION
+    assert matches[0].fields()[-1] == TOZHE_CUE
     assert matches[0].examples == "Я тоже иду"
 
 
@@ -1096,6 +1102,7 @@ def test_takzhe_row_present_standalone(real_rows):
     ]
     assert len(matches) == 1
     assert matches[0].english == TAKZHE_TRANSLATION
+    assert matches[0].fields()[-1] == TAKZHE_CUE
     assert matches[0].examples == "Я также купил хлеб"
 
 
@@ -1111,6 +1118,7 @@ def test_budto_row_translation_not_bare_as_if(real_rows):
     ]
     assert len(matches) == 1
     assert matches[0].english == BUDTO_TRANSLATION
+    assert matches[0].fields()[-1] == BUDTO_CUE
     # Not the source document's old, stale bare gloss.
     assert matches[0].english != "as if"
 

@@ -67,7 +67,7 @@ _CASE_PATTERN = re.compile(
     + r")\.)",
     re.I,
 )
-_CASE_WORD = re.compile(r"\bcase\b|\bgovern", re.I)
+_CASE_WORD = re.compile(r"(?<!\bin that )\bcase\b|\bgovern", re.I)
 
 
 def cases_in(text: str) -> frozenset[str]:

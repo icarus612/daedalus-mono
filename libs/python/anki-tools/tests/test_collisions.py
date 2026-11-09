@@ -277,6 +277,7 @@ def test_cases_in(text: str, expected: set[str] | None) -> None:
         ("Genitive", True),
         ("acc.", True),
         ("which case", True),
+        ("at that time; or in that case", False),
         ("governs the next noun", True),
         ("government", True),
         ("the postal kind", False),
@@ -544,9 +545,9 @@ def test_load_notes_fields(notes: list[Note]) -> None:
 
 def test_every_english_distinction_key_matches_a_headword(notes: list[Note]) -> None:
     headwords = {n.headword for n in notes}
-    assert len(ENGLISH_DISTINCTIONS) == 212
+    assert len(ENGLISH_DISTINCTIONS) == 438
     assert set(ENGLISH_DISTINCTIONS) <= headwords
-    assert sum(1 for n in notes if n.english_distinction) == 212
+    assert sum(1 for n in notes if n.english_distinction) == 438
 
 
 def test_provisional_cases(notes: list[Note], governed_notes: list[Note]) -> None:
@@ -705,7 +706,7 @@ def test_map_cues_separates_needs_one_side_nonempty() -> None:
 def test_map_cues_real_entry_count(
     notes: list[Note], groups: list[collisions.CollisionGroup]
 ) -> None:
-    assert len(collisions.map_cues(notes, groups)) == 212
+    assert len(collisions.map_cues(notes, groups)) == 438
 
 
 def test_classify_row_columns_are_declared() -> None:
@@ -1156,15 +1157,22 @@ def test_real_screenshot_cases(rows: list[collisions.ClassificationRow]) -> None
     actions = {r.qualifier_text: r.action for r in still}
     assert actions["ongoing"] == "keep-inline"
     assert actions["asking for more"] == "keep-inline"
-    assert rows_of(rows, "ещё", "English Distinction") == []
+    [still_cue] = rows_of(rows, "ещё", "English Distinction")
+    assert (still_cue.qualifier_text, still_cue.action) == (
+        "still going on; or more of it",
+        "keep",
+    )
     assert rows_of(rows, "ещё", "Additional Info") == []
-    assert rows_of(rows, "до", "English Distinction") == []
+    [until_cue] = rows_of(rows, "до", "English Distinction")
+    assert until_cue.action == "keep"
 
     everything = {
         r.qualifier_text: r.action for r in rows_of(rows, "всё", "Translation")
     }
     assert everything["keeps on"] == "keep-inline"
-    assert rows_of(rows, "всё", "English Distinction") == []
+    [everything_cue] = rows_of(rows, "всё", "English Distinction")
+    assert everything_cue.qualifier_text == "keeps on: still / all the time"
+    assert everything_cue.action == "keep"
 
     assert rows_of(rows, "банк", "Translation") == []
     [bank] = rows_of(rows, "банк", "English Distinction")
