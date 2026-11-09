@@ -187,15 +187,6 @@ ALLOWED = {
     ): _ELABORATES,
     (
         "Immutable Words",
-        "всё-таки",
-        dedup.RULE_CONTAINED,
-        (
-            "all the same",
-            "concessive all the same after all",
-        ),
-    ): _ELABORATES,
-    (
-        "Immutable Words",
         "как только",
         dedup.RULE_CONTAINED,
         (
