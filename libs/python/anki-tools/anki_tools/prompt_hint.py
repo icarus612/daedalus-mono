@@ -35,24 +35,32 @@ CUE_ROW_OPEN = f'<div class="{CUE_ROW_CLASS}">'
 
 # One div per line: the word (with any aspect span inside it) and its hint are
 # sibling spans. The line spans the screen less 9px each side, whatever the
-# card's own padding.
+# card's own padding. The hint takes its own line only when the word field
+# itself is multi-line; otherwise it wraps as one unit, never mid-phrase.
 PROMPT_HINT_CSS = (
     f".{CUE_ROW_CLASS} {{\n"
     "\ttext-align: center;\n"
     "\tbox-sizing: border-box;\n"
     "\twidth: calc(100vw - 18px);\n"
     "\tmargin-left: calc(50% - 50vw + 9px);\n"
-    "}\n\n"
-    + ", ".join(f"#{hint_id}" for hint_id in HINT_IDS)
-    + " {\n"
-    "\tmargin-left: .4rem;\n"
+    "}\n\n" + ", ".join(f"#{hint_id}" for hint_id in HINT_IDS) + " {\n"
+    "\tdisplay: inline-block;\n"
     "\tvertical-align: middle;\n"
     "\tfont-size: 1.2rem;\n"
     "\tcolor: #7f7f7f;\n"
-    "}\n\n"
-    + ", ".join(f"#{hint_id}:empty" for hint_id in HINT_IDS)
-    + " {\n"
+    "}\n\n" + ", ".join(f"#{hint_id}:empty" for hint_id in HINT_IDS) + " {\n"
     "\tdisplay: none;\n"
+    "}\n\n"
+    + ", ".join(
+        f"#{anchor}:has({tag}) ~ #{hint_id}:not(:empty)"
+        for anchor, hint_id in (
+            (TRANSLATION_ANCHOR, PROMPT_HINT_ID),
+            (RUSSIAN_ANCHOR, RUSSIAN_HINT_ID),
+        )
+        for tag in ("br", "div")
+    )
+    + " {\n"
+    "\tdisplay: block;\n"
     "}"
 )
 
