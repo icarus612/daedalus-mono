@@ -520,8 +520,8 @@ def test_verbs_reverse_front_carries_inline_aspect_qualifier():
     for card_index, aspect in ((1, "imperfective"), (3, "perfective")):
         qfmt = mutable_words_plan.build_template("Verbs", card_index)[0]
         expected = (
-            '<div id="translation">{{Translation}}'
-            f' <span class="aspect aspect-{aspect}">({aspect}{_only(aspect)})</span></div>'
+            '<span id="translation">{{Translation}}'
+            f' <span class="aspect aspect-{aspect}">({aspect}{_only(aspect)})</span></span>'
         )
         assert expected in qfmt, (card_index, qfmt)
 
@@ -717,7 +717,7 @@ def test_non_verb_sheets_keep_a_bare_translation():
     for sheet in ("Nouns", "Adjectives", "Pronouns", "Numerals", "Adverbs"):
         for card_index in (0, 1):
             qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
-            assert '<div id="translation">{{Translation}}</div>' in qfmt + afmt, sheet
+            assert '<span id="translation">{{Translation}}</span>' in qfmt + afmt, sheet
             assert 'class="aspect' not in qfmt + afmt, sheet
 
 
@@ -739,7 +739,7 @@ def test_a_question_showing_the_headword_cues_it(sheet, card_index):
     if RUSSIAN_CUE not in qfmt:
         return
     assert re.search(
-        r'<div id="russian">\{\{[^{}]+\}\}</div>\n' + re.escape(RUSSIAN_CUE), qfmt
+        r'<span id="russian">\{\{[^{}]+\}\}</span>\n' + re.escape(RUSSIAN_CUE), qfmt
     ), (sheet, card_index)
     field = distinction.RUSSIAN_FIELD
     assert f"{{{{#{field}}}}}" in qfmt
@@ -832,7 +832,7 @@ def test_audio_filenames_ignore_the_qualifier(adjectives, numerals):
 
 
 _RENDERED_CUE = re.compile(
-    rf'<div id="{prompt_hint.RUSSIAN_HINT_ID}">(.*?)</div>', re.S
+    rf'<span id="{prompt_hint.RUSSIAN_HINT_ID}">(.*?)</span>', re.S
 )
 _WRAPPED_CUE = re.compile(
     rf"\{{\{{#({re.escape(distinction.RUSSIAN_FIELD)})\}}\}}"
@@ -1052,7 +1052,7 @@ def test_english_cue_follows_the_translation_on_headword_front_back(sheet, card_
     assert _ENGLISH_CUE not in qfmt
     assert afmt.startswith("{{FrontSide}}")
     assert re.search(
-        r'<div id="translation">.*?</div>\s*' + re.escape(_ENGLISH_CUE), afmt, re.S
+        r'<span id="translation">.*?</span>\s*' + re.escape(_ENGLISH_CUE), afmt, re.S
     )
 
 
@@ -1064,11 +1064,11 @@ def test_gloss_front_has_the_english_cue_on_the_question_and_russian_cue_on_the_
         pytest.skip("headword-front card")
     qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
     assert re.search(
-        r'<div id="translation">.*?</div>\s*' + re.escape(_ENGLISH_CUE), qfmt, re.S
+        r'<span id="translation">.*?</span>\s*' + re.escape(_ENGLISH_CUE), qfmt, re.S
     )
     assert _ENGLISH_CUE not in afmt
     assert RUSSIAN_CUE not in qfmt
-    assert re.search(r'<div id="russian">[^<]*</div>\s*' + re.escape(RUSSIAN_CUE), afmt)
+    assert re.search(r'<span id="russian">[^<]*</span>\s*' + re.escape(RUSSIAN_CUE), afmt)
 
 
 @pytest.mark.parametrize("sheet,card_index", _CARDS)
@@ -1080,14 +1080,14 @@ def test_pill_placement_in_the_raw_templates(sheet, card_index):
     if card_index in HEADWORD_FRONT[sheet]:
         assert 'class="case-pills"' not in qfmt
         assert afmt.count(_PILLS) == 1
-        assert re.search(re.escape(_ENGLISH_CUE) + r"\s*" + re.escape(_PILLS), afmt)
+        assert re.search(re.escape(_ENGLISH_CUE) + r"</div>\s*" + re.escape(_PILLS), afmt)
         if sheet == "Verbs":
             slug = "perfective" if card_index == 0 else "imperfective"
             assert afmt.index(_PILLS) < afmt.index(f'<div id="{slug}" ')
         assert afmt.index(_PILLS) < afmt.index('<div id="details">')
     else:
         assert qfmt.count(_PILLS) == 1
-        assert re.search(re.escape(_ENGLISH_CUE) + r"\s*" + re.escape(_PILLS), qfmt)
+        assert re.search(re.escape(_ENGLISH_CUE) + r"</div>\s*" + re.escape(_PILLS), qfmt)
         assert 'class="case-pills"' not in afmt
 
 

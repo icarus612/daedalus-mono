@@ -9,6 +9,8 @@ from anki_tools.mutable_words_plan import FIELD_NAMES, build_template
 
 FIELD = distinction.ENGLISH_FIELD
 TRANSLATION_DIV = '<div id="translation">{{Translation}}</div>'
+TRANSLATION_SPAN = '<span id="translation">{{Translation}}</span>'
+RUSSIAN_SPAN = '<span id="russian">{{Russian}}</span>'
 PROMPT_SIDE = f'<div id="front">\n{TRANSLATION_DIV}\n</div>'
 
 
@@ -22,7 +24,7 @@ def test_hint_is_wrapped_in_ankis_own_empty_field_conditional():
 
 def test_hint_goes_straight_after_the_translation():
     out = prompt_hint.add_prompt_hint(PROMPT_SIDE, FIELD)
-    assert TRANSLATION_DIV + "\n" + prompt_hint.hint_div(FIELD) in out
+    assert TRANSLATION_SPAN + "\n" + prompt_hint.hint_div(FIELD) in out
 
 
 @pytest.mark.parametrize(
@@ -54,7 +56,7 @@ RUSSIAN_DIV = '<div id="russian">{{Russian}}</div>'
 
 def test_element_id_names_the_div_the_hint_emits():
     out = prompt_hint.hint_div(distinction.RUSSIAN_FIELD, prompt_hint.RUSSIAN_HINT_ID)
-    assert out.startswith(f'<div id="{prompt_hint.RUSSIAN_HINT_ID}">')
+    assert out.startswith(f'<span id="{prompt_hint.RUSSIAN_HINT_ID}">')
 
 
 def test_hint_goes_straight_after_the_headword_on_the_russian_anchor():
@@ -66,28 +68,26 @@ def test_hint_goes_straight_after_the_headword_on_the_russian_anchor():
     )
     assert out == (
         prompt_hint.CUE_ROW_OPEN
-        + RUSSIAN_DIV
+        + RUSSIAN_SPAN
         + "\n"
         + prompt_hint.hint_div(distinction.RUSSIAN_FIELD, prompt_hint.RUSSIAN_HINT_ID)
         + "</div>"
-        + prompt_hint.FIT_HINT_SCRIPT
     )
 
 
-def test_word_and_hint_share_one_centred_row():
+def test_word_and_hint_are_spans_in_one_div():
     out = prompt_hint.add_prompt_hint(PROMPT_SIDE, FIELD)
     assert (
         prompt_hint.CUE_ROW_OPEN
-        + TRANSLATION_DIV
+        + TRANSLATION_SPAN
         + "\n"
         + prompt_hint.hint_div(FIELD)
         + "</div>"
     ) in out
     css = prompt_hint.PROMPT_HINT_CSS
     assert ".cue-row {" in css
-    for rule in ("display: flex", "justify-content: center", "align-items: center"):
-        assert rule in css
-    assert "\twidth:" not in css
+    assert "text-align: center" in css and "width: calc(100vw - 10px)" in css
+    assert "flex" not in css and "60%" not in css
 
 
 def test_an_inserted_russian_hint_is_never_its_own_anchor():
@@ -114,7 +114,7 @@ def test_two_hints_on_one_anchor_stack_in_reverse_call_order():
     out = prompt_hint.add_prompt_hint(PROMPT_SIDE, "Other", "second-hint")
     out = prompt_hint.add_prompt_hint(out, FIELD)
     assert (
-        TRANSLATION_DIV
+        TRANSLATION_SPAN
         + "\n"
         + prompt_hint.hint_div(FIELD)
         + "\n"

@@ -33,39 +33,20 @@ HINT_IDS = (PROMPT_HINT_ID, RUSSIAN_HINT_ID)
 CUE_ROW_CLASS = "cue-row"
 CUE_ROW_OPEN = f'<div class="{CUE_ROW_CLASS}">'
 
-# A wrapped flex item keeps the full leftover width, which pushes the row off
-# centre; shrink each hint's box to its widest rendered line.
-FIT_HINT_SCRIPT = (
-    "<script>(function () {"
-    'document.querySelectorAll(".cue-row > #prompt-hint, .cue-row > #russian-distinction")'
-    ".forEach(function (el) {"
-    "var range = document.createRange(); range.selectNodeContents(el); var w = 0;"
-    "Array.prototype.forEach.call(range.getClientRects(), function (r) {"
-    " w = Math.max(w, r.width); });"
-    'if (w) el.style.width = Math.ceil(w) + "px"; });'
-    "})();</script>"
-)
-
-# The word and its hint share one flex row, centred both ways; a hint too
-# long for the line wraps within its own box, still beside the word.
+# One div per line: the word (with any aspect span inside it) and its hint are
+# sibling spans. The line spans the screen less 5px each side, whatever the
+# card's own padding.
 PROMPT_HINT_CSS = (
     f".{CUE_ROW_CLASS} {{\n"
-    "\tdisplay: flex;\n"
-    "\tflex-wrap: nowrap;\n"
-    "\tjustify-content: center;\n"
-    "\talign-items: center;\n"
-    "\tcolumn-gap: .5rem;\n"
-    "}\n\n"
-    f".{CUE_ROW_CLASS} > :first-child {{\n"
-    "\tflex: 0 0 auto;\n"
-    "\tmax-width: 60%;\n"
+    "\ttext-align: center;\n"
+    "\tbox-sizing: border-box;\n"
+    "\twidth: calc(100vw - 10px);\n"
+    "\tmargin-left: calc(50% - 50vw + 5px);\n"
     "}\n\n"
     + ", ".join(f"#{hint_id}" for hint_id in HINT_IDS)
     + " {\n"
-    "\tflex: 0 1 auto;\n"
-    "\tmin-width: 0;\n"
-    "\ttext-wrap: balance;\n"
-    "\ttext-align: center;\n"
+    "\tmargin-left: .4rem;\n"
+    "\tvertical-align: middle;\n"
     "\tfont-size: 1.2rem;\n"
     "\tcolor: #7f7f7f;\n"
     "}\n\n"
@@ -78,7 +59,7 @@ PROMPT_HINT_CSS = (
 
 def _anchor_pattern(anchor_id: str) -> re.Pattern[str]:
     return re.compile(
-        rf'(<div[^>]*\bid=["\']{re.escape(anchor_id)}["\'][^>]*>.*?</div>)', re.S
+        rf'(<(div|span)[^>]*\bid=["\']{re.escape(anchor_id)}["\'][^>]*>.*?</\2>)', re.S
     )
 
 
@@ -89,6 +70,12 @@ _ANCHORS = {
 }
 
 
+def _as_span(element_html: str) -> str:
+    if not element_html.startswith("<div"):
+        return element_html
+    return "<span" + element_html[len("<div") : -len("</div>")] + "</span>"
+
+
 def hint_div(field_name: str, element_id: str = PROMPT_HINT_ID) -> str:
     """The hint element for `field_name`, empty-safe.
 
@@ -97,7 +84,7 @@ def hint_div(field_name: str, element_id: str = PROMPT_HINT_ID) -> str:
     instead of "()".
     """
     body = f"{{{{#{field_name}}}}}({{{{{field_name}}}}}){{{{/{field_name}}}}}"
-    return f'<div id="{element_id}">{body}</div>'
+    return f'<span id="{element_id}">{body}</span>'
 
 
 def add_prompt_hint(
@@ -130,10 +117,9 @@ def add_prompt_hint(
     return (
         template_html[:start]
         + CUE_ROW_OPEN
-        + match.group(1)
+        + _as_span(match.group(1))
         + "\n"
         + hint
         + "</div>"
-        + FIT_HINT_SCRIPT
         + template_html[end:]
     )

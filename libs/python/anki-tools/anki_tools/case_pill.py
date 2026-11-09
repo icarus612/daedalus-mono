@@ -51,8 +51,10 @@ def pill_block() -> str:
 
 
 def _anchor_pattern(anchor_id: str) -> re.Pattern[str]:
+    # A span anchor is the last child of its line's div; the pills go after that div.
+    anchor = rf'\bid=["\']{re.escape(anchor_id)}["\'][^>]*>'
     return re.compile(
-        rf'(<div[^>]*\bid=["\']{re.escape(anchor_id)}["\'][^>]*>.*?</div>)', re.S
+        rf"(<div[^>]*{anchor}.*?</div>|<span[^>]*{anchor}.*?</span></div>)", re.S
     )
 
 

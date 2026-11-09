@@ -2870,7 +2870,7 @@ DISTINCTION_TEMPLATE_ORDS = [(IMMUTABLE_FAMILY, 0), (IMMUTABLE_FAMILY, 1)] + [
 
 _PARENTHESISED_FIELD = re.compile(r"\(\{\{([^{}#^/]+)\}\}\)")
 _HINT_DIV_TEXT = re.compile(
-    r'<div id="(' + "|".join(prompt_hint.HINT_IDS) + r')">([^<]*)</div>'
+    r'<span id="(' + "|".join(prompt_hint.HINT_IDS) + r')">([^<]*)</span>'
 )
 _WRAPPED_HINT = re.compile(r"\{\{#([^{}]+)\}\}\(\{\{\1\}\}\)\{\{/\1\}\}")
 
