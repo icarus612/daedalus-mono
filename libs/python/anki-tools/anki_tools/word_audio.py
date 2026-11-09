@@ -12,12 +12,14 @@ Anki media directory, and that invariant stays intact.
 import argparse
 import os
 import shutil
+import sys
 import time
 from dataclasses import dataclass
 from typing import Sequence
 
 import requests
 
+from anki_tools import anki_sync
 from anki_tools.audio_naming import build_filename, get_anki_media_dir
 from anki_tools.elevenlabs_tts import (
     CONFIRM_ABOVE_REQUESTS,
@@ -78,9 +80,7 @@ def plan_requests(
 ) -> WordAudioPlan:
     """(word, slot) pairs split into those needing a request and those
     already present. Duplicate words collapse to one entry."""
-    requested = tuple(
-        (word, slot) for word in dict.fromkeys(words) for slot in slots
-    )
+    requested = tuple((word, slot) for word in dict.fromkeys(words) for slot in slots)
     pending: list[tuple[str, str]] = []
     present: list[tuple[str, str]] = []
     for word, slot in requested:
@@ -169,6 +169,13 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         default=False,
         help="Redo words that already have audio, archiving the old file.",
+    )
+    parser.add_argument(
+        "--no-sync",
+        dest="sync",
+        action="store_false",
+        default=True,
+        help="Skip the AnkiWeb sync after writing (the caller syncs instead).",
     )
     parser.add_argument(
         "--output-dir",
@@ -269,6 +276,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     print(f"generated {len(written)} / {len(results)} requested pair(s)")
     for result in collisions:
         print(f"  media collision (left alone): {result.media_path}")
+    if written and args.sync and not args.anki_media_dir:
+        names = [os.path.basename(r.media_path) for r in written if r.media_path]
+        try:
+            anki_sync.sync(names)
+        except anki_sync.SyncError as error:
+            print(f"sync failed: {error}", file=sys.stderr)
+            return 3
+        print(f"synced; {len(names)} audio file(s) confirmed on AnkiWeb")
     return 0
 
 

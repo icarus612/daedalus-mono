@@ -90,7 +90,9 @@ def test_archive_existing_moves_the_file(tmp_path):
 
 def test_archive_existing_ignores_absent_files(tmp_path):
     archive = tmp_path / "archive"
-    assert word_audio.archive_existing([("нет", "f1")], str(tmp_path), str(archive)) == []
+    assert (
+        word_audio.archive_existing([("нет", "f1")], str(tmp_path), str(archive)) == []
+    )
 
 
 def test_generate_requests_replace_and_correct_voices(tmp_path, monkeypatch):
@@ -152,3 +154,51 @@ def test_nothing_to_do_when_all_present(tmp_path, monkeypatch, capsys):
 
     assert code == 0
     assert "Nothing to do." in capsys.readouterr().out
+
+
+def test_written_audio_is_synced_and_confirmed(monkeypatch, capsys):
+    from anki_tools.elevenlabs_tts import SynthesisResult
+
+    synced = []
+    monkeypatch.setattr(word_audio, "get_api_key", lambda: "k")
+    monkeypatch.setattr(
+        word_audio,
+        "generate",
+        lambda pending, **kw: [
+            SynthesisResult(
+                word="zzqx",
+                voice=None,
+                path="",
+                skipped=False,
+                media_path="/m/zzqx_f1.mp3",
+            )
+        ],
+    )
+    monkeypatch.setattr(word_audio.anki_sync, "sync", synced.append)
+    assert word_audio.main(["zzqx", "--gender", "female", "--yes"]) == 0
+    assert synced == [["zzqx_f1.mp3"]]
+
+
+def test_no_sync_leaves_the_sync_to_the_caller(monkeypatch):
+    from anki_tools.elevenlabs_tts import SynthesisResult
+
+    monkeypatch.setattr(word_audio, "get_api_key", lambda: "k")
+    monkeypatch.setattr(
+        word_audio,
+        "generate",
+        lambda pending, **kw: [
+            SynthesisResult(
+                word="zzqx",
+                voice=None,
+                path="",
+                skipped=False,
+                media_path="/m/zzqx_f1.mp3",
+            )
+        ],
+    )
+
+    def forbidden(names):
+        raise AssertionError("synced despite --no-sync")
+
+    monkeypatch.setattr(word_audio.anki_sync, "sync", forbidden)
+    assert word_audio.main(["zzqx", "--gender", "female", "--yes", "--no-sync"]) == 0

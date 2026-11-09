@@ -10,18 +10,20 @@ regenerated, so a flag still standing means the audio still needs work.
 """
 
 import argparse
+import os
 import subprocess
 import sys
 
 from anki.collection import Collection
 from anki.errors import AnkiException, DBError
 
-from anki_tools.audio_naming import get_anki_collection_path
+from anki_tools import anki_sync
+from anki_tools.audio_naming import build_filename, get_anki_collection_path
 from anki_tools.flagged_audio import (
     FLAG_NAMES,
-    UNFLAGGED,
     MODE_DOUBLE,
     MODE_SINGLE,
+    UNFLAGGED,
     count_by_flag,
     flag_of,
     words_to_regenerate,
@@ -107,6 +109,7 @@ def regenerate(mode, words):
         "--mode",
         mode,
         "--replace",
+        "--no-sync",
         "--yes",
         "--",
         *words,
@@ -159,6 +162,18 @@ def main(argv=None):
         return 1
     clear_flags(path, card_ids)
     print(f"\ncleared the flag on {len(card_ids)} regenerated card(s)")
+    names = [
+        os.path.basename(build_filename(word, slot))
+        for mode, words in picked.items()
+        for word in words
+        for slot in SLOTS[mode]
+    ]
+    try:
+        anki_sync.sync(names, path)
+    except anki_sync.SyncError as error:
+        print(f"sync failed: {error}", file=sys.stderr)
+        return 3
+    print(f"synced; {len(names)} audio file(s) confirmed on AnkiWeb")
     return 0
 
 

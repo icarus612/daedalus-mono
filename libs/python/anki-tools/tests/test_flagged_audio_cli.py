@@ -2,7 +2,7 @@ import argparse
 
 import pytest
 
-from anki_tools import flagged_audio
+from anki_tools import anki_sync, flagged_audio
 from anki_tools.flagged_audio_cli import HEADWORD_FIELDS, SLOTS, build_parser, main
 
 MUTABLE_NOUNS = "Russian - Mutable Nouns (Ellis Version)"
@@ -144,6 +144,47 @@ def test_the_fix_path_check_catches_the_shape_it_guards(monkeypatch):
     )
     main(["--collection", "ignored", "--fix"])
     assert reached == [flagged_audio.MODE_SINGLE]
+
+
+@pytest.fixture(autouse=True)
+def synced(monkeypatch):
+    calls = []
+    monkeypatch.setattr(
+        "anki_tools.anki_sync.sync", lambda names, path: calls.append(list(names))
+    )
+    return calls
+
+
+def test_fix_syncs_every_regenerated_file_after_clearing_flags(monkeypatch, synced):
+    monkeypatch.setattr(
+        "anki_tools.flagged_audio_cli.Collection",
+        lambda path: _FakeCollection([(4, MUTABLE_NOUNS, ["школа"])]),
+    )
+    monkeypatch.setattr("anki_tools.flagged_audio_cli.regenerate", lambda m, w: 0)
+    assert main(["--collection", "ignored", "--fix"]) == 0
+    assert synced == [["школа_f1.mp3", "школа_m2.mp3"]]
+
+
+def test_failed_sync_is_a_failure(monkeypatch):
+    def fail(names, path):
+        raise anki_sync.SyncError("media not uploaded: школа_f1.mp3")
+
+    monkeypatch.setattr("anki_tools.anki_sync.sync", fail)
+    monkeypatch.setattr(
+        "anki_tools.flagged_audio_cli.Collection",
+        lambda path: _FakeCollection([(4, MUTABLE_NOUNS, ["школа"])]),
+    )
+    monkeypatch.setattr("anki_tools.flagged_audio_cli.regenerate", lambda m, w: 0)
+    assert main(["--collection", "ignored", "--fix"]) == 3
+
+
+def test_report_only_never_syncs(monkeypatch, synced):
+    monkeypatch.setattr(
+        "anki_tools.flagged_audio_cli.Collection",
+        lambda path: _FakeCollection([(4, MUTABLE_NOUNS, ["школа"])]),
+    )
+    assert main(["--collection", "ignored"]) == 0
+    assert synced == []
 
 
 def _forbidden_regenerate(mode, words):
