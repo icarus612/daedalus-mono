@@ -34,14 +34,14 @@ CUE_ROW_CLASS = "cue-row"
 CUE_ROW_OPEN = f'<div class="{CUE_ROW_CLASS}">'
 
 # One div per line: the word (with any aspect span inside it) and its hint are
-# sibling spans. The line spans the screen less 5px each side, whatever the
+# sibling spans. The line spans the screen less 9px each side, whatever the
 # card's own padding.
 PROMPT_HINT_CSS = (
     f".{CUE_ROW_CLASS} {{\n"
     "\ttext-align: center;\n"
     "\tbox-sizing: border-box;\n"
-    "\twidth: calc(100vw - 10px);\n"
-    "\tmargin-left: calc(50% - 50vw + 5px);\n"
+    "\twidth: calc(100vw - 18px);\n"
+    "\tmargin-left: calc(50% - 50vw + 9px);\n"
     "}\n\n"
     + ", ".join(f"#{hint_id}" for hint_id in HINT_IDS)
     + " {\n"

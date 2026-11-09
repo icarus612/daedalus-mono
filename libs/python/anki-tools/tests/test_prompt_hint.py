@@ -86,7 +86,7 @@ def test_word_and_hint_are_spans_in_one_div():
     ) in out
     css = prompt_hint.PROMPT_HINT_CSS
     assert ".cue-row {" in css
-    assert "text-align: center" in css and "width: calc(100vw - 10px)" in css
+    assert "text-align: center" in css and "width: calc(100vw - 18px)" in css
     assert "flex" not in css and "60%" not in css
 
 
