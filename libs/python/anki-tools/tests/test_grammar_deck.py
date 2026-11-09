@@ -22,6 +22,7 @@ EXPECTED_COUNTS = {
     "Plural Noun Endings": 24,
     "Adjective Endings": 48,
     "Personal Pronouns": 42,
+    "Particles": 3,
 }
 CASES = (
     "Nominative",
@@ -48,7 +49,8 @@ def test_source_covers_every_table_cell():
     assert counts == EXPECTED_COUNTS
     for row in rows:
         assert row.type == "Grammar Rule"
-        assert any(case in row.front for case in CASES)
+        if row.table != "Particles":
+            assert any(case in row.front for case in CASES)
 
 
 def test_corrected_neuter_instrumental_endings():
@@ -83,8 +85,22 @@ def test_example_bases_come_from_the_mutable_deck():
     words |= {_plain(r["Russian (m)"]) for r in _vocab("adjectives.tsv")}
     words |= {_plain(r["Russian"]) for r in _vocab("pronouns.tsv")}
     for row in parse_rows():
+        if row.table == "Particles":
+            continue
         for example in row.examples:
             assert _plain(example.base) in words, (row.front, example.base)
+
+
+def test_particle_examples_attach_the_target_to_the_base():
+    verbs = {r["Imperfective"] for r in _vocab("verbs.tsv")}
+    verbs |= {r["Perfective"] for r in _vocab("verbs.tsv")}
+    particles = [row for row in parse_rows() if row.table == "Particles"]
+    assert [row.target for row in particles] == ["-то", "-нибудь", "-ка"]
+    for row in particles:
+        for example in row.examples:
+            assert example.form == example.base + row.target
+            if row.target == "-ка":
+                assert example.note in verbs
 
 
 def test_noun_example_forms_match_the_deck_columns():
@@ -125,7 +141,7 @@ def test_rejects_duplicate_front(tmp_path):
 def test_apply_builds_decks_and_is_idempotent(col):
     rows = parse_rows()
     first = apply_rows(col, rows)
-    assert (first.added, first.updated, first.unchanged) == (150, 0, 0)
+    assert (first.added, first.updated, first.unchanged) == (153, 0, 0)
     for table, subdeck in TABLE_SUBDECKS.items():
         deck_id = col.decks.id_for_name(f"{DECK_ROOT}::{subdeck}")
         assert len(col.decks.cids(deck_id)) == EXPECTED_COUNTS[table]
@@ -133,8 +149,8 @@ def test_apply_builds_decks_and_is_idempotent(col):
     assert all(card.type == 0 for card in map(col.get_card, col.find_cards("")))
 
     second = apply_rows(col, rows)
-    assert (second.added, second.updated, second.unchanged) == (0, 0, 150)
-    assert col.note_count() == 150
+    assert (second.added, second.updated, second.unchanged) == (0, 0, 153)
+    assert col.note_count() == 153
 
 
 def test_apply_updates_changed_field_without_new_note(col):
@@ -143,4 +159,4 @@ def test_apply_updates_changed_field_without_new_note(col):
     changed = [dataclasses.replace(rows[0], notes="edited")]
     result = apply_rows(col, changed + rows[1:])
     assert (result.added, result.updated) == (0, 1)
-    assert col.note_count() == 150
+    assert col.note_count() == 153

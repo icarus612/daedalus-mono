@@ -36,6 +36,7 @@ TABLE_SUBDECKS = {
     "Plural Noun Endings": "b. Plural Noun Endings",
     "Adjective Endings": "c. Adjective Endings",
     "Personal Pronouns": "d. Personal Pronouns",
+    "Particles": "e. Particles",
 }
 
 QFMT = '<div class="type">{{Type}}</div>\n<div class="front">{{Front}}</div>'
