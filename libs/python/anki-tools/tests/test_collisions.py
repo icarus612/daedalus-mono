@@ -586,8 +586,8 @@ def test_government_overrides_cases_for_any_section(notes: list[Note]) -> None:
 
 def test_collision_totals(groups: list[collisions.CollisionGroup]) -> None:
     assert len(groups) == 220
-    assert sum(len(g.members) for g in groups) == 483
-    assert len({m.guid for g in groups for m in g.members}) == 397
+    assert sum(len(g.members) for g in groups) == 484
+    assert len({m.guid for g in groups for m in g.members}) == 398
     assert Counter(g.mechanism for g in groups) == {
         "cue": 126,
         "header": 86,
@@ -602,7 +602,7 @@ def test_immutable_only_collisions(notes: list[Note]) -> None:
     assert len(immutable) == 233
     result = collisions.find_collisions(immutable)
     assert len(result) == 55
-    assert len({m.guid for g in result for m in g.members}) == 97
+    assert len({m.guid for g in result for m in g.members}) == 98
     assert sum(1 for g in result if g.mechanism == "pill") == 7
 
 

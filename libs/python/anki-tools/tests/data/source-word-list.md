@@ -128,8 +128,8 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 25 | таки | after all / nevertheless | often hyphenated: всё-таки | — |
 | 26 | пожалуй | perhaps / I suppose | Hedges — "I suppose, perhaps" | — |
 | 27 | будто | as if / as though | — | — |
-| 28 | мол | supposedly / "he said" | — | — |
-| 29 | дескать | allegedly / "so they claim" | more formal than мол | — |
+| 28 | мол | he says / she says / like | — | — |
+| 29 | дескать | supposedly / allegedly / so he claims | more formal than мол | — |
 | 30 | во | wow / look at that | Very colloquial exclamation | — |
 | 31 | ну и | what a... | e.g., ну и день = what a day | — |
 | 32 | здравствуйте | hello | Formal/plural greeting; lit. imperative "be healthy" | — |
