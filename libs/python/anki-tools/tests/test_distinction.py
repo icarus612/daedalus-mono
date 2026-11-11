@@ -56,14 +56,14 @@ def test_the_two_sides_get_two_separate_fields():
 @pytest.mark.parametrize(
     "russian,expected",
     [
-        ("о / об", "the topic of talk or thought"),
-        ("насчёт", "concerning; colloquial"),
+        ("о / об", "Neutral"),
+        ("насчёт", "Colloquial"),
         ("какой", "interrogative / exclamative"),
         ("который", "relative / interrogative"),
-        ("согласно (preposition)", "formal: in accordance with a rule or document"),
+        ("согласно (preposition)", "Formal"),
         ("дом", ""),
-        ("как (conjunction)", "a plain comparison, not an imagined one"),
-        ("как (adverb)", "asking in what way"),
+        ("как (conjunction)", "Real comparison"),
+        ("как (adverb)", ""),
         ("", ""),
     ],
 )

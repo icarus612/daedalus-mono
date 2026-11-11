@@ -42,7 +42,19 @@ ASPECT_SPLIT_RUNS = {
     "w],J){q5o7": ["вести", "повести"],
     "upa@NcF;x7": ["ездить"],
 }
-EXPECTED_LOST_RUNS = {**ROUTED_AWAY_RUNS, **ASPECT_SPLIT_RUNS}
+DELETED_NOTE_RUNS = {
+    "G,NZbr!zQV": ["что"],
+    "dxy;`QRj>|": ["чтобы"],
+    "L:sBP8ffq)": ["где-то", "кто-то", "нибудь"],
+    "QfFm4-sN./": ["скажи-ка"],
+}
+REWRITTEN_INFO_RUNS = {"GzoPl`NFmi": ["мол"]}
+EXPECTED_LOST_RUNS = {
+    **ROUTED_AWAY_RUNS,
+    **ASPECT_SPLIT_RUNS,
+    **DELETED_NOTE_RUNS,
+    **REWRITTEN_INFO_RUNS,
+}
 ALLOWED_CYRILLIC_TRANSLATIONS: list[str] = []
 
 CYRILLIC = re.compile(r"[Ѐ-ӿ]")
@@ -90,7 +102,7 @@ def _runs(*texts):
 
 def test_no_translation_contains_cyrillic():
     translations = [translation for _, translation, _, _ in _all_notes()]
-    assert len(translations) == 1486
+    assert len(translations) == 1481
     assert _translations_with_cyrillic(translations) == ALLOWED_CYRILLIC_TRANSLATIONS
 
 

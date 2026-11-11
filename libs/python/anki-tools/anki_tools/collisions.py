@@ -35,6 +35,7 @@ _MUTABLE_PARSERS = (
 _TAG = re.compile(r"<[^>]*>")
 _BOUNDARY = re.compile(r"<\s*(?:br\s*/?|/?\s*div[^>]*)>", re.I)
 _SPACE = re.compile(r"\s+")
+_SPACE_BEFORE_PUNCT = re.compile(r"\s+(?=[…,.;:!?])")
 
 
 @dataclass(frozen=True)
@@ -558,7 +559,7 @@ def outside_parentheses(text: str) -> str:
     """Text with parentheticals and tags removed and whitespace collapsed."""
     for start, end in reversed(_top_level_parens(text)):
         text = text[:start] + text[end:]
-    return _SPACE.sub(" ", _TAG.sub("", text)).strip()
+    return _SPACE_BEFORE_PUNCT.sub("", _SPACE.sub(" ", _TAG.sub("", text))).strip()
 
 
 ACTIONS = (

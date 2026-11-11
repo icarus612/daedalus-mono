@@ -1,7 +1,7 @@
 #	Imperfective	Perfective	English	Stress	Conjugation	я (1sg)	ты (2sg)	они (3pl)	Past (m / f)	Case / Preposition	Additional Info	Examples	Status	Case
 1	делать	сделать	do / make	де́лать / сде́лать	1st (-ешь)	де́лаю	де́лаешь	де́лают	де́лал / де́лала				New	Accusative
 2	говорить	сказать	speak / talk / say / tell	говори́ть / сказа́ть	2nd (-ишь)	говорю́	говори́шь	говоря́т	говори́л / говори́ла		suppletive pair (different roots)		New	Accusative, Prepositional
-3	мочь	смочь	be able to / can (it is possible)	мочь / смочь	irregular	могу́	мо́жешь	мо́гут	мог / могла́				New	
+3	мочь	смочь	be able to / can	мочь / смочь	irregular	могу́	мо́жешь	мо́гут	мог / могла́				New	
 4	знать		know	знать	1st (-ешь)	зна́ю	зна́ешь	зна́ют	знал / зна́ла				New	Accusative
 5	идти	пойти	go (on foot) / set off	идти́ / пойти́	1st (-ешь)	иду́	идёшь	иду́т	шёл / шла		unidirectional motion verb		New	Accusative
 6	видеть	увидеть	see	ви́деть / уви́деть	2nd (-ишь)	ви́жу	ви́дишь	ви́дят	ви́дел / ви́дела				New	Accusative
@@ -162,7 +162,7 @@
 161	приглашать	пригласить	invite	приглаша́ть / пригласи́ть	1st (-ешь)	приглаша́ю	приглаша́ешь	приглаша́ют	приглаша́л / приглаша́ла				New	Accusative
 162	поздравлять	поздравить	congratulate	поздравля́ть / поздра́вить	1st (-ешь)	поздравля́ю	поздравля́ешь	поздравля́ют	поздравля́л / поздравля́ла				New	Accusative, Instrumental
 163	жалеть	пожалеть	regret / feel sorry for	жале́ть / пожале́ть	1st (-ешь)	жале́ю	жале́ешь	жале́ют	жале́л / жале́ла				New	Accusative
-164	советовать	посоветовать	advise	сове́товать / посове́товать	1st (-ешь)	сове́тую	сове́туешь	сове́туют	сове́товал / сове́товала				New	Dative
+164	советовать	посоветовать	advise / recommend	сове́товать / посове́товать	1st (-ешь)	сове́тую	сове́туешь	сове́туют	сове́товал / сове́товала				New	Dative
 165	наблюдать	понаблюдать	observe / watch	наблюда́ть / понаблюда́ть	1st (-ешь)	наблюда́ю	наблюда́ешь	наблюда́ют	наблюда́л / наблюда́ла				New	Accusative, Instrumental
 166	догадываться	догадаться	guess / figure out	дога́дываться / догада́ться	1st (-ешь)	дога́дываюсь	дога́дываешься	дога́дываются	дога́дывался / дога́дывалась				New	Prepositional
 167	привыкать	привыкнуть	get used to	привыка́ть / привы́кнуть	1st (-ешь)	привыка́ю	привыка́ешь	привыка́ют	привыка́л / привыка́ла				New	Dative
@@ -184,7 +184,7 @@
 183	ехать	поехать	to go / ride / drive / travel	е́хать / пое́хать	irregular (suppletive present stem: е́ду/е́дешь/е́дут)	е́ду	е́дешь	е́дут	е́хал / е́хала	в/на (destination); на (means of transport)	unidirectional (cf. multidirectional е́здить, already in this deck)		New	Accusative, Prepositional
 184	значить		mean / signify	зна́чить	2nd (regular)	зна́чу	зна́чишь	зна́чат	зна́чил / зна́чила	no case; often + a что-clause (это значит, что...)	imperfective only, no perfective	что э́то зна́чит?	New	
 185	иметь		to have / possess	име́ть	1st (regular, -еть)	име́ю	име́ешь	име́ют	име́л / име́ла		imperfectivum tantum -- no perfective exists		New	Accusative
-186	нравиться	понравиться	to be pleasing to / (impers.) to like	нра́виться / понра́виться	2nd (в→вл in 1sg: нра́влюсь)	нра́влюсь	нра́вишься	нра́вятся	нра́вился / нра́вилась	(experiencer); the liked thing is the subject: мне нра́вится фильм			New	Dative
+186	нравиться	понравиться	to be pleasing to / to like	нра́виться / понра́виться	2nd (в→вл in 1sg: нра́влюсь)	нра́влюсь	нра́вишься	нра́вятся	нра́вился / нра́вилась	(experiencer); the liked thing is the subject: мне нра́вится фильм			New	Dative
 187	оставлять	оставить	to leave (behind) / abandon	оставля́ть / оста́вить	2nd (perf. future, в→вл: оста́влю)	оста́влю	оста́вишь	оста́вят	оста́вил / оста́вила				New	Accusative
 188	подходить	подойти	to approach / come up to	подходи́ть / подойти́	irregular (-йти verb like идти́; impf. 2nd: подхожу́/подхо́дишь)	подхожу́	подхо́дишь	подхо́дят	подошёл / подошла́	к	past шёл/шла irregularity inherited from идти́		New	Dative
 189	попадать	попасть	to hit / to end up / find oneself	попада́ть / попа́сть	1st (impf. regular; perf. future: попаду́/попадёшь/попадут)	попада́ю	попада́ешь	попада́ют	попа́л / попа́ла	в/на (попа́сть в ава́рию = to get into an accident)			New	Accusative
@@ -195,7 +195,7 @@
 194	удаваться	удаться	to succeed / turn out well / manage	удава́ться / уда́ться	irregular (д-verb; impersonal -- 3sg only: уда́стся/удало́сь)	—	—	—	—	(experiencer): мне удало́сь	impersonal, like прийти́сь; present is удаётся; no personal m/f/pl forms exist		New	Dative
 195	хотеть	захотеть	to want	хоте́ть / захоте́ть	irregular (mixed: хочу́/хо́чешь/хотя́т)	хочу́	хо́чешь	хотя́т	хоте́л / хоте́ла	(partitive); + infinitive	mixed conjugation: singular forms use 1st-conj. endings, plural uses 2nd-conj. (хотя́т, not "хочут")		New	Genitive, Accusative
 196	разговаривать		talk / have a conversation	разгова́ривать	1st (-ешь)	разгова́риваю	разгова́риваешь	разгова́ривают	разгова́ривал / разгова́ривала	с			New	Instrumental
-197	уметь	суметь	can / be able to / know how to (a learned skill)	уме́ть / суме́ть	1st (-ешь)	уме́ю	уме́ешь	уме́ют	уме́л / уме́ла	+ infinitive	a learned skill, unlike мочь = to be physically able		New	
+197	уметь	суметь	can / be able to / know how to	уме́ть / суме́ть	1st (-ешь)	уме́ю	уме́ешь	уме́ют	уме́л / уме́ла	+ infinitive	Unlike мочь = to be physically able		New	
 198	ненавидеть	возненавидеть	hate	ненави́деть / возненави́деть	2nd (-ишь)	ненави́жу	ненави́дишь	ненави́дят	ненави́дел / ненави́дела		д→ж in the 1sg		New	Accusative
 199	звать	позвать	call / summon / be named (summon someone)	зва́ть / позва́ть	1st (-ешь)	зову́	зовёшь	зову́т	звал / звала́		меня́ зову́т... = my name is... (literally 'they call me')		New	Accusative
 200	задавать	задать	ask (a question) / set	задава́ть / зада́ть	1st (-ешь)	задаю́	задаёшь	задаю́т	задава́л / задава́ла	+ what, + to whom	зада́ть вопро́с = to ask a question		New	Accusative, Dative
@@ -209,11 +209,11 @@
 208	подозревать	заподозрить	to suspect	подозрева́ть / заподо́зрить	1st (-ешь)	подозрева́ю	подозрева́ешь	подозрева́ют	подозрева́л / подозрева́ла	в (the offence)	imperfective only		New	Accusative, Prepositional
 209	игнорировать	проигнорировать	ignore	игнори́ровать / проигнори́ровать	1st (-ешь)	игнори́рую	игнори́руешь	игнори́руют	игнори́ровал / игнори́ровала		bi-aspectual: the same form serves both aspects		New	Accusative
 210	повторять	повторить	repeat	повторя́ть / повтори́ть	1st (-ешь)	повторя́ю	повторя́ешь	повторя́ют	повторя́л / повторя́ла				New	Accusative
-211	фотографировать	сфотографировать	take photos / photograph	фотографи́ровать / сфотографи́ровать	1st (-ешь)	фотографи́рую	фотографи́руешь	фотографи́руют	фотографи́ровал / фотографи́ровала				New	Accusative
+211	фотографировать	сфотографировать	take photos / (to) photograph	фотографи́ровать / сфотографи́ровать	1st (-ешь)	фотографи́рую	фотографи́руешь	фотографи́руют	фотографи́ровал / фотографи́ровала				New	Accusative
 212	находиться		be located / be situated	находи́ться	2nd (-ишь)	нахожу́сь	нахо́дишься	нахо́дятся	находи́лся / находи́лась		reflexive; of places and things rather than people		New	
 213	заблуждаться		be mistaken	заблужда́ться	1st (-ешь)	заблужда́юсь	заблужда́ешься	заблужда́ются	заблужда́лся / заблужда́лась		imperfective only in this sense		New	
 214		заблудиться	get lost	заблуди́ться	2nd (-ишь)	заблужу́сь	заблу́дишься	заблу́дятся	заблуди́лся / заблуди́лась				New	
-215	жаловать	пожаловать	grant / favor (archaic)<br>come / visit (formal; the "welcome" sense)	жа́ловать / пожа́ловать	1st (-ешь)	жа́лую	жа́луешь	жа́луют	жа́ловал / жа́ловала				New	
+215	жаловать	пожаловать	come / visit	жа́ловать / пожа́ловать	1st (-ешь)	жа́лую	жа́луешь	жа́луют	жа́ловал / жа́ловала				New	
 216	узнавать	узнать	find out / recognize	узнава́ть / узна́ть	1st (-ешь)	узнаю́	узнаёшь	узнаю́т	узнава́л / узнава́ла				New	Accusative
 217	вспоминать	вспомнить	remember / recall	вспомина́ть / вспо́мнить	1st (-ешь)	вспомина́ю	вспомина́ешь	вспомина́ют	вспомина́л / вспомина́ла	о			New	Accusative, Prepositional
 218	пугаться	испугаться	get scared / be frightened	пуга́ться / испуга́ться	1st (-ешь)	пуга́юсь	пуга́ешься	пуга́ются	пуга́лся / пуга́лась				New	Genitive

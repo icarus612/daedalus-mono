@@ -521,7 +521,8 @@ def test_verbs_reverse_front_carries_inline_aspect_qualifier():
         qfmt = mutable_words_plan.build_template("Verbs", card_index)[0]
         expected = (
             '<span id="translation">{{Translation}}'
-            f' <span class="aspect aspect-{aspect}">({aspect}{_only(aspect)})</span></span>'
+            f' <span class="aspect aspect-{aspect}">'
+            f"({aspect}{_only(aspect)})</span></span>"
         )
         assert expected in qfmt, (card_index, qfmt)
 
@@ -696,9 +697,10 @@ def test_every_verb_card_names_the_headwords_own_aspect():
     ):
         qfmt, afmt = mutable_words_plan.build_template("Verbs", card_index)
         side = qfmt if 'id="translation"' in qfmt else afmt
-        assert f'<span class="aspect aspect-{aspect}">({aspect}{_only(aspect)})</span>' in side, (
-            card_index
-        )
+        assert (
+            f'<span class="aspect aspect-{aspect}">({aspect}{_only(aspect)})</span>'
+            in side
+        ), card_index
 
 
 def test_the_headword_aspect_never_contradicts_the_counterpart_line():
@@ -1068,7 +1070,9 @@ def test_gloss_front_has_the_english_cue_on_the_question_and_russian_cue_on_the_
     )
     assert _ENGLISH_CUE not in afmt
     assert RUSSIAN_CUE not in qfmt
-    assert re.search(r'<span id="russian">[^<]*</span>\s*' + re.escape(RUSSIAN_CUE), afmt)
+    assert re.search(
+        r'<span id="russian">[^<]*</span>\s*' + re.escape(RUSSIAN_CUE), afmt
+    )
 
 
 @pytest.mark.parametrize("sheet,card_index", _CARDS)
@@ -1080,14 +1084,18 @@ def test_pill_placement_in_the_raw_templates(sheet, card_index):
     if card_index in HEADWORD_FRONT[sheet]:
         assert 'class="case-pills"' not in qfmt
         assert afmt.count(_PILLS) == 1
-        assert re.search(re.escape(_ENGLISH_CUE) + r"</div>\s*" + re.escape(_PILLS), afmt)
+        assert re.search(
+            re.escape(_ENGLISH_CUE) + r"</div>\s*" + re.escape(_PILLS), afmt
+        )
         if sheet == "Verbs":
             slug = "perfective" if card_index == 0 else "imperfective"
             assert afmt.index(_PILLS) < afmt.index(f'<div id="{slug}" ')
         assert afmt.index(_PILLS) < afmt.index('<div id="details">')
     else:
         assert qfmt.count(_PILLS) == 1
-        assert re.search(re.escape(_ENGLISH_CUE) + r"</div>\s*" + re.escape(_PILLS), qfmt)
+        assert re.search(
+            re.escape(_ENGLISH_CUE) + r"</div>\s*" + re.escape(_PILLS), qfmt
+        )
         assert 'class="case-pills"' not in afmt
 
 
@@ -1288,12 +1296,10 @@ def test_pronoun_type_row_is_kept_when_there_is_no_cue():
     assert fields[PRONOUN_TYPE_FIELD] == "personal (1st sg.)"
 
 
-def test_exactly_the_eleven_restating_pronouns_lose_their_type_row(pronouns):
+def test_exactly_the_ten_restating_pronouns_lose_their_type_row(pronouns):
     emptied = sorted(
         row.russian
         for row in pronouns
         if row.pronoun_type and row.fields()[PRONOUN_TYPE_FIELD] == ""
     )
-    assert emptied == sorted(
-        "ты вы кто себя тот какой который весь твой ваш свой".split()
-    )
+    assert emptied == sorted("ты вы кто себя тот какой который весь твой ваш".split())

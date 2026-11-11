@@ -251,7 +251,7 @@
 254	паспорт	passport	па́спорт	m	паспорта́	па́спорта	паспорто́в	No	Transport & Travel			New
 255	виза	visa	ви́за	f	ви́зы	ви́зы	виз	No	Transport & Travel			New
 256	граница	border	грани́ца	f	грани́цы	грани́цы	грани́ц	No	Transport & Travel			New
-257	багаж	luggage	бага́ж	m	—	багажа́	багаже́й	No	Transport & Travel			New
+257	багаж	luggage / baggage	бага́ж	m	—	багажа́	багаже́й	No	Transport & Travel			New
 258	еда	food	еда́	f	—	еды́		No	Food & Drink			New
 259	продукт	product / (plural) groceries	проду́кт	m	проду́кты	проду́кта	проду́ктов	No	Food & Drink			New
 260	чай	tea	чай	m	—	ча́я	чаёв	No	Food & Drink			New
@@ -347,7 +347,7 @@
 351	ошибка	mistake	оши́бка	f	оши́бки	оши́бки	оши́бок	No	Life & Mind			New
 352	секрет	secret	секре́т	m	секре́ты	секре́та	секре́тов	No	Life & Mind			New
 353	тайна	mystery / secret	та́йна	f	та́йны	та́йны	тайн	No	Life & Mind			New
-354	дело	matter / affair / business (an affair)	де́ло	n	дела́	де́ла	дел	No	Work, Law & Rules			New
+354	дело	matter / affair / business	де́ло	n	дела́	де́ла	дел	No	Work, Law & Rules			New
 355	работа	work / job	рабо́та	f	рабо́ты	рабо́ты	рабо́т	No	Work, Law & Rules	на работе		New
 356	труд	labor	труд	m	труды́	труда́	трудо́в	No	Work, Law & Rules			New
 357	отдых	rest / vacation	о́тдых	m	—	о́тдыха	о́тдыхов	No	Work, Law & Rules			New

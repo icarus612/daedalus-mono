@@ -77,20 +77,17 @@ Used to connect clauses, sentences, or concepts.
 | 14 | однако | however | Contrast, like "however" — often sentence-initial | — |
 | 15 | поэтому | therefore | Introduces the result — "that's why" | — |
 | 16 | словно / будто | as if / like | — | — |
-| 17 | зато | but on the other hand | Compensating contrast — "but on the plus side" | — |
+| 17 | зато | but on the other hand | But on the plus side | — |
 | 18 | тоже / также | also / too | — | — |
 | 19 | либо | either / or | Bookish alternative to или | — |
 | 20 | пока (conjunction) | while / until (for as long as) | пока не means "until" | — |
 | 21 | чем | than | Comparative — comma before it | — |
 | 22 | ни... ни... | neither... nor... | Needs a negated verb in the same clause | — |
-| 23 | то... то... | now... now... | — | — |
+| 23 | то... то... | now (this)… now (that)… | — | — |
 | 24 | как только | as soon as | "The moment that" — comma before it | — |
-| 25 | несмотря на то, что | despite the fact that | Formal; comma before что | — |
-| 26 | для того, чтобы | in order to | Emphatic чтобы — same past-form rule | — |
 | 27 | с тех пор, как | since | — | — |
 | 28 | до того, как | before | — | — |
 | 29 | перед тем, как | just before | — | — |
-| 30 | оттого что | because | — | — |
 | 31 | причём | moreover / and what's more | Adds a pointed extra detail | — |
 | 32 | притом | besides | Close to причём, more bookish | — |
 | 33 | как будто | as if / as though | — | — |
@@ -116,27 +113,25 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 13 | именно | exactly / precisely | Pinpoints exactly which one | — |
 | 14 | просто (particle) | simply / just | Plays it down — "it's just that..." | — |
 | 15 | пусть / пускай | let | — | — |
-| 16 | всё-таки | still / nevertheless | Concessive — "all the same, after all" | — |
+| 16 | всё-таки | still / nevertheless | Concessive | — |
 | 17 | вон | over there | — | — |
 | 18 | уж | really / indeed | — | — |
 | 19 | да | yes | — | — |
 | 20 | нет | no | Answers "no" | — |
-| 21 | лишь | only / merely (bookish) | Bookish equivalent of только | — |
+| 21 | лишь | merely / only | Same as только | — |
 | 22 | всё | still / all / constantly (keeps on) | Continuative — "keeps on, still" | — |
-| 23 | -то | some- | кто-то "someone", где-то "somewhere"; contrast -нибудь = any- | — |
-| 24 | -ка | go on / just (informal) | softens an imperative: скажи-ка "go on, tell me" | — |
 | 25 | таки | after all / nevertheless | often hyphenated: всё-таки | — |
 | 26 | пожалуй | perhaps / I suppose | Hedges — "I suppose, perhaps" | — |
 | 27 | будто | as if / as though | — | — |
-| 28 | мол | he says / she says / like | — | — |
-| 29 | дескать | supposedly / allegedly / so he claims | more formal than мол | — |
+| 28 | мол | supposedly / reportedly | Colloquial; repeats someone's words, often doubting them | — |
+| 29 | дескать | supposedly / reportedly | Colloquial; repeats someone's words, or puts a gesture or look into words | — |
 | 30 | во | wow / look at that | Very colloquial exclamation | — |
 | 31 | ну и | what a... | e.g., ну и день = what a day | — |
 | 32 | здравствуйте | hello | Formal/plural greeting; lit. imperative "be healthy" | — |
-| 33 | спасибо | thank you | Lit. "save [you] God" (spasi Bog), now a fixed word | — |
+| 33 | спасибо | thank you | — | — |
 | 34 | пожалуйста | please / you're welcome | Also used to mean "here you go" when handing something over | — |
-| 35 | извините | excuse me / sorry (formal — when you are at fault) | Imperative pl./formal of извинить; use when you are at fault | — |
-| 36 | простите | excuse me / forgive me (formal — to get attention) | Imperative pl./formal of простить; also used to get attention | — |
+| 35 | извините | excuse me / sorry | Imperative pl./formal of извинить; use when you are at fault | — |
+| 36 | простите | excuse me / forgive me | Imperative pl./formal of простить; also used to get attention | — |
 | 37 | привет | hello / hi | Informal only; do not use with strangers or superiors | — |
 | 38 | конечно | of course / certainly | Written with ч but pronounced [ш]: конешно | — |
 | 39 | ладно | OK / all right | Signals agreement or resignation ("fine, whatever") | — |
@@ -203,13 +198,13 @@ A lone em dash there means "no extra info" and renders as nothing.
 
 | Rank | Russian | English | Info | Examples |
 |---|---|---|---|---|
-| 1 | где | where | Asking for a static location | — |
+| 1 | где | where | Asks about a static place | — |
 | 2 | здесь | here | — | — |
 | 3 | тут | here | Interchangeable with здесь | — |
 | 4 | там | there | Static location | — |
 | 5 | везде | everywhere | Static location | — |
 | 6 | нигде | nowhere | Requires a negative verb (не) | — |
-| 7 | дома | at home | Static location | — |
+| 7 | дома | at home | — | — |
 | 8 | куда | to where | Asking for motion towards a goal | — |
 | 9 | сюда | to here | Motion towards speaker | — |
 | 10 | туда | to there | Motion away from speaker | — |

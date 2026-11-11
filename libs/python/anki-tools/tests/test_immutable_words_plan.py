@@ -64,8 +64,8 @@ REAL_SOURCE_PATH = Path(__file__).resolve().parent / "data" / "source-word-list.
 # document contains after the l3 split/transform pass and lane l14's additions.
 EXPECTED_SECTION_COUNTS = [
     ("Prepositions", 44),
-    ("Conjunctions", 35),
-    ("Particles", 44),
+    ("Conjunctions", 32),
+    ("Particles", 42),
     ("Indeclinable Nouns", 42),
     ("Base Adverbs", 68),
 ]
@@ -100,20 +100,16 @@ MULTI_FORM_ROWS = [
     ("Conjunctions", 8, "чтобы / чтоб"),
     ("Conjunctions", 23, "ни... ни..."),
     ("Conjunctions", 24, "то... то..."),
-    ("Conjunctions", 26, "несмотря на то, что"),
-    ("Conjunctions", 27, "для того, чтобы"),
-    ("Conjunctions", 28, "с тех пор, как"),
-    ("Conjunctions", 29, "до того, как"),
-    ("Conjunctions", 30, "перед тем, как"),
+    ("Conjunctions", 26, "с тех пор, как"),
+    ("Conjunctions", 27, "до того, как"),
+    ("Conjunctions", 28, "перед тем, как"),
     ("Particles", 15, "пусть / пускай"),
-    ("Particles", 23, "-то"),
-    ("Particles", 24, "-ка"),
 ]
 
 
-def test_multi_form_catalog_has_fifteen_entries():
+def test_multi_form_catalog_has_eleven_entries():
     """Sanity check on the test's own fixture data, not the implementation."""
-    assert len(MULTI_FORM_ROWS) == 15
+    assert len(MULTI_FORM_ROWS) == 11
 
 
 # ---------------------------------------------------------------------------
@@ -189,7 +185,7 @@ def _remove_section(text, heading_name):
 
 
 def test_parse_real_document_total_row_count(real_rows):
-    assert len(real_rows) == EXPECTED_TOTAL_ROWS == 233
+    assert len(real_rows) == EXPECTED_TOTAL_ROWS == 228
 
 
 def test_parse_real_document_section_order_counts_and_ranks(real_rows):
@@ -234,7 +230,7 @@ def test_parse_real_document_part_two_produces_no_spurious_rows(real_rows):
     AwesomeTTS / HyperTTS / add-on-install subsections) has no tables and
     must not contribute rows or raise.
     """
-    assert len(real_rows) == 233
+    assert len(real_rows) == 228
     assert all(row.pos in SUBDECK_LEAVES for row in real_rows)
 
 
@@ -1067,13 +1063,6 @@ TAKZHE_CUE = "same subject, an extra thing; more formal"
 BUDTO_TRANSLATION = "as if / as though"
 BUDTO_CUE = "often implies doubt"
 
-# The exact override texts for -то and -ка from lane l1's contract table
-# (transcribed verbatim from the contract, not from any implementation).
-TO_TRANSLATION = "some-"
-TO_INFO = 'кто-то "someone", где-то "somewhere"; contrast -нибудь = any-'
-KA_TRANSLATION = "go on / just (informal)"
-KA_INFO = 'softens an imperative: скажи-ка "go on, tell me"'
-
 
 def test_slovno_row_present_standalone_with_literal_simile_translation(real_rows):
     matches = [
@@ -1121,24 +1110,6 @@ def test_budto_row_translation_not_bare_as_if(real_rows):
     assert matches[0].fields()[-1] == BUDTO_CUE
     # Not the source document's old, stale bare gloss.
     assert matches[0].english != "as if"
-
-
-def test_to_row_overridden_translation(real_rows):
-    matches = [
-        row for row in real_rows if row.pos == "Particles" and row.russian == "-то"
-    ]
-    assert len(matches) == 1
-    assert matches[0].english == TO_TRANSLATION
-    assert matches[0].info == TO_INFO
-
-
-def test_ka_row_overridden_translation(real_rows):
-    matches = [
-        row for row in real_rows if row.pos == "Particles" and row.russian == "-ка"
-    ]
-    assert len(matches) == 1
-    assert matches[0].english == KA_TRANSLATION
-    assert matches[0].info == KA_INFO
 
 
 def _parse_raw_section_glosses(text):
@@ -1240,7 +1211,7 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
             populated += 1
 
     # Exact count: the rest are em-dash rows or restatements the classification dropped.
-    assert populated == 48
+    assert populated == 47
 
 
 # Populated info cells per section. Every section is four-column now:
@@ -1251,10 +1222,10 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
 # explains itself -- info that merely restates the gloss is noise.
 EXPECTED_INFO_COUNTS = {
     "Prepositions": (44, 44),
-    "Conjunctions": (35, 20),
-    "Particles": (44, 30),
+    "Conjunctions": (32, 18),
+    "Particles": (42, 28),
     "Indeclinable Nouns": (42, 42),
-    "Base Adverbs": (68, 48),
+    "Base Adverbs": (68, 47),
 }
 
 
@@ -1565,10 +1536,10 @@ def test_guid_for_row_signature_accepts_only_russian_and_pos():
 def guid_probe_russian_strings(real_rows):
     """A dozen-plus varied real Russian strings pulled from the parsed
     source document, deliberately including the multi-form entries the l8
-    contract names explicitly ("в / во", "-то", "несмотря на то, что"), per
+    contract names explicitly ("в / во", "-то", "с тех пор, как"), per
     l8.md section 1's "Non-empty, alphabet-only" acceptance criterion.
     """
-    required = ["в / во", "-то", "несмотря на то, что"]
+    required = ["в / во", "-то", "с тех пор, как"]
     picks = list(required)
     seen = set(picks)
     for row in real_rows:
@@ -1745,7 +1716,7 @@ def test_every_source_row_carrying_a_qualifier_is_in_the_table(real_rows):
 
 
 def test_no_russian_field_in_the_real_document_carries_a_parenthetical(real_rows):
-    assert len(real_rows) == 233
+    assert len(real_rows) == 228
     assert len(QUALIFIED_ROWS) == 11
     offenders = [row.russian for row in real_rows if "(" in row.fields()[RUSSIAN_INDEX]]
     assert offenders == []

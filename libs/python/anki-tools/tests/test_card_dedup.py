@@ -75,9 +75,6 @@ _ELABORATES = (
 )
 
 _CATEGORY_LABEL = "Category is a classification label"
-_CUE_RESTATES_TRANSLATION = (
-    "the cue-sweep cue restates a Translation parenthetical the source still carries"
-)
 
 ALLOWED = {
     (
@@ -86,18 +83,6 @@ ALLOWED = {
         dedup.RULE_UNION,
         ("so that past or infinitive",),
     ): _APPROVED_KEEP,
-    (
-        "Mutable Adverbs",
-        "грязно",
-        dedup.RULE_CONTAINED,
-        ("it s dirty here", "здесь грязно it s dirty here"),
-    ): _ELABORATES,
-    (
-        "Mutable Adverbs",
-        "скучно",
-        dedup.RULE_CONTAINED,
-        ("i m bored", "мне скучно i m bored"),
-    ): _ELABORATES,
     (
         "Immutable Words",
         "просто",
@@ -146,18 +131,6 @@ ALLOWED = {
         dedup.RULE_CONTAINED,
         ("to the touch", "hot to the touch жаркии hot weather"),
     ): _ELABORATES,
-    (
-        "Mutable Adjectives",
-        "синий",
-        dedup.RULE_CONTAINED,
-        ("dark", "dark blue голубои light blue russian treats them as separate colors"),
-    ): _ELABORATES,
-    (
-        "Mutable Adjectives",
-        "занятой",
-        dedup.RULE_CONTAINED,
-        ("of a person", "занятои busy person занятыи occupied seat line"),
-    ): _ELABORATES,
     ("Mutable Nouns", "время", dedup.RULE_EQUAL, ("time", "time")): _CATEGORY_LABEL,
     (
         "Mutable Nouns",
@@ -181,62 +154,11 @@ ALLOWED = {
     ("Mutable Nouns", "раз", dedup.RULE_EQUAL, ("time", "time")): _CATEGORY_LABEL,
     (
         "Immutable Words",
-        "во",
-        dedup.RULE_UNION,
-        ("colloquial exclamation wow look",),
-    ): _ELABORATES,
-    (
-        "Immutable Words",
-        "как только",
-        dedup.RULE_CONTAINED,
-        (
-            "the moment that",
-            "the moment that comma before it",
-        ),
-    ): _ELABORATES,
-    (
-        "Immutable Words",
-        "киви",
-        dedup.RULE_CONTAINED,
-        (
-            "the fruit",
-            "neuter as the fruit feminine as the bird",
-        ),
-    ): _ELABORATES,
-    (
-        "Immutable Words",
-        "поэтому",
-        dedup.RULE_CONTAINED,
-        (
-            "the result that s why",
-            "introduces the result that s why",
-        ),
-    ): _ELABORATES,
-    (
-        "Immutable Words",
         "привет",
         dedup.RULE_CONTAINED,
         (
             "informal",
             "informal only do not use with strangers or superiors",
-        ),
-    ): _ELABORATES,
-    (
-        "Immutable Words",
-        "хаки",
-        dedup.RULE_CONTAINED,
-        (
-            "the colour",
-            "neuter as a noun also an invariable colour adjective",
-        ),
-    ): _ELABORATES,
-    (
-        "Mutable Adverbs",
-        "здорово",
-        dedup.RULE_CONTAINED,
-        (
-            "colloquial",
-            "здорово different stress great colloquial",
         ),
     ): _ELABORATES,
     (
@@ -253,35 +175,7 @@ ALLOWED = {
     ): _ELABORATES,
 }
 
-OPEN: dict = {
-    (
-        "Immutable Words",
-        "вообще",
-        dedup.RULE_CONTAINED,
-        (
-            "generally or at all",
-            "in general at all generally speaking",
-        ),
-    ): _CUE_RESTATES_TRANSLATION,
-    (
-        "Immutable Words",
-        "лишь",
-        dedup.RULE_CONTAINED,
-        (
-            "bookish only merely",
-            "only merely bookish",
-        ),
-    ): _CUE_RESTATES_TRANSLATION,
-    (
-        "Immutable Words",
-        "тогда",
-        dedup.RULE_CONTAINED,
-        (
-            "at that time or in that case",
-            "then in that case at that time",
-        ),
-    ): _CUE_RESTATES_TRANSLATION,
-}
+OPEN: dict = {}
 
 _SOURCE_FIELDS = [
     "Russian",
@@ -500,14 +394,6 @@ SEEDED_CASES = {
         "row": "до",
         "overrides": {"English Distinction": "Genitive", "Additional Info": "Genitive"},
         "rules": {dedup.RULE_CASE, dedup.RULE_CONTAINED},
-    },
-    "для того, чтобы": {
-        "row": "для того, чтобы",
-        "overrides": {
-            "Translation": "in order to (the emphatic, two-part form)",
-            "English Distinction": "the emphatic, two-part form",
-        },
-        "rules": {dedup.RULE_EQUAL, dedup.RULE_CONTAINED},
     },
     "всё": {
         "row": "всё",

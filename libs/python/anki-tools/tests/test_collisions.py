@@ -383,6 +383,7 @@ def test_remove_parentheticals(
         ("bank (the financial one)", "bank"),
         ("<b>bank</b> (a)<br>tail (b)", "bank tail"),
         ("plain  text", "plain text"),
+        ("now (this)… now (that)…", "now… now…"),
     ],
 )
 def test_outside_parentheses(text: str, expected: str) -> None:
@@ -517,10 +518,10 @@ def test_format_groups_table_empty_has_header_only() -> None:
 
 
 def test_load_notes_counts_and_order(notes: list[Note]) -> None:
-    assert len(notes) == 1486
-    assert [n.family for n in notes[:233]] == ["immutable"] * 233
-    assert {n.family for n in notes[233:]} == {"mutable"}
-    mutable_sections = list(dict.fromkeys(n.section for n in notes[233:]))
+    assert len(notes) == 1481
+    assert [n.family for n in notes[:228]] == ["immutable"] * 228
+    assert {n.family for n in notes[228:]} == {"mutable"}
+    mutable_sections = list(dict.fromkeys(n.section for n in notes[228:]))
     assert mutable_sections == [
         "Nouns",
         "Verbs",
@@ -529,7 +530,7 @@ def test_load_notes_counts_and_order(notes: list[Note]) -> None:
         "Pronouns",
         "Numerals",
     ]
-    counts = Counter(n.section for n in notes[233:])
+    counts = Counter(n.section for n in notes[228:])
     assert [counts[s] for s in mutable_sections] == [631, 223, 174, 141, 29, 55]
 
 
@@ -540,14 +541,14 @@ def test_load_notes_fields(notes: list[Note]) -> None:
         assert note.english_distinction == ENGLISH_DISTINCTIONS.get(note.headword, "")
         if note.family == "mutable":
             assert note.note_type == mutable_words_plan.NOTE_TYPE_NAMES[note.section]
-    assert len({n.guid for n in notes}) == 1486
+    assert len({n.guid for n in notes}) == 1481
 
 
 def test_every_english_distinction_key_matches_a_headword(notes: list[Note]) -> None:
     headwords = {n.headword for n in notes}
-    assert len(ENGLISH_DISTINCTIONS) == 438
+    assert len(ENGLISH_DISTINCTIONS) == 327
     assert set(ENGLISH_DISTINCTIONS) <= headwords
-    assert sum(1 for n in notes if n.english_distinction) == 438
+    assert sum(1 for n in notes if n.english_distinction) == 327
 
 
 def test_provisional_cases(notes: list[Note], governed_notes: list[Note]) -> None:
@@ -586,11 +587,11 @@ def test_government_overrides_cases_for_any_section(notes: list[Note]) -> None:
 
 def test_collision_totals(groups: list[collisions.CollisionGroup]) -> None:
     assert len(groups) == 220
-    assert sum(len(g.members) for g in groups) == 484
-    assert len({m.guid for g in groups for m in g.members}) == 398
+    assert sum(len(g.members) for g in groups) == 482
+    assert len({m.guid for g in groups for m in g.members}) == 393
     assert Counter(g.mechanism for g in groups) == {
-        "cue": 126,
-        "header": 86,
+        "cue": 125,
+        "header": 87,
         "pill": 7,
         "header+pill": 1,
     }
@@ -599,10 +600,10 @@ def test_collision_totals(groups: list[collisions.CollisionGroup]) -> None:
 
 def test_immutable_only_collisions(notes: list[Note]) -> None:
     immutable = [n for n in notes if n.family == "immutable"]
-    assert len(immutable) == 233
+    assert len(immutable) == 228
     result = collisions.find_collisions(immutable)
-    assert len(result) == 55
-    assert len({m.guid for g in result for m in g.members}) == 98
+    assert len(result) == 54
+    assert len({m.guid for g in result for m in g.members}) == 93
     assert sum(1 for g in result if g.mechanism == "pill") == 7
 
 
@@ -706,7 +707,7 @@ def test_map_cues_separates_needs_one_side_nonempty() -> None:
 def test_map_cues_real_entry_count(
     notes: list[Note], groups: list[collisions.CollisionGroup]
 ) -> None:
-    assert len(collisions.map_cues(notes, groups)) == 438
+    assert len(collisions.map_cues(notes, groups)) == 327
 
 
 def test_classify_row_columns_are_declared() -> None:
@@ -1159,7 +1160,7 @@ def test_real_screenshot_cases(rows: list[collisions.ClassificationRow]) -> None
     assert actions["asking for more"] == "keep-inline"
     [still_cue] = rows_of(rows, "ещё", "English Distinction")
     assert (still_cue.qualifier_text, still_cue.action) == (
-        "still going on; or more of it",
+        "Not over yet",
         "keep",
     )
     assert rows_of(rows, "ещё", "Additional Info") == []
@@ -1171,7 +1172,7 @@ def test_real_screenshot_cases(rows: list[collisions.ClassificationRow]) -> None
     }
     assert everything["keeps on"] == "keep-inline"
     [everything_cue] = rows_of(rows, "всё", "English Distinction")
-    assert everything_cue.qualifier_text == "keeps on: still / all the time"
+    assert everything_cue.qualifier_text == "Repeatedly"
     assert everything_cue.action == "keep"
 
     assert rows_of(rows, "банк", "Translation") == []

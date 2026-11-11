@@ -23,6 +23,11 @@ UNBUILT_BASELINE_GUIDS = {
     "Kfyy3[<gHw",
     "B9<ldHd%Q|",
     "uGCt-H97.M",
+    "G,NZbr!zQV",
+    "dxy;`QRj>|",
+    "frWpR?(=>O",
+    "L:sBP8ffq)",
+    "QfFm4-sN./",
 }
 NEW_VERB_HEADWORDS = {
     "лично",
@@ -65,6 +70,10 @@ CUE_SUPERSEDED_BY_CLASSIFICATION = {
     "с / со",
     "согласно (preposition)",
     "среди",
+    "около",
+    "через",
+    "сквозь",
+    "мимо",
 }
 
 TINT = re.compile(r"</?span\b[^>]*>")
@@ -137,7 +146,7 @@ def routing():
 
 
 def test_artifact_sizes():
-    assert len(read_tsv(VOCAB / "qualifier-classification.tsv")) == 898
+    assert len(read_tsv(VOCAB / "qualifier-classification.tsv")) == 900
     assert len(read_tsv(DATA / "case-text-routing.tsv")) == 114
 
 
