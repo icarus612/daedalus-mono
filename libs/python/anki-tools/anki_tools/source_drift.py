@@ -9,6 +9,7 @@ from dataclasses import dataclass
 
 from anki_tools import immutable_words_plan as iwp
 from anki_tools import mutable_words_plan as mwp
+from anki_tools import variant_pairs
 
 IMMUTABLE_NOTE_TYPE_NAME = "Russian - Immutable Words (Ellis Version)"
 
@@ -68,6 +69,15 @@ def expected_notes(word_list_text: str, source_dir: str) -> list[ExpectedNote]:
         )
         for row in iwp.parse_word_list(word_list_text)
     ]
+    for pair in variant_pairs.load_pairs():
+        notes.append(
+            ExpectedNote(
+                guid=pair.guid,
+                note_type=variant_pairs.NOTE_TYPE_NAME,
+                headword=pair.headword,
+                fields=dict(zip(variant_pairs.FIELD_NAMES, pair.fields())),
+            )
+        )
     for sheet, (file_name, parse) in TSV_FILES.items():
         for row in parse(os.path.join(source_dir, file_name)):
             notes.append(
@@ -82,7 +92,13 @@ def expected_notes(word_list_text: str, source_dir: str) -> list[ExpectedNote]:
 
 
 def managed_note_types() -> frozenset[str]:
-    return frozenset({IMMUTABLE_NOTE_TYPE_NAME, *mwp.NOTE_TYPE_NAMES.values()})
+    return frozenset(
+        {
+            IMMUTABLE_NOTE_TYPE_NAME,
+            variant_pairs.NOTE_TYPE_NAME,
+            *mwp.NOTE_TYPE_NAMES.values(),
+        }
+    )
 
 
 def compare(expected: list[ExpectedNote], actual: list[CollectionNote]) -> DriftReport:

@@ -68,7 +68,6 @@ Used to connect clauses, sentences, or concepts.
 | 5 | как (conjunction) | like / as | — | белый как снег |
 | 6 | если | if | Subordinating — often paired with то: если..., то... | — |
 | 7 | или | or | Coordinating — comma only when repeated: или..., или... | — |
-| 8 | чтобы / чтоб | so that / in order to | The verb after it takes the PAST form; infinitive if the subject does not change | — |
 | 9 | когда (conjunction) | when / while / as | — | Когда я пришёл, он спал |
 | 10 | хотя | although | Subordinating — comma before it | — |
 | 11 | потому что | because | States the cause after the result | — |
@@ -91,7 +90,6 @@ Used to connect clauses, sentences, or concepts.
 | 31 | причём | moreover / and what's more | Adds a pointed extra detail | — |
 | 32 | притом | besides | Close to причём, more bookish | — |
 | 33 | как будто | as if / as though | — | — |
-| 34 | пускай | even though / let | Colloquial variant of пусть | — |
 
 ### Particles (Частицы)
 Short words that add grammatical function, emotion, or tone to speech.
@@ -112,7 +110,6 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 12 | неужели | is it possible? | — | — |
 | 13 | именно | exactly / precisely | Pinpoints exactly which one | — |
 | 14 | просто (particle) | simply / just | Plays it down — "it's just that..." | — |
-| 15 | пусть / пускай | let | — | — |
 | 16 | всё-таки | still / nevertheless | Concessive | — |
 | 17 | вон | over there | — | — |
 | 18 | уж | really / indeed | — | — |
@@ -123,8 +120,6 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 25 | таки | after all / nevertheless | often hyphenated: всё-таки | — |
 | 26 | пожалуй | perhaps / I suppose | Hedges — "I suppose, perhaps" | — |
 | 27 | будто | as if / as though | — | — |
-| 28 | мол | supposedly / reportedly | Colloquial; repeats someone's words, often doubting them | — |
-| 29 | дескать | supposedly / reportedly | Colloquial; repeats someone's words, or puts a gesture or look into words | — |
 | 30 | во | wow / look at that | Very colloquial exclamation | — |
 | 31 | ну и | what a... | e.g., ну и день = what a day | — |
 | 32 | здравствуйте | hello | Formal/plural greeting; lit. imperative "be healthy" | — |

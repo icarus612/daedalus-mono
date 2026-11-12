@@ -14,6 +14,7 @@ from anki_tools import (
     immutable_words,
     mutable_words,
     mutable_words_plan,
+    variant_pairs,
 )
 from anki_tools.immutable_words_plan import parse_word_list
 
@@ -47,13 +48,12 @@ DELETED_NOTE_RUNS = {
     "dxy;`QRj>|": ["чтобы"],
     "L:sBP8ffq)": ["где-то", "кто-то", "нибудь"],
     "QfFm4-sN./": ["скажи-ка"],
+    "GzoPl`NFmi": ["мол"],
 }
-REWRITTEN_INFO_RUNS = {"GzoPl`NFmi": ["мол"]}
 EXPECTED_LOST_RUNS = {
     **ROUTED_AWAY_RUNS,
     **ASPECT_SPLIT_RUNS,
     **DELETED_NOTE_RUNS,
-    **REWRITTEN_INFO_RUNS,
 }
 ALLOWED_CYRILLIC_TRANSLATIONS: list[str] = []
 
@@ -89,6 +89,10 @@ def _all_notes():
             (r.guid, r.translation, r.additional_info, r.examples) for r in rows
         )
     notes.extend((r.guid, r.english, r.info, r.examples) for r in _immutable_rows())
+    notes.extend(
+        (p.guid, p.translation, p.additional_info, p.examples)
+        for p in variant_pairs.load_pairs()
+    )
     return notes
 
 
@@ -102,7 +106,7 @@ def _runs(*texts):
 
 def test_no_translation_contains_cyrillic():
     translations = [translation for _, translation, _, _ in _all_notes()]
-    assert len(translations) == 1481
+    assert len(translations) == 1480
     assert _translations_with_cyrillic(translations) == ALLOWED_CYRILLIC_TRANSLATIONS
 
 
@@ -145,6 +149,7 @@ def _row_texts(row):
 def _runs_by_guid():
     rows = [row for sheet_rows in _mutable_rows().values() for row in sheet_rows]
     rows.extend(_immutable_rows())
+    rows.extend(variant_pairs.load_pairs())
     return {row.guid: _runs(*_row_texts(row)) for row in rows}
 
 

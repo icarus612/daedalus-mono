@@ -268,8 +268,6 @@ lead	водить	Verbs	lead / drive (a car)	Habitually	cue	drive
 lead	вести	Verbs	lead / take	on foot, one way	cue	take
 leave	уходить	Verbs	leave	on foot	cue	
 leave	оставлять	Verbs	to leave / abandon	Behind	cue	
-let	пускай	Conjunctions	even though / let	Conceding a point	header	
-let	пусть / пускай	Particles	let	as in "let them"	header	
 lie	ложь	Nouns	lie	an untruth	header	
 lie	лежать	Verbs	lie	be lying down	cue	
 lie	лгать	Verbs	lie	tell untruths	cue	
@@ -390,8 +388,6 @@ recognize	признавать	Verbs	admit / recognize	acknowledge	cue
 recognize	узнавать	Verbs	find out / recognize	know by sight	cue	
 remember	помнить	Verbs	remember	keep in memory	pill	
 remember	вспоминать	Verbs	remember / recall	bring to mind	pill	
-reportedly	мол	Particles	supposedly / reportedly	Spoken words only	cue	supposedly
-reportedly	дескать	Particles	supposedly / reportedly	Can also explain a gesture	cue	supposedly
 request	просьба	Nouns	request		header	
 request	просить	Verbs	ask (for) / request	ask for something	header	ask
 rescue	спасение	Nouns	rescue / salvation		header	
@@ -454,8 +450,6 @@ summer	лето	Nouns	summer		header
 summer	летний	Adjectives	summer		header	
 summon	звать	Verbs	call / summon / be named	Invite over	cue	call
 summon	вызывать	Verbs	call out / summon / cause	Send for	cue	cause
-supposedly	мол	Particles	supposedly / reportedly	Spoken words only	cue	reportedly
-supposedly	дескать	Particles	supposedly / reportedly	Can also explain a gesture	cue	reportedly
 suspect	подозреваемый	Nouns	suspect		header	
 suspect	подозревать	Verbs	to suspect		header	
 swim	плавать	Verbs	swim / sail	habitually, round trips	cue	sail

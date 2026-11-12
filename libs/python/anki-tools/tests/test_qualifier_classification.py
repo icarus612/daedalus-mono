@@ -28,6 +28,11 @@ UNBUILT_BASELINE_GUIDS = {
     "frWpR?(=>O",
     "L:sBP8ffq)",
     "QfFm4-sN./",
+    "l,,#bWA*.5",
+    "u]I&eN3T=v",
+    "Oy}R4$*3)M",
+    "I@5YQBFJ1Z",
+    "GzoPl`NFmi",
 }
 NEW_VERB_HEADWORDS = {
     "лично",
@@ -146,7 +151,7 @@ def routing():
 
 
 def test_artifact_sizes():
-    assert len(read_tsv(VOCAB / "qualifier-classification.tsv")) == 901
+    assert len(read_tsv(VOCAB / "qualifier-classification.tsv")) == 893
     assert len(read_tsv(DATA / "case-text-routing.tsv")) == 114
 
 

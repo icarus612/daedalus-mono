@@ -79,12 +79,6 @@ _CATEGORY_LABEL = "Category is a classification label"
 ALLOWED = {
     (
         "Immutable Words",
-        "чтобы / чтоб",
-        dedup.RULE_UNION,
-        ("so that past or infinitive",),
-    ): _APPROVED_KEEP,
-    (
-        "Immutable Words",
         "просто",
         dedup.RULE_CONTAINED,
         ("plays it down", "plays it down it s just that"),

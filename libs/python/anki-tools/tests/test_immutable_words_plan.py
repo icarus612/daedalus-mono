@@ -64,8 +64,8 @@ REAL_SOURCE_PATH = Path(__file__).resolve().parent / "data" / "source-word-list.
 # document contains after the l3 split/transform pass and lane l14's additions.
 EXPECTED_SECTION_COUNTS = [
     ("Prepositions", 44),
-    ("Conjunctions", 32),
-    ("Particles", 42),
+    ("Conjunctions", 30),
+    ("Particles", 39),
     ("Indeclinable Nouns", 42),
     ("Base Adverbs", 68),
 ]
@@ -90,26 +90,25 @@ EXPECTED_SUBDECK_PATHS = {
 # Conjunctions rank at/after the old rank 18 shifts by +1 because
 # "тоже / также" expanded from 1 row to 2 (see l3.md section 3 for the
 # renumbering algorithm); ranks below 16, and Prepositions/Particles
-# (untouched by the split), keep their original numbers.
+# (untouched by the split), keep their original numbers. The variant-pair
+# rows (чтобы / чтоб, пусть / пускай) left the list, shifting later ranks by -1.
 # (pos, rank, expected verbatim `.russian` value)
 MULTI_FORM_ROWS = [
     ("Prepositions", 1, "в / во"),
     ("Prepositions", 3, "с / со"),
     ("Prepositions", 5, "к / ко"),
     ("Prepositions", 10, "о / об"),
-    ("Conjunctions", 8, "чтобы / чтоб"),
-    ("Conjunctions", 23, "ни... ни..."),
-    ("Conjunctions", 24, "то... то..."),
-    ("Conjunctions", 26, "с тех пор, как"),
-    ("Conjunctions", 27, "до того, как"),
-    ("Conjunctions", 28, "перед тем, как"),
-    ("Particles", 15, "пусть / пускай"),
+    ("Conjunctions", 22, "ни... ни..."),
+    ("Conjunctions", 23, "то... то..."),
+    ("Conjunctions", 25, "с тех пор, как"),
+    ("Conjunctions", 26, "до того, как"),
+    ("Conjunctions", 27, "перед тем, как"),
 ]
 
 
-def test_multi_form_catalog_has_eleven_entries():
+def test_multi_form_catalog_has_nine_entries():
     """Sanity check on the test's own fixture data, not the implementation."""
-    assert len(MULTI_FORM_ROWS) == 11
+    assert len(MULTI_FORM_ROWS) == 9
 
 
 # ---------------------------------------------------------------------------
@@ -185,7 +184,7 @@ def _remove_section(text, heading_name):
 
 
 def test_parse_real_document_total_row_count(real_rows):
-    assert len(real_rows) == EXPECTED_TOTAL_ROWS == 228
+    assert len(real_rows) == EXPECTED_TOTAL_ROWS == 223
 
 
 def test_parse_real_document_section_order_counts_and_ranks(real_rows):
@@ -230,7 +229,7 @@ def test_parse_real_document_part_two_produces_no_spurious_rows(real_rows):
     AwesomeTTS / HyperTTS / add-on-install subsections) has no tables and
     must not contribute rows or raise.
     """
-    assert len(real_rows) == 228
+    assert len(real_rows) == 223
     assert all(row.pos in SUBDECK_LEAVES for row in real_rows)
 
 
@@ -1222,8 +1221,8 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
 # explains itself -- info that merely restates the gloss is noise.
 EXPECTED_INFO_COUNTS = {
     "Prepositions": (44, 44),
-    "Conjunctions": (32, 18),
-    "Particles": (42, 28),
+    "Conjunctions": (30, 16),
+    "Particles": (39, 26),
     "Indeclinable Nouns": (42, 42),
     "Base Adverbs": (68, 47),
 }
@@ -1267,7 +1266,6 @@ def test_every_indeclinable_noun_states_its_gender(real_rows):
         ("Prepositions", "около"),
         ("Prepositions", "в / во"),
         ("Conjunctions", "и"),
-        ("Conjunctions", "чтобы / чтоб"),
         ("Particles", "не"),
         ("Indeclinable Nouns", "метро"),
     ],
@@ -1716,7 +1714,7 @@ def test_every_source_row_carrying_a_qualifier_is_in_the_table(real_rows):
 
 
 def test_no_russian_field_in_the_real_document_carries_a_parenthetical(real_rows):
-    assert len(real_rows) == 228
+    assert len(real_rows) == 223
     assert len(QUALIFIED_ROWS) == 11
     offenders = [row.russian for row in real_rows if "(" in row.fields()[RUSSIAN_INDEX]]
     assert offenders == []

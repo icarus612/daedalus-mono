@@ -281,7 +281,7 @@ SOURCE_WORD_LIST_PATH = Path(__file__).resolve().parent / "data" / "source-word-
 
 
 def test_slug_collision_free_across_real_source_word_list():
-    """Prove, don't assume: run every word in the real 227-row raw source
+    """Prove, don't assume: run every word in the real 222-row raw source
     list through `sanitize_word_slug` and assert that no two DIFFERENT words
     land on the same slug.
 
@@ -309,8 +309,8 @@ def test_slug_collision_free_across_real_source_word_list():
     # A positive control on the parse itself: a bare zero (or a suspiciously
     # low count from a regex that stopped matching) would make every
     # assertion below trivially true for the wrong reason.
-    assert len(words) == 227, (
-        f"expected 227 parsed rows from the source word list, got "
+    assert len(words) == 222, (
+        f"expected 222 parsed rows from the source word list, got "
         f"{len(words)} -- the parser regex may no longer match the table "
         f"format; investigate before trusting this test's result."
     )
@@ -326,10 +326,10 @@ def test_slug_collision_free_across_real_source_word_list():
         f"instead: {collisions}"
     )
 
-    # The headline numbers, asserted on the actual counts: 227 raw rows,
-    # 223 distinct slugs -- the four dual-class words each spend two rows
+    # The headline numbers, asserted on the actual counts: 222 raw rows,
+    # 218 distinct slugs -- the four dual-class words each spend two rows
     # on one slug, and nothing else repeats.
-    assert len(set(slugs)) == 223
+    assert len(set(slugs)) == 218
     repeated = [slug for slug in set(slugs) if slugs.count(slug) > 1]
     assert sorted(repeated) == sorted(
         sanitize_word_slug(w) for w in ("как", "когда", "пока", "так")

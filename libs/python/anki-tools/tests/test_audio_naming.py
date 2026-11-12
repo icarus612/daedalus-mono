@@ -107,8 +107,6 @@ def test_spoken_text_overrides_table_contents():
         "о / об": "об",
         "-то": "то",
         "-ка": "ка",
-        "чтобы / чтоб": "чтобы",
-        "пусть / пускай": "пусть",
         "ни... ни...": "ни, ни",
         "то... то...": "то, то",
     }
@@ -243,7 +241,7 @@ def real_rows(real_source_text):
 def test_deck_audio_field_agrees_with_tts_build_filename_for_every_row_and_slot(
     real_rows,
 ):
-    assert len(real_rows) == 228  # positive control: don't trivially pass on 0 rows
+    assert len(real_rows) == 223  # positive control: don't trivially pass on 0 rows
 
     audio_index = FIELD_NAMES.index("Audio")
     slot_to_voice = {voice.slot: voice for voice in VOICES}
@@ -269,7 +267,7 @@ def test_deck_audio_field_agrees_with_tts_build_filename_for_every_row_and_slot(
             )
             checked += 1
 
-    assert checked == 228 * 4 == 912
+    assert checked == 223 * 4 == 892
 
 
 # ---------------------------------------------------------------------------
@@ -299,7 +297,7 @@ def test_real_document_slugs_no_collision_between_different_words(real_rows):
     landing on one slug), which is the defect the hash-free naming scheme
     has to stay clear of.
     """
-    assert len(real_rows) == 228
+    assert len(real_rows) == 223
 
     slug_to_words = {}
     for row in real_rows:
@@ -313,9 +311,9 @@ def test_real_document_slugs_no_collision_between_different_words(real_rows):
     }
     assert collisions == {}
 
-    # 228 rows, 224 distinct slugs: the four dual-class words each
+    # 223 rows, 219 distinct slugs: the four dual-class words each
     # contribute two rows and one slug.
-    assert len(slug_to_words) == 224
+    assert len(slug_to_words) == 219
 
     shared = {
         slug

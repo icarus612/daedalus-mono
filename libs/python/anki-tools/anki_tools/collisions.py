@@ -14,7 +14,13 @@ from dataclasses import asdict, dataclass, field, fields
 from itertools import combinations
 from pathlib import Path
 
-from anki_tools import case_field, distinction, immutable_words_plan, mutable_words_plan
+from anki_tools import (
+    case_field,
+    distinction,
+    immutable_words_plan,
+    mutable_words_plan,
+    variant_pairs,
+)
 from anki_tools.audio_naming import strip_qualifier
 from anki_tools.gloss_separators import normalize_gloss
 
@@ -113,6 +119,22 @@ def load_notes(
                 row.english,
                 row.info,
                 provisional,
+            )
+        )
+    for pair in variant_pairs.load_pairs():
+        notes.append(
+            Note(
+                family="immutable",
+                note_type=variant_pairs.NOTE_TYPE_NAME,
+                section=pair.deck_leaf,
+                deck=pair.deck,
+                headword=pair.headword,
+                guid=pair.guid,
+                translation=pair.translation,
+                russian_distinction=pair.russian_distinction,
+                english_distinction=pair.english_distinction,
+                additional_info=pair.additional_info,
+                cases=frozenset(),
             )
         )
     for stem, parse in _MUTABLE_PARSERS:

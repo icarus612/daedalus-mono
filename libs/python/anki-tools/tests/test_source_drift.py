@@ -8,6 +8,7 @@ import anki_tools
 from anki_tools import immutable_words_plan as iwp
 from anki_tools import mutable_words_plan as mwp
 from anki_tools import source_drift as sd
+from anki_tools import variant_pairs
 
 IMMUTABLE_TYPE = "Russian - Immutable Words (Ellis Version)"
 SHEETS = ("Nouns", "Verbs", "Adjectives", "Adverbs", "Pronouns", "Numerals")
@@ -69,16 +70,20 @@ def stored(guid="g1", note_type=IMMUTABLE_TYPE, **fields):
     return sd.CollectionNote(guid, note_type, dict(fields))
 
 
-def test_managed_note_types_are_the_immutable_and_six_mutable_names():
-    expected = {IMMUTABLE_TYPE, *mwp.NOTE_TYPE_NAMES.values()}
+def test_managed_note_types_are_immutable_variant_pairs_and_six_mutable_names():
+    expected = {
+        IMMUTABLE_TYPE,
+        variant_pairs.NOTE_TYPE_NAME,
+        *mwp.NOTE_TYPE_NAMES.values(),
+    }
     assert sd.managed_note_types() == frozenset(expected)
-    assert len(sd.managed_note_types()) == 7
+    assert len(sd.managed_note_types()) == 8
 
 
 def test_expected_notes_covers_every_source_row(tmp_path):
     text, source_dir = write_source(tmp_path)
     result = sd.expected_notes(text, source_dir)
-    assert len(result) == len(iwp.parse_word_list(text)) + 6 * FIXTURE_ROWS
+    assert len(result) == len(iwp.parse_word_list(text)) + 4 + 6 * FIXTURE_ROWS
     assert len({e.guid for e in result}) == len(result)
     by_type = {e.note_type for e in result}
     assert by_type == set(sd.managed_note_types())
@@ -91,6 +96,18 @@ def test_expected_immutable_note_matches_the_plan_row(tmp_path):
     assert found.note_type == IMMUTABLE_TYPE
     assert found.headword == row.russian
     assert found.fields == dict(zip(iwp.FIELD_NAMES, row.fields()))
+
+
+def test_expected_variant_pair_notes_match_the_table(tmp_path):
+    text, source_dir = write_source(tmp_path)
+    by_guid = {e.guid: e for e in sd.expected_notes(text, source_dir)}
+    pairs = variant_pairs.load_pairs()
+    assert pairs
+    for pair in pairs:
+        found = by_guid[pair.guid]
+        assert found.note_type == variant_pairs.NOTE_TYPE_NAME
+        assert found.headword == pair.headword
+        assert found.fields == dict(zip(variant_pairs.FIELD_NAMES, pair.fields()))
 
 
 @pytest.mark.parametrize(
