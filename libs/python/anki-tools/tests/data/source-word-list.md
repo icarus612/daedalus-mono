@@ -182,7 +182,7 @@ Foreign loan words that are frozen in their base form.
 | 34 | соло | solo | Neuter | гитарное соло |
 | 35 | табло | scoreboard / display board | Neuter | электронное табло |
 | 36 | фортепиано | piano | Neuter | старинное фортепиано |
-| 37 | бра | wall sconce / lamp (wall-mounted) | Neuter | настенное бра |
+| 37 | бра | wall sconce / lamp | Neuter | настенное бра |
 | 38 | регби | rugby | Neuter | любимое регби |
 | 39 | цунами | tsunami | Neuter | разрушительное цунами |
 | 40 | хаки | khaki | Neuter as a noun; also an invariable colour adjective | — |

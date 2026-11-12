@@ -405,6 +405,7 @@ ENGLISH_DISTINCTIONS: dict[str, str] = {
     "правильный": "Not wrong",
     "ужасно": "Very badly",
     "мимо": "Going past",
+    "бра": "Wall-mounted",
 }
 
 

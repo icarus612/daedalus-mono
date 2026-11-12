@@ -3,7 +3,7 @@
 2	говорить	сказать	speak / talk / say / tell	говори́ть / сказа́ть	2nd (-ишь)	говорю́	говори́шь	говоря́т	говори́л / говори́ла		suppletive pair (different roots)		New	Accusative, Prepositional
 3	мочь	смочь	be able to / can	мочь / смочь	irregular	могу́	мо́жешь	мо́гут	мог / могла́				New	
 4	знать		know	знать	1st (-ешь)	зна́ю	зна́ешь	зна́ют	знал / зна́ла				New	Accusative
-5	идти	пойти	go (on foot) / set off	идти́ / пойти́	1st (-ешь)	иду́	идёшь	иду́т	шёл / шла		unidirectional motion verb		New	Accusative
+5	идти	пойти	go / set off	идти́ / пойти́	1st (-ешь)	иду́	идёшь	иду́т	шёл / шла		unidirectional motion verb		New	Accusative
 6	видеть	увидеть	see	ви́деть / уви́деть	2nd (-ишь)	ви́жу	ви́дишь	ви́дят	ви́дел / ви́дела				New	Accusative
 7	думать	подумать	think	ду́мать / поду́мать	1st (-ешь)	ду́маю	ду́маешь	ду́мают	ду́мал / ду́мала				New	Prepositional
 8	спрашивать	спросить	ask	спра́шивать / спроси́ть	1st (-ешь)	спра́шиваю	спра́шиваешь	спра́шивают	спра́шивал / спра́шивала				New	Accusative
@@ -70,7 +70,7 @@
 69	летать		to fly	лета́ть	1st (-ешь)	лета́ю	лета́ешь	лета́ют	лета́л / лета́ла				New	Accusative
 70	бегать		run	бе́гать	1st (-ешь)	бе́гаю	бе́гаешь	бе́гают	бе́гал / бе́гала				New	Accusative
 71	плавать		swim / sail	пла́вать	1st (-ешь)	пла́ваю	пла́ваешь	пла́вают	пла́вал / пла́вала				New	Accusative
-72	ездить		go (by vehicle) / ride	е́здить	2nd (-ишь)	е́зжу	е́здишь	е́здят	е́здил / е́здила				New	Accusative, Prepositional
+72	ездить		go / ride	е́здить	2nd (-ишь)	е́зжу	е́здишь	е́здят	е́здил / е́здила				New	Accusative, Prepositional
 73	водить		lead / drive (a car)	води́ть	2nd (-ишь)	вожу́	во́дишь	во́дят	води́л / води́ла				New	Accusative
 74	носить		carry / wear	носи́ть	2nd (-ишь)	ношу́	но́сишь	но́сят	носи́л / носи́ла				New	Accusative
 75	возить		transport / drive (someone)	вози́ть	2nd (-ишь)	вожу́	во́зишь	во́зят	вози́л / вози́ла				New	Accusative
@@ -178,7 +178,7 @@
 177	зарабатывать	заработать	earn	зараба́тывать / зарабо́тать	1st (-ешь)	зараба́тываю	зараба́тываешь	зараба́тывают	зараба́тывал / зараба́тывала				New	Accusative
 178	копить	накопить	save up	копи́ть / накопи́ть	2nd (-ишь)	коплю́	ко́пишь	ко́пят	копи́л / копи́ла				New	Accusative
 179	делиться	поделиться	share	дели́ться / подели́ться	2nd (-ишь)	делю́сь	де́лишься	де́лятся	дели́лся / дели́лась	чем; с кем			New	Instrumental
-180	бежать	побежать	to run (on foot, one direction) / to set off running	бежа́ть / побежа́ть	irregular (mixed: бегу́/бежи́шь/бегу́т)	бегу́	бежи́шь	бегу́т	бежа́л / бежа́ла	в/на (destination)	unidirectional (cf. multidirectional бе́гать, already in this deck)		New	Accusative
+180	бежать	побежать	to run / to set off running	бежа́ть / побежа́ть	irregular (mixed: бегу́/бежи́шь/бегу́т)	бегу́	бежи́шь	бегу́т	бежа́л / бежа́ла	в/на (destination)	unidirectional (cf. multidirectional бе́гать, already in this deck)		New	Accusative
 181	быть	побыть	to be	быть / побы́ть	irregular (no present tense in modern use; future: бу́ду/бу́дешь/бу́дут)	бу́ду	бу́дешь	бу́дут	был / была́	for a predicate noun/adj. (был врачо́м)	no true perfective; побыть = be for a period (delimitative, like просуществовать)		New	Instrumental
 182	держать	подержать	to hold / keep	держа́ть / подержа́ть	2nd (держу́/де́ржишь; ж in 1sg)	держу́	де́ржишь	де́ржат	держа́л / держа́ла				New	Accusative
 183	ехать	поехать	to go / ride / drive / travel	е́хать / пое́хать	irregular (suppletive present stem: е́ду/е́дешь/е́дут)	е́ду	е́дешь	е́дут	е́хал / е́хала	в/на (destination); на (means of transport)	unidirectional (cf. multidirectional е́здить, already in this deck)		New	Accusative, Prepositional

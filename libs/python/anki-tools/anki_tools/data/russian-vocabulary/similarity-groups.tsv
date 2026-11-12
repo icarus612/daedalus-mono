@@ -200,8 +200,8 @@ gently	нежно	Derived Adverbs	tenderly / gently	with affection	cue
 gently	мягко	Derived Adverbs	softly / gently	Not harshly	cue	
 glass	стекло	Nouns	glass	material	cue	
 glass	стакан	Nouns	glass	drinking	cue	
-go	идти	Verbs	go (on foot) / set off	on foot, one way	cue	
-go	ездить	Verbs	go (by vehicle) / ride	by vehicle, habitually	cue	ride
+go	идти	Verbs	go / set off	on foot, one way	cue	
+go	ездить	Verbs	go / ride	by vehicle, habitually	cue	ride
 go	ехать	Verbs	to go / ride / drive / travel	by vehicle, one way	cue	drive | ride
 go	ходить	Verbs	go	on foot, habitually	cue	
 good	добро	Nouns	good (as opposed to evil) / kindness		header	
@@ -254,7 +254,7 @@ just	просто (particle)	Particles	simply / just	plays it down	header	simply
 just	просто (adverb)	Derived Adverbs	simply / just	manner: simply	header	simply
 kind	вид	Nouns	view / appearance / kind	Scenery, looks	header	view
 kind	добрый	Adjectives	kind	kind-hearted	header	
-lamp	бра	Indeclinable Nouns	wall sconce / lamp (wall-mounted)		header	
+lamp	бра	Indeclinable Nouns	wall sconce / lamp	Wall-mounted	header	
 lamp	лампа	Nouns	lamp	a free-standing lamp	header	
 last	последний	Adjectives	last	final in a series	cue	
 last	прошлый	Adjectives	past / last	week, year	cue	past
@@ -276,7 +276,7 @@ lie	лгать	Verbs	lie	tell untruths	cue
 lift	лифт	Nouns	lift / elevator		header	
 lift	поднимать	Verbs	lift / raise / pick up	lift physically	header	raise
 light	свет	Nouns	light	illumination	header	
-light	лёгкий	Adjectives	light / easy (not heavy)		header	
+light	лёгкий	Adjectives	light (not heavy) / easy		header	
 like	как (conjunction)	Conjunctions	like / as	Real comparison	cue	as
 like	словно	Conjunctions	as if / like	literary — a poetic simile	cue	as if
 like	вроде	Base Adverbs	like / kind of / sort of	hedging	header	
@@ -398,13 +398,13 @@ rescue	спасение	Nouns	rescue / salvation		header
 rescue	спасать	Verbs	to save / to rescue		header	
 rest	отдых	Nouns	rest / vacation		header	
 rest	отдыхать	Verbs	to rest / to relax		header	
-ride	ездить	Verbs	go (by vehicle) / ride	by vehicle, habitually	cue	go
+ride	ездить	Verbs	go / ride	by vehicle, habitually	cue	go
 ride	ехать	Verbs	to go / ride / drive / travel	by vehicle, one way	cue	drive | go
 right	право	Nouns	right / law	As a field	header	law
 right	правильный	Adjectives	correct / right	Not wrong	cue	
 right	правый	Adjectives	right	side	cue	
 run	бегать	Verbs	run	habitually, round trips	cue	
-run	бежать	Verbs	to run (on foot, one direction) / to set off running	one way	cue	
+run	бежать	Verbs	to run / to set off running	one way	cue	
 sad	грустный	Adjectives	sad		header	
 sad	грустно	Derived Adverbs	sad		header	
 sail	плавать	Verbs	swim / sail	habitually, round trips	cue	swim
