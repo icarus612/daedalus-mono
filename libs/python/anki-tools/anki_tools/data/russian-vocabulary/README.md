@@ -46,6 +46,17 @@ when it is stale). Rules for the `English Distinction` cue:
 - Parenthetical qualifiers do not stay in the English; they move to the cue.
 - Anything else about usage goes in `Additional Info`.
 
+## Variant pairs
+
+`variant-pairs.tsv` holds pairs of words that mean exactly the same thing and
+differ only in register (пусть / пускай, чтобы / чтоб, мол / дескать). Each pair
+is one note of the "Russian - Variant Pairs (Ellis Version)" note type
+(`anki_tools/variant_pairs.py`): the default word, the variant and its register,
+with three cards — default → English, variant → English, and English → both
+words, each on its own line with its own audio. A pair belongs here only when
+neither word does anything the other can't; near-synonyms with a real
+difference stay as separate cards with cues.
+
 ## Build input
 
 These TSV files are the build input for everything downstream in this package.
