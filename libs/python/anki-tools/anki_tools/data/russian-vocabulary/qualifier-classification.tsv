@@ -74,8 +74,8 @@ immutable	Russian - Immutable Words (Ellis Version)	внутри	QO+JS5r8H0	Tran
 immutable	Russian - Immutable Words (Ellis Version)	внутри	QO+JS5r8H0	English Distinction	located inside, no motion	whole word	keep	inside (what/where)		Genitive	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	вне	cY:~Re,N7d	Translation	what/where	sense 1 of 1	keep-inline	outside of (what/where)		Genitive	prompt word for one sense	
 immutable	Russian - Immutable Words (Ellis Version)	вне	cY:~Re,N7d	English Distinction	outside of; beyond the limits	whole word	keep	outside of (what/where)		Genitive	serves no pair (none)	
-immutable	Russian - Immutable Words (Ellis Version)	мимо	GTiPQRB2rA	Translation	whom/what/where	sense 2 of 2	keep-inline	past / by (whom/what/where)		Genitive	prompt word for one sense	
-immutable	Russian - Immutable Words (Ellis Version)	мимо	GTiPQRB2rA	English Distinction	Genitive; going past	whole word	rewrite-cue-non-case	past / by (whom/what/where)		Genitive	keeps the non-case remainder	
+immutable	Russian - Immutable Words (Ellis Version)	мимо	GTiPQRB2rA	Translation	whom/what/where	sense 2 of 2	keep-inline	past / by (whom/what/where)	Going past	Genitive	prompt word for one sense	
+immutable	Russian - Immutable Words (Ellis Version)	мимо	GTiPQRB2rA	English Distinction	Genitive; going past	whole word	keep	past / by (whom/what/where)	Going past	Genitive	separates a collision	
 immutable	Russian - Immutable Words (Ellis Version)	ради	fycl77<f{D	Translation	whom/what	sense 1 of 1	keep-inline	for the sake of (whom/what)	As a motive	Genitive	prompt word for one sense	
 immutable	Russian - Immutable Words (Ellis Version)	ради	fycl77<f{D	English Distinction	for the benefit or sake of	whole word	keep	for the sake of (whom/what)	As a motive	Genitive	separates a collision	
 immutable	Russian - Immutable Words (Ellis Version)	насчёт	Am}cLuW%,d	Translation	whom/what	sense 2 of 2	keep-inline	about / regarding (whom/what)	Colloquial	Genitive	prompt word for one sense	
@@ -297,8 +297,8 @@ mutable	Russian - Mutable Nouns (Ellis Version)	секунда	c!zk%z1@p8	Englis
 mutable	Russian - Mutable Nouns (Ellis Version)	утро	zuiL<.J{Qv	English Distinction	noun	whole word	drop-header-duplicate	morning			repeats the deck header	
 mutable	Russian - Mutable Nouns (Ellis Version)	вечер	P7zN8Bi^G	English Distinction	noun	whole word	drop-header-duplicate	evening			repeats the deck header	
 mutable	Russian - Mutable Nouns (Ellis Version)	ночь	Ho`0MH%ae]	English Distinction	noun	whole word	drop-header-duplicate	night			repeats the deck header	
-mutable	Russian - Mutable Nouns (Ellis Version)	век	z#E?casN`o	Translation	an era	sense 2 of 2	keep-inline	century<br>age (an era)			qualifies one sense of several	
-mutable	Russian - Mutable Nouns (Ellis Version)	век	z#E?casN`o	English Distinction	an era	whole word	drop-duplicate	century<br>age (an era)			restates the Translation	
+mutable	Russian - Mutable Nouns (Ellis Version)	век	z#E?casN`o	Translation	an era	sense 2 of 2	move-to-distinction	century<br>age	An era		separates a collision	
+mutable	Russian - Mutable Nouns (Ellis Version)	век	z#E?casN`o	English Distinction	an era	whole word	keep	century<br>age	An era		separates a collision	
 mutable	Russian - Mutable Nouns (Ellis Version)	люди	Hku+&?OHxO	Translation	persons, individuals	whole word	move-to-distinction	people	persons, individuals	plural of человек	single sense; qualifies the whole word	
 mutable	Russian - Mutable Nouns (Ellis Version)	люди	Hku+&?OHxO	English Distinction	persons, individuals	whole word	drop-duplicate	people	persons, individuals	plural of человек	restates the Translation	
 mutable	Russian - Mutable Nouns (Ellis Version)	друг	d8m{wM22ao	Translation	male	whole word	move-to-distinction	friend	male	irregular plural: друзья	single sense; qualifies the whole word	
@@ -311,12 +311,12 @@ mutable	Russian - Mutable Nouns (Ellis Version)	огонь	yM6[(>KM(*	English Di
 mutable	Russian - Mutable Nouns (Ellis Version)	свет	x5*([el(%F	Translation	illumination	whole word	move-to-distinction	light	illumination		single sense; qualifies the whole word	
 mutable	Russian - Mutable Nouns (Ellis Version)	свет	x5*([el(%F	English Distinction	illumination	whole word	drop-duplicate	light	illumination		restates the Translation	
 mutable	Russian - Mutable Nouns (Ellis Version)	лист	NE!7l(&A0+	Translation	of paper	sense 2 of 2	keep-inline	leaf / sheet (of paper)		листья (leaves) vs листы (sheets)	attaches by position to the last synonym; may cover all senses	
-mutable	Russian - Mutable Nouns (Ellis Version)	берег	fNr>W<#CIZ	Translation	of a river	sense 2 of 2	keep-inline	shore / bank (of a river)		на берегу́ (prep. -у́)	attaches by position to the last synonym; may cover all senses	
-mutable	Russian - Mutable Nouns (Ellis Version)	берег	fNr>W<#CIZ	English Distinction	of a river	whole word	drop-duplicate	shore / bank (of a river)		на берегу́ (prep. -у́)	restates the Translation	
+mutable	Russian - Mutable Nouns (Ellis Version)	берег	fNr>W<#CIZ	Translation	of a river	sense 2 of 2	move-to-distinction	shore / bank	Of a river	на берегу́ (prep. -у́)	separates a collision	
+mutable	Russian - Mutable Nouns (Ellis Version)	берег	fNr>W<#CIZ	English Distinction	of a river	whole word	keep	shore / bank	Of a river	на берегу́ (prep. -у́)	separates a collision	
 mutable	Russian - Mutable Nouns (Ellis Version)	кошка	P,~]:>l,xt	Translation	female	whole word	move-to-distinction	cat	female		single sense; qualifies the whole word	
 mutable	Russian - Mutable Nouns (Ellis Version)	кошка	P,~]:>l,xt	English Distinction	female	whole word	drop-duplicate	cat	female		restates the Translation	
-mutable	Russian - Mutable Nouns (Ellis Version)	кот	DBJb:P%@2c	Translation	male	sense 1 of 2	keep-inline	cat (male) / tomcat			qualifies one sense of several	
-mutable	Russian - Mutable Nouns (Ellis Version)	кот	DBJb:P%@2c	English Distinction	male	whole word	drop-duplicate	cat (male) / tomcat			restates the Translation	
+mutable	Russian - Mutable Nouns (Ellis Version)	кот	DBJb:P%@2c	Translation	male	sense 1 of 2	move-to-distinction	cat / tomcat	Male		separates a collision	
+mutable	Russian - Mutable Nouns (Ellis Version)	кот	DBJb:P%@2c	English Distinction	male	whole word	keep	cat / tomcat	Male		separates a collision	
 mutable	Russian - Mutable Nouns (Ellis Version)	муха	K(1nfkMudW	Translation	the insect	whole word	move-to-distinction	fly	the insect		single sense; qualifies the whole word	
 mutable	Russian - Mutable Nouns (Ellis Version)	стекло	COrNU{Yy:!	Translation	material	whole word	move-to-distinction	glass	material		single sense; qualifies the whole word	
 mutable	Russian - Mutable Nouns (Ellis Version)	стекло	COrNU{Yy:!	English Distinction	material	whole word	drop-duplicate	glass	material		restates the Translation	
@@ -342,8 +342,8 @@ mutable	Russian - Mutable Nouns (Ellis Version)	банк	N0/R;dq6v/	Translation	
 mutable	Russian - Mutable Nouns (Ellis Version)	банк	N0/R;dq6v/	English Distinction	the financial one	whole word	drop-duplicate	bank	the financial one		restates the Translation	
 mutable	Russian - Mutable Nouns (Ellis Version)	остановка	QvHcp7o%~.	Translation	bus/tram	whole word	move-to-distinction	stop	bus/tram		single sense; qualifies the whole word	
 mutable	Russian - Mutable Nouns (Ellis Version)	остановка	QvHcp7o%~.	English Distinction	a bus stop (noun)	whole word	drop-header-duplicate	stop	bus/tram		repeats the deck header	
-mutable	Russian - Mutable Nouns (Ellis Version)	продукт	M%lI924V>5	Translation	plural	sense 2 of 2	keep-inline	product / (plural) groceries			attaches by position to the last synonym; may cover all senses	
-mutable	Russian - Mutable Nouns (Ellis Version)	продукт	M%lI924V>5	English Distinction	plural	whole word	drop-duplicate	product / (plural) groceries			restates the Translation	
+mutable	Russian - Mutable Nouns (Ellis Version)	продукт	M%lI924V>5	Translation	plural	sense 2 of 2	move-to-distinction	product / groceries	Food items		separates a collision	
+mutable	Russian - Mutable Nouns (Ellis Version)	продукт	M%lI924V>5	English Distinction	plural	whole word	keep	product / groceries	Food items		separates a collision	
 mutable	Russian - Mutable Nouns (Ellis Version)	морковь	IAZ1j:FZp	Translation	s	whole word	keep	carrot(s)		collective: морковь = carrots (одна морковка = one carrot)	grammar marker	
 mutable	Russian - Mutable Nouns (Ellis Version)	врач	fpp3Vfc7^d	Translation	the medical profession	whole word	move-to-distinction	doctor	medical profession		single sense; qualifies the whole word	
 mutable	Russian - Mutable Nouns (Ellis Version)	врач	fpp3Vfc7^d	English Distinction	the medical profession	whole word	drop-duplicate	doctor	medical profession		restates the Translation	
@@ -367,16 +367,16 @@ mutable	Russian - Mutable Nouns (Ellis Version)	секрет	J@Fo~F9z!7	Translat
 mutable	Russian - Mutable Nouns (Ellis Version)	секрет	J@Fo~F9z!7	English Distinction	something deliberately kept from others	whole word	keep	secret	Kept from others		separates a collision	
 mutable	Russian - Mutable Nouns (Ellis Version)	тайна	ljs_A[jqe/	Translation	a mystery	whole word	move-to-distinction	mystery / secret	Unexplained		covers every sense; qualifies the whole word	
 mutable	Russian - Mutable Nouns (Ellis Version)	тайна	ljs_A[jqe/	English Distinction	something unexplained or hidden	whole word	keep	mystery / secret	Unexplained		separates a collision	
-mutable	Russian - Mutable Nouns (Ellis Version)	дело	L^gpCf)$iI	Translation	an affair	sense 3 of 3	keep-inline	matter / affair / business			attaches by position to the last synonym; may cover all senses	
-mutable	Russian - Mutable Nouns (Ellis Version)	дело	L^gpCf)$iI	English Distinction	an affair	whole word	drop-duplicate	matter / affair / business			restates the Translation	
-mutable	Russian - Mutable Nouns (Ellis Version)	сон	KLYZ0B[{$2	Translation	while asleep	sense 2 of 2	keep-inline	sleep / dream (while asleep)		fleeting vowel: сна	attaches by position to the last synonym; may cover all senses	
-mutable	Russian - Mutable Nouns (Ellis Version)	сон	KLYZ0B[{$2	English Distinction	while asleep	whole word	drop-duplicate	sleep / dream (while asleep)		fleeting vowel: сна	restates the Translation	
+mutable	Russian - Mutable Nouns (Ellis Version)	дело	L^gpCf)$iI	Translation	an affair	sense 3 of 3	keep-inline	matter / affair / business	An undertaking		attaches by position to the last synonym; may cover all senses	
+mutable	Russian - Mutable Nouns (Ellis Version)	дело	L^gpCf)$iI	English Distinction	an affair	whole word	keep	matter / affair / business	An undertaking		separates a collision	
+mutable	Russian - Mutable Nouns (Ellis Version)	сон	KLYZ0B[{$2	Translation	while asleep	sense 2 of 2	move-to-distinction	sleep / dream	While asleep	fleeting vowel: сна	separates a collision	
+mutable	Russian - Mutable Nouns (Ellis Version)	сон	KLYZ0B[{$2	English Distinction	while asleep	whole word	keep	sleep / dream	While asleep	fleeting vowel: сна	separates a collision	
 mutable	Russian - Mutable Nouns (Ellis Version)	мечта	C$ZFIhjG.*	Translation	aspiration	whole word	move-to-distinction	dream	aspiration		single sense; qualifies the whole word	
 mutable	Russian - Mutable Nouns (Ellis Version)	мечта	C$ZFIhjG.*	English Distinction	aspiration	whole word	drop-duplicate	dream	aspiration		restates the Translation	
 mutable	Russian - Mutable Nouns (Ellis Version)	просьба	lCE;G/#aN8	English Distinction	a request (noun)	whole word	drop-header-duplicate	request			repeats the deck header	
 mutable	Russian - Mutable Nouns (Ellis Version)	закон	bs[X2?Xsll	English Distinction	a statute	whole word	keep	law	a statute		separates a collision	
-mutable	Russian - Mutable Nouns (Ellis Version)	право	Gap<OEDYy#	Translation	field	sense 2 of 2	keep-inline	right / law (field)			attaches by position to the last synonym; may cover all senses	
-mutable	Russian - Mutable Nouns (Ellis Version)	право	Gap<OEDYy#	English Distinction	field	whole word	drop-duplicate	right / law (field)			restates the Translation	
+mutable	Russian - Mutable Nouns (Ellis Version)	право	Gap<OEDYy#	Translation	field	sense 2 of 2	move-to-distinction	right / law	As a field		separates a collision	
+mutable	Russian - Mutable Nouns (Ellis Version)	право	Gap<OEDYy#	English Distinction	field	whole word	keep	right / law	As a field		separates a collision	
 mutable	Russian - Mutable Nouns (Ellis Version)	гнев	MSH{@1[9+n	Translation	fury	whole word	move-to-distinction	anger / wrath	fury		covers every sense; qualifies the whole word	
 mutable	Russian - Mutable Nouns (Ellis Version)	гнев	MSH{@1[9+n	English Distinction	intense, righteous anger; literary	whole word	keep	anger / wrath	fury		separates a collision	
 mutable	Russian - Mutable Nouns (Ellis Version)	злость	jOLMclC(Wg	Translation	malice	whole word	move-to-distinction	anger / spite	malice		covers every sense; qualifies the whole word	
@@ -389,12 +389,12 @@ mutable	Russian - Mutable Nouns (Ellis Version)	смысл	yr7b&bt2>{	Translatio
 mutable	Russian - Mutable Nouns (Ellis Version)	смысл	yr7b&bt2>{	English Distinction	the point of it	whole word	keep	meaning / sense	the point of it		separates a collision	
 mutable	Russian - Mutable Nouns (Ellis Version)	значение	Lf*d,fgbm6	Translation	what it signifies	whole word	move-to-distinction	meaning / significance	what it signifies		covers every sense; qualifies the whole word	
 mutable	Russian - Mutable Nouns (Ellis Version)	значение	Lf*d,fgbm6	English Distinction	what it signifies	whole word	keep	meaning / significance	what it signifies		separates a collision	
-mutable	Russian - Mutable Nouns (Ellis Version)	число	AlKh:J)a1t	Translation	a numeral	sense 1 of 2	keep-inline	number (a numeral)<br>date (a calendar day)			qualifies one sense of several	
-mutable	Russian - Mutable Nouns (Ellis Version)	число	AlKh:J)a1t	Translation	a calendar day	sense 2 of 2	keep-inline	number (a numeral)<br>date (a calendar day)			qualifies one sense of several	
-mutable	Russian - Mutable Nouns (Ellis Version)	число	AlKh:J)a1t	English Distinction	a numeral, or calendar day	whole word	drop-duplicate	number (a numeral)<br>date (a calendar day)			restates the Translation	
-mutable	Russian - Mutable Nouns (Ellis Version)	вид	cL/$#d|9Wl	Translation	what something looks like	sense 2 of 3	keep-inline	view / appearance (what something looks like)<br>kind (a type or species)			qualifies one sense of several	
-mutable	Russian - Mutable Nouns (Ellis Version)	вид	cL/$#d|9Wl	Translation	a type or species	sense 3 of 3	keep-inline	view / appearance (what something looks like)<br>kind (a type or species)			qualifies one sense of several	
-mutable	Russian - Mutable Nouns (Ellis Version)	вид	cL/$#d|9Wl	English Distinction	appearance, or a type	whole word	drop-duplicate	view / appearance (what something looks like)<br>kind (a type or species)			restates the Translation	
+mutable	Russian - Mutable Nouns (Ellis Version)	число	AlKh:J)a1t	Translation	a numeral	sense 1 of 2	move-to-distinction	number<br>date	A numeral; calendar day		separates a collision	
+mutable	Russian - Mutable Nouns (Ellis Version)	число	AlKh:J)a1t	Translation	a calendar day	sense 2 of 2	move-to-distinction	number<br>date	A numeral; calendar day		separates a collision	
+mutable	Russian - Mutable Nouns (Ellis Version)	число	AlKh:J)a1t	English Distinction	a numeral, or calendar day	whole word	keep	number<br>date	A numeral; calendar day		separates a collision	
+mutable	Russian - Mutable Nouns (Ellis Version)	вид	cL/$#d|9Wl	Translation	what something looks like	sense 2 of 3	move-to-distinction	view / appearance<br>kind	Scenery, looks		separates a collision	
+mutable	Russian - Mutable Nouns (Ellis Version)	вид	cL/$#d|9Wl	Translation	a type or species	sense 3 of 3	move-to-distinction	view / appearance<br>kind	Scenery, looks		separates a collision	
+mutable	Russian - Mutable Nouns (Ellis Version)	вид	cL/$#d|9Wl	English Distinction	appearance, or a type	whole word	keep	view / appearance<br>kind	Scenery, looks		separates a collision	
 mutable	Russian - Mutable Nouns (Ellis Version)	случай	xYct^xk&8s	English Distinction	an instance	whole word	keep	case / occasion	an instance		separates a collision	
 mutable	Russian - Mutable Nouns (Ellis Version)	способ	j#)-(Soe*e	Translation	a way of doing something	whole word	move-to-distinction	way / method	Any way of doing it		covers every sense; qualifies the whole word	
 mutable	Russian - Mutable Nouns (Ellis Version)	способ	j#)-(Soe*e	English Distinction	a way of doing something	whole word	keep	way / method	Any way of doing it		separates a collision	
@@ -415,9 +415,9 @@ mutable	Russian - Mutable Nouns (Ellis Version)	нация	JY5F7di$I~	Translatio
 mutable	Russian - Mutable Nouns (Ellis Version)	нация	JY5F7di$I~	English Distinction	a nation state	whole word	drop-duplicate	nation	a nation state		restates the Translation	
 mutable	Russian - Mutable Nouns (Ellis Version)	партия	lE.x+cdc+z	Translation	political	sense 1 of 2	keep-inline	party (political) / batch			qualifies one sense of several	
 mutable	Russian - Mutable Nouns (Ellis Version)	товар	MfDT9fKLVL	English Distinction	merchandise	whole word	keep	goods / product	merchandise		separates a collision	
-mutable	Russian - Mutable Nouns (Ellis Version)	взгляд	k0-f224YtD	Translation	a gaze	sense 2 of 3	keep-inline	look / glance (a gaze)<br>view (an opinion)			qualifies one sense of several	
-mutable	Russian - Mutable Nouns (Ellis Version)	взгляд	k0-f224YtD	Translation	an opinion	sense 3 of 3	keep-inline	look / glance (a gaze)<br>view (an opinion)			qualifies one sense of several	
-mutable	Russian - Mutable Nouns (Ellis Version)	взгляд	k0-f224YtD	English Distinction	a gaze, or an opinion	whole word	drop-duplicate	look / glance (a gaze)<br>view (an opinion)			restates the Translation	
+mutable	Russian - Mutable Nouns (Ellis Version)	взгляд	k0-f224YtD	Translation	a gaze	sense 2 of 3	move-to-distinction	look / glance<br>view	A gaze; opinion		separates a collision	
+mutable	Russian - Mutable Nouns (Ellis Version)	взгляд	k0-f224YtD	Translation	an opinion	sense 3 of 3	move-to-distinction	look / glance<br>view	A gaze; opinion		separates a collision	
+mutable	Russian - Mutable Nouns (Ellis Version)	взгляд	k0-f224YtD	English Distinction	a gaze, or an opinion	whole word	keep	look / glance<br>view	A gaze; opinion		separates a collision	
 mutable	Russian - Mutable Nouns (Ellis Version)	случайность	kX^bDcs[%L	Translation	a coincidence	whole word	move-to-distinction	chance / accident	a coincidence		covers every sense; qualifies the whole word	
 mutable	Russian - Mutable Nouns (Ellis Version)	случайность	kX^bDcs[%L	English Distinction	a coincidence	whole word	keep	chance / accident	a coincidence		separates a collision	
 mutable	Russian - Mutable Nouns (Ellis Version)	оружие	e2&kCxB+A%	Translation	s	whole word	keep	weapon(s)			grammar marker	
@@ -425,8 +425,8 @@ mutable	Russian - Mutable Nouns (Ellis Version)	пожар	OP0?/FA.S$	Translatio
 mutable	Russian - Mutable Nouns (Ellis Version)	пожар	OP0?/FA.S$	English Distinction	blaze	whole word	drop-duplicate	fire	blaze		restates the Translation	
 mutable	Russian - Mutable Nouns (Ellis Version)	линия	I_b<xtsx!N	Translation	a geometric line	whole word	move-to-distinction	line	a geometric line		single sense; qualifies the whole word	
 mutable	Russian - Mutable Nouns (Ellis Version)	линия	I_b<xtsx!N	English Distinction	a geometric line	whole word	drop-duplicate	line	a geometric line		restates the Translation	
-mutable	Russian - Mutable Nouns (Ellis Version)	очередь	GZAu1u/mbU	Translation	people waiting	sense 2 of 3	keep-inline	line / queue (people waiting)<br>turn			qualifies one sense of several	
-mutable	Russian - Mutable Nouns (Ellis Version)	очередь	GZAu1u/mbU	English Distinction	people waiting	whole word	drop-duplicate	line / queue (people waiting)<br>turn			restates the Translation	
+mutable	Russian - Mutable Nouns (Ellis Version)	очередь	GZAu1u/mbU	Translation	people waiting	sense 2 of 3	move-to-distinction	line / queue<br>turn	People waiting		separates a collision	
+mutable	Russian - Mutable Nouns (Ellis Version)	очередь	GZAu1u/mbU	English Distinction	people waiting	whole word	keep	line / queue<br>turn	People waiting		separates a collision	
 mutable	Russian - Mutable Nouns (Ellis Version)	банкомат	KI*:?<}UsT	Translation	cash machine	whole word	move-to-distinction	ATM			single sense; qualifies the whole word	
 mutable	Russian - Mutable Nouns (Ellis Version)	бронь	c=rRxI>kJ[	Translation	for a place or event	whole word	move-to-distinction	reservation		colloquial; formal = бронирование	single sense; qualifies the whole word	
 mutable	Russian - Mutable Nouns (Ellis Version)	имя	BtGzbxk3_@	English Distinction	a name (noun)	whole word	drop-header-duplicate	name		irregular -мя noun: и́мени, и́менем (like вре́мя)	repeats the deck header	
@@ -476,23 +476,23 @@ mutable	Russian - Mutable Verbs (Ellis Version)	поднимать	A;&SihXm$v	Tr
 mutable	Russian - Mutable Verbs (Ellis Version)	поднимать	A;&SihXm$v	English Distinction	lift physically	whole word	keep	lift / raise / pick up	lift physically		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	готовить	sc`&_PWs2w	English Distinction	prepare, incl. food	whole word	keep	prepare / cook&nbsp;	prepare, incl. food		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	учить	y2IJ(V:J(b	Translation	memorize	sense 1 of 2	keep-inline	learn (memorize) / teach		учить что = learn/memorize; учить кого чему = teach	qualifies one sense of several	
-mutable	Russian - Mutable Verbs (Ellis Version)	варить	Ekx6PsmdX/	Translation	by boiling	sense 2 of 2	keep-inline	boil / cook (by boiling)			attaches by position to the last synonym; may cover all senses	
-mutable	Russian - Mutable Verbs (Ellis Version)	варить	Ekx6PsmdX/	English Distinction	by boiling	whole word	drop-duplicate	boil / cook (by boiling)			restates the Translation	
+mutable	Russian - Mutable Verbs (Ellis Version)	варить	Ekx6PsmdX/	Translation	by boiling	sense 2 of 2	move-to-distinction	boil / cook	In water		separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	варить	Ekx6PsmdX/	English Distinction	by boiling	whole word	keep	boil / cook	In water		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	встречать	NSEY7c<J$r	Translation	encounter someone	whole word	move-to-distinction	meet	run into someone		single sense; qualifies the whole word	
 mutable	Russian - Mutable Verbs (Ellis Version)	встречать	NSEY7c<J$r	English Distinction	run into someone	whole word	keep	meet	run into someone		serves no pair (covered)	
 mutable	Russian - Mutable Verbs (Ellis Version)	жениться	zNN-&N,vb	Translation	of a man	sense 1 of 2	keep-inline	marry (of a man) / get married (couple)		пожени́ться = (a couple) get married	qualifies one sense of several	
 mutable	Russian - Mutable Verbs (Ellis Version)	жениться	zNN-&N,vb	Translation	couple	sense 2 of 2	keep-inline	marry (of a man) / get married (couple)		пожени́ться = (a couple) get married	qualifies one sense of several	
-mutable	Russian - Mutable Verbs (Ellis Version)	растить	mP6._J90Ce	Translation	bring up	sense 1 of 2	keep-inline	raise (bring up)<br>grow (cultivate)			qualifies one sense of several	
-mutable	Russian - Mutable Verbs (Ellis Version)	растить	mP6._J90Ce	Translation	cultivate	sense 2 of 2	keep-inline	raise (bring up)<br>grow (cultivate)			qualifies one sense of several	
-mutable	Russian - Mutable Verbs (Ellis Version)	растить	mP6._J90Ce	English Distinction	bring up, cultivate	whole word	drop-duplicate	raise (bring up)<br>grow (cultivate)			restates the Translation	
+mutable	Russian - Mutable Verbs (Ellis Version)	растить	mP6._J90Ce	Translation	bring up	sense 1 of 2	move-to-distinction	raise<br>grow	Bring up		separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	растить	mP6._J90Ce	Translation	cultivate	sense 2 of 2	move-to-distinction	raise<br>grow	Bring up		separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	растить	mP6._J90Ce	English Distinction	bring up, cultivate	whole word	keep	raise<br>grow	Bring up		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	лечить	C4L7CVe|Q,	Translation	medically	whole word	move-to-distinction	treat / cure	medically		covers every sense; qualifies the whole word	
 mutable	Russian - Mutable Verbs (Ellis Version)	лечить	C4L7CVe|Q,	English Distinction	medically	whole word	keep	treat / cure	medically		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	мечтать	Nhj<gIl0<f	Translation	to aspire	whole word	move-to-distinction	to dream	to aspire		single sense; qualifies the whole word	
 mutable	Russian - Mutable Verbs (Ellis Version)	оставаться	IZiCd,Wa]h	English Distinction	remain behind	whole word	keep	stay / remain	remain behind		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	происходить	ke.SV%JrlJ	Translation	take place	whole word	move-to-distinction	happen / occur	take place		covers every sense; qualifies the whole word	
 mutable	Russian - Mutable Verbs (Ellis Version)	происходить	ke.SV%JrlJ	English Distinction	take place; the neutral word	whole word	keep	happen / occur	take place		separates a collision	
-mutable	Russian - Mutable Verbs (Ellis Version)	получаться	o#JqmxPaYJ	Translation	come out well	sense 2 of 2	keep-inline	turn out / work out (come out well)			attaches by position to the last synonym; may cover all senses	
-mutable	Russian - Mutable Verbs (Ellis Version)	получаться	o#JqmxPaYJ	English Distinction	come out well	whole word	drop-duplicate	turn out / work out (come out well)			restates the Translation	
+mutable	Russian - Mutable Verbs (Ellis Version)	получаться	o#JqmxPaYJ	Translation	come out well	sense 2 of 2	move-to-distinction	turn out / work out	Come out well		separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	получаться	o#JqmxPaYJ	English Distinction	come out well	whole word	keep	turn out / work out	Come out well		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	называть	Bgilgb8tKr	Translation	give a name to	whole word	move-to-distinction	name / call	give a name to		covers every sense; qualifies the whole word	
 mutable	Russian - Mutable Verbs (Ellis Version)	называть	Bgilgb8tKr	English Distinction	give a name to	whole word	keep	name / call	give a name to		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	проходить	p6>p1n7yf#	Translation	move past or through	whole word	move-to-distinction	pass / go through	move past or through		covers every sense; qualifies the whole word	
@@ -505,16 +505,16 @@ mutable	Russian - Mutable Verbs (Ellis Version)	случаться	Q&|8yb0;F?	Tr
 mutable	Russian - Mutable Verbs (Ellis Version)	случаться	Q&|8yb0;F?	English Distinction	happen unexpectedly, by chance	whole word	keep	happen	By chance		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	собирать	DWU{f)r,Sx	Translation	gather things up	whole word	move-to-distinction	collect / gather	gather things up		covers every sense; qualifies the whole word	
 mutable	Russian - Mutable Verbs (Ellis Version)	собирать	DWU{f)r,Sx	English Distinction	gather things up	whole word	keep	collect / gather	gather things up		separates a collision	
-mutable	Russian - Mutable Verbs (Ellis Version)	собираться	GBiTp(PMx~	Translation	assemble	sense 1 of 2	keep-inline	gather (assemble)<br>intend to		собираться + infinitive = plan/intend to	qualifies one sense of several	
-mutable	Russian - Mutable Verbs (Ellis Version)	собираться	GBiTp(PMx~	English Distinction	assemble; intend to	whole word	drop-duplicate	gather (assemble)<br>intend to		собираться + infinitive = plan/intend to	restates the Translation	
+mutable	Russian - Mutable Verbs (Ellis Version)	собираться	GBiTp(PMx~	Translation	assemble	sense 1 of 2	move-to-distinction	gather<br>intend to	Assemble	собираться + infinitive = plan/intend to	separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	собираться	GBiTp(PMx~	English Distinction	assemble; intend to	whole word	keep	gather<br>intend to	Assemble	собираться + infinitive = plan/intend to	separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	готовиться	HuiWUHcV4|	Translation	oneself	whole word	move-to-distinction	prepare	get yourself ready		single sense; qualifies the whole word	
 mutable	Russian - Mutable Verbs (Ellis Version)	готовиться	HuiWUHcV4|	English Distinction	get yourself ready	whole word	keep	prepare	get yourself ready		serves no pair (covered)	
 mutable	Russian - Mutable Verbs (Ellis Version)	обращаться	KU,@0*-i6v	Translation	direct words to someone	sense 2 of 3	keep-inline	turn to / address (direct words to someone)<br>treat (behave towards)			qualifies one sense of several	
 mutable	Russian - Mutable Verbs (Ellis Version)	обращаться	KU,@0*-i6v	Translation	behave towards	sense 3 of 3	keep-inline	turn to / address (direct words to someone)<br>treat (behave towards)			qualifies one sense of several	
 mutable	Russian - Mutable Verbs (Ellis Version)	обращаться	KU,@0*-i6v	English Distinction	turn to, or behave towards	whole word	drop-duplicate	turn to / address (direct words to someone)<br>treat (behave towards)			restates the Translation	
-mutable	Russian - Mutable Verbs (Ellis Version)	сдавать	L+Bj}PEyHQ	Translation	exam	sense 1 of 3	keep-inline	take (exam) / pass (exam) / hand in		сдавать экзамен = take; сдать экзамен = pass	qualifies one sense of several	
-mutable	Russian - Mutable Verbs (Ellis Version)	сдавать	L+Bj}PEyHQ	Translation	exam	sense 2 of 3	keep-inline	take (exam) / pass (exam) / hand in		сдавать экзамен = take; сдать экзамен = pass	qualifies one sense of several	
-mutable	Russian - Mutable Verbs (Ellis Version)	сдавать	L+Bj}PEyHQ	English Distinction	an exam; hand in	whole word	drop-duplicate	take (exam) / pass (exam) / hand in		сдавать экзамен = take; сдать экзамен = pass	restates the Translation	
+mutable	Russian - Mutable Verbs (Ellis Version)	сдавать	L+Bj}PEyHQ	Translation	exam	sense 1 of 3	move-to-distinction	take / pass / hand in	An exam	сдавать экзамен = take; сдать экзамен = pass	separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	сдавать	L+Bj}PEyHQ	Translation	exam	sense 2 of 3	move-to-distinction	take / pass / hand in	An exam	сдавать экзамен = take; сдать экзамен = pass	separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	сдавать	L+Bj}PEyHQ	English Distinction	an exam; hand in	whole word	keep	take / pass / hand in	An exam	сдавать экзамен = take; сдать экзамен = pass	separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	лгать	esDklbM:Tq	Translation	tell lies	whole word	move-to-distinction	lie	tell untruths		single sense; qualifies the whole word	
 mutable	Russian - Mutable Verbs (Ellis Version)	лгать	esDklbM:Tq	English Distinction	tell untruths	whole word	keep	lie	tell untruths		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	проверять	M9C8]gVO[	English Distinction	verify (verb)	whole word	drop-header-duplicate	check / verify			repeats the deck header	
@@ -531,7 +531,7 @@ mutable	Russian - Mutable Verbs (Ellis Version)	ехать	upa@NcF;x7	English Di
 mutable	Russian - Mutable Verbs (Ellis Version)	иметь	OCc!r[-%_/	English Distinction	the verb (bookish)	whole word	keep	to have / possess	the verb (bookish)	imperfectivum tantum -- no perfective exists	serves no pair (covered)	
 mutable	Russian - Mutable Verbs (Ellis Version)	нравиться	c5~C~$g8+m	Translation	impers.	sense 2 of 2	keep-inline	to be pleasing to / to like			attaches by position to the last synonym; may cover all senses	
 mutable	Russian - Mutable Verbs (Ellis Version)	нравиться	c5~C~$g8+m	English Distinction	Dative: it pleases you	whole word	drop-case	to be pleasing to / to like			cue serves no unseparated pair (covered)	
-mutable	Russian - Mutable Verbs (Ellis Version)	оставлять	b_?~h%4K<X	Translation	behind	sense 1 of 2	keep-inline	to leave (behind) / abandon			qualifies one sense of several	
+mutable	Russian - Mutable Verbs (Ellis Version)	оставлять	b_?~h%4K<X	Translation	behind	sense 1 of 2	move-to-distinction	to leave / abandon	Behind		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	приезжать	E_d<HR-KTB	Translation	by vehicle	whole word	move-to-distinction	to arrive	by vehicle		single sense; qualifies the whole word	
 mutable	Russian - Mutable Verbs (Ellis Version)	приходиться	dY4#^vv?;:	Translation	impers.	whole word	move-to-distinction	to have to / to fit / fall to	impersonal	impersonal: 3sg neuter only -- придётся (fut.), приходится (pres.), пришло́сь (past); no personal m/f/pl forms exist	covers every sense; qualifies the whole word	
 mutable	Russian - Mutable Verbs (Ellis Version)	приходиться	dY4#^vv?;:	English Distinction	impersonal	whole word	keep	to have to / to fit / fall to	impersonal	impersonal: 3sg neuter only -- придётся (fut.), приходится (pres.), пришло́сь (past); no personal m/f/pl forms exist	serves no pair (none)	
@@ -541,12 +541,12 @@ mutable	Russian - Mutable Verbs (Ellis Version)	разговаривать	C??,R
 mutable	Russian - Mutable Verbs (Ellis Version)	разговаривать	C??,R;L)T9	English Distinction	a two-way conversation	whole word	keep	talk / have a conversation	With someone		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	уметь	bSs#W{j+?-	Translation	a learned skill	sense 3 of 3	keep-inline	can / be able to / know how to	a learned skill	Unlike мочь = to be physically able	attaches by position to the last synonym; may cover all senses	
 mutable	Russian - Mutable Verbs (Ellis Version)	уметь	bSs#W{j+?-	English Distinction	a learned skill	whole word	drop-duplicate	can / be able to / know how to	a learned skill	Unlike мочь = to be physically able	restates the Translation	
-mutable	Russian - Mutable Verbs (Ellis Version)	звать	d*8(i9%SGj	Translation	summon someone	sense 3 of 3	keep-inline	call / summon / be named (summon someone)		меня́ зову́т... = my name is... (literally 'they call me')	attaches by position to the last synonym; may cover all senses	
-mutable	Russian - Mutable Verbs (Ellis Version)	звать	d*8(i9%SGj	English Distinction	summon, or be named	whole word	drop-duplicate	call / summon / be named (summon someone)		меня́ зову́т... = my name is... (literally 'they call me')	restates the Translation	
+mutable	Russian - Mutable Verbs (Ellis Version)	звать	d*8(i9%SGj	Translation	summon someone	sense 3 of 3	move-to-distinction	call / summon / be named	Invite over	меня́ зову́т... = my name is... (literally 'they call me')	separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	звать	d*8(i9%SGj	English Distinction	summon, or be named	whole word	keep	call / summon / be named	Invite over	меня́ зову́т... = my name is... (literally 'they call me')	separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	задавать	D)D1M@q=oo	Translation	a question	sense 1 of 2	keep-inline	ask (a question) / set	set a question or task	зада́ть вопро́с = to ask a question	qualifies one sense of several	
 mutable	Russian - Mutable Verbs (Ellis Version)	задавать	D)D1M@q=oo	English Distinction	set a question or task	whole word	keep	ask (a question) / set	set a question or task	зада́ть вопро́с = to ask a question	serves no pair (covered)	
-mutable	Russian - Mutable Verbs (Ellis Version)	вызывать	b3j~cuJ,nZ	Translation	bring about	sense 3 of 3	keep-inline	call out / summon<br>cause (bring about)		вы́звать врача́ = to call a doctor out	qualifies one sense of several	
-mutable	Russian - Mutable Verbs (Ellis Version)	вызывать	b3j~cuJ,nZ	English Distinction	summon out, or bring about	whole word	drop-duplicate	call out / summon<br>cause (bring about)		вы́звать врача́ = to call a doctor out	restates the Translation	
+mutable	Russian - Mutable Verbs (Ellis Version)	вызывать	b3j~cuJ,nZ	Translation	bring about	sense 3 of 3	move-to-distinction	call out / summon<br>cause	Send for	вы́звать врача́ = to call a doctor out	separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	вызывать	b3j~cuJ,nZ	English Distinction	summon out, or bring about	whole word	keep	call out / summon<br>cause	Send for	вы́звать врача́ = to call a doctor out	separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	рассказывать	O!JE!rqy?h	Translation	recount	whole word	move-to-distinction	tell / narrate	recount at length		covers every sense; qualifies the whole word	
 mutable	Russian - Mutable Verbs (Ellis Version)	рассказывать	O!JE!rqy?h	English Distinction	recount at length	whole word	keep	tell / narrate	recount at length		serves no pair (covered)	
 mutable	Russian - Mutable Verbs (Ellis Version)	знакомиться	ALx$4*=g6p	Translation	for the first time	whole word	move-to-distinction	get acquainted / meet	for the first time	-ся verb; м→мл in the 1sg	covers every sense; qualifies the whole word	
@@ -557,11 +557,11 @@ mutable	Russian - Mutable Verbs (Ellis Version)	фотографировать	z
 mutable	Russian - Mutable Adjectives (Ellis Version)	маленький	fL4},5.uVb	Translation	not big	whole word	move-to-distinction	small / little	not big	comparative: меньше	covers every sense; qualifies the whole word	
 mutable	Russian - Mutable Adjectives (Ellis Version)	маленький	fL4},5.uVb	English Distinction	not big	whole word	keep	small / little	not big	comparative: меньше	separates a collision	
 mutable	Russian - Mutable Adjectives (Ellis Version)	высокий	j+![zEg<d?	English Distinction	adj.	whole word	drop-header-duplicate	tall / high			repeats the deck header	
-mutable	Russian - Mutable Adjectives (Ellis Version)	низкий	qj|]D68X~|	Translation	not tall	sense 2 of 2	keep-inline	low / short (not tall)			attaches by position to the last synonym; may cover all senses	
-mutable	Russian - Mutable Adjectives (Ellis Version)	низкий	qj|]D68X~|	English Distinction	not tall	whole word	drop-duplicate	low / short (not tall)			restates the Translation	
-mutable	Russian - Mutable Adjectives (Ellis Version)	тяжёлый	t6&tVKW%@d	Translation	weighty	sense 1 of 2	keep-inline	heavy (weighty)<br>hard (difficult)		heavy or hard/difficult	qualifies one sense of several	
-mutable	Russian - Mutable Adjectives (Ellis Version)	тяжёлый	t6&tVKW%@d	Translation	difficult	sense 2 of 2	keep-inline	heavy (weighty)<br>hard (difficult)		heavy or hard/difficult	qualifies one sense of several	
-mutable	Russian - Mutable Adjectives (Ellis Version)	тяжёлый	t6&tVKW%@d	English Distinction	weighty, or difficult	whole word	drop-duplicate	heavy (weighty)<br>hard (difficult)		heavy or hard/difficult	restates the Translation	
+mutable	Russian - Mutable Adjectives (Ellis Version)	низкий	qj|]D68X~|	Translation	not tall	sense 2 of 2	move-to-distinction	low / short	Not tall		separates a collision	
+mutable	Russian - Mutable Adjectives (Ellis Version)	низкий	qj|]D68X~|	English Distinction	not tall	whole word	keep	low / short	Not tall		separates a collision	
+mutable	Russian - Mutable Adjectives (Ellis Version)	тяжёлый	t6&tVKW%@d	Translation	weighty	sense 1 of 2	move-to-distinction	heavy<br>hard	Difficult		separates a collision	
+mutable	Russian - Mutable Adjectives (Ellis Version)	тяжёлый	t6&tVKW%@d	Translation	difficult	sense 2 of 2	move-to-distinction	heavy<br>hard	Difficult		separates a collision	
+mutable	Russian - Mutable Adjectives (Ellis Version)	тяжёлый	t6&tVKW%@d	English Distinction	weighty, or difficult	whole word	keep	heavy<br>hard	Difficult		separates a collision	
 mutable	Russian - Mutable Adjectives (Ellis Version)	лёгкий	vPomK)iQ6N	Translation	not heavy	sense 2 of 2	keep-inline	light / easy (not heavy)		light (weight) or easy	attaches by position to the last synonym; may cover all senses	
 mutable	Russian - Mutable Adjectives (Ellis Version)	лёгкий	vPomK)iQ6N	English Distinction	not heavy	whole word	drop-duplicate	light / easy (not heavy)		light (weight) or easy	restates the Translation	
 mutable	Russian - Mutable Adjectives (Ellis Version)	короткий	g#<f?kg1@V	Translation	not long	whole word	move-to-distinction	short	not long		single sense; qualifies the whole word	
@@ -575,7 +575,7 @@ mutable	Russian - Mutable Adjectives (Ellis Version)	красивый	Ow%`_{|l_Q
 mutable	Russian - Mutable Adjectives (Ellis Version)	уродливый	HYh#l(oymx	English Distinction	adj.	whole word	drop-header-duplicate	ugly			repeats the deck header	
 mutable	Russian - Mutable Adjectives (Ellis Version)	ужасный	q=+LVzUX,2	Translation	dreadful	whole word	move-to-distinction	terrible / awful	Bad quality		covers every sense; qualifies the whole word	
 mutable	Russian - Mutable Adjectives (Ellis Version)	ужасный	q=+LVzUX,2	English Distinction	very bad in quality	whole word	keep	terrible / awful	Bad quality		separates a collision	
-mutable	Russian - Mutable Adjectives (Ellis Version)	правильный	d&<AjYz@C1	English Distinction	correct	whole word	drop-duplicate	correct / right			restates the Translation	
+mutable	Russian - Mutable Adjectives (Ellis Version)	правильный	d&<AjYz@C1	English Distinction	correct	whole word	keep	correct / right	Not wrong		separates a collision	
 mutable	Russian - Mutable Adjectives (Ellis Version)	холодный	z88_zd8ycK	English Distinction	adj.	whole word	drop-header-duplicate	cold			repeats the deck header	
 mutable	Russian - Mutable Adjectives (Ellis Version)	тёплый	La7ni|,i1&	English Distinction	adj.	whole word	drop-header-duplicate	warm			repeats the deck header	
 mutable	Russian - Mutable Adjectives (Ellis Version)	жаркий	j.B;]84Noy	Translation	weather	whole word	move-to-distinction	hot	weather	weather/climate; горячий = hot to the touch	single sense; qualifies the whole word	
@@ -628,8 +628,8 @@ mutable	Russian - Mutable Adjectives (Ellis Version)	мокрый	y[DK%LX%dT	Eng
 mutable	Russian - Mutable Adjectives (Ellis Version)	влажный	mbHZ4[LM^r	English Distinction	adj.	whole word	drop-header-duplicate	damp / humid			repeats the deck header	
 mutable	Russian - Mutable Adjectives (Ellis Version)	живой	L-ow0/Au=H	English Distinction	adj.	whole word	drop-header-duplicate	alive / lively			repeats the deck header	
 mutable	Russian - Mutable Adjectives (Ellis Version)	целый	sp<a|jem>}	English Distinction	entire, unbroken	whole word	keep	whole / entire	entire, unbroken		serves no pair (covered)	
-mutable	Russian - Mutable Adjectives (Ellis Version)	мелкий	e_.a8-{(Oe	Translation	petty, fine-grained	sense 2 of 2	keep-inline	shallow<br>small (petty, fine-grained)		shallow (water) or small/fine (grains, change)	qualifies one sense of several	
-mutable	Russian - Mutable Adjectives (Ellis Version)	мелкий	e_.a8-{(Oe	English Distinction	petty, fine-grained	whole word	drop-duplicate	shallow<br>small (petty, fine-grained)		shallow (water) or small/fine (grains, change)	restates the Translation	
+mutable	Russian - Mutable Adjectives (Ellis Version)	мелкий	e_.a8-{(Oe	Translation	petty, fine-grained	sense 2 of 2	move-to-distinction	shallow<br>small	Petty, fine-grained	shallow (water) or small/fine (grains, change)	separates a collision	
+mutable	Russian - Mutable Adjectives (Ellis Version)	мелкий	e_.a8-{(Oe	English Distinction	petty, fine-grained	whole word	keep	shallow<br>small	Petty, fine-grained	shallow (water) or small/fine (grains, change)	separates a collision	
 mutable	Russian - Mutable Adjectives (Ellis Version)	известный	xJJ1lymJ@7	English Distinction	widely known	whole word	keep	famous / well-known	widely known		separates a collision	
 mutable	Russian - Mutable Adjectives (Ellis Version)	нужный	r1;q.a0Q7]	English Distinction	adj.	whole word	drop-header-duplicate	needed / necessary		often short form: мне нужен / нужна / нужно	repeats the deck header	
 mutable	Russian - Mutable Adjectives (Ellis Version)	прекрасный	qI5X?:I<Uh	Translation	splendid	whole word	move-to-distinction	wonderful / beautiful	Fine, excellent		covers every sense; qualifies the whole word	
@@ -657,9 +657,9 @@ mutable	Russian - Mutable Adverbs (Ellis Version)	высоко	*~2bh<!H@	English
 mutable	Russian - Mutable Adverbs (Ellis Version)	низко	iIKh<x5)?R	English Distinction	adv.	whole word	drop-header-duplicate	low			repeats the deck header	
 mutable	Russian - Mutable Adverbs (Ellis Version)	сильно	OBOl,TVEi9	Translation	intensity	whole word	move-to-distinction	strongly / a lot	intensity		covers every sense; qualifies the whole word	
 mutable	Russian - Mutable Adverbs (Ellis Version)	сильно	OBOl,TVEi9	English Distinction	to a strong degree, not quantity	whole word	keep	strongly / a lot	intensity		serves no pair (covered)	
-mutable	Russian - Mutable Adverbs (Ellis Version)	тяжело	Ey+.:];C}[	Translation	a heavy burden	sense 1 of 2	keep-inline	heavily (a heavy burden)<br>with difficulty (with effort)		мне тяжело́ = it's hard for me	qualifies one sense of several	
-mutable	Russian - Mutable Adverbs (Ellis Version)	тяжело	Ey+.:];C}[	Translation	with effort	sense 2 of 2	keep-inline	heavily (a heavy burden)<br>with difficulty (with effort)		мне тяжело́ = it's hard for me	qualifies one sense of several	
-mutable	Russian - Mutable Adverbs (Ellis Version)	тяжело	Ey+.:];C}[	English Distinction	heavily, or with effort	whole word	drop-duplicate	heavily (a heavy burden)<br>with difficulty (with effort)		мне тяжело́ = it's hard for me	restates the Translation	
+mutable	Russian - Mutable Adverbs (Ellis Version)	тяжело	Ey+.:];C}[	Translation	a heavy burden	sense 1 of 2	move-to-distinction	heavily<br>with difficulty	Burdensome	мне тяжело́ = it's hard for me	separates a collision	
+mutable	Russian - Mutable Adverbs (Ellis Version)	тяжело	Ey+.:];C}[	Translation	with effort	sense 2 of 2	move-to-distinction	heavily<br>with difficulty	Burdensome	мне тяжело́ = it's hard for me	separates a collision	
+mutable	Russian - Mutable Adverbs (Ellis Version)	тяжело	Ey+.:];C}[	English Distinction	heavily, or with effort	whole word	keep	heavily<br>with difficulty	Burdensome	мне тяжело́ = it's hard for me	separates a collision	
 mutable	Russian - Mutable Adverbs (Ellis Version)	коротко	KPqC>BdE]N	English Distinction	briefly, in speech	whole word	keep	briefly / short	briefly, in speech		serves no pair (covered)	
 mutable	Russian - Mutable Adverbs (Ellis Version)	трудно	k8ATmLIQ@F	Translation	it is hard to do	whole word	move-to-distinction	with difficulty	it is hard to do	мне тру́дно = it's hard for me	single sense; qualifies the whole word	
 mutable	Russian - Mutable Adverbs (Ellis Version)	трудно	k8ATmLIQ@F	English Distinction	it is hard to do	whole word	drop-duplicate	with difficulty	it is hard to do	мне тру́дно = it's hard for me	restates the Translation	
@@ -681,8 +681,8 @@ mutable	Russian - Mutable Adverbs (Ellis Version)	тепло	rD}7l|Qntg	Translat
 mutable	Russian - Mutable Adverbs (Ellis Version)	тепло	rD}7l|Qntg	English Distinction	adv.	whole word	drop-header-duplicate	warm		на у́лице тепло́ = it's warm outside	repeats the deck header	
 mutable	Russian - Mutable Adverbs (Ellis Version)	жарко	K^|k)PmgKt	Translation	weather	whole word	move-to-distinction	hot	weather	мне жа́рко = I'm hot	single sense; qualifies the whole word	
 mutable	Russian - Mutable Adverbs (Ellis Version)	жарко	K^|k)PmgKt	English Distinction	adv. (weather)	whole word	drop-header-duplicate	hot	weather	мне жа́рко = I'm hot	repeats the deck header	
-mutable	Russian - Mutable Adverbs (Ellis Version)	горячо	o-~%TYf-s/	Translation	to the touch	sense 1 of 2	keep-inline	hot (to the touch)<br>passionately			qualifies one sense of several	
-mutable	Russian - Mutable Adverbs (Ellis Version)	горячо	o-~%TYf-s/	English Distinction	adv. (to the touch)	whole word	drop-header-duplicate	hot (to the touch)<br>passionately			repeats the deck header	
+mutable	Russian - Mutable Adverbs (Ellis Version)	горячо	o-~%TYf-s/	Translation	to the touch	sense 1 of 2	move-to-distinction	hot<br>passionately	To the touch		separates a collision	
+mutable	Russian - Mutable Adverbs (Ellis Version)	горячо	o-~%TYf-s/	English Distinction	adv. (to the touch)	whole word	keep	hot<br>passionately	To the touch		separates a collision	
 mutable	Russian - Mutable Adverbs (Ellis Version)	прохладно	I&eN@lwr4y	Translation	it is cool out	whole word	move-to-distinction	cool			single sense; qualifies the whole word	
 mutable	Russian - Mutable Adverbs (Ellis Version)	прохладно	I&eN@lwr4y	English Distinction	adv.	whole word	drop-header-duplicate	cool			repeats the deck header	
 mutable	Russian - Mutable Adverbs (Ellis Version)	странно	CsCi/F0(+v	Translation	it's odd	sense 1 of 2	keep-inline	strange (it's odd)<br>strangely			qualifies one sense of several	
@@ -899,3 +899,4 @@ mutable	Russian - Mutable Adjectives (Ellis Version)	должен	j^c#WZs=Ci	Eng
 mutable	Russian - Mutable Adverbs (Ellis Version)	налево	MEH^0+3x<#	English Distinction	Direction	whole word	keep	to the left	Direction		separates a collision	
 mutable	Russian - Mutable Adverbs (Ellis Version)	слева	E^vtYuA8G#	English Distinction	Location	whole word	keep	on the left	Location		separates a collision	
 mutable	Russian - Mutable Adverbs (Ellis Version)	прекрасно	N@=/LqB4{w	English Distinction	Fine, excellent	whole word	keep	wonderfully	Fine, excellent	Прекра́сно! = Wonderful!	separates a collision	
+mutable	Russian - Mutable Adverbs (Ellis Version)	ужасно	qcpr]]R4D*	English Distinction	Very badly	whole word	keep	terribly / awfully	Very badly	also 'really' as intensifier	separates a collision	

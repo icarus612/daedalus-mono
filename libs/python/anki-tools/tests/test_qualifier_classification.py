@@ -146,7 +146,7 @@ def routing():
 
 
 def test_artifact_sizes():
-    assert len(read_tsv(VOCAB / "qualifier-classification.tsv")) == 900
+    assert len(read_tsv(VOCAB / "qualifier-classification.tsv")) == 901
     assert len(read_tsv(DATA / "case-text-routing.tsv")) == 114
 
 
