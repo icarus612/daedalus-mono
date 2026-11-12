@@ -23,6 +23,27 @@ rows are tagged `New` in the `Status` column. Pronouns and Numerals have their
 own field sets (see `mutable_words_plan.py`'s `FIELD_NAMES["Pronouns"]` /
 `FIELD_NAMES["Numerals"]` for the exact columns).
 
+## Similarity groups and cues
+
+`similarity-groups.tsv` lists every group of words that share an English meaning.
+It is generated; regenerate it after any vocabulary change with
+`uv run python -m anki_tools.collisions --write-similarity-table` (a test fails
+when it is stale). Rules for the `English Distinction` cue:
+
+- Each English meaning is its own group. A word with several meanings sits in
+  several groups, across all decks and parts of speech, Mutable and Immutable.
+- A word whose `told apart by` is `cue` needs a cue, even when its other
+  meanings already differ from its partners'.
+- A word in no group gets no cue.
+- Adjective/adverb pairs need no cue: the part of speech and deck separate them.
+- A cue holds only what separates the word within its groups, as short as
+  possible; a word in several groups may run slightly longer.
+- Partner cues must sound different from each other.
+- A cue never repeats the English or the Info, never names a part of speech or a
+  case, and is never "general use".
+- Parenthetical qualifiers do not stay in the English; they move to the cue.
+- Anything else about usage goes in `Additional Info`.
+
 ## Build input
 
 These TSV files are the build input for everything downstream in this package.
