@@ -68,3 +68,25 @@ def test_templates_reference_only_real_fields():
     for front, back in variant_pairs.TEMPLATES.values():
         for ref in re.findall(r"\{\{[#/]?(?:text:|hint:)?([^}]+)\}\}", front + back):
             assert ref in names, ref
+
+
+def test_play_button_comes_before_the_word():
+    _, back = variant_pairs.TEMPLATES["English"]
+    for slug, field in (("default", "Russian"), ("variant", "Variant")):
+        assert back.index(f'id="pair-{slug}-slot"') < back.index(
+            f"{{{{{field}}}}}</span>"
+        )
+
+
+def test_russian_backs_show_only_the_other_word_under_a_heading():
+    for name, shown, other in (
+        ("Russian", "{{Russian}}", "{{Variant}}"),
+        ("Variant", "{{Variant}}", "{{Russian}}"),
+    ):
+        back = variant_pairs.TEMPLATES[name][1]
+        assert "Alternative Russian:" in back
+        assert back.count('class="pair-line ') == 1
+        assert f"{other}</span>" in back
+        assert f'class="pair-word">{shown}' not in back
+        assert "display: none" not in back
+    assert "Alternative Russian:" not in variant_pairs.TEMPLATES["English"][1]

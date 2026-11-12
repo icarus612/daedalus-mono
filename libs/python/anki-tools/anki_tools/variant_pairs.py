@@ -166,19 +166,19 @@ def _pair_line(
     return (
         f'<div id="{line_id}" class="pair-line {card_audio.TAPPABLE_CLASS}" '
         f'onclick="{play_fn}(event)">'
-        f'<span class="pair-word">{{{{{word_field}}}}}</span> '
-        f'<span class="pair-label">({label})</span> '
         + card_audio.audio_line_block(audio_field, f"{line_id}-slot", line_id, play_fn)
-        + "</div>"
+        + f' <span class="pair-word">{{{{{word_field}}}}}</span> '
+        f'<span class="pair-label">({label})</span>'
+        "</div>"
     )
 
 
-_PAIR_LINES = (
-    '<div class="pair-lines">'
-    + _pair_line("Russian", DEFAULT_LABEL, "Audio", "default", _DEFAULT_PLAY)
-    + _pair_line("Variant", "{{Register}}", "Variant Audio", "variant", _VARIANT_PLAY)
-    + "</div>"
+_DEFAULT_LINE = _pair_line("Russian", DEFAULT_LABEL, "Audio", "default", _DEFAULT_PLAY)
+_VARIANT_LINE = _pair_line(
+    "Variant", "{{Register}}", "Variant Audio", "variant", _VARIANT_PLAY
 )
+
+_PAIR_LINES = '<div class="pair-lines">' + _DEFAULT_LINE + _VARIANT_LINE + "</div>"
 
 _AUTOPLAY_DEFAULT = """<script>
 setTimeout(function () {
@@ -186,6 +186,13 @@ setTimeout(function () {
   if (player) player.play();
 }, 50);
 </script>"""
+
+
+def _alternative(line: str) -> str:
+    return (
+        '<div class="pair-lines">'
+        '<div class="pair-heading">Alternative Russian:</div>' + line + "</div>"
+    )
 
 
 def _russian_front(word_field: str, audio_field: str) -> str:
@@ -201,27 +208,41 @@ def _russian_front(word_field: str, audio_field: str) -> str:
     )
 
 
-def _back(*, autoplay: bool) -> str:
+def _russian_back(other_line: str) -> str:
     return (
         "{{FrontSide}}\n\n"
         '<div id="back">\n'
-        + ("" if autoplay else _ENGLISH_ROW + "\n")
-        + _PAIR_LINES
+        + _ENGLISH_ROW
         + "\n"
-        + (_AUTOPLAY_DEFAULT + "\n" if autoplay else "")
+        + _alternative(other_line)
+        + "\n"
         + _DETAILS
         + "\n</div>"
     )
 
+
+_ENGLISH_BACK = (
+    "{{FrontSide}}\n\n"
+    '<div id="back">\n'
+    + _PAIR_LINES
+    + "\n"
+    + _AUTOPLAY_DEFAULT
+    + "\n"
+    + _DETAILS
+    + "\n</div>"
+)
 
 _ENGLISH_FRONT = (
     '<div id="front">\n' + _HEADER + "\n" + _ENGLISH_ROW + "\n</div>\n" + _HEADER_SCRIPT
 )
 
 TEMPLATES = {
-    "Russian": (_russian_front("Russian", "Audio"), _back(autoplay=False)),
-    "Variant": (_russian_front("Variant", "Variant Audio"), _back(autoplay=False)),
-    "English": (_ENGLISH_FRONT, _back(autoplay=True)),
+    "Russian": (_russian_front("Russian", "Audio"), _russian_back(_VARIANT_LINE)),
+    "Variant": (
+        _russian_front("Variant", "Variant Audio"),
+        _russian_back(_DEFAULT_LINE),
+    ),
+    "English": (_ENGLISH_FRONT, _ENGLISH_BACK),
 }
 
 PAIR_CSS = """.pair-lines {
@@ -238,4 +259,9 @@ PAIR_CSS = """.pair-lines {
 
 .pair-label {
   color: grey;
+}
+
+.pair-heading {
+  color: grey;
+  margin-bottom: .2rem;
 }"""
