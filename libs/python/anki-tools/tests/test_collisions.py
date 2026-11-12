@@ -125,11 +125,11 @@ def test_gloss_segments(translation: str, expected: tuple[str, ...]) -> None:
     ("segment", "expected"),
     [
         ("At (Where)", "at"),
-        ("a (b (c)) d", "a d"),
+        ("x (b (c)) d", "x d"),
         ("x (y) (z)", "x"),
         ("  Hello.. ", "hello"),
         ("Hello;: ", "hello"),
-        ("a   b", "a b"),
+        ("x   b", "x b"),
         ("(only)", ""),
         ("plain", "plain"),
     ],
@@ -586,12 +586,12 @@ def test_government_overrides_cases_for_any_section(notes: list[Note]) -> None:
 
 
 def test_collision_totals(groups: list[collisions.CollisionGroup]) -> None:
-    assert len(groups) == 220
-    assert sum(len(g.members) for g in groups) == 482
-    assert len({m.guid for g in groups for m in g.members}) == 393
+    assert len(groups) == 250
+    assert sum(len(g.members) for g in groups) == 552
+    assert len({m.guid for g in groups for m in g.members}) == 455
     assert Counter(g.mechanism for g in groups) == {
-        "cue": 125,
-        "header": 87,
+        "cue": 131,
+        "header": 111,
         "pill": 7,
         "header+pill": 1,
     }
@@ -602,8 +602,8 @@ def test_immutable_only_collisions(notes: list[Note]) -> None:
     immutable = [n for n in notes if n.family == "immutable"]
     assert len(immutable) == 228
     result = collisions.find_collisions(immutable)
-    assert len(result) == 54
-    assert len({m.guid for g in result for m in g.members}) == 93
+    assert len(result) == 55
+    assert len({m.guid for g in result for m in g.members}) == 97
     assert sum(1 for g in result if g.mechanism == "pill") == 7
 
 
@@ -1203,7 +1203,7 @@ def test_cli_groups_prints_table(capsys: pytest.CaptureFixture[str]) -> None:
     out = capsys.readouterr().out
     assert code == 0
     assert out.splitlines()[0].split("\t")[:3] == ["sense", "mechanism", "members"]
-    assert len(out.splitlines()) == 221
+    assert len(out.splitlines()) == 251
 
 
 def test_cli_pos_counts_prints_fields(capsys: pytest.CaptureFixture[str]) -> None:
@@ -1246,3 +1246,15 @@ def test_core_imports_no_anki_module() -> None:
         check=False,
     )
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_similarity_table_is_current() -> None:
+    committed = collisions.SIMILARITY_TABLE.read_text(encoding="utf-8")
+    assert committed == collisions.similarity_table(SOURCE_LIST, DATA_DIR), (
+        "run: uv run python -m anki_tools.collisions --write-similarity-table"
+    )
+
+
+def test_similarity_table_ignores_a_leading_to() -> None:
+    assert collisions.sense_key("to arrive") == collisions.sense_key("arrive")
+    assert collisions.sense_key("tomorrow") == "tomorrow"

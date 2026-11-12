@@ -36,6 +36,7 @@ _TAG = re.compile(r"<[^>]*>")
 _BOUNDARY = re.compile(r"<\s*(?:br\s*/?|/?\s*div[^>]*)>", re.I)
 _SPACE = re.compile(r"\s+")
 _SPACE_BEFORE_PUNCT = re.compile(r"\s+(?=[…,.;:!?])")
+_LEADING_FILLER = re.compile(r"^(?:to|the|an?) (?=\S)")
 
 
 @dataclass(frozen=True)
@@ -247,7 +248,8 @@ def sense_key(segment: str) -> str:
     while previous != segment:
         previous = segment
         segment = re.sub(r"\([^()]*\)", "", segment)
-    return _SPACE.sub(" ", segment.casefold()).strip(".,;: ").strip()
+    key = _SPACE.sub(" ", segment.casefold()).strip(".,;: ").strip()
+    return _LEADING_FILLER.sub("", key)
 
 
 def senses(translation: str) -> tuple[str, ...]:
@@ -422,6 +424,55 @@ def find_collisions(notes: Sequence[Note]) -> list[CollisionGroup]:
         unseparated = tuple(pair for pair, kind in separators.items() if kind == "none")
         groups.append(CollisionGroup(sense, members, mechanism, unseparated))
     return groups
+
+
+SIMILARITY_TABLE = DEFAULT_VOCAB_DIR / "similarity-groups.tsv"
+SIMILARITY_HEADER = (
+    "group",
+    "word",
+    "deck",
+    "English",
+    "cue",
+    "told apart by",
+    "also in",
+)
+
+
+def _told_apart_by(note: Note, group: CollisionGroup) -> str:
+    kinds = {
+        pair_separator(note, other) for other in group.members if other is not note
+    }
+    if "none" in kinds:
+        return "cue"
+    return "+".join(sorted(kinds))
+
+
+def format_similarity_table(groups: Sequence[CollisionGroup]) -> str:
+    """One row per word per similarity group; `cue` marks words only a cue separates."""
+    groups_of: dict[str, list[str]] = {}
+    for group in groups:
+        for note in group.members:
+            groups_of.setdefault(note.guid, []).append(group.sense)
+    lines = ["\t".join(SIMILARITY_HEADER)]
+    for group in groups:
+        for note in group.members:
+            others = [g for g in groups_of[note.guid] if g != group.sense]
+            cells = (
+                group.sense,
+                note.headword,
+                deck_label(note.deck),
+                _clean(_BOUNDARY.sub(" / ", note.translation)),
+                note.english_distinction,
+                _told_apart_by(note, group),
+                " | ".join(others),
+            )
+            lines.append("\t".join(cell.replace("\t", " ") for cell in cells))
+    return "\n".join(lines) + "\n"
+
+
+def similarity_table(source: Path | str, vocab_dir: Path | str) -> str:
+    notes = load_notes(source, vocab_dir, case_field.default_government())
+    return format_similarity_table(find_collisions(notes))
 
 
 def format_groups_table(groups: Sequence[CollisionGroup]) -> str:
@@ -899,6 +950,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--vocab-dir", type=Path, default=DEFAULT_VOCAB_DIR)
     parser.add_argument("--government", type=Path)
     parser.add_argument("--groups", action="store_true")
+    parser.add_argument("--write-similarity-table", action="store_true")
     parser.add_argument("--pos-counts", action="store_true")
     parser.add_argument("--write-classification", type=Path)
     parser.add_argument("--check-classification", type=Path)
@@ -910,6 +962,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     notes = load_notes(args.source, args.vocab_dir, government)
     if args.groups:
         print(format_groups_table(find_collisions(notes)), end="")
+    if args.write_similarity_table:
+        SIMILARITY_TABLE.write_text(
+            similarity_table(args.source, args.vocab_dir), encoding="utf-8"
+        )
     if args.pos_counts:
         print("\n".join(_iter_pos_counts(pos_cue_counts(notes))))
     fresh = format_classification_tsv(classify(notes))
