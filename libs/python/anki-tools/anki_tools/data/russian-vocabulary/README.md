@@ -41,6 +41,8 @@ when it is stale). Rules for the `English Distinction` cue:
 - Partner cues must sound different from each other.
 - A cue never repeats the English or the Info, never names a part of speech or a
   case, and is never "general use".
+- Rare exception: a cue may reuse an English word when it names the category the
+  word belongs to (e.g. "business" as the category for commerce). Use sparingly.
 - Parenthetical qualifiers do not stay in the English; they move to the cue.
 - Anything else about usage goes in `Additional Info`.
 
