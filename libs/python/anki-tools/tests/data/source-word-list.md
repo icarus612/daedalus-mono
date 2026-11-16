@@ -115,7 +115,7 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 18 | уж | really / indeed | — | — |
 | 19 | да | yes | — | — |
 | 20 | нет | no | Answers "no" | — |
-| 21 | лишь | merely / only | Same as только | — |
+| 21 | лишь | merely / only | Similar to только, but more bookish and less flexible | — |
 | 22 | всё | still / all / constantly (keeps on) | Continuative — "keeps on, still" | — |
 | 25 | таки | after all / nevertheless | often hyphenated: всё-таки | — |
 | 26 | пожалуй | perhaps / I suppose | Hedges — "I suppose, perhaps" | — |

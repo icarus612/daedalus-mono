@@ -79,6 +79,12 @@ _CATEGORY_LABEL = "Category is a classification label"
 ALLOWED = {
     (
         "Immutable Words",
+        "лишь",
+        dedup.RULE_CONTAINED,
+        ("bookish", "similar to только but more bookish and less flexible"),
+    ): _ELABORATES,
+    (
+        "Immutable Words",
         "просто",
         dedup.RULE_CONTAINED,
         ("plays it down", "plays it down it s just that"),
