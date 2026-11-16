@@ -1056,7 +1056,7 @@ def test_guid_pin_file_still_matches_the_real_source_rows(real_rows):
 SLOVNO_TRANSLATION = "as if / like"
 SLOVNO_CUE = "literary — a poetic simile"
 TOZHE_TRANSLATION = "also / too"
-TOZHE_CUE = 'same action, different subject — "me too"'
+TOZHE_CUE = "same action, different subject"
 TAKZHE_TRANSLATION = "also / in addition"
 TAKZHE_CUE = "same subject, an extra thing; more formal"
 BUDTO_TRANSLATION = "as if / as though"

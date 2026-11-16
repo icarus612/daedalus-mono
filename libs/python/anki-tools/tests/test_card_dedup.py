@@ -97,18 +97,6 @@ ALLOWED = {
     ): _ELABORATES,
     (
         "Immutable Words",
-        "это",
-        dedup.RULE_CONTAINED,
-        (
-            "this is linking word",
-            (
-                "subject less linking word это книга this is a book invariable "
-                "unlike the pronoun этот эта это эти which agrees with its noun"
-            ),
-        ),
-    ): _ELABORATES,
-    (
-        "Immutable Words",
         "правда",
         dedup.RULE_CONTAINED,
         (

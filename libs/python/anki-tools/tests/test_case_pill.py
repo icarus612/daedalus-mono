@@ -18,7 +18,7 @@ CANONICAL = (
 LIGHT_TEXT = dict(
     zip(
         CANONICAL,
-        ("#616161", "#c62828", "#2e7d32", "#1565c0", "#c43e00", "#6a1b9a"),
+        ("#616161", "#c62828", "#2e7d32", "#1565c0", "#9a6700", "#6a1b9a"),
         strict=True,
     )
 )
@@ -32,7 +32,7 @@ DARK_TEXT = dict(
 LIGHT_BG = dict(
     zip(
         CANONICAL,
-        ("#eeeeee", "#fdecea", "#e8f5e9", "#e3f2fd", "#fff3e0", "#f3e5f5"),
+        ("#eeeeee", "#fdecea", "#e8f5e9", "#e3f2fd", "#fff8e1", "#f3e5f5"),
         strict=True,
     )
 )

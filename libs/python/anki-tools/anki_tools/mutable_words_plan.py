@@ -11,7 +11,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import ClassVar
 
-from anki_tools import card_audio, card_dedup, case_pill, distinction, prompt_hint
+from anki_tools import card_audio, case_pill, distinction, prompt_hint
 from anki_tools.anki_identity import guid_for_row, notetype_id_for_name
 from anki_tools.audio_naming import (
     audio_field_value,
@@ -407,21 +407,16 @@ class AdverbRow:
         ]
 
 
-_CUE_CARRIES_TYPE = frozenset({"ты", "вы", "твой"})
+# Pronouns whose cue tells them apart from a look-alike; their Pronoun Type row
+# stays off the card so the grammar label is not shown beside the cue.
+_TYPE_ROW_HIDDEN = frozenset(
+    {"ты", "вы", "твой", "ваш", "кто", "который", "какой", "тот", "себя", "весь"}
+)
 
 
 def _pronoun_type_shown(russian: str, pronoun_type: str, cue: str) -> str:
-    """The Pronoun Type row's value, empty when the English cue already says it.
-
-    An empty field leaves no row on the answer side; the cue stays on the
-    English-prompt front untouched. The cue says it when the two are equal, or
-    for `ты`, `вы` and `твой`, whose cue is the type plus the register.
-    """
-    type_words = card_dedup.content_words(pronoun_type)
-    cue_words = card_dedup.content_words(cue)
-    if type_words and type_words == cue_words:
-        return ""
-    if russian in _CUE_CARRIES_TYPE and type_words <= cue_words:
+    """The Pronoun Type row's value, empty for the pronouns that carry a cue."""
+    if russian in _TYPE_ROW_HIDDEN:
         return ""
     return pronoun_type
 

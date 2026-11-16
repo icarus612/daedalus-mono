@@ -58,8 +58,8 @@ def test_the_two_sides_get_two_separate_fields():
     [
         ("о / об", "Neutral"),
         ("насчёт", "Colloquial"),
-        ("какой", "interrogative / exclamative"),
-        ("который", "relative / interrogative"),
+        ("какой", "asking about qualities"),
+        ("который", "refers back to a noun"),
         ("согласно (preposition)", "Formal"),
         ("дом", ""),
         ("как (conjunction)", "Real comparison"),

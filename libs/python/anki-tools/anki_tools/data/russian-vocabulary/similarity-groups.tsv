@@ -17,7 +17,7 @@ all	всё	Particles	still / all / constantly (keeps on)	Repeatedly	header	still
 all	весь	Pronouns	all / the whole / everything	determinative	header	whole
 along	по	Prepositions	along / around (where) / according to (what/whom)	Over a surface	pill	according to | around
 along	вдоль	Prepositions	along (what/where)	Lengthwise	pill	
-also	тоже	Conjunctions	also / too	same action, different subject — "me too"	cue	too
+also	тоже	Conjunctions	also / too	same action, different subject	cue	too
 also	также	Conjunctions	also / in addition	same subject, an extra thing; more formal	cue	
 among	между	Prepositions	between / among (whom/what)	Between two	pill	
 among	среди	Prepositions	among (whom/what)	Surrounded by	pill	
@@ -105,7 +105,7 @@ closed	закрыто	Derived Adverbs	closed		header
 cold	холодный	Adjectives	cold		header	
 cold	холодно	Derived Adverbs	cold		header	
 come	приходить	Verbs	come / arrive	on foot	cue	arrive
-come	жаловать	Verbs	come / visit	formal; like welcome	cue	
+come	жаловать	Verbs	come / visit	formal invitation	cue	
 command	приказ	Nouns	order / command		header	order
 command	приказывать	Verbs	to order / to command		header	order
 completely	совсем	Base Adverbs	completely / entirely	utterly	header	entirely
@@ -115,7 +115,7 @@ complicated	сложно	Derived Adverbs	complicated		header
 contract	договор	Nouns	agreement / contract	a treaty or accord	cue	
 contract	контракт	Nouns	contract	the formal document	cue	
 cook	повар	Nouns	cook / chef	the person	header	
-cook	готовить	Verbs	prepare / cook	prepare, incl. food	cue	prepare
+cook	готовить	Verbs	prepare / cook	any cooking method	cue	prepare
 cook	варить	Verbs	boil / cook	In water	cue	
 cool	прохладный	Adjectives	cool		header	
 cool	прохладно	Derived Adverbs	cool		header	
@@ -210,10 +210,10 @@ happen	происходить	Verbs	happen / occur	take place	cue
 happen	случаться	Verbs	happen	By chance	cue	
 hard	тяжёлый	Adjectives	heavy / hard	Difficult	cue	
 hard	твёрдый	Adjectives	hard / firm	solid, not soft	cue	firm
-hat	шапка	Nouns	hat	knit/winter	cue	
+hat	шапка	Nouns	hat	soft, close-fitting	cue	
 hat	шляпа	Nouns	hat	brimmed	cue	
 have	у	Prepositions	by / at (where/whom) / to have (possessed by whom)	at someone's; to have	header	at | by
-have	иметь	Verbs	to have / possess	the verb (bookish)	header	
+have	иметь	Verbs	to have / possess	bookish	header	
 have to	приходиться	Verbs	to have to / to fit / fall to	impersonal	header	
 have to	должен	Adjectives	must / have to / obliged to	Obliged, has a subject	header	
 hello	здравствуйте	Particles	hello	formal	cue	
@@ -246,7 +246,7 @@ indeed	уж	Particles	really / indeed	adds intensity	header	really
 indeed	правда (adverb)	Base Adverbs	really / indeed / actually	asserts the whole clause	header	really
 interesting	интересный	Adjectives	interesting		header	
 interesting	интересно	Derived Adverbs	interesting		header	
-it	это	Particles	this (is) / that (is) / it (is)	this is (linking word)	header	that | this
+it	это	Particles	this (is) / that (is) / it (is)		header	that | this
 it	он	Pronouns	he / it	masculine	cue	
 it	она	Pronouns	she / it	feminine	cue	
 it	оно	Pronouns	it	neuter	cue	
@@ -257,7 +257,7 @@ kind	добрый	Adjectives	kind	kind-hearted	header
 lamp	бра	Indeclinable Nouns	wall sconce / lamp	Wall-mounted	header	
 lamp	лампа	Nouns	lamp	a free-standing lamp	header	
 last	последний	Adjectives	last	final in a series	cue	
-last	прошлый	Adjectives	past / last	week, year	cue	past
+last	прошлый	Adjectives	past / last	the one just gone	cue	past
 late	поздний	Adjectives	late		header	
 late	поздно	Derived Adverbs	late		header	
 later	потом	Base Adverbs	then / later	Next, everyday	header	then
@@ -337,7 +337,7 @@ now	теперь	Base Adverbs	now / nowadays	as opposed to before	cue
 number	число	Nouns	number / date	A numeral; calendar day	cue	date
 number	номер	Nouns	number / hotel room	an assigned number	cue	
 occasion	случай	Nouns	case / occasion	an instance	cue	
-occasion	раз	Nouns	time / occasion	as in "once, twice..."	cue	time
+occasion	раз	Nouns	time / occasion	counting occurrences	cue	time
 office	бюро	Indeclinable Nouns	bureau / office	Agency	header	
 office	офис	Nouns	office	a workplace	header	
 only	только	Particles	only	Neutral	cue	
@@ -355,10 +355,10 @@ over	над	Prepositions	above / over (where/what/whom)	Not touching	pill
 over	поверх	Prepositions	over / on top of (what/where)	Covering	pill	
 pass	проходить	Verbs	pass / go through	move past or through	cue	
 pass	передавать	Verbs	pass / hand over / convey	To someone else	cue	
-pass	сдавать	Verbs	take / pass / hand in	An exam	cue	take
+pass	сдавать	Verbs	take / pass / hand in	submit for assessment	cue	take
 past	мимо	Prepositions	past / by (whom/what/where)	Going past	header	by
 past	прошлое	Nouns	the past		header	
-past	прошлый	Adjectives	past / last	week, year	header	last
+past	прошлый	Adjectives	past / last	the one just gone	header	last
 penalty	пенальти	Indeclinable Nouns	penalty	in sports	header	
 penalty	штраф	Nouns	fine / penalty	a money punishment	header	fine
 people	люди	Nouns	people	persons, individuals	cue	
@@ -371,7 +371,7 @@ piano	пианино	Indeclinable Nouns	piano	upright	cue
 piano	фортепиано	Indeclinable Nouns	piano	the instrument in general	cue	
 pleasant	приятный	Adjectives	pleasant / nice		header	nice
 pleasant	приятно	Derived Adverbs	nice(ly) / pleasant(ly)		header	nice
-prepare	готовить	Verbs	prepare / cook	prepare, incl. food	pill	cook
+prepare	готовить	Verbs	prepare / cook	any cooking method	pill	cook
 prepare	готовиться	Verbs	prepare	get yourself ready	pill	
 present	настоящее	Nouns	the present		header	
 present	настоящий	Adjectives	real / genuine / present		header	
@@ -414,7 +414,7 @@ secret	тайна	Nouns	mystery / secret	Unexplained	cue
 short	низкий	Adjectives	low / short	Not tall	cue	low
 short	короткий	Adjectives	short	not long	cue	
 short	коротко	Derived Adverbs	briefly / short	briefly, in speech	header	
-show	шоу	Indeclinable Nouns	show	a TV or stage show	header	
+show	шоу	Indeclinable Nouns	show		header	
 show	показывать	Verbs	to show		header	
 simply	просто (particle)	Particles	simply / just	plays it down	header	just
 simply	просто (adverb)	Derived Adverbs	simply / just	manner: simply	header	just
@@ -437,7 +437,7 @@ stay	останавливаться	Verbs	stop / stay (at a place)	come to a hal
 still	всё-таки	Particles	still / nevertheless	all the same	cue	nevertheless
 still	всё	Particles	still / all / constantly (keeps on)	Repeatedly	cue	all
 still	ещё	Base Adverbs	still / yet (ongoing) / more (asking for more)	Not over yet	header	
-stop	остановка	Nouns	stop	bus/tram	header	
+stop	остановка	Nouns	stop		header	
 stop	останавливать	Verbs	stop	stop something else	cue	
 stop	останавливаться	Verbs	stop / stay (at a place)	come to a halt, or lodge	cue	stay
 straight	прямой	Adjectives	straight / direct		header	
@@ -455,7 +455,7 @@ suspect	подозревать	Verbs	to suspect		header
 swim	плавать	Verbs	swim / sail	habitually, round trips	cue	sail
 swim	плыть	Verbs	swim / sail	one way	cue	sail
 take	брать	Verbs	take	take hold of	cue	
-take	сдавать	Verbs	take / pass / hand in	An exam	cue	pass
+take	сдавать	Verbs	take / pass / hand in	submit for assessment	cue	pass
 take	вести	Verbs	lead / take	on foot, one way	cue	lead
 talk	говорить	Verbs	speak / talk / say / tell	the general verb	pill	tell
 talk	разговаривать	Verbs	talk / have a conversation	With someone	pill	
@@ -465,10 +465,10 @@ terrible	ужасный	Adjectives	terrible / awful	Bad quality	cue
 terrible	страшный	Adjectives	terrible / frightful / scary	frightening	cue	scary
 terribly	ужасно	Derived Adverbs	terribly / awfully	Very badly	cue	
 terribly	страшно	Derived Adverbs	scary (it's scary) / terribly (very)	frighteningly	cue	scary
-that	что	Conjunctions	what / that	said that…	header	
-that	это	Particles	this (is) / that (is) / it (is)	this is (linking word)	header	it | this
-that	тот	Pronouns	that (one) / that (over there)	demonstrative	cue	
-that	который	Pronouns	which / who / that	relative / interrogative	cue	which | who
+that	что	Conjunctions	what / that		header	
+that	это	Particles	this (is) / that (is) / it (is)		header	it | this
+that	тот	Pronouns	that (one) / that (over there)	pointing at something farther	cue	
+that	который	Pronouns	which / who / that	refers back to a noun	cue	which | who
 then	же	Particles	but / then / after all	Emphasis, not time	header	after all | but
 then	тогда	Base Adverbs	then / in that case (at that time)	Not a sequence	cue	
 then	потом	Base Adverbs	then / later	Next, everyday	cue	later
@@ -476,13 +476,13 @@ then	затем	Base Adverbs	then / after that	Next, formal	cue
 there	вот	Particles	here (is) / there (is)	Pointing near	header	here
 there	там	Base Adverbs	there	location, not direction	cue	
 there	туда	Base Adverbs	to there	destination	cue	
-this	это	Particles	this (is) / that (is) / it (is)	this is (linking word)	header	it | that
+this	это	Particles	this (is) / that (is) / it (is)		header	it | that
 this	этот	Pronouns	this (one) / this (right here)		header	
 through	через	Prepositions	through / across (what/where) / in (when/time)	Crossing	cue	in
 through	сквозь	Prepositions	through (what/where)	Something dense	cue	
 time	время	Nouns	time	time in general	cue	
-time	раз	Nouns	time / occasion	as in "once, twice..."	cue	occasion
-too	тоже	Conjunctions	also / too	same action, different subject — "me too"	header	also
+time	раз	Nouns	time / occasion	counting occurrences	cue	occasion
+too	тоже	Conjunctions	also / too	same action, different subject	header	also
 too	слишком	Base Adverbs	too / too much	excessively	header	
 transport	возить	Verbs	transport / drive (someone)	by vehicle, habitually	cue	drive
 transport	везти	Verbs	transport / drive (someone)	by vehicle, one way	cue	drive
@@ -510,17 +510,17 @@ well	хорошо	Derived Adverbs	well	done well	header
 wet	мокрый	Adjectives	wet		header	
 wet	мокро	Derived Adverbs	wet		header	
 what a	ну и	Particles	what a...	Colloquial	header	
-what a	какой	Pronouns	which / what kind of / what a	interrogative / exclamative	header	which
+what a	какой	Pronouns	which / what kind of / what a	asking about qualities	header	which
 when	когда (conjunction)	Conjunctions	when / while / as	at the time that	header	as | while
 when	когда (adverb)	Base Adverbs	when	asking a time	header	
 where	где	Base Adverbs	where	Location	cue	
 where	куда	Base Adverbs	to where	destination	cue	
-which	какой	Pronouns	which / what kind of / what a	interrogative / exclamative	cue	what a
-which	который	Pronouns	which / who / that	relative / interrogative	cue	that | who
+which	какой	Pronouns	which / what kind of / what a	asking about qualities	cue	what a
+which	который	Pronouns	which / who / that	refers back to a noun	cue	that | who
 while	когда (conjunction)	Conjunctions	when / while / as	at the time that	cue	as | when
 while	пока (conjunction)	Conjunctions	while / until (for as long as)	For the duration	cue	until
-who	кто	Pronouns	who	interrogative / relative	cue	
-who	который	Pronouns	which / who / that	relative / interrogative	cue	that | which
+who	кто	Pronouns	who	people only	cue	
+who	который	Pronouns	which / who / that	refers back to a noun	cue	that | which
 whole	целый	Adjectives	whole / entire	entire, unbroken	header	
 whole	целиком	Derived Adverbs	entirely / whole	In one piece	header	entirely
 whole	весь	Pronouns	all / the whole / everything	determinative	header	all
@@ -537,11 +537,11 @@ wonderfully	прекрасно	Derived Adverbs	wonderfully	Fine, excellent	cue
 wonderfully	замечательно	Derived Adverbs	wonderful (it's wonderful) / wonderfully	Worth noticing	cue	wonderful
 work	работа	Nouns	work / job		header	
 work	работать	Verbs	to work		header	
-you	ты	Pronouns	you	personal (2nd sg.)	cue	
-you	вы	Pronouns	you	personal (2nd pl./formal)	cue	
+you	ты	Pronouns	you	one person, casual	cue	
+you	вы	Pronouns	you	several people, or polite	cue	
 young	молодой	Adjectives	young		header	
 young	молодо	Derived Adverbs	young	looking	header	
-your	твой	Pronouns	your / yours	possessive (2nd sg.)	cue	yours
-your	ваш	Pronouns	your / yours	possessive (2nd pl./formal)	cue	yours
-yours	твой	Pronouns	your / yours	possessive (2nd sg.)	cue	your
-yours	ваш	Pronouns	your / yours	possessive (2nd pl./formal)	cue	your
+your	твой	Pronouns	your / yours	one person's, casual	cue	yours
+your	ваш	Pronouns	your / yours	several people's, or polite	cue	yours
+yours	твой	Pronouns	your / yours	one person's, casual	cue	your
+yours	ваш	Pronouns	your / yours	several people's, or polite	cue	your

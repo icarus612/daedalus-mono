@@ -26,7 +26,7 @@ _PALETTE = {
     "Genitive": ("#c62828", "#fdecea", "#ef9a9a", "#4a2c2c"),
     "Dative": ("#2e7d32", "#e8f5e9", "#a5d6a7", "#2c4030"),
     "Accusative": ("#1565c0", "#e3f2fd", "#90caf9", "#2a3a4d"),
-    "Instrumental": ("#c43e00", "#fff3e0", "#ffb74d", "#4d3a1f"),
+    "Instrumental": ("#9a6700", "#fff8e1", "#ffb74d", "#4d3a1f"),
     "Prepositional": ("#6a1b9a", "#f3e5f5", "#ce93d8", "#40304a"),
 }
 
