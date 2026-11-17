@@ -254,8 +254,9 @@ them explicitly to widen both.
 | `--anki-media-dir` | auto-detected | Override the Anki media directory. |
 | `--yes` / `-y` | off | Skip the confirmation prompt before a run of more than one word. |
 
-The account roster is four voices, one per slot (`f1` Alisa, `f2` Elena Gromova, `m1` Mishka
-Yaponcik, `m2` Nester Surovy) out of five verified Russian voices on the account; a fifth
+The account roster is four voices, one per slot (`f1` Alisa, `f2` Elena Gromova, `m1` Alexandr
+Vlasov, `m2` Nester Surovy) out of the verified Russian voices on the account; m1 was Mishka
+Yaponcik until 2026-11-17, dropped for his Odessa accent (г spoken as h); a fifth
 character voice (Elen Kuragina) stays defined but is never included in the default roster. Every
 request goes through `fetch_tts_audio_metered`, which requires a `RequestBudget` — new callers
 construct one sized to their own computed work set rather than bypassing the choke point.

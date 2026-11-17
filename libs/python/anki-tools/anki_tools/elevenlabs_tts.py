@@ -18,7 +18,7 @@ per "slot" -- the slot, not the voice name, is the filename identity:
 
     f1  Alisa - Natural Russian Female
     f2  Elena Gromova - Podcasts & Conversation
-    m1  Mishka Yaponcik - Odessa Rogue Charm
+    m1  Alexandr Vlasov - Professional Voiceover
     m2  Nester Surovy - Gravely yet Refined
 
 A fifth voice, Elen Kuragina ("Golden & Dangerous"), is a character voice
@@ -110,13 +110,15 @@ DEFAULT_LANGUAGE_CODE = "ru"
 
 # Models known to ignore `language_code`. Not an allow-list of good models:
 # an unknown id is allowed through, because the catalogue grows.
-MODELS_IGNORING_LANGUAGE_CODE = frozenset({
-    "eleven_multilingual_v2",
-    "eleven_multilingual_v1",
-    "eleven_monolingual_v1",
-    "eleven_turbo_v2",
-    "eleven_flash_v2",
-})
+MODELS_IGNORING_LANGUAGE_CODE = frozenset(
+    {
+        "eleven_multilingual_v2",
+        "eleven_multilingual_v1",
+        "eleven_monolingual_v1",
+        "eleven_turbo_v2",
+        "eleven_flash_v2",
+    }
+)
 
 
 def assert_model_supports_language(model_id: str) -> None:
@@ -132,6 +134,7 @@ def assert_model_supports_language(model_id: str) -> None:
             "language. Use a model that honours it, e.g. "
             f"{DEFAULT_MODEL_ID!r}."
         )
+
 
 DEFAULT_TIMEOUT = 30  # seconds, per HTTP request
 
@@ -235,11 +238,11 @@ VOICES: tuple = (
         gender="female",
         slot="f2",
     ),
-    # m1: Mishka Yaponcik - Odessa Rogue Charm
+    # m1: Alexandr Vlasov (replaced Odessa-accented Mishka Yaponcik)
     Voice(
-        name="Mishka Yaponcik - Odessa Rogue Charm",
-        voice_id="RLRdvNFwJJct2XZOgfzy",
-        slug="mishka-yaponcik",
+        name="Alexandr Vlasov - Professional Voiceover",
+        voice_id="txnCCHHGKmYIwrn7HfHQ",
+        slug="alexandr-vlasov",
         gender="male",
         slot="m1",
     ),

@@ -14,7 +14,7 @@ other, and the cap is enforced structurally via `RequestBudget`/
 threaded through correctly.
 
 Voice roster (paid plan, four slots + one retired, non-default voice):
-f1 Alisa, f2 Elena Gromova, m1 Mishka Yaponcik, m2 Nester Surovy, plus
+f1 Alisa, f2 Elena Gromova, m1 Alexandr Vlasov, m2 Nester Surovy, plus
 f0 Elen Kuragina (defined, never default). Filenames are
 `<word-slug>_<slot>.mp3`, readable and hash-free -- verified collision-free
 against the real 151-row raw source word list below; every slug in the
@@ -172,7 +172,7 @@ def test_voices_are_exactly_the_four_default_roster_voices():
     assert [v.voice_id for v in VOICES] == [
         "t6lBrEl93uCiLR1Lgm8v",  # Alisa
         "0ArNnoIAWKlT4WweaVMY",  # Elena Gromova
-        "RLRdvNFwJJct2XZOgfzy",  # Mishka Yaponcik
+        "txnCCHHGKmYIwrn7HfHQ",  # Alexandr Vlasov
         "pM78bgjPVk0JXtaEnFoj",  # Nester Surovy
     ]
     assert [v.slot for v in VOICES] == ["f1", "f2", "m1", "m2"]
@@ -860,7 +860,7 @@ def test_2_all_voices_on_one_word_issues_exactly_four_requests(
     out = capsys.readouterr().out
     assert f"About to issue {len(VOICES)} ElevenLabs request(s)" in out
     assert (
-        "Elena Gromova" in out and "Mishka Yaponcik" in out and "Nester Surovy" in out
+        "Elena Gromova" in out and "Alexandr Vlasov" in out and "Nester Surovy" in out
     )
 
 
