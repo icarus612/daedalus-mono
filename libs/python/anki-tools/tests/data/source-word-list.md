@@ -195,7 +195,7 @@ A lone em dash there means "no extra info" and renders as nothing.
 |---|---|---|---|---|
 | 1 | где | where | Asks about a static place | — |
 | 2 | здесь | here | — | — |
-| 3 | тут | here | Interchangeable with здесь | — |
+| 3 | тут | here | Like здесь; also means 'just then' in a story | — |
 | 4 | там | there | Static location | — |
 | 5 | везде | everywhere | Static location | — |
 | 6 | нигде | nowhere | Requires a negative verb (не) | — |
