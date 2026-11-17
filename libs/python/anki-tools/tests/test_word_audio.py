@@ -202,3 +202,44 @@ def test_no_sync_leaves_the_sync_to_the_caller(monkeypatch):
 
     monkeypatch.setattr(word_audio.anki_sync, "sync", forbidden)
     assert word_audio.main(["zzqx", "--gender", "female", "--yes", "--no-sync"]) == 0
+
+
+def test_narrow_slots_keeps_only_the_named_slot():
+    assert word_audio.narrow_slots(("f1", "f2", "m1", "m2"), ["m1"]) == ("m1",)
+
+
+def test_narrow_slots_without_a_filter_keeps_every_slot():
+    assert word_audio.narrow_slots(("m1", "m2"), None) == ("m1", "m2")
+
+
+def test_narrow_slots_rejects_a_slot_outside_the_mode():
+    with pytest.raises(ValueError):
+        word_audio.narrow_slots(("f1", "m2"), ["m1"])
+
+
+def test_slot_flag_plans_only_that_slot(tmp_path, capsys):
+    code = word_audio.main(
+        [
+            "слово",
+            "--mode",
+            "double",
+            "--slot",
+            "m1",
+            "--anki-media-dir",
+            str(tmp_path),
+            "--dry-run",
+        ]
+    )
+
+    out = capsys.readouterr().out
+    assert code == 0
+    assert "slots m1\n" in out
+    assert "pending 1" in out
+
+
+def test_slot_flag_outside_the_mode_fails(tmp_path):
+    code = word_audio.main(
+        ["слово", "--slot", "m1", "--anki-media-dir", str(tmp_path), "--dry-run"]
+    )
+
+    assert code == 2

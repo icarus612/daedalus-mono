@@ -57,6 +57,16 @@ def slots_for(mode: str, gender: str) -> tuple[str, ...]:
     return _FEMALE_SLOTS[mode] + _MALE_SLOTS[mode]
 
 
+def narrow_slots(slots: Sequence[str], only: Sequence[str] | None) -> tuple[str, ...]:
+    """`slots` restricted to `only`, in roster order; `None` keeps them all."""
+    if not only:
+        return tuple(slots)
+    outside = [slot for slot in only if slot not in slots]
+    if outside:
+        raise ValueError(f"slot(s) {outside} not in this mode/gender: {list(slots)}")
+    return tuple(slot for slot in slots if slot in only)
+
+
 def select_voices(slots: Sequence[str]) -> list[Voice]:
     by_slot = {voice.slot: voice for voice in VOICES}
     unknown = [slot for slot in slots if slot not in by_slot]
@@ -165,6 +175,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="Which gender(s) to generate. Default: both.",
     )
     parser.add_argument(
+        "--slot",
+        dest="only_slots",
+        action="append",
+        default=None,
+        help="Only this voice slot (e.g. m1). Repeatable. Default: every slot "
+        "the mode and gender give.",
+    )
+    parser.add_argument(
         "--replace",
         action="store_true",
         default=False,
@@ -218,7 +236,11 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
-    slots = slots_for(args.mode, args.gender)
+    try:
+        slots = narrow_slots(slots_for(args.mode, args.gender), args.only_slots)
+    except ValueError as error:
+        print(str(error), file=sys.stderr)
+        return 2
     media_dir = args.anki_media_dir or get_anki_media_dir()
     work_plan = plan_requests(args.words, slots, media_dir, replace=args.replace)
     voices = select_voices(slots)
