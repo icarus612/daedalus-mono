@@ -125,7 +125,7 @@ crying	плач	Nouns	weeping / crying	The noun	header
 crying	плачущий	Adjectives	crying	describing someone	header	
 date	число	Nouns	number / date	A numeral; calendar day	cue	number
 date	свидание	Nouns	date / meeting	romantic	cue	meeting
-date	встречаться	Verbs	meet / date	each other; also to date	header	meet
+date	встречаться	Verbs	meet / date	meet up by arrangement	header	meet
 day	день	Nouns	day		header	
 day	дневной	Adjectives	day / daytime		header	
 different	разный	Adjectives	different / various	Assorted	cue	
@@ -304,7 +304,7 @@ meaning	смысл	Nouns	meaning / sense	the point of it	cue
 meaning	значение	Nouns	meaning / significance	what it signifies	cue	
 meet	встречать	Verbs	meet	run into someone	pill	
 meet	знакомиться	Verbs	get acquainted / meet	for the first time	cue	
-meet	встречаться	Verbs	meet / date	each other; also to date	cue	date
+meet	встречаться	Verbs	meet / date	meet up by arrangement	cue	date
 meeting	свидание	Nouns	date / meeting	romantic	cue	date
 meeting	встреча	Nouns	meeting	any meeting	cue	
 method	способ	Nouns	way / method	Any way of doing it	cue	way
