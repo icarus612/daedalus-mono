@@ -88,7 +88,7 @@ ENGLISH_DISTINCTIONS: dict[str, str] = {
     "вспоминать": "bring to mind",
     "встреча": "any meeting",
     "встречать": "run into someone",
-    "встречаться": "meet up by arrangement",
+    "встречаться": "an arranged meeting",
     "всё": "Repeatedly",
     "всё-таки": "all the same",
     "второй": "Numeric",
