@@ -124,7 +124,7 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 31 | ну и | what a... | e.g., ну и день = what a day | — |
 | 32 | здравствуйте | hello | Formal/plural greeting; lit. imperative "be healthy" | — |
 | 33 | спасибо | thank you | — | — |
-| 34 | пожалуйста | please / you're welcome | Also used to mean "here you go" when handing something over | — |
+| 34 | пожалуйста | please / you're welcome / here you go |  | — |
 | 35 | извините | excuse me / sorry | Imperative pl./formal of извинить; use when you are at fault | — |
 | 36 | простите | excuse me / forgive me | Imperative pl./formal of простить; also used to get attention | — |
 | 37 | привет | hello / hi | Informal only; do not use with strangers or superiors | — |
@@ -195,7 +195,7 @@ A lone em dash there means "no extra info" and renders as nothing.
 |---|---|---|---|---|
 | 1 | где | where | Asks about a static place | — |
 | 2 | здесь | here | — | — |
-| 3 | тут | here | Like здесь; also means 'just then' in a story | — |
+| 3 | тут | here / just then | Like здесь | — |
 | 4 | там | there | Static location | — |
 | 5 | везде | everywhere | Static location | — |
 | 6 | нигде | nowhere | Requires a negative verb (не) | — |
@@ -222,7 +222,7 @@ A lone em dash there means "no extra info" and renders as nothing.
 | 27 | никогда | never | Requires a negative verb (не) | — |
 | 28 | уже | already | Marks a completed status | — |
 | 29 | ещё | still / yet (ongoing)<br>more (asking for more) | — | — |
-| 30 | пока (adverb) | for now / so far | Also used casually to say "bye" | — |
+| 30 | пока (adverb) | for now / so far / bye |  | — |
 | 31 | опять | again | — | — |
 | 32 | снова | again / anew | Repeating, often implying a fresh start | — |
 | 33 | вдруг | suddenly | — | — |

@@ -597,11 +597,11 @@ def test_government_overrides_cases_for_any_section(notes: list[Note]) -> None:
 
 def test_collision_totals(groups: list[collisions.CollisionGroup]) -> None:
     assert len(groups) == 247
-    assert sum(len(g.members) for g in groups) == 546
+    assert sum(len(g.members) for g in groups) == 548
     assert len({m.guid for g in groups for m in g.members}) == 451
     assert Counter(g.mechanism for g in groups) == {
-        "cue": 129,
-        "header": 110,
+        "cue": 130,
+        "header": 109,
         "pill": 7,
         "header+pill": 1,
     }

@@ -125,6 +125,7 @@ crying	плач	Nouns	weeping / crying	The noun	header
 crying	плачущий	Adjectives	crying	describing someone	header	
 date	число	Nouns	number / date	A numeral; calendar day	cue	number
 date	свидание	Nouns	date / meeting	romantic	cue	meeting
+date	встречаться	Verbs	meet / date	each other; also to date	header	meet
 day	день	Nouns	day		header	
 day	дневной	Adjectives	day / daytime		header	
 different	разный	Adjectives	different / various	Assorted	cue	
@@ -222,7 +223,7 @@ help	помощь	Nouns	help	The noun	header
 help	помогать	Verbs	to help	The verb	header	
 here	вот	Particles	here (is) / there (is)	Pointing near	header	there
 here	здесь	Base Adverbs	here	static location	cue	
-here	тут	Base Adverbs	here	casual	cue	
+here	тут	Base Adverbs	here / just then	casual	cue	
 here	сюда	Base Adverbs	to here	destination	cue	
 high	высокий	Adjectives	tall / high		header	
 high	высоко	Derived Adverbs	high	up	header	
@@ -303,7 +304,7 @@ meaning	смысл	Nouns	meaning / sense	the point of it	cue
 meaning	значение	Nouns	meaning / significance	what it signifies	cue	
 meet	встречать	Verbs	meet	run into someone	pill	
 meet	знакомиться	Verbs	get acquainted / meet	for the first time	cue	
-meet	встречаться	Verbs	meet	each other; also to date	cue	
+meet	встречаться	Verbs	meet / date	each other; also to date	cue	date
 meeting	свидание	Nouns	date / meeting	romantic	cue	date
 meeting	встреча	Nouns	meeting	any meeting	cue	
 method	способ	Nouns	way / method	Any way of doing it	cue	way
@@ -381,7 +382,8 @@ raise	поднимать	Verbs	lift / raise / pick up	lift physically	cue	lift
 raise	растить	Verbs	raise / grow	Bring up	cue	
 really	уж	Particles	really / indeed	adds intensity	header	indeed
 really	правда (adverb)	Base Adverbs	really / indeed / actually	asserts the whole clause	header	indeed
-really	по-настоящему	Derived Adverbs	really / for real	genuinely	header	
+really	ужасно	Derived Adverbs	terribly / awfully / really	Very badly	cue	terribly
+really	по-настоящему	Derived Adverbs	really / for real	genuinely	cue	
 reason	разум	Nouns	reason	the faculty of reason	cue	
 reason	причина	Nouns	cause / reason	the why	cue	cause
 recognize	признавать	Verbs	admit / recognize	acknowledge	cue	
@@ -398,7 +400,7 @@ ride	ездить	Verbs	go / ride	by vehicle, habitually	cue	go
 ride	ехать	Verbs	to go / ride / drive / travel	by vehicle, one way	cue	drive | go
 right	право	Nouns	right / law	As a field	header	law
 right	правильный	Adjectives	correct / right	Not wrong	cue	
-right	правый	Adjectives	right	side	cue	
+right	правый	Adjectives	right / right-wing	side	cue	
 run	бегать	Verbs	run	habitually, round trips	cue	
 run	бежать	Verbs	to run / to set off running	one way	cue	
 sad	грустный	Adjectives	sad		header	
@@ -463,7 +465,7 @@ tell	говорить	Verbs	speak / talk / say / tell	the general verb	pill	talk
 tell	рассказывать	Verbs	tell / narrate	recount at length	pill	
 terrible	ужасный	Adjectives	terrible / awful	Bad quality	cue	
 terrible	страшный	Adjectives	terrible / frightful / scary	frightening	cue	scary
-terribly	ужасно	Derived Adverbs	terribly / awfully	Very badly	cue	
+terribly	ужасно	Derived Adverbs	terribly / awfully / really	Very badly	cue	really
 terribly	страшно	Derived Adverbs	scary (it's scary) / terribly (very)	frighteningly	cue	scary
 that	что	Conjunctions	what / that		header	
 that	это	Particles	this (is) / that (is) / it (is)		header	it | this

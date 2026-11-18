@@ -1210,7 +1210,7 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
             populated += 1
 
     # Exact count: the rest are em-dash rows or restatements the classification dropped.
-    assert populated == 47
+    assert populated == 46
 
 
 # Populated info cells per section. Every section is four-column now:
@@ -1222,9 +1222,9 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
 EXPECTED_INFO_COUNTS = {
     "Prepositions": (44, 44),
     "Conjunctions": (30, 16),
-    "Particles": (39, 26),
+    "Particles": (39, 25),
     "Indeclinable Nouns": (42, 42),
-    "Base Adverbs": (68, 47),
+    "Base Adverbs": (68, 46),
 }
 
 

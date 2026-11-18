@@ -219,8 +219,8 @@ immutable	Russian - Immutable Words (Ellis Version)	где	pFIpm1z@jf	English Di
 immutable	Russian - Immutable Words (Ellis Version)	здесь	zv)&R+`i*Y	Translation	static location	whole word	move-to-distinction	here	static location		single sense; qualifies the whole word	
 immutable	Russian - Immutable Words (Ellis Version)	здесь	zv)&R+`i*Y	English Distinction	static location	whole word	drop-duplicate	here	static location		restates the Translation	
 immutable	Russian - Immutable Words (Ellis Version)	здесь	zv)&R+`i*Y	Additional Info	Static location	whole word	drop-duplicate	here	static location		2/2 stems restate qualifiers; leftover: none	
-immutable	Russian - Immutable Words (Ellis Version)	тут	wmy:XK4zOr	Translation	casual	whole word	move-to-distinction	here	casual	Like здесь; also means 'just then' in a story	single sense; qualifies the whole word	
-immutable	Russian - Immutable Words (Ellis Version)	тут	wmy:XK4zOr	English Distinction	casual	whole word	drop-duplicate	here	casual	Like здесь; also means 'just then' in a story	restates the Translation	
+immutable	Russian - Immutable Words (Ellis Version)	тут	wmy:XK4zOr	Translation	casual	whole word	move-to-distinction	here / just then	casual	Like здесь	single sense; qualifies the whole word	
+immutable	Russian - Immutable Words (Ellis Version)	тут	wmy:XK4zOr	English Distinction	casual	whole word	drop-duplicate	here / just then	casual	Like здесь	restates the Translation	
 immutable	Russian - Immutable Words (Ellis Version)	куда	ww)-n;c~:J	Translation	destination	whole word	move-to-distinction	to where	destination	Asking for motion towards a goal	single sense; qualifies the whole word	
 immutable	Russian - Immutable Words (Ellis Version)	сюда	l2OWS{-V#~	Translation	destination	whole word	move-to-distinction	to here	destination	Motion towards speaker	single sense; qualifies the whole word	
 immutable	Russian - Immutable Words (Ellis Version)	туда	mgo}%NpWKp	Translation	destination	whole word	move-to-distinction	to there	destination	Motion away from speaker	single sense; qualifies the whole word	
@@ -244,8 +244,8 @@ immutable	Russian - Immutable Words (Ellis Version)	ещё	q%D_>XJ0Z:	Translatio
 immutable	Russian - Immutable Words (Ellis Version)	ещё	q%D_>XJ0Z:	Translation	asking for more	sense 3 of 3	keep-inline	still / yet (ongoing)<br>more (asking for more)	Not over yet		qualifies one sense of several	
 immutable	Russian - Immutable Words (Ellis Version)	ещё	q%D_>XJ0Z:	English Distinction	still going on; or more of it	whole word	keep	still / yet (ongoing)<br>more (asking for more)	Not over yet		serves no pair (covered)	
 immutable	Russian - Immutable Words (Ellis Version)	ещё	q%D_>XJ0Z:	Additional Info	Marks an ongoing status or asks for more	whole word	drop-duplicate	still / yet (ongoing)<br>more (asking for more)	Not over yet		3/5 stems restate qualifiers; leftover: mark, statu	
-immutable	Russian - Immutable Words (Ellis Version)	пока (adverb)	d/(bEQ_U/Y	Russian Distinction	adverb	whole word	keep	for now / so far		Also used casually to say "bye"	shares the bare headword with пока (conjunction)	
-immutable	Russian - Immutable Words (Ellis Version)	пока (adverb)	d/(bEQ_U/Y	English Distinction	for the time being	whole word	keep	for now / so far		Also used casually to say "bye"	serves no pair (none)	
+immutable	Russian - Immutable Words (Ellis Version)	пока (adverb)	d/(bEQ_U/Y	Russian Distinction	adverb	whole word	keep	for now / so far / bye			shares the bare headword with пока (conjunction)	
+immutable	Russian - Immutable Words (Ellis Version)	пока (adverb)	d/(bEQ_U/Y	English Distinction	for the time being	whole word	keep	for now / so far / bye			serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	опять	y6*:x+GMxL	Translation	the same action repeating	whole word	move-to-distinction	again	the same action repeating		single sense; qualifies the whole word	
 immutable	Russian - Immutable Words (Ellis Version)	опять	y6*:x+GMxL	English Distinction	the same action repeating	whole word	drop-duplicate	again	the same action repeating		restates the Translation	
 immutable	Russian - Immutable Words (Ellis Version)	опять	y6*:x+GMxL	Additional Info	An action repeating itself	whole word	drop-duplicate	again	the same action repeating		2/3 stems restate qualifiers; leftover: itsel	
@@ -543,8 +543,8 @@ mutable	Russian - Mutable Verbs (Ellis Version)	рассказывать	O!JE!rq
 mutable	Russian - Mutable Verbs (Ellis Version)	рассказывать	O!JE!rqy?h	English Distinction	recount at length	whole word	keep	tell / narrate	recount at length		serves no pair (covered)	
 mutable	Russian - Mutable Verbs (Ellis Version)	знакомиться	ALx$4*=g6p	Translation	for the first time	whole word	move-to-distinction	get acquainted / meet	for the first time	-ся verb; м→мл in the 1sg	covers every sense; qualifies the whole word	
 mutable	Russian - Mutable Verbs (Ellis Version)	знакомиться	ALx$4*=g6p	English Distinction	for the first time	whole word	keep	get acquainted / meet	for the first time	-ся verb; м→мл in the 1sg	separates a collision	
-mutable	Russian - Mutable Verbs (Ellis Version)	встречаться	o]Pc$U1FQ0	Translation	one another	whole word	move-to-distinction	meet	each other; also to date	-ся verb; also = to be dating someone	single sense; qualifies the whole word	
-mutable	Russian - Mutable Verbs (Ellis Version)	встречаться	o]Pc$U1FQ0	English Distinction	each other; also to date	whole word	keep	meet	each other; also to date	-ся verb; also = to be dating someone	separates a collision	
+mutable	Russian - Mutable Verbs (Ellis Version)	встречаться	o]Pc$U1FQ0	Translation	one another	whole word	move-to-distinction	meet / date	each other; also to date	-ся verb	single sense; qualifies the whole word	
+mutable	Russian - Mutable Verbs (Ellis Version)	встречаться	o]Pc$U1FQ0	English Distinction	each other; also to date	whole word	keep	meet / date	each other; also to date	-ся verb	separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	фотографировать	z}EM|6(5IA	English Distinction	verb	whole word	drop-header-duplicate	take photos / (to) photograph			repeats the deck header	
 mutable	Russian - Mutable Adjectives (Ellis Version)	маленький	fL4},5.uVb	Translation	not big	whole word	move-to-distinction	small / little	not big	comparative: меньше	covers every sense; qualifies the whole word	
 mutable	Russian - Mutable Adjectives (Ellis Version)	маленький	fL4},5.uVb	English Distinction	not big	whole word	keep	small / little	not big	comparative: меньше	separates a collision	
@@ -610,8 +610,8 @@ mutable	Russian - Mutable Adjectives (Ellis Version)	разный	Jm7n@OD~Ai	Eng
 mutable	Russian - Mutable Adjectives (Ellis Version)	пустой	B!U,kF0VL3	English Distinction	adj.	whole word	drop-header-duplicate	empty			repeats the deck header	
 mutable	Russian - Mutable Adjectives (Ellis Version)	занятой	s,t6ro[8k2	Translation	of a person	whole word	move-to-distinction	busy		занятой = busy person; занятый = occupied (seat, line)	single sense; qualifies the whole word	
 mutable	Russian - Mutable Adjectives (Ellis Version)	закрытый	E&(_vCaDOn	English Distinction	adj.	whole word	drop-header-duplicate	closed			repeats the deck header	
-mutable	Russian - Mutable Adjectives (Ellis Version)	правый	N#{iJlvT-0	Translation	side	whole word	move-to-distinction	right	side	also 'right-wing'; прав = 'correct' (short form)	single sense; qualifies the whole word	
-mutable	Russian - Mutable Adjectives (Ellis Version)	правый	N#{iJlvT-0	English Distinction	side	whole word	drop-duplicate	right	side	also 'right-wing'; прав = 'correct' (short form)	restates the Translation	
+mutable	Russian - Mutable Adjectives (Ellis Version)	правый	N#{iJlvT-0	Translation	side	whole word	move-to-distinction	right / right-wing	side	прав = 'correct' (short form)	single sense; qualifies the whole word	
+mutable	Russian - Mutable Adjectives (Ellis Version)	правый	N#{iJlvT-0	English Distinction	side	whole word	drop-duplicate	right / right-wing	side	прав = 'correct' (short form)	restates the Translation	
 mutable	Russian - Mutable Adjectives (Ellis Version)	левый	Np$c-trgh^	Translation	side	whole word	move-to-distinction	left			single sense; qualifies the whole word	
 mutable	Russian - Mutable Adjectives (Ellis Version)	прямой	v9GA*1:@O%	English Distinction	adj.	whole word	drop-header-duplicate	straight / direct			repeats the deck header	
 mutable	Russian - Mutable Adjectives (Ellis Version)	твёрдый	k$84.f}B(_	Translation	solid, not soft	whole word	move-to-distinction	hard / firm	solid, not soft		covers every sense; qualifies the whole word	
@@ -871,7 +871,7 @@ immutable	Russian - Immutable Words (Ellis Version)	нарочно	Pc^VZ(.UD*	En
 immutable	Russian - Immutable Words (Ellis Version)	вслух	o_<{V-,~(A	English Distinction	aloud, not silently	whole word	keep	out loud		Spoken so others can hear	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	наизусть	H+Af#.;(~;	English Distinction	from memory	whole word	keep	by heart		Memorized perfectly	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	спасибо	Q*9Ljk9m/J	English Distinction	for a favour, a gift or help	whole word	keep	thank you			serves no pair (none)	
-immutable	Russian - Immutable Words (Ellis Version)	пожалуйста	viYS?K?&S}	English Distinction	when asking; or as a reply to thanks	whole word	keep	please / you're welcome		Also used to mean "here you go" when handing something over	serves no pair (none)	
+immutable	Russian - Immutable Words (Ellis Version)	пожалуйста	viYS?K?&S}	English Distinction	when asking; or as a reply to thanks	whole word	keep	please / you're welcome / here you go			serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	поздравляю	Qlb+to54d<	English Distinction	on someone's good news or birthday	whole word	keep	congratulations!		1st-person present of поздравлять; often + с (с днём рождения!)	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	помогите	Q`Yd{lX^6b	English Distinction	a call for help	whole word	keep	help!	Shouting for help	Imperative pl./formal of помочь; shouted in an emergency	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	можно	hvk)J!3XtL	English Distinction	permission or possibility	whole word	keep	one may / it is possible/allowed to	Allowed, no subject	Impersonal predicate word, not a true adverb of manner	serves no pair (none)	
@@ -891,4 +891,4 @@ mutable	Russian - Mutable Adjectives (Ellis Version)	должен	j^c#WZs=Ci	Eng
 mutable	Russian - Mutable Adverbs (Ellis Version)	налево	MEH^0+3x<#	English Distinction	Direction	whole word	keep	to the left	Direction		separates a collision	
 mutable	Russian - Mutable Adverbs (Ellis Version)	слева	E^vtYuA8G#	English Distinction	Location	whole word	keep	on the left	Location		separates a collision	
 mutable	Russian - Mutable Adverbs (Ellis Version)	прекрасно	N@=/LqB4{w	English Distinction	Fine, excellent	whole word	keep	wonderfully	Fine, excellent	Прекра́сно! = Wonderful!	separates a collision	
-mutable	Russian - Mutable Adverbs (Ellis Version)	ужасно	qcpr]]R4D*	English Distinction	Very badly	whole word	keep	terribly / awfully	Very badly	also 'really' as intensifier	separates a collision	
+mutable	Russian - Mutable Adverbs (Ellis Version)	ужасно	qcpr]]R4D*	English Distinction	Very badly	whole word	keep	terribly / awfully / really	Very badly		separates a collision	
