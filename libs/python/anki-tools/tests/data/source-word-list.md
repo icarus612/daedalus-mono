@@ -80,7 +80,7 @@ Used to connect clauses, sentences, or concepts.
 | 18 | тоже / также | also / too | — | — |
 | 19 | либо | either / or | Bookish alternative to или | — |
 | 20 | пока (conjunction) | while / until (for as long as) | пока не means "until" | — |
-| 21 | чем | than | Comparative — comma before it | — |
+| 21 | чем (conjunction) | than | Comparative — comma before it | — |
 | 22 | ни... ни... | neither... nor... | Needs a negated verb in the same clause | — |
 | 23 | то... то... | now (this)… now (that)… | — | — |
 | 24 | как только | as soon as | "The moment that" — comma before it | — |

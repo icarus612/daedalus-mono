@@ -1657,6 +1657,7 @@ QUALIFIED_ROWS = (
     ("Conjunctions", "как (conjunction)", "как", "conjunction", "rMK!oN+,fY"),
     ("Conjunctions", "когда (conjunction)", "когда", "conjunction", "j^<Rt&~%@c"),
     ("Conjunctions", "пока (conjunction)", "пока", "conjunction", "dpu^rGACeg"),
+    ("Conjunctions", "чем (conjunction)", "чем", "conjunction", "ekK$Z9-T+-"),
     ("Particles", "просто (particle)", "просто", "particle", "e?fXscN7<r"),
     ("Particles", "так (particle)", "так", "particle", "zrbEss%Xjc"),
     ("Base Adverbs", "как (adverb)", "как", "adverb", "B!s$bTdC60"),
@@ -1715,7 +1716,7 @@ def test_every_source_row_carrying_a_qualifier_is_in_the_table(real_rows):
 
 def test_no_russian_field_in_the_real_document_carries_a_parenthetical(real_rows):
     assert len(real_rows) == 223
-    assert len(QUALIFIED_ROWS) == 11
+    assert len(QUALIFIED_ROWS) == 12
     offenders = [row.russian for row in real_rows if "(" in row.fields()[RUSSIAN_INDEX]]
     assert offenders == []
 
