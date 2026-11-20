@@ -63,11 +63,11 @@ REAL_SOURCE_PATH = Path(__file__).resolve().parent / "data" / "source-word-list.
 # The five sections in document order, with the exact counts the real
 # document contains after the l3 split/transform pass and lane l14's additions.
 EXPECTED_SECTION_COUNTS = [
-    ("Prepositions", 44),
-    ("Conjunctions", 30),
-    ("Particles", 39),
+    ("Prepositions", 59),
+    ("Conjunctions", 36),
+    ("Particles", 46),
     ("Indeclinable Nouns", 42),
-    ("Base Adverbs", 68),
+    ("Base Adverbs", 182),
 ]
 EXPECTED_TOTAL_ROWS = sum(count for _, count in EXPECTED_SECTION_COUNTS)
 
@@ -184,7 +184,7 @@ def _remove_section(text, heading_name):
 
 
 def test_parse_real_document_total_row_count(real_rows):
-    assert len(real_rows) == EXPECTED_TOTAL_ROWS == 223
+    assert len(real_rows) == EXPECTED_TOTAL_ROWS == 365
 
 
 def test_parse_real_document_section_order_counts_and_ranks(real_rows):
@@ -210,7 +210,7 @@ def test_parse_real_document_row_order_endpoints(real_rows):
     assert real_rows[0].pos == "Prepositions"
     assert real_rows[0].rank == 1
     assert real_rows[-1].pos == "Base Adverbs"
-    assert real_rows[-1].rank == 68
+    assert real_rows[-1].rank == 182
 
 
 @pytest.mark.parametrize(
@@ -229,7 +229,7 @@ def test_parse_real_document_part_two_produces_no_spurious_rows(real_rows):
     AwesomeTTS / HyperTTS / add-on-install subsections) has no tables and
     must not contribute rows or raise.
     """
-    assert len(real_rows) == 223
+    assert len(real_rows) == 365
     assert all(row.pos in SUBDECK_LEAVES for row in real_rows)
 
 
@@ -1200,7 +1200,7 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
     cells, so the test cannot pass by finding nothing to check.
     """
     adverbs = [row for row in real_rows if row.pos == "Base Adverbs"]
-    assert len(adverbs) == 68
+    assert len(adverbs) == 182
 
     populated = 0
     for row in adverbs:
@@ -1210,7 +1210,7 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
             populated += 1
 
     # Exact count: the rest are em-dash rows or restatements the classification dropped.
-    assert populated == 46
+    assert populated == 73
 
 
 # Populated info cells per section. Every section is four-column now:
@@ -1220,11 +1220,11 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
 # usage note. The rows left blank are the ones whose English gloss already
 # explains itself -- info that merely restates the gloss is noise.
 EXPECTED_INFO_COUNTS = {
-    "Prepositions": (44, 44),
-    "Conjunctions": (30, 16),
-    "Particles": (39, 25),
+    "Prepositions": (59, 59),
+    "Conjunctions": (36, 22),
+    "Particles": (46, 31),
     "Indeclinable Nouns": (42, 42),
-    "Base Adverbs": (68, 46),
+    "Base Adverbs": (182, 73),
 }
 
 
@@ -1654,17 +1654,29 @@ QUALIFIED_ROWS = (
         "preposition",
         "sOIrDtHy,;",
     ),
+    (
+        "Prepositions",
+        "прежде (preposition)",
+        "прежде",
+        "preposition",
+        "G[CY/_;t.!",
+    ),
     ("Conjunctions", "как (conjunction)", "как", "conjunction", "rMK!oN+,fY"),
     ("Conjunctions", "когда (conjunction)", "когда", "conjunction", "j^<Rt&~%@c"),
     ("Conjunctions", "пока (conjunction)", "пока", "conjunction", "dpu^rGACeg"),
     ("Conjunctions", "чем (conjunction)", "чем", "conjunction", "ekK$Z9-T+-"),
+    ("Conjunctions", "хоть (conjunction)", "хоть", "conjunction", "v*fpit`1C{"),
+    ("Conjunctions", "то (conjunction)", "то", "conjunction", "AeTd@1pd;c"),
     ("Particles", "просто (particle)", "просто", "particle", "e?fXscN7<r"),
     ("Particles", "так (particle)", "так", "particle", "zrbEss%Xjc"),
+    ("Particles", "всего (particle)", "всего", "particle", "dR_Af5#/P|"),
+    ("Particles", "хоть (particle)", "хоть", "particle", "FVBi$xzwR["),
     ("Base Adverbs", "как (adverb)", "как", "adverb", "B!s$bTdC60"),
     ("Base Adverbs", "когда (adverb)", "когда", "adverb", "PK!!ts-EGZ"),
     ("Base Adverbs", "пока (adverb)", "пока", "adverb", "d/(bEQ_U/Y"),
     ("Base Adverbs", "так (adverb)", "так", "adverb", "p[f.<aMxja"),
     ("Base Adverbs", "правда (adverb)", "правда", "adverb", "kaU+d{l/fy"),
+    ("Base Adverbs", "прежде (adverb)", "прежде", "adverb", "uCVxB6est7"),
 )
 
 RUSSIAN_INDEX = 0
@@ -1715,8 +1727,8 @@ def test_every_source_row_carrying_a_qualifier_is_in_the_table(real_rows):
 
 
 def test_no_russian_field_in_the_real_document_carries_a_parenthetical(real_rows):
-    assert len(real_rows) == 223
-    assert len(QUALIFIED_ROWS) == 12
+    assert len(real_rows) == 365
+    assert len(QUALIFIED_ROWS) == 18
     offenders = [row.russian for row in real_rows if "(" in row.fields()[RUSSIAN_INDEX]]
     assert offenders == []
 

@@ -151,7 +151,7 @@ def routing():
 
 
 def test_artifact_sizes():
-    assert len(read_tsv(VOCAB / "qualifier-classification.tsv")) == 893
+    assert len(read_tsv(VOCAB / "qualifier-classification.tsv")) == 985
     assert len(read_tsv(DATA / "case-text-routing.tsv")) == 114
 
 
@@ -303,7 +303,7 @@ def read_baseline() -> dict[str, str]:
 
 def test_guid_set_changes_only_by_the_pin_and_the_new_verbs(notes):
     baseline = read_baseline()
-    assert len(baseline) == 1474
+    assert len(baseline) == 1616
     assert set(baseline) - set(notes) == UNBUILT_BASELINE_GUIDS
     added = set(notes) - set(baseline)
     assert {notes[g]["headword"] for g in added} == NEW_VERB_HEADWORDS

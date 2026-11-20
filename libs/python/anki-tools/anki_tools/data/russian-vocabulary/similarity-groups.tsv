@@ -1,35 +1,52 @@
 group	word	deck	English	cue	told apart by	also in
-about	о / об	Prepositions	about (whom/what)	Neutral	pill	
-about	насчёт	Prepositions	about / regarding (whom/what)	Colloquial	pill	
+about	о / об	Prepositions	about (whom/what)	Neutral	header+pill	
+about	насчёт	Prepositions	about / regarding (whom/what)	Colloquial	header+pill	regarding
+about	про	Prepositions	about (whom/what)		header+pill	
+about	где-то	Base Adverbs	somewhere / about / roughly	a place I can't name	header	somewhere
+above	над	Prepositions	above / over (where/what/whom)	Not touching	header	over
+above	наверху	Base Adverbs	above / upstairs	being up there	header	upstairs
 according to	по	Prepositions	along / around (where) / according to (what/whom)	Over a surface	cue	along | around
 according to	согласно (preposition)	Prepositions	according to (what/whom)	Formal	cue	
 according to	согласно (adverb)	Derived Adverbs	according to		header	
+actually	вообще-то	Particles	actually / as a matter of fact		header	
+actually	правда (adverb)	Base Adverbs	really / indeed / actually	asserts the whole clause	header	indeed | really
 address	адрес	Nouns	address	the postal kind	header	
 address	обращаться	Verbs	turn to / address (direct words to someone) / treat (behave towards)		header	treat
+after	после	Prepositions	after (whom/what/when)		pill	
+after	спустя	Prepositions	later / after (how long)		pill	later
 after all	же	Particles	but / then / after all	Emphasis, not time	cue	but | then
 after all	ведь	Particles	you see / after all	asserting a known fact	cue	
 after all	таки	Particles	after all / nevertheless	Colloquial	cue	nevertheless
 again	опять	Base Adverbs	again	the same action repeating	cue	
-again	снова	Base Adverbs	again / anew	afresh, a new start	cue	
+again	снова	Base Adverbs	again / anew	afresh, a new start	cue	anew
 age	век	Nouns	century / age	An era	cue	
 age	возраст	Nouns	age	how old someone is	cue	
 all	всё	Particles	still / all / constantly (keeps on)	Repeatedly	header	still
 all	весь	Pronouns	all / the whole / everything	determinative	header	whole
+almost	почти	Base Adverbs	almost	nearly all the way	cue	
+almost	чуть	Base Adverbs	slightly / barely / almost	by a tiny amount	cue	barely | slightly
 along	по	Prepositions	along / around (where) / according to (what/whom)	Over a surface	pill	according to | around
 along	вдоль	Prepositions	along (what/where)	Lengthwise	pill	
 also	тоже	Conjunctions	also / too	same action, different subject	cue	too
-also	также	Conjunctions	also / in addition	same subject, an extra thing; more formal	cue	
+also	также	Conjunctions	also / in addition	same subject, an extra thing; more formal	cue	in addition
+although	хотя	Conjunctions	although	Neutral	cue	
+although	хоть (conjunction)	Conjunctions	although / even if	casual	cue	even if
 among	между	Prepositions	between / among (whom/what)	Between two	pill	
 among	среди	Prepositions	among (whom/what)	Surrounded by	pill	
 and	и	Conjunctions	and	Joins equal items	cue	
 and	а	Conjunctions	but / and	Side by side	cue	but
+anew	снова	Base Adverbs	again / anew	afresh, a new start	cue	again
+anew	заново	Base Adverbs	anew / all over again	redo from scratch	cue	
 anger	гнев	Nouns	anger / wrath	fury	cue	
 anger	злость	Nouns	anger / spite	malice	cue	
 answer	ответ	Nouns	answer		header	
 answer	отвечать	Verbs	to answer		header	
-around	по	Prepositions	along / around (where) / according to (what/whom)	Over a surface	pill	according to | along
+anywhere	где-нибудь	Base Adverbs	somewhere / anywhere	any place at all	cue	somewhere
+anywhere	куда-нибудь	Base Adverbs	somewhere / anywhere	to any place	cue	somewhere
+around	по	Prepositions	along / around (where) / according to (what/whom)	Over a surface	header+pill	according to | along
 around	вокруг	Prepositions	around (whom/what/where)	all the way round	cue	
 around	около	Prepositions	near / around (whom/what/where/when)	Roughly	cue	near
+around	кругом	Base Adverbs	around / all around		header	
 arrive	приходить	Verbs	come / arrive	on foot	pill	come
 arrive	приезжать	Verbs	to arrive	by vehicle	pill	
 as	как (conjunction)	Conjunctions	like / as	Real comparison	cue	like
@@ -48,22 +65,37 @@ at	на	Prepositions	on / at (where) / onto (where/what)	on a surface	cue
 at	у	Prepositions	by / at (where/whom) / to have (possessed by whom)	at someone's; to have	pill	by | have
 at all	вовсе	Base Adverbs	at all	Colloquial, negatives only	cue	
 at all	вообще	Base Adverbs	in general / at all (generally speaking)	Neutral	cue	
+at first	сначала	Base Adverbs	at first / at the beginning	first step	cue	
+at first	поначалу	Base Adverbs	at first	until things changed	cue	
+at the same time	заодно	Base Adverbs	while you're at it / at the same time	on the same trip	cue	
+at the same time	разом	Base Adverbs	all at once / at the same time	all in one go	cue	
 attack	атака	Nouns	attack		header	
 attack	нападать	Verbs	to attack		header	
 backwards	назад	Base Adverbs	backwards (direction) / ago (time past)	The way you came	cue	
 backwards	наоборот	Base Adverbs	vice versa / backwards	the other way round	cue	
 bank	берег	Nouns	shore / bank	Of a river	cue	
 bank	банк	Nouns	bank	the financial one	cue	
+barely	едва	Base Adverbs	barely	only just	cue	
+barely	еле	Base Adverbs	barely / hardly	with great effort	cue	
+barely	чуть	Base Adverbs	slightly / barely / almost	by a tiny amount	cue	almost | slightly
 be able to	мочь	Verbs	be able to / can	Physically able	cue	can
 be able to	уметь	Verbs	can / be able to / know how to	a learned skill	cue	can
 beautiful	красивый	Adjectives	beautiful / handsome	good-looking	cue	
 beautiful	прекрасный	Adjectives	wonderful / beautiful	Fine, excellent	cue	wonderful
-before	до	Prepositions	up to (where/what) / until / before (when)	As far as	header+pill	until
-before	перед	Prepositions	in front of / before (where/whom/what/when)	Right in front	header+pill	
+because	потому что	Conjunctions	because	Neutral	cue	
+because	поскольку	Conjunctions	since / because	given that	cue	since
+because	ибо	Conjunctions	for / because	bookish	cue	for
+before	до	Prepositions	up to (where/what) / until / before (when)	As far as	cue	until
+before	перед	Prepositions	in front of / before (where/whom/what/when)	Right in front	header+pill	in front of
+before	прежде (preposition)	Prepositions	before (what)	formal	cue	
 before	до того, как	Conjunctions	before	Any time earlier	header	
+before	прежде (adverb)	Base Adverbs	before / previously / formerly		header	
 behind	за	Prepositions	behind (where/whom/what) / for (whom/what)	Beyond; in exchange	pill	for
 behind	позади	Prepositions	behind (whom/what/where)	At the back	pill	
-besides	кроме	Prepositions	except / besides (whom/what)	Excluding	header	
+below	под	Prepositions	under / below (where/what/whom)		header	
+below	внизу	Base Adverbs	below / downstairs	being down there	header	downstairs
+besides	кроме	Prepositions	except / besides (whom/what)	Excluding	cue	
+besides	помимо	Prepositions	besides / apart from (whom/what)	on top of	cue	
 besides	притом	Conjunctions	besides	and besides that	header	
 bet	пари	Indeclinable Nouns	bet / wager	a wager on an outcome	header	
 bet	спорить	Verbs	to argue / to bet		header	
@@ -79,6 +111,8 @@ but	же	Particles	but / then / after all	Emphasis, not time	header	after all | 
 by	у	Prepositions	by / at (where/whom) / to have (possessed by whom)	at someone's; to have	cue	at | have
 by	возле	Prepositions	by / near (whom/what/where)	right beside	cue	near
 by	мимо	Prepositions	past / by (whom/what/where)	Going past	cue	past
+by means of	путём	Prepositions	by means of (what)	through a process	cue	
+by means of	посредством	Prepositions	by means of (what)	using a tool	cue	
 call	называть	Verbs	name / call	give a name to	pill	name
 call	звонить	Verbs	call (phone) / ring		pill	
 call	звать	Verbs	call / summon / be named	Invite over	pill	summon
@@ -90,7 +124,7 @@ cat	кошка	Nouns	cat	female	cue
 cat	кот	Nouns	cat / tomcat	Male	cue	
 cause	причина	Nouns	cause / reason	the why	header	reason
 cause	вызывать	Verbs	call out / summon / cause	Send for	header	summon
-certainly	конечно	Particles	of course / certainly	obviously so	header	
+certainly	конечно	Particles	of course / certainly	obviously so	header	of course
 certainly	наверняка	Base Adverbs	for sure / certainly	confident of it	header	
 chance	случайность	Nouns	chance / accident	a coincidence	cue	
 chance	шанс	Nouns	chance	an opportunity	cue	
@@ -100,6 +134,8 @@ check	чек	Nouns	receipt / check		header
 check	проверять	Verbs	check / verify		header	
 clean	чистить	Verbs	to clean / to brush / to peel		header	
 clean	чистый	Adjectives	clean / pure		header	
+clearly	толком	Base Adverbs	properly / clearly		header	
+clearly	понятно	Derived Adverbs	clearly		header	
 closed	закрытый	Adjectives	closed		header	
 closed	закрыто	Derived Adverbs	closed		header	
 cold	холодный	Adjectives	cold		header	
@@ -108,8 +144,9 @@ come	приходить	Verbs	come / arrive	on foot	cue	arrive
 come	жаловать	Verbs	come / visit	formal invitation	cue	
 command	приказ	Nouns	order / command		header	order
 command	приказывать	Verbs	to order / to command		header	order
-completely	совсем	Base Adverbs	completely / entirely	utterly	header	entirely
-completely	полностью	Derived Adverbs	completely / fully	in full	header	
+completely	совсем	Base Adverbs	completely / entirely	utterly	cue	entirely
+completely	сплошь	Base Adverbs	completely / all over / nothing but	all over, no gaps	cue	
+completely	полностью	Derived Adverbs	completely / fully	in full	header	fully
 complicated	сложный	Adjectives	complicated / complex		header	
 complicated	сложно	Derived Adverbs	complicated		header	
 contract	договор	Nouns	agreement / contract	a treaty or accord	cue	
@@ -134,10 +171,14 @@ different	иной	Adjectives	different / other	of another kind	cue	other
 differently	иначе	Base Adverbs	otherwise / differently (or else)		header	
 differently	по-разному	Derived Adverbs	differently	in various ways	cue	
 differently	по-другому	Derived Adverbs	differently / another way	conversational	cue	
+directly	напрямую	Base Adverbs	directly / straight		header	straight
+directly	прямо	Derived Adverbs	straight / directly		header	straight
 dirty	грязный	Adjectives	dirty		header	
 dirty	грязно	Derived Adverbs	dirty		header	
 doctor	врач	Nouns	doctor	medical profession	cue	
 doctor	доктор	Nouns	doctor	as a title or form of address	cue	
+downstairs	вниз	Base Adverbs	down / downwards / downstairs	going down	cue	
+downstairs	внизу	Base Adverbs	below / downstairs	being down there	cue	below
 dream	сон	Nouns	sleep / dream	While asleep	cue	sleep
 dream	мечта	Nouns	dream	aspiration	cue	
 dream	мечтать	Verbs	to dream	to aspire	header	
@@ -149,17 +190,27 @@ driver	водитель	Nouns	driver	the one driving	cue
 driver	шофёр	Nouns	chauffeur / driver	a hired driver	cue	
 early	ранний	Adjectives	early		header	
 early	рано	Derived Adverbs	early		header	
+easily	запросто	Base Adverbs	easily / just like that		header	
+easily	легко	Derived Adverbs	easily / lightly		header	lightly
 empty	пустой	Adjectives	empty		header	
 empty	пусто	Derived Adverbs	empty		header	
 end	конец	Nouns	end		header	
 end	заканчивать	Verbs	to finish / to end		header	
 end up	оказываться	Verbs	turn out / end up	prove to be	pill	turn out
 end up	попадать	Verbs	to hit / to end up / find oneself		pill	
-entirely	совсем	Base Adverbs	completely / entirely	utterly	header	completely
+entirely	совсем	Base Adverbs	completely / entirely	utterly	cue	completely
+entirely	вполне	Base Adverbs	quite / fully / entirely	to a satisfying degree	cue	fully
 entirely	целиком	Derived Adverbs	entirely / whole	In one piece	header	whole
+even	даже	Particles	even	plain emphasis	cue	
+even	аж	Particles	even / as much as	a surprising amount	cue	
+even	хоть (particle)	Particles	at least / even	as a bare minimum	cue	
+even if	хоть (conjunction)	Conjunctions	although / even if	casual	cue	although
+even if	пусть / пускай	Conjunctions	even though / even if	granting it	cue	
 evening	вечер	Nouns	evening		header	
 evening	вечерний	Adjectives	evening		header	
-excuse me	извините	Particles	excuse me / sorry	excuse my action / minor	cue	
+everywhere	везде	Base Adverbs	everywhere	everyday	cue	
+everywhere	всюду	Base Adverbs	everywhere	a touch bookish	cue	
+excuse me	извините	Particles	excuse me / sorry	excuse my action / minor	cue	sorry
 excuse me	простите	Particles	excuse me / forgive me	deepest apologies / major	cue	
 expensive	дорогой	Adjectives	expensive / dear		header	
 expensive	дорого	Derived Adverbs	expensive		header	
@@ -167,6 +218,8 @@ familiar	знакомый	Adjectives	familiar		header
 familiar	знакомо	Derived Adverbs	familiar		header	
 famous	известный	Adjectives	famous / well-known	widely known	cue	
 famous	знаменитый	Adjectives	famous	celebrated	cue	
+far	гораздо	Base Adverbs	much / far	very much more	cue	much
+far	намного	Base Adverbs	much / far	by a wide margin	cue	much
 few	немного	Base Adverbs	a little bit / some / few	Neutral	cue	
 few	мало	Base Adverbs	little / few	not much	cue	little
 fine	штраф	Nouns	fine / penalty	a money punishment	header	penalty
@@ -180,8 +233,11 @@ first	первый (numeral)	Numerals	first		header
 fly	муха	Nouns	fly	the insect	header	
 fly	летать	Verbs	to fly	habitually, round trips	cue	
 fly	лететь	Verbs	fly	one way	cue	
-for	за	Prepositions	behind (where/whom/what) / for (whom/what)	Beyond; in exchange	pill	behind
-for	для	Prepositions	for / for the sake of (whom/what)	intended for	pill	for the sake of
+for	за	Prepositions	behind (where/whom/what) / for (whom/what)	Beyond; in exchange	header+pill	behind
+for	для	Prepositions	for / for the sake of (whom/what)	intended for	header+pill	for the sake of
+for	ибо	Conjunctions	for / because	bookish	header	because
+for some reason	зачем-то	Base Adverbs	for some reason	unknown purpose	cue	
+for some reason	почему-то	Base Adverbs	for some reason	unknown cause	cue	
 for the sake of	ради	Prepositions	for the sake of (whom/what)	As a motive	cue	
 for the sake of	для	Prepositions	for / for the sake of (whom/what)	intended for	cue	for
 friend	друг	Nouns	friend	male	cue	
@@ -189,6 +245,8 @@ friend	подруга	Nouns	friend	female	cue
 from	с / со	Prepositions	with (whom/what) / from / off of (where/what) / since (when) /	Off a surface	pill	since
 from	из	Prepositions	from (where) / out of (what/where)	From inside	cue	
 from	от	Prepositions	from / away from (whom/what/where)	From beside	cue	
+fully	вполне	Base Adverbs	quite / fully / entirely	to a satisfying degree	header	entirely
+fully	полностью	Derived Adverbs	completely / fully	in full	header	completely
 fun	весёлый	Adjectives	cheerful / fun		header	
 fun	весело	Derived Adverbs	fun (it's fun) / cheerfully		header	
 funny	смешной	Adjectives	funny		header	
@@ -207,6 +265,8 @@ go	ехать	Verbs	to go / ride / drive / travel	by vehicle, one way	cue	drive 
 go	ходить	Verbs	go	on foot, habitually	cue	
 good	добро	Nouns	good (as opposed to evil) / kindness		header	
 good	хороший	Adjectives	good		header	
+half	наполовину	Base Adverbs	half / halfway		header	
+half	половина	Nouns	half		header	
 happen	происходить	Verbs	happen / occur	take place	cue	
 happen	случаться	Verbs	happen	By chance	cue	
 hard	тяжёлый	Adjectives	heavy / hard	Difficult	cue	
@@ -237,21 +297,36 @@ hot	жарко	Derived Adverbs	hot	weather	cue
 hot	горячо	Derived Adverbs	hot / passionately	To the touch	cue	
 hotel	гостиница	Nouns	hotel	the ordinary Russian word	cue	
 hotel	отель	Nouns	hotel	borrowed term, usually upscale/international	cue	
+how much	сколько	Base Adverbs	how much / how many	counting	cue	
+how much	насколько	Base Adverbs	how much / as far as	to what degree	cue	
+however	однако	Conjunctions	however	Formal	header	
+however	впрочем	Base Adverbs	however / then again	on second thought	header	then again
 humid	влажный	Adjectives	damp / humid		header	
 humid	влажно	Derived Adverbs	humid		header	
 if	если	Conjunctions	if	conditional	header	
 if	ли	Particles	whether / if	turns it into a question	header	
 in	в / во	Prepositions	in / at (where) / into (where/what)	inside	pill	at
 in	через	Prepositions	through / across (what/where) / in (when/time)	Crossing	pill	through
+in addition	также	Conjunctions	also / in addition	same subject, an extra thing; more formal	header	also
+in addition	вдобавок	Base Adverbs	in addition / on top of that		header	
+in earnest	вплотную	Base Adverbs	right up close / in earnest	getting down to it	cue	
+in earnest	всерьёз	Base Adverbs	seriously / in earnest	not joking	cue	seriously
+in front of	перед	Prepositions	in front of / before (where/whom/what/when)	Right in front	pill	before
+in front of	впереди	Prepositions	ahead of / in front of (whom/what) / ahead		pill	
+in half	вдвое	Base Adverbs	twice as / in half	by a factor of two	cue	
+in half	пополам	Base Adverbs	in half / fifty-fifty	into two equal parts	cue	
+in vain	зря	Base Adverbs	in vain / for nothing	needlessly	cue	
+in vain	даром	Base Adverbs	for free / in vain	for no return	cue	
 indeed	уж	Particles	really / indeed	adds intensity	header	really
-indeed	правда (adverb)	Base Adverbs	really / indeed / actually	asserts the whole clause	header	really
+indeed	правда (adverb)	Base Adverbs	really / indeed / actually	asserts the whole clause	header	actually | really
 interesting	интересный	Adjectives	interesting		header	
 interesting	интересно	Derived Adverbs	interesting		header	
 it	это	Particles	this (is) / that (is) / it (is)		header	that | this
 it	он	Pronouns	he / it	masculine	cue	
 it	она	Pronouns	she / it	feminine	cue	
 it	оно	Pronouns	it	neuter	cue	
-just	просто (particle)	Particles	simply / just	plays it down	header	simply
+just	просто (particle)	Particles	simply / just	plays it down	cue	simply
+just	всего (particle)	Particles	only / just / in total	just this much	cue	only
 just	просто (adverb)	Derived Adverbs	simply / just	manner: simply	header	simply
 kind	вид	Nouns	view / appearance / kind	Scenery, looks	header	view
 kind	добрый	Adjectives	kind	kind-hearted	header	
@@ -261,6 +336,7 @@ last	последний	Adjectives	last	final in a series	cue
 last	прошлый	Adjectives	past / last	the one just gone	cue	past
 late	поздний	Adjectives	late		header	
 late	поздно	Derived Adverbs	late		header	
+later	спустя	Prepositions	later / after (how long)		header	after
 later	потом	Base Adverbs	then / later	Next, everyday	header	then
 later	позже	Derived Adverbs	later		header	
 law	закон	Nouns	law	a statute	cue	
@@ -276,6 +352,9 @@ lift	лифт	Nouns	lift / elevator		header
 lift	поднимать	Verbs	lift / raise / pick up	lift physically	header	raise
 light	свет	Nouns	light	illumination	header	
 light	лёгкий	Adjectives	light (not heavy) / easy		header	
+lightly	слегка	Base Adverbs	slightly / lightly	a little bit	header	slightly
+lightly	легко	Derived Adverbs	easily / lightly		header	easily
+like	подобно	Prepositions	like / just as (whom/what)		header	
 like	как (conjunction)	Conjunctions	like / as	Real comparison	cue	as
 like	словно	Conjunctions	as if / like	literary — a poetic simile	cue	as if
 like	вроде	Base Adverbs	like / kind of / sort of	hedging	header	
@@ -290,7 +369,7 @@ lively	живой	Adjectives	alive / lively		header
 lively	живо	Derived Adverbs	vividly / lively		header	
 look	взгляд	Nouns	look / glance / view	A gaze; opinion	header	view
 look	смотреть	Verbs	look / watch	direct your eyes at	header	watch
-lot	много	Base Adverbs	many / much / a lot	quantity	header	
+lot	много	Base Adverbs	many / much / a lot	quantity	header	much
 lot	сильно	Derived Adverbs	strongly / a lot	intensity	header	
 love	любовь	Nouns	love		header	
 love	любить	Verbs	to love / to like	you do the liking	header	like
@@ -309,12 +388,19 @@ meeting	свидание	Nouns	date / meeting	romantic	cue	date
 meeting	встреча	Nouns	meeting	any meeting	cue	
 method	способ	Nouns	way / method	Any way of doing it	cue	way
 method	метод	Nouns	method	Systematic, scientific	cue	
+more	ещё	Base Adverbs	still / yet (ongoing) / more (asking for more)	Not over yet	cue	still
+more	более	Base Adverbs	more	formal comparison	cue	
 morning	утро	Nouns	morning		header	
 morning	утренний	Adjectives	morning		header	
+most	наиболее	Base Adverbs	the most		header	
+most	самый	Pronouns	the most / the very		header	very
 move	ход	Nouns	move / course		header	
 move	двигаться	Verbs	to move		header	
 movie	кино	Indeclinable Nouns	cinema / movie	cinema, or film as a medium	header	
 movie	фильм	Nouns	film / movie	a particular film	header	
+much	много	Base Adverbs	many / much / a lot	quantity	cue	lot
+much	гораздо	Base Adverbs	much / far	very much more	cue	far
+much	намного	Base Adverbs	much / far	by a wide margin	cue	far
 naive	наивный	Adjectives	naive		header	
 naive	наивно	Derived Adverbs	naive (it's naive) / naively		header	
 name	имя	Nouns	name		header	
@@ -323,6 +409,11 @@ nation	народ	Nouns	people / nation	The populace	cue	people
 nation	нация	Nouns	nation	a nation state	cue	
 near	около	Prepositions	near / around (whom/what/where/when)	Roughly	cue	around
 near	возле	Prepositions	by / near (whom/what/where)	right beside	cue	by
+near	вблизи	Prepositions	near (whom/what/where) / nearby	in the vicinity	cue	nearby
+nearby	вблизи	Prepositions	near (whom/what/where) / nearby	in the vicinity	header	near
+nearby	поблизости	Base Adverbs	nearby / in the vicinity	somewhere around here	cue	
+nearby	неподалёку	Base Adverbs	not far away / nearby	a short way off	cue	
+nearby	рядом	Base Adverbs	next to / nearby / side by side	right next to	cue	
 necessary	нужный	Adjectives	needed / necessary		header	
 necessary	нужно	Derived Adverbs	necessary		header	
 nevertheless	всё-таки	Particles	still / nevertheless	all the same	cue	still
@@ -335,25 +426,40 @@ nothing	ничего	Particles	nothing / it's OK / no problem	nothing; also 'it'
 nothing	ничто	Pronouns	nothing	As the subject	header	
 now	сейчас	Base Adverbs	now / right now	this exact moment	cue	
 now	теперь	Base Adverbs	now / nowadays	as opposed to before	cue	
+nowhere	нигде	Base Adverbs	nowhere	no place at all	cue	
+nowhere	никуда	Base Adverbs	nowhere	to no place	cue	
 number	число	Nouns	number / date	A numeral; calendar day	cue	date
 number	номер	Nouns	number / hotel room	an assigned number	cue	
 occasion	случай	Nouns	case / occasion	an instance	cue	
 occasion	раз	Nouns	time / occasion	counting occurrences	cue	time
+of course	конечно	Particles	of course / certainly	obviously so	header	certainly
+of course	разумеется	Base Adverbs	of course / naturally		header	
 office	бюро	Indeclinable Nouns	bureau / office	Agency	header	
 office	офис	Nouns	office	a workplace	header	
+often	зачастую	Base Adverbs	often / frequently		header	
+often	часто	Derived Adverbs	often		header	
+once	однажды	Base Adverbs	once / one day	one particular time	cue	
+once	как-то	Base Adverbs	somehow / once (in the past) / somewhat	casual and vague	cue	somehow | somewhat
+once	когда-то	Base Adverbs	once / at one time	long ago	cue	
 only	только	Particles	only	Neutral	cue	
 only	лишь	Particles	merely / only	Bookish	cue	
+only	всего (particle)	Particles	only / just / in total	just this much	cue	just
 only	единственный	Adjectives	only / sole	Describes a noun	header	
 open	открывать	Verbs	to open		header	
 open	открытый	Adjectives	open		header	
+opposite	против	Prepositions	against / opposite (whom/what/where)	in conflict with	cue	
+opposite	напротив	Prepositions	opposite (whom/what/where) / on the contrary	across from	cue	
 or	или	Conjunctions	or	Everyday	cue	
 or	либо	Conjunctions	either / or	Formal	cue	
 order	приказ	Nouns	order / command		header	command
 order	приказывать	Verbs	to order / to command		header	command
 other	другой	Adjectives	other / different	another one	cue	different
 other	иной	Adjectives	different / other	of another kind	cue	different
-over	над	Prepositions	above / over (where/what/whom)	Not touching	pill	
-over	поверх	Prepositions	over / on top of (what/where)	Covering	pill	
+outside	наружу	Base Adverbs	out / outside	going out	cue	
+outside	снаружи	Base Adverbs	outside / from the outside	on the outer side	cue	
+over	над	Prepositions	above / over (where/what/whom)	Not touching	pill	above
+over	поверх	Prepositions	over / on top of (what/where)	Covering	cue	
+over	свыше	Prepositions	over / more than (how many)	above a number	cue	
 pass	проходить	Verbs	pass / go through	move past or through	cue	
 pass	передавать	Verbs	pass / hand over / convey	To someone else	cue	
 pass	сдавать	Verbs	take / pass / hand in	submit for assessment	cue	take
@@ -381,13 +487,15 @@ product	товар	Nouns	goods / product	merchandise	cue
 raise	поднимать	Verbs	lift / raise / pick up	lift physically	cue	lift
 raise	растить	Verbs	raise / grow	Bring up	cue	
 really	уж	Particles	really / indeed	adds intensity	header	indeed
-really	правда (adverb)	Base Adverbs	really / indeed / actually	asserts the whole clause	header	indeed
+really	правда (adverb)	Base Adverbs	really / indeed / actually	asserts the whole clause	header	actually | indeed
 really	ужасно	Derived Adverbs	terribly / awfully / really	Very badly	cue	terribly
 really	по-настоящему	Derived Adverbs	really / for real	genuinely	cue	
 reason	разум	Nouns	reason	the faculty of reason	cue	
 reason	причина	Nouns	cause / reason	the why	cue	cause
 recognize	признавать	Verbs	admit / recognize	acknowledge	cue	
 recognize	узнавать	Verbs	find out / recognize	know by sight	cue	
+regarding	насчёт	Prepositions	about / regarding (whom/what)	Colloquial	cue	about
+regarding	относительно	Prepositions	regarding / concerning (whom/what)	formal	cue	
 remember	помнить	Verbs	remember	keep in memory	pill	
 remember	вспоминать	Verbs	remember / recall	bring to mind	pill	
 request	просьба	Nouns	request		header	
@@ -413,24 +521,47 @@ second	секунда	Nouns	second	the unit of time	header
 second	второй	Numerals	second	Numeric	header	
 secret	секрет	Nouns	secret	Kept from others	cue	
 secret	тайна	Nouns	mystery / secret	Unexplained	cue	
+seriously	всерьёз	Base Adverbs	seriously / in earnest	not joking	header	in earnest
+seriously	серьёзно	Derived Adverbs	seriously		header	
 short	низкий	Adjectives	low / short	Not tall	cue	low
 short	короткий	Adjectives	short	not long	cue	
 short	коротко	Derived Adverbs	briefly / short	briefly, in speech	header	
 show	шоу	Indeclinable Nouns	show		header	
 show	показывать	Verbs	to show		header	
 simply	просто (particle)	Particles	simply / just	plays it down	header	just
+simply	попросту	Base Adverbs	simply / plainly		header	
 simply	просто (adverb)	Derived Adverbs	simply / just	manner: simply	header	just
 since	с / со	Prepositions	with (whom/what) / from / off of (where/what) / since (when) /	Off a surface	header	from
 since	так как	Conjunctions	since / as	because	cue	as
 since	с тех пор, как	Conjunctions	since	From that time	cue	
+since	поскольку	Conjunctions	since / because	given that	cue	because
 sleep	сон	Nouns	sleep / dream	While asleep	header	dream
 sleep	спать	Verbs	to sleep		header	
+slightly	несколько	Base Adverbs	somewhat / slightly	formal	cue	somewhat
+slightly	слегка	Base Adverbs	slightly / lightly	a little bit	cue	lightly
+slightly	чуть	Base Adverbs	slightly / barely / almost	by a tiny amount	cue	almost | barely
 small	маленький	Adjectives	small / little	not big	cue	little
 small	мелкий	Adjectives	shallow / small	Petty, fine-grained	cue	
 smile	улыбка	Nouns	smile		header	
 smile	улыбаться	Verbs	to smile		header	
-so	так (adverb)	Base Adverbs	so / like this	in this way	header	
+so	итак	Conjunctions	so / thus		header	
+so	так (adverb)	Base Adverbs	so / like this	in this way	cue	
+so	настолько	Base Adverbs	so / so much / to such an extent	to such a degree	cue	so much
 so	такой	Pronouns	such / that kind of / so (so + adjective)	such a, so + adj.	header	
+so much	настолько	Base Adverbs	so / so much / to such an extent	to such a degree	cue	so
+so much	столько	Base Adverbs	so much / so many	this many	cue	
+some day	как-нибудь	Base Adverbs	somehow / some day	any old way	cue	somehow
+some day	когда-нибудь	Base Adverbs	some day / ever	at any time	cue	
+somehow	как-нибудь	Base Adverbs	somehow / some day	any old way	cue	some day
+somehow	как-то	Base Adverbs	somehow / once (in the past) / somewhat	casual and vague	cue	once | somewhat
+somewhat	как-то	Base Adverbs	somehow / once (in the past) / somewhat	casual and vague	cue	once | somehow
+somewhat	несколько	Base Adverbs	somewhat / slightly	formal	cue	slightly
+somewhere	где-нибудь	Base Adverbs	somewhere / anywhere	any place at all	cue	anywhere
+somewhere	где-то	Base Adverbs	somewhere / about / roughly	a place I can't name	cue	about
+somewhere	куда-нибудь	Base Adverbs	somewhere / anywhere	to any place	cue	anywhere
+somewhere	куда-то	Base Adverbs	somewhere	to a place I can't name	cue	
+sorry	извините	Particles	excuse me / sorry	excuse my action / minor	header	excuse me
+sorry	жаль	Base Adverbs	it's a pity / sorry		header	
 start	старт	Nouns	start		header	
 start	начинать	Verbs	to begin / to start	begin an action	header+pill	
 start	становиться	Verbs	to become / to start (doing)		header+pill	
@@ -438,12 +569,13 @@ stay	оставаться	Verbs	stay / remain	remain behind	cue
 stay	останавливаться	Verbs	stop / stay (at a place)	come to a halt, or lodge	cue	stop
 still	всё-таки	Particles	still / nevertheless	all the same	cue	nevertheless
 still	всё	Particles	still / all / constantly (keeps on)	Repeatedly	cue	all
-still	ещё	Base Adverbs	still / yet (ongoing) / more (asking for more)	Not over yet	header	
+still	ещё	Base Adverbs	still / yet (ongoing) / more (asking for more)	Not over yet	header	more
 stop	остановка	Nouns	stop		header	
 stop	останавливать	Verbs	stop	stop something else	cue	
 stop	останавливаться	Verbs	stop / stay (at a place)	come to a halt, or lodge	cue	stay
+straight	напрямую	Base Adverbs	directly / straight		header	directly
 straight	прямой	Adjectives	straight / direct		header	
-straight	прямо	Derived Adverbs	straight / directly		header	
+straight	прямо	Derived Adverbs	straight / directly		header	directly
 strange	странный	Adjectives	strange		header	
 strange	странно	Derived Adverbs	strange (it's odd) / strangely		header	
 stupid	глупый	Adjectives	stupid / silly		header	
@@ -452,6 +584,8 @@ summer	лето	Nouns	summer		header
 summer	летний	Adjectives	summer		header	
 summon	звать	Verbs	call / summon / be named	Invite over	cue	call
 summon	вызывать	Verbs	call out / summon / cause	Send for	cue	cause
+supposedly	якобы	Particles	supposedly / allegedly	doubting it	cue	
+supposedly	мол / дескать	Particles	supposedly / reportedly	reporting speech	cue	
 suspect	подозреваемый	Nouns	suspect		header	
 suspect	подозревать	Verbs	to suspect		header	
 swim	плавать	Verbs	swim / sail	habitually, round trips	cue	sail
@@ -471,13 +605,24 @@ that	что	Conjunctions	what / that		header
 that	это	Particles	this (is) / that (is) / it (is)		header	it | this
 that	тот	Pronouns	that (one) / that (over there)	pointing at something farther	cue	
 that	который	Pronouns	which / who / that	refers back to a noun	cue	which | who
+the left	влево	Base Adverbs	to the left		header	
+the left	налево	Derived Adverbs	to the left	Direction	header	
+the right	вправо	Base Adverbs	to the right		header	
+the right	направо	Derived Adverbs	to the right		header	
+then	то (conjunction)	Conjunctions	then		header	
 then	же	Particles	but / then / after all	Emphasis, not time	header	after all | but
 then	тогда	Base Adverbs	then / in that case (at that time)	Not a sequence	cue	
 then	потом	Base Adverbs	then / later	Next, everyday	cue	later
 then	затем	Base Adverbs	then / after that	Next, formal	cue	
+then again	впрочем	Base Adverbs	however / then again	on second thought	cue	however
+then again	опять-таки	Base Adverbs	then again / what's more	and once more	cue	
 there	вот	Particles	here (is) / there (is)	Pointing near	header	here
 there	там	Base Adverbs	there	location, not direction	cue	
 there	туда	Base Adverbs	to there	destination	cue	
+there is nowhere	негде	Base Adverbs	there is nowhere (to)	no place to be	cue	
+there is nowhere	некуда	Base Adverbs	there is nowhere (to go)	no place to go	cue	
+therefore	поэтому	Conjunctions	therefore		header	
+therefore	следовательно	Base Adverbs	consequently / therefore		header	
 this	это	Particles	this (is) / that (is) / it (is)		header	it | that
 this	этот	Pronouns	this (one) / this (right here)		header	
 through	через	Prepositions	through / across (what/where) / in (when/time)	Crossing	cue	in
@@ -485,7 +630,10 @@ through	сквозь	Prepositions	through (what/where)	Something dense	cue
 time	время	Nouns	time	time in general	cue	
 time	раз	Nouns	time / occasion	counting occurrences	cue	occasion
 too	тоже	Conjunctions	also / too	same action, different subject	header	also
-too	слишком	Base Adverbs	too / too much	excessively	header	
+too	слишком	Base Adverbs	too / too much	excessively	cue	too much
+too	чересчур	Base Adverbs	too / too much	way over the top	cue	too much
+too much	слишком	Base Adverbs	too / too much	excessively	cue	too
+too much	чересчур	Base Adverbs	too / too much	way over the top	cue	too
 transport	возить	Verbs	transport / drive (someone)	by vehicle, habitually	cue	drive
 transport	везти	Verbs	transport / drive (someone)	by vehicle, one way	cue	drive
 treat	лечить	Verbs	treat / cure	medically	pill	
@@ -496,8 +644,13 @@ ugly	уродливый	Adjectives	ugly		header
 ugly	уродливо	Derived Adverbs	ugly		header	
 until	до	Prepositions	up to (where/what) / until / before (when)	As far as	header	before
 until	пока (conjunction)	Conjunctions	while / until (for as long as)	For the duration	header	while
-very	очень	Base Adverbs	very	intensifier	header	
-very	самый	Pronouns	the most / the very		header	
+up	вверх	Base Adverbs	up / upwards	in an upward direction	cue	
+up	наверх	Base Adverbs	up / upstairs	going up to the top	cue	upstairs
+upstairs	наверх	Base Adverbs	up / upstairs	going up to the top	cue	up
+upstairs	наверху	Base Adverbs	above / upstairs	being up there	cue	above
+very	очень	Base Adverbs	very	intensifier	cue	
+very	весьма	Base Adverbs	very / highly	formal	cue	
+very	самый	Pronouns	the most / the very		header	most
 view	вид	Nouns	view / appearance / kind	Scenery, looks	cue	kind
 view	взгляд	Nouns	look / glance / view	A gaze; opinion	cue	look
 warm	тёплый	Adjectives	warm		header	
@@ -528,8 +681,10 @@ whole	целиком	Derived Adverbs	entirely / whole	In one piece	header	entire
 whole	весь	Pronouns	all / the whole / everything	determinative	header	all
 why	почему	Base Adverbs	why	cause	cue	
 why	зачем	Base Adverbs	what for / why	purpose	cue	
+why	отчего	Base Adverbs	why	what led to it	cue	
 wish	желание	Nouns	wish / desire		header	
 wish	желать	Verbs	to wish		header	
+with difficulty	кое-как	Base Adverbs	carelessly / with difficulty		header	
 with difficulty	тяжело	Derived Adverbs	heavily / with difficulty	Burdensome	cue	
 with difficulty	трудно	Derived Adverbs	with difficulty	it is hard to do	cue	
 wonderful	прекрасный	Adjectives	wonderful / beautiful	Fine, excellent	cue	beautiful

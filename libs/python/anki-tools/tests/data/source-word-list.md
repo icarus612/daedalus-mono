@@ -55,6 +55,21 @@ Prepositions never change themselves, though they dictate the case of the noun t
 | 42 | поверх | over / on top of (what/where) | Genitive | — |
 | 43 | ввиду | in view of (what) | Genitive | — |
 | 44 | для | for / for the sake of (whom/what) | Genitive — always | — |
+| 45 | про | about (whom/what) | Accusative; everyday alternative to о | — |
+| 46 | помимо | besides / apart from (whom/what) | Genitive | — |
+| 47 | спустя | later / after (how long) | Accusative; often after the time phrase | — |
+| 48 | включая | including (whom/what) | Accusative | — |
+| 49 | относительно | regarding / concerning (whom/what) | Genitive | — |
+| 50 | путём | by means of (what) | Genitive | — |
+| 51 | напротив | opposite (whom/what/where)<br>on the contrary | Genitive | — |
+| 52 | накануне | on the eve of (what)<br>the day before | Genitive | — |
+| 53 | вследствие | as a result of (what) | Genitive; formal | — |
+| 54 | вблизи | near (whom/what/where)<br>nearby | Genitive | — |
+| 55 | впереди | ahead of / in front of (whom/what)<br>ahead | Genitive | — |
+| 56 | свыше | over / more than (how many) | Genitive | — |
+| 57 | подобно | like / just as (whom/what) | Dative | — |
+| 58 | посредством | by means of (what) | Genitive; formal | — |
+| 59 | прежде (preposition) | before (what) | Genitive | — |
 
 ### Conjunctions (Союзы)
 Used to connect clauses, sentences, or concepts.
@@ -90,6 +105,12 @@ Used to connect clauses, sentences, or concepts.
 | 31 | причём | moreover / and what's more | Adds a pointed extra detail | — |
 | 32 | притом | besides | Close to причём, more bookish | — |
 | 33 | как будто | as if / as though | — | — |
+| 34 | поскольку | since / because | Comma before it | — |
+| 35 | итак | so / thus | Sums up or moves on; comma after it | — |
+| 36 | хоть (conjunction) | although / even if | Colloquial form of хотя | — |
+| 37 | то (conjunction) | then | Second half of если…, то… | — |
+| 38 | ибо | for / because | Comma before it | — |
+| 39 | плюс | plus / and besides | Colloquial | — |
 
 ### Particles (Частицы)
 Short words that add grammatical function, emotion, or tone to speech.
@@ -135,6 +156,13 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 42 | помогите | help! | Imperative pl./formal of помочь; shouted in an emergency | — |
 | 43 | это | this (is) / that (is) / it (is) | Subject-less linking word: Э́то кни́га = This is a book. Invariable, unlike the pronoun э́тот (э́та, э́то, э́ти) which agrees with its noun | Это моя сестра |
 | 44 | так (particle) | well then / alright | Colloquial — close to значит or хорошо; set off by a comma | Так, начнём |
+| 45 | аж | even / as much as | Colloquial | — |
+| 46 | вообще-то | actually / as a matter of fact | Colloquial | — |
+| 47 | всего (particle) | only / just<br>in total | With numbers | — |
+| 48 | давай / давайте | let's | Imperative of давать; давайте is plural/formal | — |
+| 49 | хоть (particle) | at least / even | — | — |
+| 50 | угодно | -ever / any … at all | After кто/что/где/когда: что угодно = anything at all | — |
+| 51 | якобы | supposedly / allegedly | Signals doubt about someone's claim | — |
 
 ### Indeclinable Nouns (Несклоняемые существительные)
 Foreign loan words that are frozen in their base form.
@@ -261,6 +289,120 @@ A lone em dash there means "no extra info" and renders as nothing.
 | 66 | сначала | at first / at the beginning | Contrast with снова ("again") — do not confuse | — |
 | 67 | правда (adverb) | really / indeed / actually | Asserts the truth of the whole clause, not the manner of the verb; also a noun (правда = truth) | Он правда пришёл |
 | 68 | поблизости | nearby / in the vicinity | Adverb of place; answers где, not куда | — |
+| 69 | более | more | Bookish; builds comparatives | — |
+| 70 | вверх | up / upwards | — | — |
+| 71 | вдали | in the distance | — | — |
+| 72 | вдвое | twice as / in half | — | — |
+| 73 | вдвоём | the two of us / two together | — | — |
+| 74 | вдобавок | in addition / on top of that | — | — |
+| 75 | весьма | very / highly | — | — |
+| 76 | влево | to the left | — | — |
+| 77 | вниз | down / downwards / downstairs | — | — |
+| 78 | внизу | below / downstairs | — | — |
+| 79 | вовремя | on time / in time | — | — |
+| 80 | вовсю | with all one's might / in full swing | Colloquial | — |
+| 81 | во-вторых | secondly | — | — |
+| 82 | вот-вот | any moment now / just about to | — | — |
+| 83 | впервые | for the first time | — | — |
+| 84 | вплотную | right up close / in earnest | — | — |
+| 85 | вполне | quite / fully / entirely | — | — |
+| 86 | вправе | be entitled (to) | Predicative: вы вправе отказаться | — |
+| 87 | вправо | to the right | — | — |
+| 88 | впрочем | however / then again | — | — |
+| 89 | всерьёз | seriously / in earnest | — | — |
+| 90 | вскоре | soon after / before long | — | — |
+| 91 | всюду | everywhere | — | — |
+| 92 | в-третьих | thirdly | — | — |
+| 93 | втроём | the three of us / three together | — | — |
+| 94 | где-нибудь | somewhere / anywhere | — | — |
+| 95 | где-то | somewhere<br>about / roughly | — | — |
+| 96 | гораздо | much / far | With comparatives: гораздо лучше | — |
+| 97 | даром | for free<br>in vain | — | — |
+| 98 | дважды | twice | — | — |
+| 99 | еле | barely / hardly | — | — |
+| 100 | жаль | it's a pity / sorry | Predicative: мне жаль | — |
+| 101 | заново | anew / all over again | — | — |
+| 102 | заодно | while you're at it / at the same time | — | — |
+| 103 | запросто | easily / just like that | Colloquial | — |
+| 104 | заранее | in advance / beforehand | — | — |
+| 105 | зачастую | often / frequently | — | — |
+| 106 | зачем-то | for some reason | — | — |
+| 107 | издалека | from afar / from far away | — | — |
+| 108 | изнутри | from inside / from within | — | — |
+| 109 | изредка | occasionally / now and then | — | — |
+| 110 | как-нибудь | somehow / some day | — | — |
+| 111 | как-то | somehow<br>once (in the past)<br>somewhat | — | — |
+| 112 | когда-нибудь | some day / ever | — | — |
+| 113 | когда-то | once / at one time | — | — |
+| 114 | кое-где | here and there / in places | — | — |
+| 115 | кое-как | carelessly<br>with difficulty | — | — |
+| 116 | кругом | around / all around | — | — |
+| 117 | кстати | by the way<br>handy / just right | — | — |
+| 118 | куда-нибудь | somewhere / anywhere | Answers куда | — |
+| 119 | куда-то | somewhere | Answers куда | — |
+| 120 | менее | less | Bookish; builds comparatives | — |
+| 121 | наверное | probably | — | — |
+| 122 | наверх | up / upstairs | Answers куда | — |
+| 123 | наверху | above / upstairs | Answers где | — |
+| 124 | навсегда | forever / for good | — | — |
+| 125 | надолго | for a long time | — | — |
+| 126 | наедине | alone (with) / in private | — | — |
+| 127 | наиболее | the most | Bookish; builds superlatives | — |
+| 128 | налицо | evident / on hand | Predicative | — |
+| 129 | намного | much / far | With comparatives: намного лучше | — |
+| 130 | наполовину | half / halfway | — | — |
+| 131 | напоследок | at the end / before parting | — | — |
+| 132 | например | for example | — | — |
+| 133 | напрямую | directly / straight | — | — |
+| 134 | наружу | out / outside | Answers куда | — |
+| 135 | насквозь | right through / through and through | — | — |
+| 136 | насколько | how much / as far as | — | — |
+| 137 | настолько | so / so much / to such an extent | — | — |
+| 138 | наутро | the next morning | — | — |
+| 139 | негде | there is nowhere (to) | Predicative + infinitive: негде сесть | — |
+| 140 | недаром | not for nothing / with good reason | — | — |
+| 141 | некуда | there is nowhere (to go) | Predicative + infinitive: некуда идти | — |
+| 142 | нельзя | it is forbidden / one cannot | Impersonal predicate; opposite of можно | — |
+| 143 | ненадолго | for a short while | — | — |
+| 144 | неподалёку | not far away / nearby | — | — |
+| 145 | несколько | somewhat / slightly | As "several" it's a numeral that declines | — |
+| 146 | нечего | there is nothing (to) | Predicative + infinitive: нечего делать | — |
+| 147 | никак | no way / by no means | — | — |
+| 148 | никуда | nowhere | Answers куда; needs не | — |
+| 149 | нисколько | not at all / not in the least | — | — |
+| 150 | ничуть | not a bit / not in the slightest | — | — |
+| 151 | опять-таки | then again / what's more | Colloquial | — |
+| 152 | откуда-то | from somewhere | — | — |
+| 153 | оттого | that's why / because of that | оттого что = because | — |
+| 154 | отчасти | partly | — | — |
+| 155 | отчего | why | — | — |
+| 156 | подолгу | for long periods | — | — |
+| 157 | подряд | in a row / running | — | — |
+| 158 | поначалу | at first | — | — |
+| 159 | понемногу | little by little | — | — |
+| 160 | пополам | in half / fifty-fifty | — | — |
+| 161 | попросту | simply / plainly | — | — |
+| 162 | пора | it's time (to) | Predicative: пора идти | — |
+| 163 | по-своему | in one's own way | — | — |
+| 164 | почему-то | for some reason | — | — |
+| 165 | прежде (adverb) | before / previously / formerly | — | — |
+| 166 | прочь | away / off | — | — |
+| 167 | разом | all at once / at the same time | — | — |
+| 168 | разумеется | of course / naturally | — | — |
+| 169 | рядом | next to / nearby / side by side | — | — |
+| 170 | сбоку | from the side / on the side | — | — |
+| 171 | сверху | from above / on top | — | — |
+| 172 | слегка | slightly / lightly | — | — |
+| 173 | следовательно | consequently / therefore | — | — |
+| 174 | следом | right after / close behind | — | — |
+| 175 | снаружи | outside / from the outside | Answers где | — |
+| 176 | снизу | from below / at the bottom | — | — |
+| 177 | сплошь | completely / all over<br>nothing but | — | — |
+| 178 | столько | so much / so many | — | — |
+| 179 | толком | properly / clearly | Colloquial; usually with не | — |
+| 180 | трижды | three times | — | — |
+| 181 | чересчур | too / too much | — | — |
+| 182 | чуть | slightly / barely<br>almost | чуть не = almost | — |
 
 
 ---

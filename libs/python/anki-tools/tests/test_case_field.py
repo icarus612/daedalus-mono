@@ -61,7 +61,7 @@ def test_poznravlyayu_style_row_names_the_governed_case_only_in_raw_info():
 
 def test_every_real_preposition_info_names_a_case(real_rows):
     prepositions = [r for r in real_rows if r.pos == "Prepositions"]
-    assert len(prepositions) == 44
+    assert len(prepositions) == 59
     named = {r.russian: case_field.case_name(r.info) for r in prepositions}
     assert [w for w, tag in named.items() if not tag] == []
     assert named["о / об"] == "Prepositional"

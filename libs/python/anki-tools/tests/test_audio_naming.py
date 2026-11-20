@@ -241,7 +241,7 @@ def real_rows(real_source_text):
 def test_deck_audio_field_agrees_with_tts_build_filename_for_every_row_and_slot(
     real_rows,
 ):
-    assert len(real_rows) == 223  # positive control: don't trivially pass on 0 rows
+    assert len(real_rows) == 365  # positive control: don't trivially pass on 0 rows
 
     audio_index = FIELD_NAMES.index("Audio")
     slot_to_voice = {voice.slot: voice for voice in VOICES}
@@ -267,7 +267,7 @@ def test_deck_audio_field_agrees_with_tts_build_filename_for_every_row_and_slot(
             )
             checked += 1
 
-    assert checked == 223 * 4 == 892
+    assert checked == 365 * 4 == 1460
 
 
 # ---------------------------------------------------------------------------
@@ -280,7 +280,7 @@ def test_deck_audio_field_agrees_with_tts_build_filename_for_every_row_and_slot(
 # a parenthetical qualifier -- "как (conjunction)" / "как (adverb)" -- which
 # `strip_qualifier` removes before a filename is built. They therefore SHARE
 # one recording per slot, deliberately: it is one word, pronounced one way.
-DUAL_CLASS_WORDS = {"как", "когда", "пока", "так"}
+DUAL_CLASS_WORDS = {"как", "когда", "пока", "так", "хоть", "прежде"}
 
 
 def test_real_document_slugs_no_collision_between_different_words(real_rows):
@@ -297,7 +297,7 @@ def test_real_document_slugs_no_collision_between_different_words(real_rows):
     landing on one slug), which is the defect the hash-free naming scheme
     has to stay clear of.
     """
-    assert len(real_rows) == 223
+    assert len(real_rows) == 365
 
     slug_to_words = {}
     for row in real_rows:
@@ -313,7 +313,7 @@ def test_real_document_slugs_no_collision_between_different_words(real_rows):
 
     # 223 rows, 219 distinct slugs: the four dual-class words each
     # contribute two rows and one slug.
-    assert len(slug_to_words) == 219
+    assert len(slug_to_words) == 359
 
     shared = {
         slug
@@ -335,7 +335,8 @@ def test_dual_class_rows_share_one_recording_per_slot(real_rows):
     for word in sorted(DUAL_CLASS_WORDS):
         rows = [row for row in real_rows if strip_qualifier(row.russian) == word]
         assert len(rows) == 2, f"{word}: expected two rows, one per class"
-        assert "Base Adverbs" in {row.pos for row in rows}
+        if word != "хоть":
+            assert "Base Adverbs" in {row.pos for row in rows}
         assert len({row.pos for row in rows}) == 2
 
         audio_fields = {row.fields()[audio_index] for row in rows}

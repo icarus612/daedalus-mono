@@ -51,8 +51,8 @@ immutable	Russian - Immutable Words (Ellis Version)	кроме	Nvc59u9(Ec	Transl
 immutable	Russian - Immutable Words (Ellis Version)	кроме	Nvc59u9(Ec	English Distinction	apart from, excluding	whole word	keep	except / besides (whom/what)	Excluding	Genitive	serves no pair (covered)	
 immutable	Russian - Immutable Words (Ellis Version)	между	wnI9fjT7NX	Translation	whom/what	sense 2 of 2	keep-inline	between / among (whom/what)	Between two	Instrumental	prompt word for one sense	
 immutable	Russian - Immutable Words (Ellis Version)	между	wnI9fjT7NX	English Distinction	in the space between two or more things	whole word	keep	between / among (whom/what)	Between two	Instrumental	serves no pair (covered)	
-immutable	Russian - Immutable Words (Ellis Version)	против	Jy-rcPw}7H	Translation	whom/what/where	sense 2 of 2	keep-inline	against / opposite (whom/what/where)		Genitive	prompt word for one sense	
-immutable	Russian - Immutable Words (Ellis Version)	против	Jy-rcPw}7H	English Distinction	opposing; or facing	whole word	keep	against / opposite (whom/what/where)		Genitive	serves no pair (none)	
+immutable	Russian - Immutable Words (Ellis Version)	против	Jy-rcPw}7H	Translation	whom/what/where	sense 2 of 2	keep-inline	against / opposite (whom/what/where)	in conflict with	Genitive	prompt word for one sense	
+immutable	Russian - Immutable Words (Ellis Version)	против	Jy-rcPw}7H	English Distinction	opposing; or facing	whole word	keep	against / opposite (whom/what/where)	in conflict with	Genitive	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	вокруг	Q:Swyhj[??	Translation	whom/what/where	sense 1 of 1	keep-inline	around (whom/what/where)	all the way round	Genitive	prompt word for one sense	
 immutable	Russian - Immutable Words (Ellis Version)	вокруг	Q:Swyhj[??	English Distinction	Genitive; all the way round	whole word	rewrite-cue-non-case	around (whom/what/where)	all the way round	Genitive	keeps the non-case remainder	
 immutable	Russian - Immutable Words (Ellis Version)	вместо	nXG;6|x!>.	Translation	whom/what	sense 1 of 1	keep-inline	instead of (whom/what)		Genitive	prompt word for one sense	
@@ -801,7 +801,7 @@ immutable	Russian - Immutable Words (Ellis Version)	ни... ни...	Q(b8F?nt^#	E
 immutable	Russian - Immutable Words (Ellis Version)	как только	qbA/z$a+Rg	English Distinction	the moment that	whole word	keep	as soon as		"The moment that" — comma before it	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	причём	I!6EXg{nQ<	English Distinction	adds a further detail	whole word	keep	moreover / and what's more		Adds a pointed extra detail	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	не	K[K^R[ZIJj	English Distinction	negates the next word	whole word	keep	not / don’t	Plain negation	Negates the word directly after it	serves no pair (none)	
-immutable	Russian - Immutable Words (Ellis Version)	даже	uPc8)MWx5L	English Distinction	something surprising: even that	whole word	keep	even		Marks something unexpected	serves no pair (none)	
+immutable	Russian - Immutable Words (Ellis Version)	даже	uPc8)MWx5L	English Distinction	something surprising: even that	whole word	keep	even	plain emphasis	Marks something unexpected	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	ни	wSCO$p>D+4	English Distinction	emphatic negative: not a single one	whole word	keep	neither / not a single / not one	Not even one	Reinforces a negation; needs не or нет in the clause	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	именно	fd`w{/Wj5O	English Distinction	points to exactly that one	whole word	keep	exactly / precisely		Pinpoints exactly which one	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	нет	jY!=9;TFcY	English Distinction	the answer no; or there is none	whole word	keep	no		Answers "no"	serves no pair (none)	
@@ -841,8 +841,8 @@ immutable	Russian - Immutable Words (Ellis Version)	хаки	I]-W~zq0I*	English 
 immutable	Russian - Immutable Words (Ellis Version)	киви	i==nDkX:b0	English Distinction	the fruit	whole word	keep	kiwi		Neuter as the fruit; feminine as the bird	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	манго	dy$aua`tfm	English Distinction	the fruit	whole word	keep	mango		Neuter	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	там	u+brF|9v(n	English Distinction	location, not direction	whole word	keep	there	location, not direction	Static location	serves no pair (covered)	
-immutable	Russian - Immutable Words (Ellis Version)	везде	ogN&>5GQ^V	English Distinction	in every place	whole word	keep	everywhere		Static location	serves no pair (none)	
-immutable	Russian - Immutable Words (Ellis Version)	нигде	xA_I0&ZQ(^	English Distinction	in no place	whole word	keep	nowhere		Requires a negative verb (не)	serves no pair (none)	
+immutable	Russian - Immutable Words (Ellis Version)	везде	ogN&>5GQ^V	English Distinction	in every place	whole word	keep	everywhere	everyday	Static location	serves no pair (none)	
+immutable	Russian - Immutable Words (Ellis Version)	нигде	xA_I0&ZQ(^	English Distinction	in no place	whole word	keep	nowhere	no place at all	Requires a negative verb (не)	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	дома	cLYL)r@*`w	English Distinction	location, not direction	whole word	keep	at home	Location		serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	домой	niqY,-8?pd	English Distinction	direction: going home	whole word	keep	to home	Direction	Motion towards home	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	откуда	B>I^luw1uC	English Distinction	origin: asking where from	whole word	keep	from where		Asking for a starting point	serves no pair (none)	
@@ -861,12 +861,12 @@ immutable	Russian - Immutable Words (Ellis Version)	сразу	b=$e,o>V;C	Englis
 immutable	Russian - Immutable Words (Ellis Version)	наконец	A6#?,kK/uv	English Distinction	at last, after a wait	whole word	keep	finally		Conclusion of a wait or sequence	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	очень	fvd9K63@tP	English Distinction	intensifier	whole word	keep	very	intensifier	Amplifies an adjective/adverb	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	немного	M_1lN)k0T9	English Distinction	a small amount	whole word	keep	a little bit / some / few	Neutral		separates a collision	
-immutable	Russian - Immutable Words (Ellis Version)	почти	ltx;9H]mR/	English Distinction	nearly	whole word	keep	almost			serves no pair (none)	
-immutable	Russian - Immutable Words (Ellis Version)	едва	JwVq]^Weu]	English Distinction	only just	whole word	keep	barely			serves no pair (none)	
+immutable	Russian - Immutable Words (Ellis Version)	почти	ltx;9H]mR/	English Distinction	nearly	whole word	keep	almost	nearly all the way		serves no pair (none)	
+immutable	Russian - Immutable Words (Ellis Version)	едва	JwVq]^Weu]	English Distinction	only just	whole word	keep	barely	only just		serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	чуть-чуть	ll-M]Y>Gn8	English Distinction	colloquial: just a little	whole word	keep	a tiny bit	Colloquial, tiny	Highly conversational	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	вместе	OA/it09@>Z	English Distinction	with each other	whole word	keep	together			serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	пешком	Mu,W;78B5{	English Distinction	walking, not riding	whole word	keep	on foot		The method of travel (walking)	serves no pair (none)	
-immutable	Russian - Immutable Words (Ellis Version)	зря	rTUaCTAu5+	English Distinction	to no purpose	whole word	keep	in vain / for nothing		Wasted effort	serves no pair (none)	
+immutable	Russian - Immutable Words (Ellis Version)	зря	rTUaCTAu5+	English Distinction	to no purpose	whole word	keep	in vain / for nothing	needlessly	Wasted effort	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	нарочно	Pc^VZ(.UD*	English Distinction	deliberately	whole word	keep	on purpose		Intentional action	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	вслух	o_<{V-,~(A	English Distinction	aloud, not silently	whole word	keep	out loud		Spoken so others can hear	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	наизусть	H+Af#.;(~;	English Distinction	from memory	whole word	keep	by heart		Memorized perfectly	serves no pair (none)	
@@ -876,10 +876,10 @@ immutable	Russian - Immutable Words (Ellis Version)	поздравляю	Qlb+to5
 immutable	Russian - Immutable Words (Ellis Version)	помогите	Q`Yd{lX^6b	English Distinction	a call for help	whole word	keep	help!	Shouting for help	Imperative pl./formal of помочь; shouted in an emergency	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	можно	hvk)J!3XtL	English Distinction	permission or possibility	whole word	keep	one may / it is possible/allowed to	Allowed, no subject	Impersonal predicate word, not a true adverb of manner	serves no pair (none)	
 immutable	Russian - Immutable Words (Ellis Version)	надо	QT*;XCgS!i	English Distinction	need or obligation	whole word	keep	it is necessary / one must/needs to		Impersonal predicate word; synonym нужно	serves no pair (none)	
-immutable	Russian - Immutable Words (Ellis Version)	однажды	Qy)j?kW`EV	English Distinction	on one occasion	whole word	keep	once / one day		Introduces a narrative event, like English "once upon a time"	serves no pair (none)	
-immutable	Russian - Immutable Words (Ellis Version)	сколько	Q1BQj*^Uu*	English Distinction	asking a quantity	whole word	keep	how much / how many		Also used in exclamations	serves no pair (none)	
-immutable	Russian - Immutable Words (Ellis Version)	сначала	xh#pwSP)^,	English Distinction	first, before anything else	whole word	keep	at first / at the beginning		Contrast with снова ("again") — do not confuse	serves no pair (none)	
-immutable	Russian - Immutable Words (Ellis Version)	поблизости	q|MokZpJ!`	English Distinction	close by	whole word	keep	nearby / in the vicinity		Adverb of place; answers где, not куда	serves no pair (none)	
+immutable	Russian - Immutable Words (Ellis Version)	однажды	Qy)j?kW`EV	English Distinction	on one occasion	whole word	keep	once / one day	one particular time	Introduces a narrative event, like English "once upon a time"	serves no pair (none)	
+immutable	Russian - Immutable Words (Ellis Version)	сколько	Q1BQj*^Uu*	English Distinction	asking a quantity	whole word	keep	how much / how many	counting	Also used in exclamations	serves no pair (none)	
+immutable	Russian - Immutable Words (Ellis Version)	сначала	xh#pwSP)^,	English Distinction	first, before anything else	whole word	keep	at first / at the beginning	first step	Contrast with снова ("again") — do not confuse	serves no pair (none)	
+immutable	Russian - Immutable Words (Ellis Version)	поблизости	q|MokZpJ!`	English Distinction	close by	whole word	keep	nearby / in the vicinity	somewhere around here	Adverb of place; answers где, not куда	serves no pair (none)	
 mutable	Russian - Mutable Adverbs (Ellis Version)	приятно	t#syU{BydR	English Distinction	describing a situation: it's nice here, nice to meet you	whole word	keep	nice(ly) / pleasant(ly)			serves no pair (covered)	
 mutable	Russian - Mutable Nouns (Ellis Version)	помощь	u;w{W7(3Ra	English Distinction	The noun	whole word	keep	help	The noun		separates a collision	
 mutable	Russian - Mutable Verbs (Ellis Version)	помогать	RcSyAYecq_	English Distinction	The verb	whole word	keep	to help	The verb		separates a collision	
@@ -892,3 +892,95 @@ mutable	Russian - Mutable Adverbs (Ellis Version)	налево	MEH^0+3x<#	Englis
 mutable	Russian - Mutable Adverbs (Ellis Version)	слева	E^vtYuA8G#	English Distinction	Location	whole word	keep	on the left	Location		separates a collision	
 mutable	Russian - Mutable Adverbs (Ellis Version)	прекрасно	N@=/LqB4{w	English Distinction	Fine, excellent	whole word	keep	wonderfully	Fine, excellent	Прекра́сно! = Wonderful!	separates a collision	
 mutable	Russian - Mutable Adverbs (Ellis Version)	ужасно	qcpr]]R4D*	English Distinction	Very badly	whole word	keep	terribly / awfully / really	Very badly		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	про	q{^{@O^=5F	Translation	whom/what	sense 1 of 1	keep-inline	about (whom/what)			prompt word for one sense	
+immutable	Russian - Immutable Words (Ellis Version)	помимо	PR[O6bo`>-	Translation	whom/what	sense 2 of 2	keep-inline	besides / apart from (whom/what)	on top of		prompt word for one sense	
+immutable	Russian - Immutable Words (Ellis Version)	помимо	PR[O6bo`>-	English Distinction	on top of	whole word	keep	besides / apart from (whom/what)	on top of		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	спустя	Jvul+}sn]4	Translation	how long	sense 2 of 2	keep-inline	later / after (how long)			attaches by position to the last synonym; may cover all senses	
+immutable	Russian - Immutable Words (Ellis Version)	включая	AJWvOV=bIW	Translation	whom/what	sense 1 of 1	keep-inline	including (whom/what)			prompt word for one sense	
+immutable	Russian - Immutable Words (Ellis Version)	относительно	tCdC]n`jkZ	Translation	whom/what	sense 2 of 2	keep-inline	regarding / concerning (whom/what)	formal		prompt word for one sense	
+immutable	Russian - Immutable Words (Ellis Version)	относительно	tCdC]n`jkZ	English Distinction	formal	whole word	keep	regarding / concerning (whom/what)	formal		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	путём	tD*|b[q+K9	Translation	what	sense 1 of 1	keep-inline	by means of (what)	through a process		prompt word for one sense	
+immutable	Russian - Immutable Words (Ellis Version)	путём	tD*|b[q+K9	English Distinction	through a process	whole word	keep	by means of (what)	through a process		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	напротив	hSrNw-yIyk	Translation	whom/what/where	sense 1 of 2	keep-inline	opposite (whom/what/where)<br>on the contrary	across from		prompt word for one sense	
+immutable	Russian - Immutable Words (Ellis Version)	напротив	hSrNw-yIyk	English Distinction	across from	whole word	keep	opposite (whom/what/where)<br>on the contrary	across from		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	накануне	hPn0q#NG4y	Translation	what	sense 1 of 2	keep-inline	on the eve of (what)<br>the day before			prompt word for one sense	
+immutable	Russian - Immutable Words (Ellis Version)	вследствие	uh7_0I/FQ;	Translation	what	sense 1 of 1	keep-inline	as a result of (what)			prompt word for one sense	
+immutable	Russian - Immutable Words (Ellis Version)	вблизи	b+;D2Cn_;s	Translation	whom/what/where	sense 1 of 2	keep-inline	near (whom/what/where)<br>nearby	in the vicinity		prompt word for one sense	
+immutable	Russian - Immutable Words (Ellis Version)	вблизи	b+;D2Cn_;s	English Distinction	in the vicinity	whole word	keep	near (whom/what/where)<br>nearby	in the vicinity		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	впереди	Q2H*-N72*x	Translation	whom/what	sense 2 of 3	keep-inline	ahead of / in front of (whom/what)<br>ahead			prompt word for one sense	
+immutable	Russian - Immutable Words (Ellis Version)	свыше	G1rRP)_9?x	Translation	how many	sense 2 of 2	keep-inline	over / more than (how many)	above a number		attaches by position to the last synonym; may cover all senses	
+immutable	Russian - Immutable Words (Ellis Version)	свыше	G1rRP)_9?x	English Distinction	above a number	whole word	keep	over / more than (how many)	above a number		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	подобно	Iqhk5Xh8s{	Translation	whom/what	sense 2 of 2	keep-inline	like / just as (whom/what)			prompt word for one sense	
+immutable	Russian - Immutable Words (Ellis Version)	посредством	FOwbn7b:rL	Translation	what	sense 1 of 1	keep-inline	by means of (what)	using a tool		prompt word for one sense	
+immutable	Russian - Immutable Words (Ellis Version)	посредством	FOwbn7b:rL	English Distinction	using a tool	whole word	keep	by means of (what)	using a tool		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	прежде (preposition)	G[CY/_;t.!	Russian Distinction	preposition	whole word	keep	before (what)	formal		shares the bare headword with прежде (adverb)	
+immutable	Russian - Immutable Words (Ellis Version)	прежде (preposition)	G[CY/_;t.!	Translation	what	sense 1 of 1	keep-inline	before (what)	formal		prompt word for one sense	
+immutable	Russian - Immutable Words (Ellis Version)	прежде (preposition)	G[CY/_;t.!	English Distinction	formal	whole word	keep	before (what)	formal		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	поскольку	eTIfzT-TQ[	English Distinction	given that	whole word	keep	since / because	given that	Comma before it	separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	хоть (conjunction)	v*fpit`1C{	Russian Distinction	conjunction	whole word	keep	although / even if	casual	Colloquial form of хотя	shares the bare headword with хоть (particle)	
+immutable	Russian - Immutable Words (Ellis Version)	хоть (conjunction)	v*fpit`1C{	English Distinction	casual	whole word	keep	although / even if	casual	Colloquial form of хотя	separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	то (conjunction)	AeTd@1pd;c	Russian Distinction	conjunction	whole word	keep	then		Second half of если…, то…	no other note shares the bare headword	
+immutable	Russian - Immutable Words (Ellis Version)	ибо	Db[*`-Z={0	English Distinction	bookish	whole word	keep	for / because	bookish	Comma before it	separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	аж	L9@BuY&b=9	English Distinction	a surprising amount	whole word	keep	even / as much as	a surprising amount	Colloquial	separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	всего (particle)	dR_Af5#/P|	Russian Distinction	particle	whole word	keep	only / just<br>in total	just this much	With numbers	no other note shares the bare headword	
+immutable	Russian - Immutable Words (Ellis Version)	всего (particle)	dR_Af5#/P|	English Distinction	just this much	whole word	keep	only / just<br>in total	just this much	With numbers	separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	хоть (particle)	FVBi$xzwR[	Russian Distinction	particle	whole word	keep	at least / even	as a bare minimum		shares the bare headword with хоть (conjunction)	
+immutable	Russian - Immutable Words (Ellis Version)	хоть (particle)	FVBi$xzwR[	English Distinction	as a bare minimum	whole word	keep	at least / even	as a bare minimum		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	якобы	DYSH2&suwI	English Distinction	doubting it	whole word	keep	supposedly / allegedly	doubting it	Signals doubt about someone's claim	separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	более	G{OGQA]hHR	English Distinction	formal comparison	whole word	keep	more	formal comparison	Bookish; builds comparatives	separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	вверх	x^0=e-nyOG	English Distinction	in an upward direction	whole word	keep	up / upwards	in an upward direction		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	вдвое	xfEkr~mSFU	English Distinction	by a factor of two	whole word	keep	twice as / in half	by a factor of two		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	весьма	BZ7elE+x~:	English Distinction	formal	whole word	keep	very / highly	formal		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	вниз	J&N(;@:_])	English Distinction	going down	whole word	keep	down / downwards / downstairs	going down		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	внизу	mxR)<UB-BS	English Distinction	being down there	whole word	keep	below / downstairs	being down there		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	вплотную	8iwYd?C>Z	English Distinction	getting down to it	whole word	keep	right up close / in earnest	getting down to it		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	вполне	bo0#q)S6k^	English Distinction	to a satisfying degree	whole word	keep	quite / fully / entirely	to a satisfying degree		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	вправе	vqClNIy[(<	Translation	to	whole word	keep	be entitled (to)		Predicative: вы вправе отказаться	grammar marker	
+immutable	Russian - Immutable Words (Ellis Version)	впрочем	q<7owF<0<{	English Distinction	on second thought	whole word	keep	however / then again	on second thought		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	всерьёз	wYb{:uW!at	English Distinction	not joking	whole word	keep	seriously / in earnest	not joking		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	всюду	OP?_s3x%P[	English Distinction	a touch bookish	whole word	keep	everywhere	a touch bookish		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	где-нибудь	uIupm_#vw;	English Distinction	any place at all	whole word	keep	somewhere / anywhere	any place at all		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	где-то	zNE&FNv3]|	English Distinction	a place I can't name	whole word	keep	somewhere<br>about / roughly	a place I can't name		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	гораздо	iL`bb~/:Rg	English Distinction	very much more	whole word	keep	much / far	very much more	With comparatives: гораздо лучше	separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	даром	PX^mg@$[gR	English Distinction	for no return	whole word	keep	for free<br>in vain	for no return		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	еле	HsBC@ga~`A	English Distinction	with great effort	whole word	keep	barely / hardly	with great effort		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	заново	AMbQ=Fj?*r	English Distinction	redo from scratch	whole word	keep	anew / all over again	redo from scratch		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	заодно	ly4y~-W~er	English Distinction	on the same trip	whole word	keep	while you're at it / at the same time	on the same trip		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	зачем-то	bK0ix77}VL	English Distinction	unknown purpose	whole word	keep	for some reason	unknown purpose		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	как-нибудь	B?g:TI~A#	English Distinction	any old way	whole word	keep	somehow / some day	any old way		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	как-то	K6C3/o-WFE	Translation	in the past	sense 2 of 3	keep-inline	somehow<br>once (in the past)<br>somewhat	casual and vague		qualifies one sense of several	
+immutable	Russian - Immutable Words (Ellis Version)	как-то	K6C3/o-WFE	English Distinction	casual and vague	whole word	keep	somehow<br>once (in the past)<br>somewhat	casual and vague		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	когда-нибудь	lWz$UDw*}L	English Distinction	at any time	whole word	keep	some day / ever	at any time		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	когда-то	w=p5Z&Ab82	English Distinction	long ago	whole word	keep	once / at one time	long ago		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	куда-нибудь	LM9Zz*h0FY	English Distinction	to any place	whole word	keep	somewhere / anywhere	to any place	Answers куда	separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	куда-то	m&Hr|B6v8p	English Distinction	to a place I can't name	whole word	keep	somewhere	to a place I can't name	Answers куда	separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	наверх	ByeRq*3yi9	English Distinction	going up to the top	whole word	keep	up / upstairs	going up to the top	Answers куда	separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	наверху	hn/ZIbIopj	English Distinction	being up there	whole word	keep	above / upstairs	being up there	Answers где	separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	наедине	qCwFj(qmli	Translation	with	sense 1 of 2	keep-inline	alone (with) / in private			qualifies one sense of several	
+immutable	Russian - Immutable Words (Ellis Version)	намного	JYY8k.O)AE	English Distinction	by a wide margin	whole word	keep	much / far	by a wide margin	With comparatives: намного лучше	separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	наружу	C}8qe8JgT2	English Distinction	going out	whole word	keep	out / outside	going out	Answers куда	separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	насколько	PYLXr_&$%D	English Distinction	to what degree	whole word	keep	how much / as far as	to what degree		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	настолько	jL-P5D6=q.	English Distinction	to such a degree	whole word	keep	so / so much / to such an extent	to such a degree		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	негде	B((Zso$zg;	Translation	to	whole word	keep	there is nowhere (to)	no place to be	Predicative + infinitive: негде сесть	grammar marker	
+immutable	Russian - Immutable Words (Ellis Version)	негде	B((Zso$zg;	English Distinction	no place to be	whole word	keep	there is nowhere (to)	no place to be	Predicative + infinitive: негде сесть	separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	некуда	t9`sljr}KZ	Translation	to go	whole word	keep-inline	there is nowhere (to go)	no place to go	Predicative + infinitive: некуда идти	kept in the English by user approval	
+immutable	Russian - Immutable Words (Ellis Version)	некуда	t9`sljr}KZ	English Distinction	no place to go	whole word	keep	there is nowhere (to go)	no place to go	Predicative + infinitive: некуда идти	separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	неподалёку	t]2LBA1IFK	English Distinction	a short way off	whole word	keep	not far away / nearby	a short way off		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	несколько	s$_%l?RYd<	English Distinction	formal	whole word	keep	somewhat / slightly	formal	As "several" it's a numeral that declines	separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	нечего	M<lfLb.Kca	Translation	to	whole word	keep	there is nothing (to)		Predicative + infinitive: нечего делать	grammar marker	
+immutable	Russian - Immutable Words (Ellis Version)	никуда	A*CMfp3ufU	English Distinction	to no place	whole word	keep	nowhere	to no place	Answers куда; needs не	separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	опять-таки	z(i8:p=PyO	English Distinction	and once more	whole word	keep	then again / what's more	and once more	Colloquial	separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	отчего	mVJ.&r0_-K	English Distinction	what led to it	whole word	keep	why	what led to it		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	поначалу	ep^[3H[Z:;	English Distinction	until things changed	whole word	keep	at first	until things changed		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	пополам	F<*IX@p+@_	English Distinction	into two equal parts	whole word	keep	in half / fifty-fifty	into two equal parts		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	пора	QWHvqQ[-a~	Translation	to	whole word	keep	it's time (to)		Predicative: пора идти	grammar marker	
+immutable	Russian - Immutable Words (Ellis Version)	почему-то	cKC{5wC#By	English Distinction	unknown cause	whole word	keep	for some reason	unknown cause		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	прежде (adverb)	uCVxB6est7	Russian Distinction	adverb	whole word	keep	before / previously / formerly			shares the bare headword with прежде (preposition)	
+immutable	Russian - Immutable Words (Ellis Version)	разом	G5G^hk6VZh	English Distinction	all in one go	whole word	keep	all at once / at the same time	all in one go		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	рядом	B$~1fP}`o.	English Distinction	right next to	whole word	keep	next to / nearby / side by side	right next to		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	слегка	I,d;G-<_H,	English Distinction	a little bit	whole word	keep	slightly / lightly	a little bit		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	снаружи	lv)&/%NC~m	English Distinction	on the outer side	whole word	keep	outside / from the outside	on the outer side	Answers где	separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	сплошь	,K-U#9.$H	English Distinction	all over, no gaps	whole word	keep	completely / all over<br>nothing but	all over, no gaps		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	столько	o^e`_#=:aU	English Distinction	this many	whole word	keep	so much / so many	this many		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	чересчур	QAP4cQ<w7@	English Distinction	way over the top	whole word	keep	too / too much	way over the top		separates a collision	
+immutable	Russian - Immutable Words (Ellis Version)	чуть	u+Gny||TY?	English Distinction	by a tiny amount	whole word	keep	slightly / barely<br>almost	by a tiny amount	чуть не = almost	separates a collision	
