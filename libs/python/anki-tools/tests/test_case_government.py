@@ -7,7 +7,12 @@ from pathlib import Path
 
 import pytest
 
-from anki_tools import case_field, immutable_words_plan, mutable_words_plan
+from anki_tools import (
+    case_field,
+    immutable_words_plan,
+    mutable_words_plan,
+    variant_pairs,
+)
 
 PACKAGE_ROOT = Path(__file__).resolve().parent.parent
 DATA = PACKAGE_ROOT / "anki_tools" / "data"
@@ -56,8 +61,13 @@ def adverb_rows():
 
 
 @pytest.fixture(scope="module")
-def universe(immutable_rows, verb_rows, adverb_rows):
-    return {row.guid for row in [*immutable_rows, *verb_rows, *adverb_rows]}
+def pair_rows():
+    return variant_pairs.load_pairs()
+
+
+@pytest.fixture(scope="module")
+def universe(immutable_rows, verb_rows, adverb_rows, pair_rows):
+    return {row.guid for row in [*immutable_rows, *verb_rows, *adverb_rows, *pair_rows]}
 
 
 def missing_from(table_rows, universe_guids):
@@ -117,10 +127,11 @@ def gloss_lines(english: str) -> set[str]:
 
 
 def test_every_meaning_key_matches_an_actual_gloss_line(
-    table, immutable_rows, verb_rows
+    table, immutable_rows, verb_rows, pair_rows
 ):
     english = {row.guid: row.english for row in immutable_rows}
     english.update({row.guid: row.translation for row in verb_rows})
+    english.update({row.guid: row.translation for row in pair_rows})
     mapped = [row for row in table if row["meaning->case"].strip()]
     assert mapped
     for row in mapped:
@@ -144,7 +155,7 @@ def test_a_key_that_is_not_a_gloss_line_is_caught():
         ("на", {"Accusative", "Prepositional"}),
         ("с / со", {"Instrumental", "Genitive"}),
         ("за", {"Accusative", "Instrumental"}),
-        ("под", {"Accusative", "Instrumental"}),
+        ("под / подо", {"Accusative", "Instrumental"}),
         ("для", {"Genitive"}),
         ("вопреки", {"Dative"}),
         ("нет", {"Genitive"}),
@@ -159,10 +170,10 @@ def test_known_governors(table, headword, cases):
     assert set(row["cases"].split(", ")) == cases
 
 
-def test_every_preposition_governs_a_case(table, immutable_rows):
+def test_every_preposition_governs_a_case(table, immutable_rows, pair_rows):
     preposition_guids = {
         row.guid for row in immutable_rows if row.pos == "Prepositions"
-    }
+    } | {row.guid for row in pair_rows if row.deck_leaf == "Prepositions"}
     by_guid = {row["guid"]: row for row in table}
     assert preposition_guids
     for guid in preposition_guids:
@@ -225,8 +236,8 @@ def test_hit_counts_match_the_planning_probe(routing):
         )
 
     english = sum(1 for r in routing if r["field"] == "English Distinction")
-    assert english == 28
-    assert count("Additional Info", True) == 10
+    assert english == 22
+    assert count("Additional Info", True) == 7
     assert count("Additional Info", False) == 33
     assert sum(1 for r in routing if r["field"] == "Case / Preposition") == 43
 

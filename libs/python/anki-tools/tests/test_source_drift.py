@@ -83,7 +83,7 @@ def test_managed_note_types_are_immutable_variant_pairs_and_six_mutable_names():
 def test_expected_notes_covers_every_source_row(tmp_path):
     text, source_dir = write_source(tmp_path)
     result = sd.expected_notes(text, source_dir)
-    assert len(result) == len(iwp.parse_word_list(text)) + 4 + 6 * FIXTURE_ROWS
+    assert len(result) == len(iwp.parse_word_list(text)) + 21 + 6 * FIXTURE_ROWS
     assert len({e.guid for e in result}) == len(result)
     by_type = {e.note_type for e in result}
     assert by_type == set(sd.managed_note_types())

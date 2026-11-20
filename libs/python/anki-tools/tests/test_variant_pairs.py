@@ -5,19 +5,36 @@ from anki_tools import immutable_words_plan, variant_pairs
 SOURCE = Path(__file__).parent / "data" / "source-word-list.md"
 
 
-def test_the_four_pairs():
+def test_the_pairs():
     pairs = variant_pairs.load_pairs()
     assert [(p.deck_leaf, p.headword) for p in pairs] == [
         ("Particles", "пусть / пускай"),
         ("Conjunctions", "пусть / пускай"),
         ("Conjunctions", "чтобы / чтоб"),
         ("Particles", "мол / дескать"),
+        ("Prepositions", "в / во"),
+        ("Prepositions", "с / со"),
+        ("Prepositions", "к / ко"),
+        ("Prepositions", "о / об"),
+        ("Prepositions", "без / безо"),
+        ("Prepositions", "из / изо"),
+        ("Prepositions", "от / ото"),
+        ("Prepositions", "под / подо"),
+        ("Prepositions", "над / надо"),
+        ("Prepositions", "перед / передо"),
+        ("Particles", "бы / б"),
+        ("Particles", "же / ж"),
+        ("Particles", "ли / ль"),
+        ("Conjunctions", "или / иль"),
+        ("Particles", "неужели / неужто"),
+        ("Base Adverbs", "наверное / наверно"),
+        ("Particles", "давай / давайте"),
     ]
 
 
 def test_guids_are_unique():
     guids = [p.guid for p in variant_pairs.load_pairs()]
-    assert len(set(guids)) == len(guids) == 4
+    assert len(set(guids)) == len(guids) == 21
 
 
 def test_fields_follow_field_names():
@@ -25,20 +42,25 @@ def test_fields_follow_field_names():
         fields = dict(zip(variant_pairs.FIELD_NAMES, pair.fields(), strict=True))
         assert fields["Russian"] == pair.russian
         assert fields["Variant"] == pair.variant
-        assert fields["Part of Speech"] in {"particle", "conjunction"}
+        assert fields["Part of Speech"] in {
+            "particle",
+            "conjunction",
+            "preposition",
+            "adverb",
+        }
 
 
-def test_audio_reuses_existing_files():
+def test_each_word_has_its_own_audio():
     by_key = {(p.deck_leaf, p.russian): p for p in variant_pairs.load_pairs()}
     fields = dict(
         zip(variant_pairs.FIELD_NAMES, by_key[("Particles", "пусть")].fields())
     )
-    assert 'src="пусть-пускай_f1.mp3"' in fields["Audio"]
+    assert 'src="пусть_f1.mp3"' in fields["Audio"]
     assert 'src="пускай_f1.mp3"' in fields["Variant Audio"]
     fields = dict(
         zip(variant_pairs.FIELD_NAMES, by_key[("Conjunctions", "чтобы")].fields())
     )
-    assert 'src="чтобы-чтоб_m2.mp3"' in fields["Audio"]
+    assert 'src="чтобы_m2.mp3"' in fields["Audio"]
     assert 'src="чтоб_m2.mp3"' in fields["Variant Audio"]
 
 
@@ -49,7 +71,19 @@ def test_pair_words_left_the_immutable_list():
             SOURCE.read_text(encoding="utf-8")
         )
     }
-    for gone in ("пусть / пускай", "пускай", "чтобы / чтоб", "мол", "дескать"):
+    for gone in (
+        "пусть / пускай",
+        "пускай",
+        "чтобы / чтоб",
+        "мол",
+        "дескать",
+        "в / во",
+        "о / об",
+        "без",
+        "бы",
+        "давай / давайте",
+        "наверное",
+    ):
         assert gone not in words
 
 
@@ -90,3 +124,33 @@ def test_russian_backs_show_only_the_other_word_under_a_heading():
         assert f'class="pair-word">{shown}' not in back
         assert "display: none" not in back
     assert "Alternative Russian:" not in variant_pairs.TEMPLATES["English"][1]
+
+
+def test_one_consonant_words_speak_a_phrase():
+    by_key = {(p.deck_leaf, p.russian): p for p in variant_pairs.load_pairs()}
+    fields = dict(
+        zip(variant_pairs.FIELD_NAMES, by_key[("Prepositions", "в")].fields())
+    )
+    assert 'src="в-дом_f1.mp3"' in fields["Audio"]
+    assert 'src="во_f1.mp3"' in fields["Variant Audio"]
+    fields = dict(zip(variant_pairs.FIELD_NAMES, by_key[("Particles", "бы")].fields()))
+    assert 'src="бы_m1.mp3"' in fields["Audio"]
+    assert 'src="сказал-б_m1.mp3"' in fields["Variant Audio"]
+
+
+def test_prepositions_carry_their_case():
+    by_key = {(p.deck_leaf, p.russian): p for p in variant_pairs.load_pairs()}
+    fields = dict(
+        zip(variant_pairs.FIELD_NAMES, by_key[("Prepositions", "в")].fields())
+    )
+    assert fields["Case"] == "Accusative, Prepositional"
+    assert 'class="case-text case-accusative"' in fields["Translation"]
+    fields = dict(zip(variant_pairs.FIELD_NAMES, by_key[("Particles", "же")].fields()))
+    assert fields["Case"] == ""
+
+
+def test_case_pills_sit_where_the_immutable_cards_put_them():
+    for name, (front, back) in variant_pairs.TEMPLATES.items():
+        on_front = name == "English"
+        assert ("case-pills" in front) == on_front, name
+        assert ("case-pills" in back) == (not on_front), name

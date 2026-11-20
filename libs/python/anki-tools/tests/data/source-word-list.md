@@ -11,65 +11,55 @@ Prepositions never change themselves, though they dictate the case of the noun t
 
 | Rank | Russian | English | Info | Examples |
 |---|---|---|---|---|
-| 1 | в / во | in / at (where)<br>into (where/what) | Accusative for motion in; Prepositional for location | — |
-| 2 | на | on / at (where)<br>onto (where/what) | Accusative for motion onto; Prepositional for location | — |
-| 3 | с / со | with (whom/what)<br>from / off of (where/what)<div>since (when)</div> | Instrumental for "with"; Genitive for "from / since" | — |
-| 4 | по | along / around (where)<br>according to (what/whom) | Dative | — |
-| 5 | к / ко | to / toward (whom/what/where) | Dative — always | — |
-| 6 | из | from (where)<br>out of (what/where) | Genitive | — |
-| 7 | у | by / at (where/whom)<br>to have (possessed by whom) | Genitive | — |
-| 8 | за | behind (where/whom/what)<br>for (whom/what) | Accusative for motion; Instrumental for location | — |
-| 9 | от | from / away from (whom/what/where) | Genitive | — |
-| 10 | о / об | about (whom/what) | Prepositional | — |
-| 11 | до | up to (where/what)<br>until / before (when) | Genitive | — |
-| 12 | без | without (whom/what) | Genitive | — |
-| 13 | под | under / below (where/what/whom) | Accusative for motion; Instrumental for location | — |
-| 14 | над | above / over (where/what/whom) | Instrumental | — |
-| 15 | перед | in front of / before (where/whom/what/when) | Instrumental | — |
-| 16 | при | in the presence of (whom)<br>attached to (what/where) | Prepositional | — |
-| 17 | через | through / across (what/where)<br>in (when/time) | Accusative | — |
-| 18 | после | after (whom/what/when) | Genitive | — |
-| 19 | кроме | except / besides (whom/what) | Genitive | — |
-| 20 | между | between / among (whom/what) | Instrumental | — |
-| 21 | против | against / opposite (whom/what/where) | Genitive | — |
-| 22 | вокруг | around (whom/what/where) | Genitive | — |
-| 23 | вместо | instead of (whom/what) | Genitive | — |
-| 24 | из-за | because of (whom/what)<br>from behind (what/where) | Genitive | — |
-| 25 | около | near / around (whom/what/where/when) | Genitive | — |
-| 26 | возле | by / near (whom/what/where) | Genitive | — |
-| 27 | вдоль | along (what/where) | Genitive | — |
-| 28 | сквозь | through (what/where) | Accusative | — |
-| 29 | среди | among (whom/what) | Genitive | — |
-| 30 | внутри | inside (what/where) | Genitive | — |
-| 31 | вне | outside of (what/where) | Genitive | — |
-| 32 | мимо | past / by (whom/what/where) | Genitive | — |
-| 33 | ради | for the sake of (whom/what) | Genitive | — |
-| 34 | насчёт | about / regarding (whom/what) | Genitive | — |
-| 35 | из-под | from under (what/where) | Genitive | — |
-| 36 | вопреки | despite / contrary to (what/whom) | Dative | — |
-| 37 | благодаря | thanks to (whom/what) | Dative | — |
-| 38 | согласно (preposition) | according to (what/whom) | Dative | — |
-| 39 | навстречу | towards (whom/what) | Dative | — |
-| 40 | позади | behind (whom/what/where) | Genitive | — |
-| 41 | посреди | in the middle of (what/where) | Genitive | — |
-| 42 | поверх | over / on top of (what/where) | Genitive | — |
-| 43 | ввиду | in view of (what) | Genitive | — |
-| 44 | для | for / for the sake of (whom/what) | Genitive — always | — |
-| 45 | про | about (whom/what) | Accusative; everyday alternative to о | — |
-| 46 | помимо | besides / apart from (whom/what) | Genitive | — |
-| 47 | спустя | later / after (how long) | Accusative; often after the time phrase | — |
-| 48 | включая | including (whom/what) | Accusative | — |
-| 49 | относительно | regarding / concerning (whom/what) | Genitive | — |
-| 50 | путём | by means of (what) | Genitive | — |
-| 51 | напротив | opposite (whom/what/where)<br>on the contrary | Genitive | — |
-| 52 | накануне | on the eve of (what)<br>the day before | Genitive | — |
-| 53 | вследствие | as a result of (what) | Genitive; formal | — |
-| 54 | вблизи | near (whom/what/where)<br>nearby | Genitive | — |
-| 55 | впереди | ahead of / in front of (whom/what)<br>ahead | Genitive | — |
-| 56 | свыше | over / more than (how many) | Genitive | — |
-| 57 | подобно | like / just as (whom/what) | Dative | — |
-| 58 | посредством | by means of (what) | Genitive; formal | — |
-| 59 | прежде (preposition) | before (what) | Genitive | — |
+| 1 | на | on / at (where)<br>onto (where/what) | Accusative for motion onto; Prepositional for location | — |
+| 2 | по | along / around (where)<br>according to (what/whom) | Dative | — |
+| 3 | у | by / at (where/whom)<br>to have (possessed by whom) | Genitive | — |
+| 4 | за | behind (where/whom/what)<br>for (whom/what) | Accusative for motion; Instrumental for location | — |
+| 5 | до | up to (where/what)<br>until / before (when) | Genitive | — |
+| 6 | при | in the presence of (whom)<br>attached to (what/where) | Prepositional | — |
+| 7 | через | through / across (what/where)<br>in (when/time) | Accusative | — |
+| 8 | после | after (whom/what/when) | Genitive | — |
+| 9 | кроме | except / besides (whom/what) | Genitive | — |
+| 10 | между | between / among (whom/what) | Instrumental | — |
+| 11 | против | against / opposite (whom/what/where) | Genitive | — |
+| 12 | вокруг | around (whom/what/where) | Genitive | — |
+| 13 | вместо | instead of (whom/what) | Genitive | — |
+| 14 | из-за | because of (whom/what)<br>from behind (what/where) | Genitive | — |
+| 15 | около | near / around (whom/what/where/when) | Genitive | — |
+| 16 | возле | by / near (whom/what/where) | Genitive | — |
+| 17 | вдоль | along (what/where) | Genitive | — |
+| 18 | сквозь | through (what/where) | Accusative | — |
+| 19 | среди | among (whom/what) | Genitive | — |
+| 20 | внутри | inside (what/where) | Genitive | — |
+| 21 | вне | outside of (what/where) | Genitive | — |
+| 22 | мимо | past / by (whom/what/where) | Genitive | — |
+| 23 | ради | for the sake of (whom/what) | Genitive | — |
+| 24 | насчёт | about / regarding (whom/what) | Genitive | — |
+| 25 | из-под | from under (what/where) | Genitive | — |
+| 26 | вопреки | despite / contrary to (what/whom) | Dative | — |
+| 27 | благодаря | thanks to (whom/what) | Dative | — |
+| 28 | согласно (preposition) | according to (what/whom) | Dative | — |
+| 29 | навстречу | towards (whom/what) | Dative | — |
+| 30 | позади | behind (whom/what/where) | Genitive | — |
+| 31 | посреди | in the middle of (what/where) | Genitive | — |
+| 32 | поверх | over / on top of (what/where) | Genitive | — |
+| 33 | ввиду | in view of (what) | Genitive | — |
+| 34 | для | for / for the sake of (whom/what) | Genitive — always | — |
+| 35 | про | about (whom/what) | Accusative; everyday alternative to о | — |
+| 36 | помимо | besides / apart from (whom/what) | Genitive | — |
+| 37 | спустя | later / after (how long) | Accusative; often after the time phrase | — |
+| 38 | включая | including (whom/what) | Accusative | — |
+| 39 | относительно | regarding / concerning (whom/what) | Genitive | — |
+| 40 | путём | by means of (what) | Genitive | — |
+| 41 | напротив | opposite (whom/what/where)<br>on the contrary | Genitive | — |
+| 42 | накануне | on the eve of (what)<br>the day before | Genitive | — |
+| 43 | вследствие | as a result of (what) | Genitive; formal | — |
+| 44 | вблизи | near (whom/what/where)<br>nearby | Genitive | — |
+| 45 | впереди | ahead of / in front of (whom/what)<br>ahead | Genitive | — |
+| 46 | свыше | over / more than (how many) | Genitive | — |
+| 47 | подобно | like / just as (whom/what) | Dative | — |
+| 48 | посредством | by means of (what) | Genitive; formal | — |
+| 49 | прежде (preposition) | before (what) | Genitive | — |
 
 ### Conjunctions (Союзы)
 Used to connect clauses, sentences, or concepts.
@@ -82,35 +72,34 @@ Used to connect clauses, sentences, or concepts.
 | 4 | но | but | — | — |
 | 5 | как (conjunction) | like / as | — | белый как снег |
 | 6 | если | if | Subordinating — often paired with то: если..., то... | — |
-| 7 | или | or | Coordinating — comma only when repeated: или..., или... | — |
-| 9 | когда (conjunction) | when / while / as | — | Когда я пришёл, он спал |
-| 10 | хотя | although | Subordinating — comma before it | — |
-| 11 | потому что | because | States the cause after the result | — |
-| 12 | так как | since / as | States the cause first; more formal than потому что | — |
-| 13 | то есть | that is | — | — |
-| 14 | однако | however | Contrast, like "however" — often sentence-initial | — |
-| 15 | поэтому | therefore | Introduces the result — "that's why" | — |
-| 16 | словно / будто | as if / like | — | — |
-| 17 | зато | but on the other hand | But on the plus side | — |
-| 18 | тоже / также | also / too | — | — |
-| 19 | либо | either / or | Bookish alternative to или | — |
-| 20 | пока (conjunction) | while / until (for as long as) | пока не means "until" | — |
-| 21 | чем (conjunction) | than | Comparative — comma before it | — |
-| 22 | ни... ни... | neither... nor... | Needs a negated verb in the same clause | — |
-| 23 | то... то... | now (this)… now (that)… | — | — |
-| 24 | как только | as soon as | "The moment that" — comma before it | — |
-| 27 | с тех пор, как | since | — | — |
-| 28 | до того, как | before | — | — |
-| 29 | перед тем, как | just before | — | — |
-| 31 | причём | moreover / and what's more | Adds a pointed extra detail | — |
-| 32 | притом | besides | Close to причём, more bookish | — |
-| 33 | как будто | as if / as though | — | — |
-| 34 | поскольку | since / because | Comma before it | — |
-| 35 | итак | so / thus | Sums up or moves on; comma after it | — |
-| 36 | хоть (conjunction) | although / even if | Colloquial form of хотя | — |
-| 37 | то (conjunction) | then | Second half of если…, то… | — |
-| 38 | ибо | for / because | Comma before it | — |
-| 39 | плюс | plus / and besides | Colloquial | — |
+| 7 | когда (conjunction) | when / while / as | — | Когда я пришёл, он спал |
+| 8 | хотя | although | Subordinating — comma before it | — |
+| 9 | потому что | because | States the cause after the result | — |
+| 10 | так как | since / as | States the cause first; more formal than потому что | — |
+| 11 | то есть | that is | — | — |
+| 12 | однако | however | Contrast, like "however" — often sentence-initial | — |
+| 13 | поэтому | therefore | Introduces the result — "that's why" | — |
+| 14 | словно / будто | as if / like | — | — |
+| 15 | зато | but on the other hand | But on the plus side | — |
+| 16 | тоже / также | also / too | — | — |
+| 17 | либо | either / or | Bookish alternative to или | — |
+| 18 | пока (conjunction) | while / until (for as long as) | пока не means "until" | — |
+| 19 | чем (conjunction) | than | Comparative — comma before it | — |
+| 20 | ни... ни... | neither... nor... | Needs a negated verb in the same clause | — |
+| 21 | то... то... | now (this)… now (that)… | — | — |
+| 22 | как только | as soon as | "The moment that" — comma before it | — |
+| 23 | с тех пор, как | since | — | — |
+| 24 | до того, как | before | — | — |
+| 25 | перед тем, как | just before | — | — |
+| 26 | причём | moreover / and what's more | Adds a pointed extra detail | — |
+| 27 | притом | besides | Close to причём, more bookish | — |
+| 28 | как будто | as if / as though | — | — |
+| 29 | поскольку | since / because | Comma before it | — |
+| 30 | итак | so / thus | Sums up or moves on; comma after it | — |
+| 31 | хоть (conjunction) | although / even if | Colloquial form of хотя | — |
+| 32 | то (conjunction) | then | Second half of если…, то… | — |
+| 33 | ибо | for / because | Comma before it | — |
+| 34 | плюс | plus / and besides | Colloquial | — |
 
 ### Particles (Частицы)
 Short words that add grammatical function, emotion, or tone to speech.
@@ -118,51 +107,46 @@ Short words that add grammatical function, emotion, or tone to speech.
 | Rank | Russian | English | Info | Examples |
 |---|---|---|---|---|
 | 1 | не | not / don’t | Negates the word directly after it | — |
-| 2 | же | but / then / after all | — | — |
-| 3 | бы | would | — | — |
-| 4 | вот | here (is) / there (is) | — | — |
-| 5 | только | only | — | — |
-| 6 | даже | even | Marks something unexpected | — |
-| 7 | ли | whether / if | — | — |
-| 8 | ни | neither / not a single / not one | Reinforces a negation; needs не or нет in the clause | — |
-| 9 | ну | well / come on (urging) | Conversational opener — urging, hesitating or softening | — |
-| 10 | ведь | you see / after all | — | — |
-| 11 | разве | really? | — | — |
-| 12 | неужели | is it possible? | — | — |
-| 13 | именно | exactly / precisely | Pinpoints exactly which one | — |
-| 14 | просто (particle) | simply / just | Plays it down — "it's just that..." | — |
-| 16 | всё-таки | still / nevertheless | Concessive | — |
-| 17 | вон | over there | — | — |
-| 18 | уж | really / indeed | — | — |
-| 19 | да | yes | — | — |
-| 20 | нет | no | Answers "no" | — |
-| 21 | лишь | merely / only | Similar to только, but more bookish and less flexible | — |
-| 22 | всё | still / all / constantly (keeps on) | Continuative — "keeps on, still" | — |
-| 25 | таки | after all / nevertheless | often hyphenated: всё-таки | — |
-| 26 | пожалуй | perhaps / I suppose | Hedges — "I suppose, perhaps" | — |
-| 27 | будто | as if / as though | — | — |
-| 30 | во | wow / look at that | Very colloquial exclamation | — |
-| 31 | ну и | what a... | e.g., ну и день = what a day | — |
-| 32 | здравствуйте | hello | Formal/plural greeting; lit. imperative "be healthy" | — |
-| 33 | спасибо | thank you | — | — |
-| 34 | пожалуйста | please / you're welcome / here you go |  | — |
-| 35 | извините | excuse me / sorry | Imperative pl./formal of извинить; use when you are at fault | — |
-| 36 | простите | excuse me / forgive me | Imperative pl./formal of простить; also used to get attention | — |
-| 37 | привет | hello / hi | Informal only; do not use with strangers or superiors | — |
-| 38 | конечно | of course / certainly | Written with ч but pronounced [ш]: конешно | — |
-| 39 | ладно | OK / all right | Signals agreement or resignation ("fine, whatever") | — |
-| 40 | ничего | nothing / it's OK / no problem | Also a stand-alone reassuring reply | — |
-| 41 | поздравляю | congratulations! | 1st-person present of поздравлять; often + с (с днём рождения!) | — |
-| 42 | помогите | help! | Imperative pl./formal of помочь; shouted in an emergency | — |
-| 43 | это | this (is) / that (is) / it (is) | Subject-less linking word: Э́то кни́га = This is a book. Invariable, unlike the pronoun э́тот (э́та, э́то, э́ти) which agrees with its noun | Это моя сестра |
-| 44 | так (particle) | well then / alright | Colloquial — close to значит or хорошо; set off by a comma | Так, начнём |
-| 45 | аж | even / as much as | Colloquial | — |
-| 46 | вообще-то | actually / as a matter of fact | Colloquial | — |
-| 47 | всего (particle) | only / just<br>in total | With numbers | — |
-| 48 | давай / давайте | let's | Imperative of давать; давайте is plural/formal | — |
-| 49 | хоть (particle) | at least / even | — | — |
-| 50 | угодно | -ever / any … at all | After кто/что/где/когда: что угодно = anything at all | — |
-| 51 | якобы | supposedly / allegedly | Signals doubt about someone's claim | — |
+| 2 | вот | here (is) / there (is) | — | — |
+| 3 | только | only | — | — |
+| 4 | даже | even | Marks something unexpected | — |
+| 5 | ни | neither / not a single / not one | Reinforces a negation; needs не or нет in the clause | — |
+| 6 | ну | well / come on (urging) | Conversational opener — urging, hesitating or softening | — |
+| 7 | ведь | you see / after all | — | — |
+| 8 | разве | really? | — | — |
+| 9 | именно | exactly / precisely | Pinpoints exactly which one | — |
+| 10 | просто (particle) | simply / just | Plays it down — "it's just that..." | — |
+| 11 | всё-таки | still / nevertheless | Concessive | — |
+| 12 | вон | over there | — | — |
+| 13 | уж | really / indeed | — | — |
+| 14 | да | yes | — | — |
+| 15 | нет | no | Answers "no" | — |
+| 16 | лишь | merely / only | Similar to только, but more bookish and less flexible | — |
+| 17 | всё | still / all / constantly (keeps on) | Continuative — "keeps on, still" | — |
+| 18 | таки | after all / nevertheless | often hyphenated: всё-таки | — |
+| 19 | пожалуй | perhaps / I suppose | Hedges — "I suppose, perhaps" | — |
+| 20 | будто | as if / as though | — | — |
+| 21 | во | wow / look at that | Very colloquial exclamation | — |
+| 22 | ну и | what a... | e.g., ну и день = what a day | — |
+| 23 | здравствуйте | hello | Formal/plural greeting; lit. imperative "be healthy" | — |
+| 24 | спасибо | thank you | — | — |
+| 25 | пожалуйста | please / you're welcome / here you go |  | — |
+| 26 | извините | excuse me / sorry | Imperative pl./formal of извинить; use when you are at fault | — |
+| 27 | простите | excuse me / forgive me | Imperative pl./formal of простить; also used to get attention | — |
+| 28 | привет | hello / hi | Informal only; do not use with strangers or superiors | — |
+| 29 | конечно | of course / certainly | Written with ч but pronounced [ш]: конешно | — |
+| 30 | ладно | OK / all right | Signals agreement or resignation ("fine, whatever") | — |
+| 31 | ничего | nothing / it's OK / no problem | Also a stand-alone reassuring reply | — |
+| 32 | поздравляю | congratulations! | 1st-person present of поздравлять; often + с (с днём рождения!) | — |
+| 33 | помогите | help! | Imperative pl./formal of помочь; shouted in an emergency | — |
+| 34 | это | this (is) / that (is) / it (is) | Subject-less linking word: Э́то кни́га = This is a book. Invariable, unlike the pronoun э́тот (э́та, э́то, э́ти) which agrees with its noun | Это моя сестра |
+| 35 | так (particle) | well then / alright | Colloquial — close to значит or хорошо; set off by a comma | Так, начнём |
+| 36 | аж | even / as much as | Colloquial | — |
+| 37 | вообще-то | actually / as a matter of fact | Colloquial | — |
+| 38 | всего (particle) | only / just<br>in total | With numbers | — |
+| 39 | хоть (particle) | at least / even | — | — |
+| 40 | угодно | -ever / any … at all | After кто/что/где/когда: что угодно = anything at all | — |
+| 41 | якобы | supposedly / allegedly | Signals doubt about someone's claim | — |
 
 ### Indeclinable Nouns (Несклоняемые существительные)
 Foreign loan words that are frozen in their base form.
@@ -341,68 +325,67 @@ A lone em dash there means "no extra info" and renders as nothing.
 | 118 | куда-нибудь | somewhere / anywhere | Answers куда | — |
 | 119 | куда-то | somewhere | Answers куда | — |
 | 120 | менее | less | Bookish; builds comparatives | — |
-| 121 | наверное | probably | — | — |
-| 122 | наверх | up / upstairs | Answers куда | — |
-| 123 | наверху | above / upstairs | Answers где | — |
-| 124 | навсегда | forever / for good | — | — |
-| 125 | надолго | for a long time | — | — |
-| 126 | наедине | alone (with) / in private | — | — |
-| 127 | наиболее | the most | Bookish; builds superlatives | — |
-| 128 | налицо | evident / on hand | Predicative | — |
-| 129 | намного | much / far | With comparatives: намного лучше | — |
-| 130 | наполовину | half / halfway | — | — |
-| 131 | напоследок | at the end / before parting | — | — |
-| 132 | например | for example | — | — |
-| 133 | напрямую | directly / straight | — | — |
-| 134 | наружу | out / outside | Answers куда | — |
-| 135 | насквозь | right through / through and through | — | — |
-| 136 | насколько | how much / as far as | — | — |
-| 137 | настолько | so / so much / to such an extent | — | — |
-| 138 | наутро | the next morning | — | — |
-| 139 | негде | there is nowhere (to) | Predicative + infinitive: негде сесть | — |
-| 140 | недаром | not for nothing / with good reason | — | — |
-| 141 | некуда | there is nowhere (to go) | Predicative + infinitive: некуда идти | — |
-| 142 | нельзя | it is forbidden / one cannot | Impersonal predicate; opposite of можно | — |
-| 143 | ненадолго | for a short while | — | — |
-| 144 | неподалёку | not far away / nearby | — | — |
-| 145 | несколько | somewhat / slightly | As "several" it's a numeral that declines | — |
-| 146 | нечего | there is nothing (to) | Predicative + infinitive: нечего делать | — |
-| 147 | никак | no way / by no means | — | — |
-| 148 | никуда | nowhere | Answers куда; needs не | — |
-| 149 | нисколько | not at all / not in the least | — | — |
-| 150 | ничуть | not a bit / not in the slightest | — | — |
-| 151 | опять-таки | then again / what's more | Colloquial | — |
-| 152 | откуда-то | from somewhere | — | — |
-| 153 | оттого | that's why / because of that | оттого что = because | — |
-| 154 | отчасти | partly | — | — |
-| 155 | отчего | why | — | — |
-| 156 | подолгу | for long periods | — | — |
-| 157 | подряд | in a row / running | — | — |
-| 158 | поначалу | at first | — | — |
-| 159 | понемногу | little by little | — | — |
-| 160 | пополам | in half / fifty-fifty | — | — |
-| 161 | попросту | simply / plainly | — | — |
-| 162 | пора | it's time (to) | Predicative: пора идти | — |
-| 163 | по-своему | in one's own way | — | — |
-| 164 | почему-то | for some reason | — | — |
-| 165 | прежде (adverb) | before / previously / formerly | — | — |
-| 166 | прочь | away / off | — | — |
-| 167 | разом | all at once / at the same time | — | — |
-| 168 | разумеется | of course / naturally | — | — |
-| 169 | рядом | next to / nearby / side by side | — | — |
-| 170 | сбоку | from the side / on the side | — | — |
-| 171 | сверху | from above / on top | — | — |
-| 172 | слегка | slightly / lightly | — | — |
-| 173 | следовательно | consequently / therefore | — | — |
-| 174 | следом | right after / close behind | — | — |
-| 175 | снаружи | outside / from the outside | Answers где | — |
-| 176 | снизу | from below / at the bottom | — | — |
-| 177 | сплошь | completely / all over<br>nothing but | — | — |
-| 178 | столько | so much / so many | — | — |
-| 179 | толком | properly / clearly | Colloquial; usually with не | — |
-| 180 | трижды | three times | — | — |
-| 181 | чересчур | too / too much | — | — |
-| 182 | чуть | slightly / barely<br>almost | чуть не = almost | — |
+| 121 | наверх | up / upstairs | Answers куда | — |
+| 122 | наверху | above / upstairs | Answers где | — |
+| 123 | навсегда | forever / for good | — | — |
+| 124 | надолго | for a long time | — | — |
+| 125 | наедине | alone (with) / in private | — | — |
+| 126 | наиболее | the most | Bookish; builds superlatives | — |
+| 127 | налицо | evident / on hand | Predicative | — |
+| 128 | намного | much / far | With comparatives: намного лучше | — |
+| 129 | наполовину | half / halfway | — | — |
+| 130 | напоследок | at the end / before parting | — | — |
+| 131 | например | for example | — | — |
+| 132 | напрямую | directly / straight | — | — |
+| 133 | наружу | out / outside | Answers куда | — |
+| 134 | насквозь | right through / through and through | — | — |
+| 135 | насколько | how much / as far as | — | — |
+| 136 | настолько | so / so much / to such an extent | — | — |
+| 137 | наутро | the next morning | — | — |
+| 138 | негде | there is nowhere (to) | Predicative + infinitive: негде сесть | — |
+| 139 | недаром | not for nothing / with good reason | — | — |
+| 140 | некуда | there is nowhere (to go) | Predicative + infinitive: некуда идти | — |
+| 141 | нельзя | it is forbidden / one cannot | Impersonal predicate; opposite of можно | — |
+| 142 | ненадолго | for a short while | — | — |
+| 143 | неподалёку | not far away / nearby | — | — |
+| 144 | несколько | somewhat / slightly | As "several" it's a numeral that declines | — |
+| 145 | нечего | there is nothing (to) | Predicative + infinitive: нечего делать | — |
+| 146 | никак | no way / by no means | — | — |
+| 147 | никуда | nowhere | Answers куда; needs не | — |
+| 148 | нисколько | not at all / not in the least | — | — |
+| 149 | ничуть | not a bit / not in the slightest | — | — |
+| 150 | опять-таки | then again / what's more | Colloquial | — |
+| 151 | откуда-то | from somewhere | — | — |
+| 152 | оттого | that's why / because of that | оттого что = because | — |
+| 153 | отчасти | partly | — | — |
+| 154 | отчего | why | — | — |
+| 155 | подолгу | for long periods | — | — |
+| 156 | подряд | in a row / running | — | — |
+| 157 | поначалу | at first | — | — |
+| 158 | понемногу | little by little | — | — |
+| 159 | пополам | in half / fifty-fifty | — | — |
+| 160 | попросту | simply / plainly | — | — |
+| 161 | пора | it's time (to) | Predicative: пора идти | — |
+| 162 | по-своему | in one's own way | — | — |
+| 163 | почему-то | for some reason | — | — |
+| 164 | прежде (adverb) | before / previously / formerly | — | — |
+| 165 | прочь | away / off | — | — |
+| 166 | разом | all at once / at the same time | — | — |
+| 167 | разумеется | of course / naturally | — | — |
+| 168 | рядом | next to / nearby / side by side | — | — |
+| 169 | сбоку | from the side / on the side | — | — |
+| 170 | сверху | from above / on top | — | — |
+| 171 | слегка | slightly / lightly | — | — |
+| 172 | следовательно | consequently / therefore | — | — |
+| 173 | следом | right after / close behind | — | — |
+| 174 | снаружи | outside / from the outside | Answers где | — |
+| 175 | снизу | from below / at the bottom | — | — |
+| 176 | сплошь | completely / all over<br>nothing but | — | — |
+| 177 | столько | so much / so many | — | — |
+| 178 | толком | properly / clearly | Colloquial; usually with не | — |
+| 179 | трижды | three times | — | — |
+| 180 | чересчур | too / too much | — | — |
+| 181 | чуть | slightly / barely<br>almost | чуть не = almost | — |
 
 
 ---

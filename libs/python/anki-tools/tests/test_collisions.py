@@ -520,7 +520,7 @@ def test_format_groups_table_empty_has_header_only() -> None:
 def test_load_notes_counts_and_order(notes: list[Note]) -> None:
     assert len(notes) == 1622
     assert [n.family for n in notes[:369]] == ["immutable"] * 369
-    assert [n.note_type for n in notes[365:369]] == [variant_pairs.NOTE_TYPE_NAME] * 4
+    assert [n.note_type for n in notes[348:369]] == [variant_pairs.NOTE_TYPE_NAME] * 21
     assert {n.family for n in notes[369:]} == {"mutable"}
     mutable_sections = list(dict.fromkeys(n.section for n in notes[369:]))
     assert mutable_sections == [
@@ -556,7 +556,7 @@ def test_load_notes_fields(notes: list[Note]) -> None:
 
 def test_every_english_distinction_key_matches_a_headword(notes: list[Note]) -> None:
     headwords = {n.headword for n in notes}
-    assert len(ENGLISH_DISTINCTIONS) == 420
+    assert len(ENGLISH_DISTINCTIONS) == 408
     assert set(ENGLISH_DISTINCTIONS) <= headwords
     assert sum(1 for n in notes if n.english_distinction) == 422
 
@@ -600,10 +600,10 @@ def test_collision_totals(groups: list[collisions.CollisionGroup]) -> None:
     assert sum(len(g.members) for g in groups) == 703
     assert len({m.guid for g in groups for m in g.members}) == 564
     assert Counter(g.mechanism for g in groups) == {
-        "cue": 178,
+        "cue": 181,
         "header": 121,
-        "pill": 6,
-        "header+pill": 2,
+        "pill": 4,
+        "header+pill": 1,
     }
     assert [g.sense for g in groups] == sorted(g.sense for g in groups)
 
@@ -614,7 +614,7 @@ def test_immutable_only_collisions(notes: list[Note]) -> None:
     result = collisions.find_collisions(immutable)
     assert len(result) == 108
     assert len({m.guid for g in result for m in g.members}) == 195
-    assert sum(1 for g in result if g.mechanism == "pill") == 6
+    assert sum(1 for g in result if g.mechanism == "pill") == 4
 
 
 def group_for(
@@ -640,7 +640,7 @@ def test_spot_check_near_and_from(groups: list[collisions.CollisionGroup]) -> No
     assert {"около", "возле"} <= {m.headword for m in near.members}
     assert near.mechanism == "cue"
     origin = group_for(groups, "from")
-    assert {"из", "от"} <= {m.headword for m in origin.members}
+    assert {"из / изо", "от / ото"} <= {m.headword for m in origin.members}
     assert origin.mechanism == "cue"
 
 

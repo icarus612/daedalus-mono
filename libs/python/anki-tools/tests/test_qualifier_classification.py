@@ -33,6 +33,23 @@ UNBUILT_BASELINE_GUIDS = {
     "Oy}R4$*3)M",
     "I@5YQBFJ1Z",
     "GzoPl`NFmi",
+    "NyZhE)yQL;",
+    "glCs7HO_81",
+    "cgFjJ$GiX*",
+    "ef}Y#mp3{g",
+    "uv3)*@XB~.",
+    "kWpFW%g>/T",
+    "xP+xM!q31L",
+    "i^%k&akS;S",
+    "B=*m(FzW.n",
+    "C+FyacC3k<",
+    "n+Vp?5WPNT",
+    "fB]voros#k",
+    "xh#4ye,.e+",
+    "P0sxWzDEqM",
+    "xd<pz27WOx",
+    "KHgjP_?aB!",
+    "Ax+e%5,2IT",
 }
 NEW_VERB_HEADWORDS = {
     "лично",
@@ -56,8 +73,6 @@ NEW_VERB_HEADWORDS = {
 }
 CUE_SUPERSEDED_BY_CLASSIFICATION = {
     "по",
-    "из",
-    "от",
     "ради",
     "бежать",
     "нравиться",
@@ -66,13 +81,9 @@ CUE_SUPERSEDED_BY_CLASSIFICATION = {
     "за",
     "кроме",
     "между",
-    "над",
     "насчёт",
-    "о / об",
-    "перед",
     "поверх",
     "позади",
-    "с / со",
     "согласно (preposition)",
     "среди",
     "около",
@@ -151,8 +162,8 @@ def routing():
 
 
 def test_artifact_sizes():
-    assert len(read_tsv(VOCAB / "qualifier-classification.tsv")) == 985
-    assert len(read_tsv(DATA / "case-text-routing.tsv")) == 114
+    assert len(read_tsv(VOCAB / "qualifier-classification.tsv")) == 953
+    assert len(read_tsv(DATA / "case-text-routing.tsv")) == 105
 
 
 def test_every_classified_note_is_built_under_its_key(notes, classification):

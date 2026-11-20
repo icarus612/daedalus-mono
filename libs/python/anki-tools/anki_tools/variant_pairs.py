@@ -8,10 +8,17 @@ Pure: no `anki` imports.
 """
 
 import csv
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
-from anki_tools import card_audio, distinction, immutable_words_plan
+from anki_tools import (
+    card_audio,
+    case_field,
+    case_pill,
+    distinction,
+    immutable_words_plan,
+)
 from anki_tools.anki_identity import notetype_id_for_name
 from anki_tools.audio_naming import audio_field_value, build_filename
 from anki_tools.immutable_words_plan import SLOTS
@@ -34,16 +41,18 @@ FIELD_NAMES = (
     "Examples",
     distinction.RUSSIAN_FIELD,
     distinction.ENGLISH_FIELD,
+    case_field.CASE_FIELD,
 )
 
 TEMPLATE_NAMES = ("Russian", "Variant", "English")
 
-# The source note's audio files, where they predate this note type and are not
-# named after the word they speak.
+# One-consonant words cannot be voiced alone, so their audio speaks a short phrase.
 AUDIO_STEMS = {
-    ("Particles", "пусть"): "пусть / пускай",
-    ("Conjunctions", "пусть"): "пусть / пускай",
-    ("Conjunctions", "чтобы"): "чтобы / чтоб",
+    ("Prepositions", "в"): "в дом",
+    ("Prepositions", "с"): "с другом",
+    ("Prepositions", "к"): "к нам",
+    ("Particles", "б"): "сказал б",
+    ("Particles", "ж"): "ты ж",
 }
 
 
@@ -72,21 +81,38 @@ class VariantPair:
     def part_of_speech(self) -> str:
         return immutable_words_plan.POS_FIELD_VALUE[self.deck_leaf]
 
-    def fields(self) -> list[str]:
-        stem = AUDIO_STEMS.get((self.deck_leaf, self.russian), self.russian)
+    def audio_stem(self, word: str) -> str:
+        return AUDIO_STEMS.get((self.deck_leaf, word), word)
+
+    def fields(
+        self, government: Mapping[str, case_field.CaseGovernment] | None = None
+    ) -> list[str]:
+        if government is None:
+            government = case_field.default_government()
+        entry = government.get(self.guid)
+        translation = (
+            case_pill.tint_lines(self.translation, entry.line_cases)
+            if entry and entry.line_cases
+            else self.translation
+        )
         return [
             self.russian,
             self.variant,
             self.register,
-            self.translation,
+            translation,
             "",
             self.part_of_speech,
-            audio_field_value(build_filename(stem, slot) for slot in SLOTS),
-            audio_field_value(build_filename(self.variant, slot) for slot in SLOTS),
-            self.additional_info,
+            audio_field_value(
+                build_filename(self.audio_stem(self.russian), slot) for slot in SLOTS
+            ),
+            audio_field_value(
+                build_filename(self.audio_stem(self.variant), slot) for slot in SLOTS
+            ),
+            case_field.residual_info_for_row(self.deck_leaf, self.additional_info),
             self.examples,
             self.russian_distinction,
             self.english_distinction,
+            case_field.case_value(government, self.guid),
         ]
 
 
@@ -237,12 +263,15 @@ _ENGLISH_FRONT = (
 )
 
 TEMPLATES = {
-    "Russian": (_russian_front("Russian", "Audio"), _russian_back(_VARIANT_LINE)),
+    "Russian": (
+        _russian_front("Russian", "Audio"),
+        case_pill.add_pill_block(_russian_back(_VARIANT_LINE)),
+    ),
     "Variant": (
         _russian_front("Variant", "Variant Audio"),
-        _russian_back(_DEFAULT_LINE),
+        case_pill.add_pill_block(_russian_back(_DEFAULT_LINE)),
     ),
-    "English": (_ENGLISH_FRONT, _ENGLISH_BACK),
+    "English": (case_pill.add_pill_block(_ENGLISH_FRONT), _ENGLISH_BACK),
 }
 
 PAIR_CSS = """.pair-lines {

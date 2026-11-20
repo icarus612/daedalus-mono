@@ -1,10 +1,10 @@
 group	word	deck	English	cue	told apart by	also in
-about	о / об	Prepositions	about (whom/what)	Neutral	header+pill	
 about	насчёт	Prepositions	about / regarding (whom/what)	Colloquial	header+pill	regarding
 about	про	Prepositions	about (whom/what)		header+pill	
 about	где-то	Base Adverbs	somewhere / about / roughly	a place I can't name	header	somewhere
-above	над	Prepositions	above / over (where/what/whom)	Not touching	header	over
+about	о / об	Prepositions	about (whom/what)	Neutral	header+pill	
 above	наверху	Base Adverbs	above / upstairs	being up there	header	upstairs
+above	над / надо	Prepositions	above / over (where/what/whom)	Not touching	header	over
 according to	по	Prepositions	along / around (where) / according to (what/whom)	Over a surface	cue	along | around
 according to	согласно (preposition)	Prepositions	according to (what/whom)	Formal	cue	
 according to	согласно (adverb)	Derived Adverbs	according to		header	
@@ -14,9 +14,9 @@ address	адрес	Nouns	address	the postal kind	header
 address	обращаться	Verbs	turn to / address (direct words to someone) / treat (behave towards)		header	treat
 after	после	Prepositions	after (whom/what/when)		pill	
 after	спустя	Prepositions	later / after (how long)		pill	later
-after all	же	Particles	but / then / after all	Emphasis, not time	cue	but | then
 after all	ведь	Particles	you see / after all	asserting a known fact	cue	
 after all	таки	Particles	after all / nevertheless	Colloquial	cue	nevertheless
+after all	же / ж	Particles	but / then / after all	Emphasis, not time	cue	but | then
 again	опять	Base Adverbs	again	the same action repeating	cue	
 again	снова	Base Adverbs	again / anew	afresh, a new start	cue	anew
 age	век	Nouns	century / age	An era	cue	
@@ -60,9 +60,9 @@ as though	будто	Particles	as if / as though	often implies doubt	header	as i
 ask	спрашивать	Verbs	ask	a question	pill	
 ask	просить	Verbs	ask (for) / request	ask for something	pill	request
 ask	задавать	Verbs	ask (a question) / set	set a question or task	pill	
-at	в / во	Prepositions	in / at (where) / into (where/what)	inside	cue	in
 at	на	Prepositions	on / at (where) / onto (where/what)	on a surface	cue	
 at	у	Prepositions	by / at (where/whom) / to have (possessed by whom)	at someone's; to have	pill	by | have
+at	в / во	Prepositions	in / at (where) / into (where/what)	inside	cue	in
 at all	вовсе	Base Adverbs	at all	Colloquial, negatives only	cue	
 at all	вообще	Base Adverbs	in general / at all (generally speaking)	Neutral	cue	
 at first	сначала	Base Adverbs	at first / at the beginning	first step	cue	
@@ -86,14 +86,14 @@ because	потому что	Conjunctions	because	Neutral	cue
 because	поскольку	Conjunctions	since / because	given that	cue	since
 because	ибо	Conjunctions	for / because	bookish	cue	for
 before	до	Prepositions	up to (where/what) / until / before (when)	As far as	cue	until
-before	перед	Prepositions	in front of / before (where/whom/what/when)	Right in front	header+pill	in front of
 before	прежде (preposition)	Prepositions	before (what)	formal	cue	
 before	до того, как	Conjunctions	before	Any time earlier	header	
 before	прежде (adverb)	Base Adverbs	before / previously / formerly		header	
+before	перед / передо	Prepositions	in front of / before (where/whom/what/when)	Right in front	header+pill	in front of
 behind	за	Prepositions	behind (where/whom/what) / for (whom/what)	Beyond; in exchange	pill	for
 behind	позади	Prepositions	behind (whom/what/where)	At the back	pill	
-below	под	Prepositions	under / below (where/what/whom)		header	
 below	внизу	Base Adverbs	below / downstairs	being down there	header	downstairs
+below	под / подо	Prepositions	under / below (where/what/whom)		header	
 besides	кроме	Prepositions	except / besides (whom/what)	Excluding	cue	
 besides	помимо	Prepositions	besides / apart from (whom/what)	on top of	cue	
 besides	притом	Conjunctions	besides	and besides that	header	
@@ -107,7 +107,7 @@ business	дело	Nouns	matter / affair / business	An undertaking	cue
 business	бизнес	Nouns	business	commerce	cue	
 but	а	Conjunctions	but / and	Side by side	cue	and
 but	но	Conjunctions	but	direct contrast	cue	
-but	же	Particles	but / then / after all	Emphasis, not time	header	after all | then
+but	же / ж	Particles	but / then / after all	Emphasis, not time	header	after all | then
 by	у	Prepositions	by / at (where/whom) / to have (possessed by whom)	at someone's; to have	cue	at | have
 by	возле	Prepositions	by / near (whom/what/where)	right beside	cue	near
 by	мимо	Prepositions	past / by (whom/what/where)	Going past	cue	past
@@ -243,8 +243,8 @@ for the sake of	для	Prepositions	for / for the sake of (whom/what)	intended f
 friend	друг	Nouns	friend	male	cue	
 friend	подруга	Nouns	friend	female	cue	
 from	с / со	Prepositions	with (whom/what) / from / off of (where/what) / since (when) /	Off a surface	pill	since
-from	из	Prepositions	from (where) / out of (what/where)	From inside	cue	
-from	от	Prepositions	from / away from (whom/what/where)	From beside	cue	
+from	из / изо	Prepositions	from (where) / out of (what/where)	From inside	cue	
+from	от / ото	Prepositions	from / away from (whom/what/where)	From beside	cue	
 fully	вполне	Base Adverbs	quite / fully / entirely	to a satisfying degree	header	entirely
 fully	полностью	Derived Adverbs	completely / fully	in full	header	completely
 fun	весёлый	Adjectives	cheerful / fun		header	
@@ -304,15 +304,15 @@ however	впрочем	Base Adverbs	however / then again	on second thought	heade
 humid	влажный	Adjectives	damp / humid		header	
 humid	влажно	Derived Adverbs	humid		header	
 if	если	Conjunctions	if	conditional	header	
-if	ли	Particles	whether / if	turns it into a question	header	
-in	в / во	Prepositions	in / at (where) / into (where/what)	inside	pill	at
+if	ли / ль	Particles	whether / if	turns it into a question	header	
 in	через	Prepositions	through / across (what/where) / in (when/time)	Crossing	pill	through
+in	в / во	Prepositions	in / at (where) / into (where/what)	inside	pill	at
 in addition	также	Conjunctions	also / in addition	same subject, an extra thing; more formal	header	also
 in addition	вдобавок	Base Adverbs	in addition / on top of that		header	
 in earnest	вплотную	Base Adverbs	right up close / in earnest	getting down to it	cue	
 in earnest	всерьёз	Base Adverbs	seriously / in earnest	not joking	cue	seriously
-in front of	перед	Prepositions	in front of / before (where/whom/what/when)	Right in front	pill	before
 in front of	впереди	Prepositions	ahead of / in front of (whom/what) / ahead		pill	
+in front of	перед / передо	Prepositions	in front of / before (where/whom/what/when)	Right in front	pill	before
 in half	вдвое	Base Adverbs	twice as / in half	by a factor of two	cue	
 in half	пополам	Base Adverbs	in half / fifty-fifty	into two equal parts	cue	
 in vain	зря	Base Adverbs	in vain / for nothing	needlessly	cue	
@@ -449,17 +449,17 @@ open	открывать	Verbs	to open		header
 open	открытый	Adjectives	open		header	
 opposite	против	Prepositions	against / opposite (whom/what/where)	in conflict with	cue	
 opposite	напротив	Prepositions	opposite (whom/what/where) / on the contrary	across from	cue	
-or	или	Conjunctions	or	Everyday	cue	
 or	либо	Conjunctions	either / or	Formal	cue	
+or	или / иль	Conjunctions	or	Everyday	cue	
 order	приказ	Nouns	order / command		header	command
 order	приказывать	Verbs	to order / to command		header	command
 other	другой	Adjectives	other / different	another one	cue	different
 other	иной	Adjectives	different / other	of another kind	cue	different
 outside	наружу	Base Adverbs	out / outside	going out	cue	
 outside	снаружи	Base Adverbs	outside / from the outside	on the outer side	cue	
-over	над	Prepositions	above / over (where/what/whom)	Not touching	pill	above
 over	поверх	Prepositions	over / on top of (what/where)	Covering	cue	
 over	свыше	Prepositions	over / more than (how many)	above a number	cue	
+over	над / надо	Prepositions	above / over (where/what/whom)	Not touching	pill	above
 pass	проходить	Verbs	pass / go through	move past or through	cue	
 pass	передавать	Verbs	pass / hand over / convey	To someone else	cue	
 pass	сдавать	Verbs	take / pass / hand in	submit for assessment	cue	take
@@ -531,10 +531,10 @@ show	показывать	Verbs	to show		header
 simply	просто (particle)	Particles	simply / just	plays it down	header	just
 simply	попросту	Base Adverbs	simply / plainly		header	
 simply	просто (adverb)	Derived Adverbs	simply / just	manner: simply	header	just
-since	с / со	Prepositions	with (whom/what) / from / off of (where/what) / since (when) /	Off a surface	header	from
 since	так как	Conjunctions	since / as	because	cue	as
 since	с тех пор, как	Conjunctions	since	From that time	cue	
 since	поскольку	Conjunctions	since / because	given that	cue	because
+since	с / со	Prepositions	with (whom/what) / from / off of (where/what) / since (when) /	Off a surface	header	from
 sleep	сон	Nouns	sleep / dream	While asleep	header	dream
 sleep	спать	Verbs	to sleep		header	
 slightly	несколько	Base Adverbs	somewhat / slightly	formal	cue	somewhat
@@ -610,10 +610,10 @@ the left	налево	Derived Adverbs	to the left	Direction	header
 the right	вправо	Base Adverbs	to the right		header	
 the right	направо	Derived Adverbs	to the right		header	
 then	то (conjunction)	Conjunctions	then		header	
-then	же	Particles	but / then / after all	Emphasis, not time	header	after all | but
 then	тогда	Base Adverbs	then / in that case (at that time)	Not a sequence	cue	
 then	потом	Base Adverbs	then / later	Next, everyday	cue	later
 then	затем	Base Adverbs	then / after that	Next, formal	cue	
+then	же / ж	Particles	but / then / after all	Emphasis, not time	header	after all | but
 then again	впрочем	Base Adverbs	however / then again	on second thought	cue	however
 then again	опять-таки	Base Adverbs	then again / what's more	and once more	cue	
 there	вот	Particles	here (is) / there (is)	Pointing near	header	here

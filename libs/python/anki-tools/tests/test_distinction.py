@@ -56,7 +56,7 @@ def test_the_two_sides_get_two_separate_fields():
 @pytest.mark.parametrize(
     "russian,expected",
     [
-        ("о / об", "Neutral"),
+        ("около", "Roughly"),
         ("насчёт", "Colloquial"),
         ("какой", "asking about qualities"),
         ("который", "refers back to a noun"),

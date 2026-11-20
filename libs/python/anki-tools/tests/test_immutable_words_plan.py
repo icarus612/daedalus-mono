@@ -63,11 +63,11 @@ REAL_SOURCE_PATH = Path(__file__).resolve().parent / "data" / "source-word-list.
 # The five sections in document order, with the exact counts the real
 # document contains after the l3 split/transform pass and lane l14's additions.
 EXPECTED_SECTION_COUNTS = [
-    ("Prepositions", 59),
-    ("Conjunctions", 36),
-    ("Particles", 46),
+    ("Prepositions", 49),
+    ("Conjunctions", 35),
+    ("Particles", 41),
     ("Indeclinable Nouns", 42),
-    ("Base Adverbs", 182),
+    ("Base Adverbs", 181),
 ]
 EXPECTED_TOTAL_ROWS = sum(count for _, count in EXPECTED_SECTION_COUNTS)
 
@@ -94,21 +94,17 @@ EXPECTED_SUBDECK_PATHS = {
 # rows (чтобы / чтоб, пусть / пускай) left the list, shifting later ranks by -1.
 # (pos, rank, expected verbatim `.russian` value)
 MULTI_FORM_ROWS = [
-    ("Prepositions", 1, "в / во"),
-    ("Prepositions", 3, "с / со"),
-    ("Prepositions", 5, "к / ко"),
-    ("Prepositions", 10, "о / об"),
-    ("Conjunctions", 22, "ни... ни..."),
-    ("Conjunctions", 23, "то... то..."),
-    ("Conjunctions", 25, "с тех пор, как"),
-    ("Conjunctions", 26, "до того, как"),
-    ("Conjunctions", 27, "перед тем, как"),
+    ("Conjunctions", 21, "ни... ни..."),
+    ("Conjunctions", 22, "то... то..."),
+    ("Conjunctions", 24, "с тех пор, как"),
+    ("Conjunctions", 25, "до того, как"),
+    ("Conjunctions", 26, "перед тем, как"),
 ]
 
 
-def test_multi_form_catalog_has_nine_entries():
+def test_multi_form_catalog_has_five_entries():
     """Sanity check on the test's own fixture data, not the implementation."""
-    assert len(MULTI_FORM_ROWS) == 9
+    assert len(MULTI_FORM_ROWS) == 5
 
 
 # ---------------------------------------------------------------------------
@@ -184,7 +180,7 @@ def _remove_section(text, heading_name):
 
 
 def test_parse_real_document_total_row_count(real_rows):
-    assert len(real_rows) == EXPECTED_TOTAL_ROWS == 365
+    assert len(real_rows) == EXPECTED_TOTAL_ROWS == 348
 
 
 def test_parse_real_document_section_order_counts_and_ranks(real_rows):
@@ -210,7 +206,7 @@ def test_parse_real_document_row_order_endpoints(real_rows):
     assert real_rows[0].pos == "Prepositions"
     assert real_rows[0].rank == 1
     assert real_rows[-1].pos == "Base Adverbs"
-    assert real_rows[-1].rank == 182
+    assert real_rows[-1].rank == 181
 
 
 @pytest.mark.parametrize(
@@ -229,7 +225,7 @@ def test_parse_real_document_part_two_produces_no_spurious_rows(real_rows):
     AwesomeTTS / HyperTTS / add-on-install subsections) has no tables and
     must not contribute rows or raise.
     """
-    assert len(real_rows) == 365
+    assert len(real_rows) == 348
     assert all(row.pos in SUBDECK_LEAVES for row in real_rows)
 
 
@@ -1200,7 +1196,7 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
     cells, so the test cannot pass by finding nothing to check.
     """
     adverbs = [row for row in real_rows if row.pos == "Base Adverbs"]
-    assert len(adverbs) == 182
+    assert len(adverbs) == 181
 
     populated = 0
     for row in adverbs:
@@ -1220,11 +1216,11 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
 # usage note. The rows left blank are the ones whose English gloss already
 # explains itself -- info that merely restates the gloss is noise.
 EXPECTED_INFO_COUNTS = {
-    "Prepositions": (59, 59),
-    "Conjunctions": (36, 22),
-    "Particles": (46, 31),
+    "Prepositions": (49, 49),
+    "Conjunctions": (35, 21),
+    "Particles": (41, 30),
     "Indeclinable Nouns": (42, 42),
-    "Base Adverbs": (182, 73),
+    "Base Adverbs": (181, 73),
 }
 
 
@@ -1264,7 +1260,7 @@ def test_every_indeclinable_noun_states_its_gender(real_rows):
     "pos,russian",
     [
         ("Prepositions", "около"),
-        ("Prepositions", "в / во"),
+        ("Prepositions", "на"),
         ("Conjunctions", "и"),
         ("Particles", "не"),
         ("Indeclinable Nouns", "метро"),
@@ -1727,19 +1723,19 @@ def test_every_source_row_carrying_a_qualifier_is_in_the_table(real_rows):
 
 
 def test_no_russian_field_in_the_real_document_carries_a_parenthetical(real_rows):
-    assert len(real_rows) == 365
+    assert len(real_rows) == 348
     assert len(QUALIFIED_ROWS) == 18
     offenders = [row.russian for row in real_rows if "(" in row.fields()[RUSSIAN_INDEX]]
     assert offenders == []
 
 
 def test_unqualified_headword_is_untouched(real_rows_by_source_text):
-    row = real_rows_by_source_text[("Prepositions", "из")]
+    row = real_rows_by_source_text[("Prepositions", "на")]
 
     fields = row.fields()
-    assert fields[RUSSIAN_INDEX] == "из"
+    assert fields[RUSSIAN_INDEX] == "на"
     assert fields[RUSSIAN_DISTINCTION_INDEX] == ""
-    assert row.guid == guid_for_row("из", "Prepositions")
+    assert row.guid == guid_for_row("на", "Prepositions")
 
 
 def test_word_row_decouples_russian_field_from_guid_input():

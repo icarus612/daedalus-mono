@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from anki_tools import case_field, distinction
+from anki_tools import case_field, distinction, variant_pairs
 from anki_tools.immutable_words_plan import FIELD_NAMES, WordRow, parse_word_list
 
 REAL_SOURCE_PATH = Path(__file__).resolve().parent / "data" / "source-word-list.md"
@@ -61,8 +61,13 @@ def test_poznravlyayu_style_row_names_the_governed_case_only_in_raw_info():
 
 def test_every_real_preposition_info_names_a_case(real_rows):
     prepositions = [r for r in real_rows if r.pos == "Prepositions"]
-    assert len(prepositions) == 59
+    assert len(prepositions) == 49
     named = {r.russian: case_field.case_name(r.info) for r in prepositions}
+    named |= {
+        p.headword: case_field.case_name(p.additional_info)
+        for p in variant_pairs.load_pairs()
+        if p.deck_leaf == "Prepositions"
+    }
     assert [w for w, tag in named.items() if not tag] == []
     assert named["о / об"] == "Prepositional"
     assert named["насчёт"] == "Genitive"
@@ -348,11 +353,19 @@ def test_bare_case_cells_collapse_and_commentary_survives(real_rows):
     residual = {
         r.russian: case_field.residual_info_for_row(r.pos, r.info) for r in preps
     }
-    assert residual["о / об"] == ""
-    assert residual["из"] == ""
     assert residual["для"] == "always"
-    assert residual["в / во"] == ""
-    assert sum(1 for v in residual.values() if v) == 2
+    assert residual["насчёт"] == ""
+    assert sum(1 for v in residual.values() if v) == 1
+    pairs = {p.headword: p for p in variant_pairs.load_pairs()}
+    pair_residual = {
+        head: case_field.residual_info_for_row("Prepositions", p.additional_info)
+        for head, p in pairs.items()
+        if p.deck_leaf == "Prepositions"
+    }
+    assert pair_residual["о / об"] == "обо before мне / всём"
+    assert pair_residual["из / изо"] == ""
+    assert pair_residual["в / во"] == ""
+    assert pair_residual["к / ко"] == "always"
 
 
 def test_additional_info_field_carries_the_residual(real_rows):
@@ -384,10 +397,11 @@ def test_the_about_pair_is_told_apart_by_its_english_not_by_its_case(real_rows):
     columns already differ -- so the prompt is answerable on its own and the
     `Case` row never has to carry that weight."""
     by_word = {r.russian: r for r in real_rows if r.pos == "Prepositions"}
-    o, naschet = by_word["о / об"], by_word["насчёт"]
-    assert "about" in o.english and "about" in naschet.english
-    assert o.english != naschet.english
-    assert case_field.case_name(o.info) == "Prepositional"
+    pairs = {p.headword: p for p in variant_pairs.load_pairs()}
+    o, naschet = pairs["о / об"], by_word["насчёт"]
+    assert "about" in o.translation and "about" in naschet.english
+    assert o.translation != naschet.english
+    assert case_field.case_name(o.additional_info) == "Prepositional"
     assert case_field.case_name(naschet.info) == "Genitive"
 
 

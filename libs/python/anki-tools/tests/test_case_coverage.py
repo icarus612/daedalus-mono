@@ -10,6 +10,7 @@ from anki_tools import (
     case_pill,
     immutable_words_plan,
     mutable_words_plan,
+    variant_pairs,
 )
 
 PACKAGE_ROOT = Path(__file__).resolve().parent.parent
@@ -70,6 +71,10 @@ def built_cases(immutable_rows, verb_rows, adverb_rows, government=None):
     for row in adverb_rows:
         cases[row.guid] = built_case(
             mutable_words_plan.FIELD_NAMES["Adverbs"], row.fields()
+        )
+    for pair in variant_pairs.load_pairs():
+        cases[pair.guid] = built_case(
+            variant_pairs.FIELD_NAMES, pair.fields(government)
         )
     return cases
 
@@ -140,7 +145,7 @@ def test_the_seven_quantity_words_are_all_the_non_preposition_immutable_governor
     others = {
         by_guid[row["guid"]].russian
         for row in table
-        if row["family"] == "immutable"
+        if row["guid"] in by_guid
         and row["cases"].strip()
         and by_guid[row["guid"]].pos != "Prepositions"
     }
