@@ -122,11 +122,17 @@ def _note_type_css(plan, sheet):
     return "\n\n".join(parts)
 
 
+def _template_count(plan, sheet):
+    if sheet == "Pronouns":
+        return 2 + len(getattr(plan, "PRONOUN_CASES", ()))
+    return TEMPLATE_COUNTS_BY_SHEET[sheet]
+
+
 def _register(col, plan, sheet):
     note_type = col.models.new(f"Layout {sheet}")
     for name in plan.FIELD_NAMES[sheet]:
         note_type["flds"].append(col.models.new_field(name))
-    for card_index in range(TEMPLATE_COUNTS_BY_SHEET[sheet]):
+    for card_index in range(_template_count(plan, sheet)):
         qfmt, afmt = plan.build_template(sheet, card_index)
         template = col.models.new_template(f"Card {card_index + 1}")
         template["qfmt"] = word_qualifier.add_qualifier_script(qfmt)
@@ -230,7 +236,7 @@ ROW_IDS = {
 CASES = [
     (sheet, card_index, variant, width)
     for sheet, count in sorted(TEMPLATE_COUNTS_BY_SHEET.items())
-    for card_index in range(count)
+    for card_index in range(2 if sheet == "Pronouns" else count)
     for variant in ("full", "sparse")
     for width in WIDTHS
 ]

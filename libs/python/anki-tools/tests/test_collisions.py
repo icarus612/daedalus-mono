@@ -518,7 +518,7 @@ def test_format_groups_table_empty_has_header_only() -> None:
 
 
 def test_load_notes_counts_and_order(notes: list[Note]) -> None:
-    assert len(notes) == 1622
+    assert len(notes) == 1623
     assert [n.family for n in notes[:369]] == ["immutable"] * 369
     assert [n.note_type for n in notes[348:369]] == [variant_pairs.NOTE_TYPE_NAME] * 21
     assert {n.family for n in notes[369:]} == {"mutable"}
@@ -532,7 +532,7 @@ def test_load_notes_counts_and_order(notes: list[Note]) -> None:
         "Numerals",
     ]
     counts = Counter(n.section for n in notes[227:])
-    assert [counts[s] for s in mutable_sections] == [631, 223, 174, 141, 29, 55]
+    assert [counts[s] for s in mutable_sections] == [631, 223, 174, 141, 30, 55]
 
 
 def test_load_notes_fields(notes: list[Note]) -> None:
@@ -551,14 +551,14 @@ def test_load_notes_fields(notes: list[Note]) -> None:
         assert note.english_distinction == ENGLISH_DISTINCTIONS.get(note.headword, "")
         if note.family == "mutable":
             assert note.note_type == mutable_words_plan.NOTE_TYPE_NAMES[note.section]
-    assert len({n.guid for n in notes}) == 1622
+    assert len({n.guid for n in notes}) == 1623
 
 
 def test_every_english_distinction_key_matches_a_headword(notes: list[Note]) -> None:
     headwords = {n.headword for n in notes}
-    assert len(ENGLISH_DISTINCTIONS) == 408
+    assert len(ENGLISH_DISTINCTIONS) == 410
     assert set(ENGLISH_DISTINCTIONS) <= headwords
-    assert sum(1 for n in notes if n.english_distinction) == 422
+    assert sum(1 for n in notes if n.english_distinction) == 424
 
 
 def test_provisional_cases(notes: list[Note], governed_notes: list[Note]) -> None:
@@ -596,12 +596,12 @@ def test_government_overrides_cases_for_any_section(notes: list[Note]) -> None:
 
 
 def test_collision_totals(groups: list[collisions.CollisionGroup]) -> None:
-    assert len(groups) == 307
-    assert sum(len(g.members) for g in groups) == 703
-    assert len({m.guid for g in groups for m in g.members}) == 564
+    assert len(groups) == 308
+    assert sum(len(g.members) for g in groups) == 705
+    assert len({m.guid for g in groups for m in g.members}) == 565
     assert Counter(g.mechanism for g in groups) == {
         "cue": 181,
-        "header": 121,
+        "header": 122,
         "pill": 4,
         "header+pill": 1,
     }
@@ -717,7 +717,7 @@ def test_map_cues_separates_needs_one_side_nonempty() -> None:
 def test_map_cues_real_entry_count(
     notes: list[Note], groups: list[collisions.CollisionGroup]
 ) -> None:
-    assert len(collisions.map_cues(notes, groups)) == 422
+    assert len(collisions.map_cues(notes, groups)) == 424
 
 
 def test_classify_row_columns_are_declared() -> None:
@@ -1213,7 +1213,7 @@ def test_cli_groups_prints_table(capsys: pytest.CaptureFixture[str]) -> None:
     out = capsys.readouterr().out
     assert code == 0
     assert out.splitlines()[0].split("\t")[:3] == ["sense", "mechanism", "members"]
-    assert len(out.splitlines()) == 308
+    assert len(out.splitlines()) == 309
 
 
 def test_cli_pos_counts_prints_fields(capsys: pytest.CaptureFixture[str]) -> None:

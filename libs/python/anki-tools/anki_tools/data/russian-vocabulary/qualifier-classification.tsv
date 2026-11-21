@@ -78,7 +78,7 @@ immutable	Russian - Immutable Words (Ellis Version)	для	epGoS8S$NC	Translatio
 immutable	Russian - Immutable Words (Ellis Version)	для	epGoS8S$NC	English Distinction	Genitive; intended for	whole word	rewrite-cue-non-case	for / for the sake of (whom/what)	intended for	Genitive — always	keeps the non-case remainder	
 immutable	Russian - Immutable Words (Ellis Version)	и	J0hh-,p/i)	Translation	standard	whole word	move-to-distinction	and	Joins equal items		single sense; qualifies the whole word	
 immutable	Russian - Immutable Words (Ellis Version)	и	J0hh-,p/i)	English Distinction	joins equal items: plain and	whole word	keep	and	Joins equal items		separates a collision	
-immutable	Russian - Immutable Words (Ellis Version)	что	s-(vnZ$JU=	English Distinction	introduces a clause: said that…	whole word	keep	what / that		Subordinating — always a comma before it	serves no pair (covered)	
+immutable	Russian - Immutable Words (Ellis Version)	что (conjunction)	s-(vnZ$JU=	English Distinction	introduces a clause: said that…	whole word	keep	what / that	links a statement	Subordinating — always a comma before it	serves no pair (covered)	
 immutable	Russian - Immutable Words (Ellis Version)	а	P]Po{iL%`D	Translation	when contrasting	whole word	move-to-distinction	but / and	Side by side		covers every sense; qualifies the whole word	
 immutable	Russian - Immutable Words (Ellis Version)	а	P]Po{iL%`D	English Distinction	sets two different things side by side, not opposing them	whole word	keep	but / and	Side by side		separates a collision	
 immutable	Russian - Immutable Words (Ellis Version)	но	M&4s,:lO9h	Translation	direct contrast	whole word	move-to-distinction	but	direct contrast		single sense; qualifies the whole word	
@@ -952,3 +952,4 @@ immutable	Russian - Immutable Words (Ellis Version)	сплошь	,K-U#9.$H	Engli
 immutable	Russian - Immutable Words (Ellis Version)	столько	o^e`_#=:aU	English Distinction	this many	whole word	keep	so much / so many	this many		separates a collision	
 immutable	Russian - Immutable Words (Ellis Version)	чересчур	QAP4cQ<w7@	English Distinction	way over the top	whole word	keep	too / too much	way over the top		separates a collision	
 immutable	Russian - Immutable Words (Ellis Version)	чуть	u+Gny||TY?	English Distinction	by a tiny amount	whole word	keep	slightly / barely<br>almost	by a tiny amount	чуть не = almost	separates a collision	
+mutable	Russian - Mutable Pronouns (Ellis Version)	что (pronoun)	gJ6S@(5[xc	English Distinction	interrogative / relative	whole word	keep	what	asking about a thing	pronounced «што»	separates a collision	

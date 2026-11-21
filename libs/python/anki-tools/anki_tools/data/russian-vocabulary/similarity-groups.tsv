@@ -601,7 +601,7 @@ terrible	ужасный	Adjectives	terrible / awful	Bad quality	cue
 terrible	страшный	Adjectives	terrible / frightful / scary	frightening	cue	scary
 terribly	ужасно	Derived Adverbs	terribly / awfully / really	Very badly	cue	really
 terribly	страшно	Derived Adverbs	scary (it's scary) / terribly (very)	frighteningly	cue	scary
-that	что	Conjunctions	what / that		header	
+that	что (conjunction)	Conjunctions	what / that	links a statement	header	what
 that	это	Particles	this (is) / that (is) / it (is)		header	it | this
 that	тот	Pronouns	that (one) / that (over there)	pointing at something farther	cue	
 that	который	Pronouns	which / who / that	refers back to a noun	cue	which | who
@@ -664,6 +664,8 @@ well	ну	Particles	well / come on (urging)	Filler	header
 well	хорошо	Derived Adverbs	well	done well	header	
 wet	мокрый	Adjectives	wet		header	
 wet	мокро	Derived Adverbs	wet		header	
+what	что (conjunction)	Conjunctions	what / that	links a statement	header	that
+what	что (pronoun)	Pronouns	what	asking about a thing	header	
 what a	ну и	Particles	what a...	Colloquial	header	
 what a	какой	Pronouns	which / what kind of / what a	asking about qualities	header	which
 when	когда (conjunction)	Conjunctions	when / while / as	at the time that	header	as | while

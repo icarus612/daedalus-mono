@@ -208,6 +208,7 @@ class SourceDocumentError(Exception):
 GUID_PINS: dict[tuple[str, str], str] = {
     ("Base Adverbs", "так (adverb)"): "p[f.<aMxja",
     ("Conjunctions", "чем (conjunction)"): "ekK$Z9-T+-",
+    ("Conjunctions", "что (conjunction)"): "s-(vnZ$JU=",
 }
 
 

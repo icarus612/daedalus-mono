@@ -106,7 +106,7 @@ def _runs(*texts):
 
 def test_no_translation_contains_cyrillic():
     translations = [translation for _, translation, _, _ in _all_notes()]
-    assert len(translations) == 1622
+    assert len(translations) == 1623
     assert _translations_with_cyrillic(translations) == ALLOWED_CYRILLIC_TRANSLATIONS
 
 
@@ -223,7 +223,10 @@ def test_mutable_rows_carry_examples_in_field_order(sheet):
 
 @pytest.mark.parametrize("sheet", list(mutable_words_plan.FIELD_NAMES))
 def test_mutable_back_templates_render_examples_through_add_title(sheet):
-    for card_index in range(mutable_words.TEMPLATE_COUNTS_BY_SHEET[sheet]):
+    word_cards = 2 if sheet == "Pronouns" else None
+    for card_index in range(
+        word_cards or mutable_words.TEMPLATE_COUNTS_BY_SHEET[sheet]
+    ):
         qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
         assert 'id="examples"' not in qfmt
         assert afmt.count('<div id="examples">{{Examples}}</div>') == 1

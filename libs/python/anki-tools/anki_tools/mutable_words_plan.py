@@ -7,6 +7,7 @@ passed in.
 """
 
 import csv
+import re
 from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import ClassVar
@@ -41,6 +42,19 @@ SUBDECK_OVERRIDES = {
 }
 
 VOICE_SLOTS: tuple[str, ...] = ("f1", "m2")
+
+# Each declining pronoun gets one card per case, made only when the case's
+# field is filled -- the same way a verb with no perfective skips cards 3/4.
+PRONOUN_CASES: tuple[str, ...] = (
+    "Genitive",
+    "Dative",
+    "Accusative",
+    "Instrumental",
+    "Prepositional",
+)
+PRONOUN_CASE_AUDIO_FIELDS: tuple[str, ...] = tuple(
+    f"Audio {case}" for case in PRONOUN_CASES
+)
 
 NOTE_TYPE_NAMES = {
     "Nouns": "Russian - Mutable Nouns (Ellis Version)",
@@ -135,6 +149,8 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Audio",
         "Russian Distinction",
         "English Distinction",
+        *PRONOUN_CASES,
+        *(f"Audio {case}" for case in PRONOUN_CASES),
     ),
     "Numerals": (
         "Russian",
@@ -432,6 +448,7 @@ class PronounRow:
     oblique_forms: str
     additional_info: str
     examples: str
+    case_forms: tuple[str, ...] = ("",) * len(PRONOUN_CASES)
 
     SHEET: ClassVar[str] = "Pronouns"
 
@@ -463,7 +480,29 @@ class PronounRow:
             audio_field_value(names),
             distinction.qualifier_of(self.russian),
             cue,
+            *self.case_forms,
+            *(
+                audio_field_value(audio_names(spoken_case_text(form))) if form else ""
+                for form in self.case_forms
+            ),
         ]
+
+
+_CASE_LABELS = re.compile(r"^(?:m\./n\.|m\.|n\.|f\.|pl\.|living)\s+")
+
+
+def spoken_case_text(form: str) -> str:
+    """What a case card's recording says: every distinct form in `form`,
+    stress marks and the m./f./pl./living labels dropped, comma-separated.
+    """
+    spoken: list[str] = []
+    for part in re.split(r"\s+·\s+|\s+/\s+|,\s+", form.replace("\u0301", "")):
+        word = part.strip()
+        while _CASE_LABELS.match(word):
+            word = _CASE_LABELS.sub("", word, count=1)
+        if word and word not in spoken:
+            spoken.append(word)
+    return ", ".join(spoken)
 
 
 @dataclass(frozen=True)
@@ -716,6 +755,7 @@ def parse_pronouns(tsv_path: str) -> list[PronounRow]:
                     oblique_forms=row["Oblique Forms"],
                     additional_info=row["Additional Info"],
                     examples=row["Examples"],
+                    case_forms=tuple(row[case] for case in PRONOUN_CASES),
                 )
             )
     return rows
@@ -841,6 +881,8 @@ def _detail_fields(sheet: str, primary_field: str) -> list[str]:
         distinction.RUSSIAN_FIELD,
         distinction.ENGLISH_FIELD,
         "Case",
+        *PRONOUN_CASES,
+        *PRONOUN_CASE_AUDIO_FIELDS,
     }
     if sheet == "Verbs":
         excluded |= set(_ASPECT_COUNTERPART)
@@ -980,6 +1022,19 @@ _ASPECT_LINE_CSS = (
 )
 
 
+PRONOUN_CASE_CSS = (
+    "#case-prompt {\n"
+    "\tfont-size: 1.4rem;\n"
+    "\tcolor: #656565;\n"
+    "\tpadding-top: .3rem;\n"
+    "}\n\n"
+    "#case-form {\n"
+    "\tfont-size: 2rem;\n"
+    "\tpadding: .4rem 0;\n"
+    "}"
+)
+
+
 def _build_extra_css() -> str:
     """CSS appended to the cloned source note type's CSS (never rewritten in
     place -- see `mutable_words.build_note_types`). Lays the `#details` rows
@@ -1026,7 +1081,8 @@ def _build_extra_css() -> str:
         "\twhite-space: nowrap;\n"
         "}\n\n"
         f"{_ASPECT_LINE_CSS}\n\n"
-        f"{_ASPECT_COLOUR_CSS}"
+        f"{_ASPECT_COLOUR_CSS}\n\n"
+        f"{PRONOUN_CASE_CSS}"
     )
 
 
@@ -1088,6 +1144,8 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
             raise ValueError(f"Verbs card_index out of range: {card_index!r}")
         primary_field, audio_field, dom_id, state_key = _VERB_CARD_CONFIGS[card_index]
         audio_side = card_index % 2 == 0
+    elif sheet == "Pronouns" and card_index in range(2, 2 + len(PRONOUN_CASES)):
+        return _pronoun_case_template(PRONOUN_CASES[card_index - 2])
     elif sheet in _PRIMARY_FIELD:
         if card_index not in (0, 1):
             raise ValueError(f"{sheet} card_index out of range: {card_index!r}")
@@ -1145,3 +1203,28 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
         qfmt = f"{{{{#{primary_field}}}}}{qfmt}{{{{/{primary_field}}}}}"
 
     return qfmt, "\n".join(p for p in ("{{FrontSide}}", back, detail_script) if p)
+
+
+PRONOUN_CASE_STATE_KEY = "__mutablePronounCaseChoice"
+
+
+def _pronoun_case_template(case: str) -> tuple[str, str]:
+    """A pronoun's case card: the headword and the case name on the front,
+    that case's form with its own recording on the back. Wrapped in the case
+    field's conditional, so a pronoun without that form makes no card.
+    """
+    front = _wrap(
+        "front",
+        _DECK_HEADER_HTML,
+        '<div id="russian">{{Russian}}</div>',
+        f'<div id="case-prompt">{case}</div>',
+    )
+    qfmt = _add_russian_cue(front + _DECK_HEADER_SCRIPT)
+    qfmt = f"{{{{#{case}}}}}{qfmt}{{{{/{case}}}}}"
+    back = _wrap(
+        "back",
+        card_audio.audio_block(f"Audio {case}", "audio", PRONOUN_CASE_STATE_KEY),
+        f'<div id="case-form">{{{{{case}}}}}</div>',
+        '<div id="translation">{{Translation}}</div>',
+    )
+    return qfmt, "\n".join(("{{FrontSide}}", back))

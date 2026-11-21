@@ -83,6 +83,11 @@ EXPECTED_HEADERS = {
         "Oblique Forms",
         "Additional Info",
         "Examples",
+        "Genitive",
+        "Dative",
+        "Accusative",
+        "Instrumental",
+        "Prepositional",
         "Status",
     ],
     "numerals.tsv": [
@@ -105,7 +110,7 @@ EXPECTED_LINE_COUNTS = {
     "verbs.tsv": 224,
     "adjectives.tsv": 175,
     "adverbs.tsv": 162,
-    "pronouns.tsv": 30,
+    "pronouns.tsv": 31,
     "numerals.tsv": 56,
 }
 
@@ -123,7 +128,7 @@ EXPECTED_DASH_COUNTS = {
     ("adverbs.tsv", "Comparative"): 40,
     ("adverbs.tsv", "Adverb"): 22,
     ("adverbs.tsv", "Stress"): 22,
-    ("pronouns.tsv", "Gender Forms"): 11,
+    ("pronouns.tsv", "Gender Forms"): 12,
     ("numerals.tsv", "Gender Forms"): 44,
 }
 

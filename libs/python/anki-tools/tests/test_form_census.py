@@ -251,6 +251,11 @@ TSV_HEADERS = {
         "Oblique Forms",
         "Additional Info",
         "Examples",
+        "Genitive",
+        "Dative",
+        "Accusative",
+        "Instrumental",
+        "Prepositional",
     ],
     "Numerals": [
         "#",
@@ -588,7 +593,9 @@ class TestClassifyCells:
 
     def test_blank_verb_perfective_is_not_applicable(self):
         cells = self.classify("Verbs", {"Perfective": ""})
-        assert [(c.field, c.status) for c in cells] == [("Perfective", fc.NOT_APPLICABLE)]
+        assert [(c.field, c.status) for c in cells] == [
+            ("Perfective", fc.NOT_APPLICABLE)
+        ]
 
     @pytest.mark.parametrize(
         "sheet", ["Nouns", "Verbs", "Adjectives", "Adverbs", "Pronouns", "Numerals"]
@@ -814,7 +821,7 @@ PLANNED_EMPTY_COUNTS = {
     "Nouns": {"Plural": 134, "Genitive Sg": 622, "Genitive Pl": 623},
     "Adjectives": {"Short Form": 159, "Comparative": 166},
     "Adverbs": {"Comparative": 43},
-    "Pronouns": {"Gender Forms": 11},
+    "Pronouns": {"Gender Forms": 12},
     "Numerals": {"Gender Forms": 44},
     "Verbs": {
         "Perfective": 17,
@@ -863,7 +870,7 @@ class TestRealData:
             "Verbs": 223,
             "Adjectives": 174,
             "Adverbs": 141,
-            "Pronouns": 29,
+            "Pronouns": 30,
             "Numerals": 55,
         }
 

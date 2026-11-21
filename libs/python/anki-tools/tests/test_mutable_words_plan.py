@@ -105,7 +105,7 @@ def test_row_counts(nouns, verbs, adjectives, adverbs, pronouns, numerals):
     assert len(verbs) == 223
     assert len(adjectives) == 174
     assert len(adverbs) == 141
-    assert len(pronouns) == 29
+    assert len(pronouns) == 30
     assert len(numerals) == 55
 
 
@@ -161,14 +161,16 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
     )
     adjectives_cards = len(adjectives) * 2
     adverbs_cards = len(adverbs) * 2
-    pronouns_cards = len(pronouns) * 2
+    pronouns_cards = len(pronouns) * 2 + sum(
+        1 for p in pronouns for form in p.case_forms if form
+    )
     numerals_cards = len(numerals) * 2
 
     assert nouns_cards == 1262
     assert verbs_cards == 856
     assert adjectives_cards == 348
     assert adverbs_cards == 282
-    assert pronouns_cards == 58
+    assert pronouns_cards == 170
     assert numerals_cards == 110
     assert (
         nouns_cards
@@ -177,7 +179,7 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
         + adverbs_cards
         + pronouns_cards
         + numerals_cards
-        == 2916
+        == 3028
     )
 
 
@@ -205,6 +207,13 @@ def test_field_name_legality():
             assert "}" not in name
     tail = ("Russian Distinction", "English Distinction")
     for sheet, names in mutable_words_plan.FIELD_NAMES.items():
+        if sheet == "Pronouns":
+            case_tail = (
+                *mutable_words_plan.PRONOUN_CASES,
+                *mutable_words_plan.PRONOUN_CASE_AUDIO_FIELDS,
+            )
+            assert tuple(names[-len(case_tail) :]) == case_tail
+            names = names[: -len(case_tail)]
         if sheet in CASE_SHEETS:
             assert tuple(names[-3:]) == (*tail, "Case"), sheet
             assert names[-4].startswith("Audio"), sheet
@@ -246,12 +255,12 @@ def test_no_slug_collisions_across_all_base_words(
         + [w for row in pronouns for w in row.base_words]
         + [w for row in numerals for w in row.base_words]
     )
-    assert len(all_words) == 1458
+    assert len(all_words) == 1459
 
     slugs = [sanitize_word_slug(w) for w in all_words]
     dupes = {slug: c for slug, c in Counter(slugs).items() if c > 1}
     assert set(dupes) == _EXPECTED_DUPLICATE_SLUGS, dupes
-    assert len(set(slugs)) == 1457
+    assert len(set(slugs)) == 1458
 
 
 def test_named_media_overlap_slugs_present(nouns, verbs, adjectives, adverbs):
@@ -790,6 +799,7 @@ _QUALIFIED_HEADWORD_GUIDS = {
     ("Adverbs", "просто (adverb)"): "v*^Y^8o93j",
     ("Adverbs", "согласно (adverb)"): "tL.M_0|Uet",
     ("Numerals", "первый (numeral)"): "B.OZ`5x]dH",
+    ("Pronouns", "что (pronoun)"): "gJ6S@(5[xc",
 }
 
 
@@ -1268,6 +1278,9 @@ def _pronoun_row(russian, pronoun_type):
 
 
 PRONOUN_TYPE_FIELD = mutable_words_plan.FIELD_NAMES["Pronouns"].index("Pronoun Type")
+PRONOUN_CUE_FIELD = mutable_words_plan.FIELD_NAMES["Pronouns"].index(
+    "English Distinction"
+)
 
 
 @pytest.mark.parametrize(
@@ -1282,7 +1295,7 @@ PRONOUN_TYPE_FIELD = mutable_words_plan.FIELD_NAMES["Pronouns"].index("Pronoun T
 def test_pronoun_type_row_is_empty_when_the_cue_says_it(russian, pronoun_type):
     fields = _pronoun_row(russian, pronoun_type).fields()
     assert fields[PRONOUN_TYPE_FIELD] == ""
-    assert fields[-1] != ""
+    assert fields[PRONOUN_CUE_FIELD] != ""
 
 
 def test_pronoun_type_row_is_kept_when_the_cue_adds_to_it():
@@ -1292,7 +1305,7 @@ def test_pronoun_type_row_is_kept_when_the_cue_adds_to_it():
 
 def test_pronoun_type_row_is_kept_when_there_is_no_cue():
     fields = _pronoun_row("я", "personal (1st sg.)").fields()
-    assert fields[-1] == ""
+    assert fields[PRONOUN_CUE_FIELD] == ""
     assert fields[PRONOUN_TYPE_FIELD] == "personal (1st sg.)"
 
 

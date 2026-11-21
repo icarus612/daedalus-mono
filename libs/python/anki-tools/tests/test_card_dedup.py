@@ -327,6 +327,10 @@ def test_every_note_type_and_template_is_rendered(all_current_keys):
     expected += immutable_count * 2 * 2
     templates = mutable_words.TEMPLATE_COUNTS_BY_SHEET
     for sheet, rows in current_mutable_rows().items():
+        if sheet == "Pronouns":
+            expected += len(rows) * 2 * 2
+            expected += sum(1 for r in rows for form in r.case_forms if form) * 2
+            continue
         expected += len(rows) * templates[sheet] * 2
         if sheet == "Verbs":
             expected -= sum(1 for r in rows if not r.perfective.strip()) * 2 * 2

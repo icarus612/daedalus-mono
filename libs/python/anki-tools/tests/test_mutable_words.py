@@ -418,6 +418,7 @@ def _write_pronouns_tsv(path, rows):
         "Oblique Forms",
         "Additional Info",
         "Examples",
+        *mutable_words_plan.PRONOUN_CASES,
     ]
     data = [
         [
@@ -430,6 +431,7 @@ def _write_pronouns_tsv(path, rows):
             r.oblique_forms,
             r.additional_info,
             r.examples,
+            *r.case_forms,
         ]
         for r in rows
     ]

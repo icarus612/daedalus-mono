@@ -152,6 +152,8 @@ ENGLISH_DISTINCTIONS: dict[str, str] = {
     "красивый": "good-looking",
     "кроме": "Excluding",
     "кто": "people only",
+    "что (pronoun)": "asking about a thing",
+    "что (conjunction)": "links a statement",
     "куда": "destination",
     "ладно": "Agreeing",
     "лампа": "a free-standing lamp",

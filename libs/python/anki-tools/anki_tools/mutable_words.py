@@ -44,11 +44,16 @@ TEMPLATE_COUNTS_BY_SHEET: dict[str, int] = {
     "Verbs": 4,
     "Adjectives": 2,
     "Adverbs": 2,
-    "Pronouns": 2,
+    "Pronouns": 2 + len(mutable_words_plan.PRONOUN_CASES),
     "Numerals": 2,
 }
 
-_AUDIO_FIELD_NAMES = ("Audio", "Audio Imperfective", "Audio Perfective")
+_AUDIO_FIELD_NAMES = (
+    "Audio",
+    "Audio Imperfective",
+    "Audio Perfective",
+    *mutable_words_plan.PRONOUN_CASE_AUDIO_FIELDS,
+)
 
 
 def build_note_types(

@@ -67,7 +67,7 @@ Used to connect clauses, sentences, or concepts.
 | Rank | Russian | English | Info | Examples |
 |---|---|---|---|---|
 | 1 | и | and | — | — |
-| 2 | что | what / that | Subordinating — always a comma before it | — |
+| 2 | что (conjunction) | what / that | Subordinating — always a comma before it | — |
 | 3 | а | but / and | — | — |
 | 4 | но | but | — | — |
 | 5 | как (conjunction) | like / as | — | белый как снег |
