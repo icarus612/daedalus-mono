@@ -229,9 +229,9 @@ def _small_rows_by_sheet(
             stress="",
             pronoun_type="",
             gender_forms="",
-            oblique_forms="",
             additional_info="",
             examples="",
+            case_forms=("",) * 22,
         )
         for i in range(pronouns)
     ]
@@ -415,11 +415,12 @@ def _write_pronouns_tsv(path, rows):
         "Stress",
         "Pronoun Type",
         "Gender Forms",
-        "Oblique Forms",
         "Additional Info",
         "Examples",
-        *mutable_words_plan.PRONOUN_CASES,
+        *mutable_words_plan.PRONOUN_FORM_FIELDS,
+        "Status",
     ]
+    assert len(header) == 31
     data = [
         [
             r.rank,
@@ -428,10 +429,10 @@ def _write_pronouns_tsv(path, rows):
             r.stress,
             r.pronoun_type,
             r.gender_forms,
-            r.oblique_forms,
             r.additional_info,
             r.examples,
             *r.case_forms,
+            "confirmed",
         ]
         for r in rows
     ]
@@ -623,7 +624,7 @@ def test_build_note_types_css_extends_source_with_extra_css(cloned_note_types):
     )
     for sheet, note_type in note_types.items():
         css = note_type["css"]
-        if "Case" in FIELD_NAMES[sheet]:
+        if sheet in ("Verbs", "Adverbs", "Pronouns"):
             assert css.count(case_pill.CASE_PILL_CSS) == 1, sheet
             assert css.replace("\n\n" + case_pill.CASE_PILL_CSS, "", 1) == expected_css
         else:

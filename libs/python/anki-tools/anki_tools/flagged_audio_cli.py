@@ -28,8 +28,11 @@ from anki_tools.flagged_audio import (
     flag_of,
     words_to_regenerate,
 )
+from anki_tools.mutable_words_plan import NOTE_TYPE_NAMES, PRONOUN_CARD_SLOTS, bare_form
 
 HEADWORD_FIELDS = ("Russian", "Imperfective", "Perfective")
+
+FIRST_SLOT_ORD = 2
 
 SLOTS = {MODE_SINGLE: ("f1", "m2"), MODE_DOUBLE: ("f1", "f2", "m1", "m2")}
 
@@ -69,17 +72,25 @@ def scan(col):
     """`(flags, notetype_name, headwords)` per flagged card.
 
     Headword fields are read by NAME rather than by index: the two families
-    disagree on field order, and a verb keeps its aspects in two fields.
+    disagree on field order, and a verb keeps its aspects in two fields. A
+    Pronouns case card (ord >= 2) voices only its own slot's form.
     """
     rows = []
     for card_id in col.db.list("select id from cards where (flags & 7) != 0"):
         card = col.get_card(card_id)
         note = card.note()
         names = [field["name"] for field in note.note_type()["flds"]]
-        headwords = [
-            note.fields[names.index(name)] for name in HEADWORD_FIELDS if name in names
-        ]
-        rows.append((card.flags, note.note_type()["name"], headwords))
+        notetype_name = note.note_type()["name"]
+        if notetype_name == NOTE_TYPE_NAMES["Pronouns"] and card.ord >= FIRST_SLOT_ORD:
+            slot_field = PRONOUN_CARD_SLOTS[card.ord - FIRST_SLOT_ORD]
+            headwords = [bare_form(note.fields[names.index(slot_field)])]
+        else:
+            headwords = [
+                note.fields[names.index(name)]
+                for name in HEADWORD_FIELDS
+                if name in names
+            ]
+        rows.append((card.flags, notetype_name, headwords))
     return rows
 
 

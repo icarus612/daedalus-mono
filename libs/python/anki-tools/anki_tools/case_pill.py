@@ -36,16 +36,28 @@ def case_slug(name: str) -> str:
     return name.lower()
 
 
-def pill_block() -> str:
-    """The template block: six pills in a wrapper rendered only when `Case` is set."""
+def pill_block(case: str | None = None, trailing: str = "") -> str:
+    """The template block: six pills in a wrapper.
+
+    Without `case` the wrapper is rendered only when the `Case` field is set.
+    With `case` it is unconditional, carries that literal case, and `trailing`
+    is placed after the last pill inside the wrapper.
+    """
+    if case is not None and case not in CASE_ORDER:
+        raise ValueError(f"not a canonical case name: {case!r}")
     pills = "".join(
         f'<span class="case-pill case-{case_slug(name)}">{name}</span>'
         for name in CASE_ORDER
     )
+    if case is not None:
+        return (
+            f'<div class="{PILL_WRAPPER_CLASS}" data-case="{case}">'
+            f"{pills}{trailing}</div>"
+        )
     return (
         f"{{{{#{_CASE_FIELD}}}}}"
         f'<div class="{PILL_WRAPPER_CLASS}" data-case="{{{{text:{_CASE_FIELD}}}}}">'
-        f"{pills}</div>"
+        f"{pills}{trailing}</div>"
         f"{{{{/{_CASE_FIELD}}}}}"
     )
 

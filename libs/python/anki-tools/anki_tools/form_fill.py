@@ -37,7 +37,6 @@ EXCLUDED_BY_PLAN: frozenset[tuple[str, str]] = frozenset(
     {
         ("Numerals", "Gender Forms"),
         ("Numerals", "Genitive"),
-        ("Pronouns", "Oblique Forms"),
         ("Adverbs", "Formation"),
     }
 )

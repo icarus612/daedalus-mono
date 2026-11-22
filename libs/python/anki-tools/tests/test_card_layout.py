@@ -116,7 +116,7 @@ def _note_type_css(plan, sheet):
         word_stack.WORD_STACK_CSS,
         prompt_hint.PROMPT_HINT_CSS,
     ]
-    if "Case" in plan.FIELD_NAMES[sheet]:
+    if "Case" in plan.FIELD_NAMES[sheet] or sheet == "Pronouns":
         parts.append(case_pill.CASE_PILL_CSS)
     parts.append(plan.EXTRA_CSS)
     return "\n\n".join(parts)
@@ -124,7 +124,7 @@ def _note_type_css(plan, sheet):
 
 def _template_count(plan, sheet):
     if sheet == "Pronouns":
-        return 2 + len(getattr(plan, "PRONOUN_CASES", ()))
+        return 24 if hasattr(plan, "PRONOUN_SLOTS") else 2
     return TEMPLATE_COUNTS_BY_SHEET[sheet]
 
 
@@ -281,3 +281,147 @@ def test_pre_4_1_template_fails_the_centre_assertion(webkit_page, old_variants):
             if abs(_centre(m["details"]) - _centre(m["russian"])) > TOLERANCE:
                 failures.append((sheet, card_index, width))
     assert failures, "pre-4.1 templates unexpectedly pass the centre assertion"
+
+
+CASE_ORDS = range(2, 24)
+
+CASE_MEASURE_JS = """
+() => {
+  const rects = (el) => {
+    const out = [];
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      if (!n.textContent.trim()) continue;
+      const range = document.createRange();
+      range.selectNodeContents(n);
+      for (const r of range.getClientRects()) {
+        if (r.width > 0 && r.height > 0) out.push(r);
+      }
+    }
+    return out;
+  };
+  const span = (el) => {
+    const rs = rects(el);
+    return rs.length ? {
+      left: Math.min(...rs.map(r => r.left)),
+      right: Math.max(...rs.map(r => r.right)),
+    } : null;
+  };
+  const ids = (selector) => Array.from(document.querySelectorAll(selector))
+    .filter(e => e.getBoundingClientRect().height > 0)
+    .map(span).filter(Boolean);
+  const row = (el) => el && el.parentElement.classList.contains('cue-row')
+    ? el.parentElement : el;
+  const rows = (selector) => Array.from(document.querySelectorAll(selector))
+    .filter(e => e.getBoundingClientRect().height > 0)
+    .map(row).map(span).filter(Boolean);
+  const head = row(document.getElementById('russian'));
+  return {
+    russian: head ? span(head) : null,
+    form: rows('#case-form'),
+    lines: ids('.form-line'),
+    gloss: rows('#translation'),
+    overflow: document.documentElement.scrollWidth - window.innerWidth,
+  };
+}
+"""
+
+
+@pytest.fixture(scope="module")
+def case_answers(tmp_path_factory):
+    col = Collection(str(tmp_path_factory.mktemp("case") / "p.anki2"))
+    try:
+        note_type = _register(col, mutable_words_plan, "Pronouns")
+        note = col.new_note(note_type)
+        for name in mutable_words_plan.FIELD_NAMES["Pronouns"]:
+            note[name] = "[sound:a.mp3]" if name.startswith("Audio") else f"{name} text"
+        col.add_note(note, col.decks.id("Layout"))
+        cards = {card.ord: card for card in note.cards()}
+        assert sorted(cards) == list(range(24))
+        yield {
+            ord_: (cards[ord_].render_output().answer_text, note_type["css"])
+            for ord_ in CASE_ORDS
+        }
+    finally:
+        col.close()
+
+
+def test_pronoun_template_count_is_24():
+    assert _template_count(mutable_words_plan, "Pronouns") == 24
+
+
+@pytest.mark.parametrize("width", WIDTHS)
+@pytest.mark.parametrize("ord_", CASE_ORDS)
+def test_case_answer_form_lines_and_gloss_are_centred(
+    webkit_page, case_answers, ord_, width
+):
+    html, css = case_answers[ord_]
+    webkit_page.set_viewport_size({"width": width, "height": 900})
+    webkit_page.set_content(
+        "<!doctype html><html><head>"
+        '<meta name="viewport" content="width=device-width, initial-scale=1">'
+        f'<style>{css}</style></head><body><div class="card">{html}</div></body></html>'
+    )
+    m = webkit_page.evaluate(CASE_MEASURE_JS)
+    assert m["russian"], "headword not rendered"
+    assert m["form"], "case form not rendered"
+    assert m["gloss"], "gloss not rendered"
+    assert m["overflow"] <= 0, m
+    reference = _centre(m["russian"])
+    for item in m["form"] + m["lines"] + m["gloss"]:
+        assert abs(_centre(item) - reference) <= TOLERANCE, m
+
+
+def _question(col, note_type, filled, ord_):
+    note = col.new_note(note_type)
+    for name in mutable_words_plan.FIELD_NAMES["Pronouns"]:
+        note[name] = (
+            "" if name in mutable_words_plan.PRONOUN_CARD_SLOTS else f"{name} text"
+        )
+        if name.startswith("Audio "):
+            note[name] = ""
+    for name in filled:
+        note[name] = f"{name} text"
+    col.add_note(note, col.decks.id("Layout"))
+    cards = {card.ord: card for card in note.cards()}
+    return cards[ord_].render_output().question_text
+
+
+@pytest.fixture(scope="module")
+def case_col(tmp_path_factory):
+    col = Collection(str(tmp_path_factory.mktemp("question") / "q.anki2"))
+    try:
+        yield col, _register(col, mutable_words_plan, "Pronouns")
+    finally:
+        col.close()
+
+
+def test_single_form_cell_renders_the_pill_and_no_qualifier(case_col):
+    col, note_type = case_col
+    html = _question(col, note_type, ["Prepositional"], 6)
+    assert 'data-case="Prepositional"' in html
+    assert "aspect" not in html
+
+
+def test_primary_qualifier_appears_only_when_a_sibling_slot_is_filled(case_col):
+    col, note_type = case_col
+    plain = _question(col, note_type, ["Genitive"], 2)
+    gendered = _question(col, note_type, ["Genitive", "Genitive f."], 2)
+    prep = _question(col, note_type, ["Genitive", "Genitive (н-)"], 2)
+    assert "aspect" not in plain
+    assert "(masculine / neuter)" in gendered
+    assert "(without a preposition)" in prep
+    assert "(masculine / neuter)" not in prep
+
+
+def test_accusative_primary_says_not_living_only_with_the_living_form(case_col):
+    col, note_type = case_col
+    html = _question(col, note_type, ["Accusative", "Accusative m. living"], 4)
+    assert "(masculine, not living)" in html
+    assert "(masculine, not living)" not in _question(col, note_type, ["Accusative"], 4)
+
+
+def test_non_primary_front_shows_pill_before_its_fixed_qualifier(case_col):
+    col, note_type = case_col
+    html = _question(col, note_type, ["Genitive f."], 7)
+    assert html.index('data-case="Genitive"') < html.index("(feminine)")

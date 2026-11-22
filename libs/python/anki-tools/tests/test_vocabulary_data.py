@@ -11,6 +11,31 @@ DATA_DIR = (
     Path(__file__).resolve().parents[1] / "anki_tools" / "data" / "russian-vocabulary"
 )
 
+PRONOUN_SLOT_COLUMNS = [
+    "Genitive",
+    "Genitive f.",
+    "Genitive pl.",
+    "Genitive (н-)",
+    "Dative",
+    "Dative f.",
+    "Dative pl.",
+    "Dative (н-)",
+    "Accusative",
+    "Accusative m. living",
+    "Accusative n.",
+    "Accusative f.",
+    "Accusative pl.",
+    "Accusative pl. living",
+    "Accusative (н-)",
+    "Instrumental",
+    "Instrumental f.",
+    "Instrumental pl.",
+    "Instrumental (н-)",
+    "Prepositional",
+    "Prepositional f.",
+    "Prepositional pl.",
+]
+
 EXPECTED_HEADERS = {
     "nouns.tsv": [
         "#",
@@ -80,14 +105,9 @@ EXPECTED_HEADERS = {
         "Stress",
         "Pronoun Type",
         "Gender Forms",
-        "Oblique Forms",
         "Additional Info",
         "Examples",
-        "Genitive",
-        "Dative",
-        "Accusative",
-        "Instrumental",
-        "Prepositional",
+        *PRONOUN_SLOT_COLUMNS,
         "Status",
     ],
     "numerals.tsv": [
@@ -300,3 +320,104 @@ def test_the_two_sense_cue_check_catches_the_shape_it_guards():
     assert _cues_enumerating_two_senses(tainted) == [
         ("nouns.tsv", "число", "number / date (a numeral, or a calendar day)")
     ]
+
+
+COMBINING_ACUTE = "\u0301"
+
+PRONOUN_SLOT_COUNTS = {
+    **dict.fromkeys(["я", "ты", "вы", "мы"], 5),
+    **dict.fromkeys(["он", "она", "оно", "они"], 9),
+    **dict.fromkeys(["кто", "ничто", "себя", "никто", "что (pronoun)"], 5),
+    **dict.fromkeys(
+        ["сам", "тот", "этот", "мой", "твой", "свой", "наш", "ваш", "весь"], 18
+    ),
+}
+
+
+def _pronoun_records():
+    rows = _read_rows("pronouns.tsv")
+    header = rows[0]
+    return [dict(zip(header, row, strict=True)) for row in rows[1:]]
+
+
+def _pronoun(russian):
+    matches = [
+        record
+        for record in _pronoun_records()
+        if record["Russian"].replace(COMBINING_ACUTE, "") == russian
+    ]
+    assert len(matches) == 1, russian
+    return matches[0]
+
+
+def _filled_slots(record):
+    return {column: record[column] for column in PRONOUN_SLOT_COLUMNS if record[column]}
+
+
+def test_pronoun_slot_cells_hold_exactly_one_form():
+    for record in _pronoun_records():
+        for column, cell in _filled_slots(record).items():
+            for banned in (" · ", " / ", ", ", "living ", "ни о"):
+                assert banned not in cell, (record["Russian"], column, cell)
+            assert cell == cell.strip(), (record["Russian"], column, cell)
+            assert len(cell.split()) == 1, (record["Russian"], column, cell)
+
+
+def test_pronoun_slot_cells_total_243():
+    total = sum(len(_filled_slots(record)) for record in _pronoun_records())
+    assert total == 243
+
+
+def test_pronoun_slot_counts_per_pronoun():
+    records = _pronoun_records()
+    for russian, expected in PRONOUN_SLOT_COUNTS.items():
+        assert len(_filled_slots(_pronoun(russian))) == expected, russian
+    declining = {
+        r["Russian"].replace(COMBINING_ACUTE, "") for r in records if _filled_slots(r)
+    }
+    assert declining == set(PRONOUN_SLOT_COUNTS)
+
+
+def test_pronoun_old_oblique_column_is_gone():
+    assert "Oblique Forms" not in _read_rows("pronouns.tsv")[0]
+
+
+@pytest.mark.parametrize(
+    ("russian", "column", "expected"),
+    [
+        ("тот", "Genitive", "того́"),
+        ("тот", "Genitive f.", "той"),
+        ("тот", "Genitive pl.", "тех"),
+        ("тот", "Accusative", "тот"),
+        ("тот", "Accusative m. living", "того́"),
+        ("тот", "Accusative n.", "то"),
+        ("тот", "Accusative f.", "ту"),
+        ("тот", "Accusative pl.", "те"),
+        ("тот", "Accusative pl. living", "тех"),
+        ("он", "Genitive", "его́"),
+        ("он", "Genitive (н-)", "него́"),
+        ("он", "Prepositional", "нём"),
+        ("она", "Prepositional", "ней"),
+        ("они", "Prepositional", "них"),
+        ("я", "Genitive", "меня́"),
+        ("никто", "Prepositional", "нико́м"),
+        ("ничто", "Prepositional", "ничём"),
+    ],
+)
+def test_pronoun_slot_spot_checks(russian, column, expected):
+    assert _pronoun(russian)[column] == expected
+
+
+def test_single_form_pronouns_leave_extra_slots_empty():
+    record = _pronoun("я")
+    extras = [c for c in PRONOUN_SLOT_COLUMNS if c not in _PRIMARY_SLOTS]
+    assert all(record[column] == "" for column in extras)
+
+
+_PRIMARY_SLOTS = {
+    "Genitive",
+    "Dative",
+    "Accusative",
+    "Instrumental",
+    "Prepositional",
+}

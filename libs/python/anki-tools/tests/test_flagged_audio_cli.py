@@ -4,9 +4,11 @@ import pytest
 
 from anki_tools import anki_sync, flagged_audio
 from anki_tools.flagged_audio_cli import HEADWORD_FIELDS, SLOTS, build_parser, main
+from anki_tools.mutable_words_plan import FIELD_NAMES
 
 MUTABLE_NOUNS = "Russian - Mutable Nouns (Ellis Version)"
 IMMUTABLE = flagged_audio.IMMUTABLE_NOTE_TYPE
+PRONOUNS = "Russian - Mutable Pronouns (Ellis Version)"
 
 
 def test_build_parser_returns_argument_parser():
@@ -187,8 +189,61 @@ def test_report_only_never_syncs(monkeypatch, synced):
     assert synced == []
 
 
+def _pronoun_collection(ord_, **values):
+    return _FakeCollection(
+        [(4, PRONOUNS, ["x"])], pronoun_ord=ord_, pronoun_values=values
+    )
+
+
+def _flagged_words(monkeypatch, collection):
+    calls = []
+    monkeypatch.setattr(
+        "anki_tools.flagged_audio_cli.Collection", lambda path: collection
+    )
+    monkeypatch.setattr(
+        "anki_tools.flagged_audio_cli.regenerate",
+        lambda mode, words: calls.append(words) or 0,
+    )
+    assert main(["--collection", "ignored", "--fix"]) == 0
+    return calls
+
+
+def test_flagged_pronoun_genitive_f_card_resolves_to_its_one_form(monkeypatch):
+    collection = _pronoun_collection(
+        7, **{"Russian": "тот", "Genitive": "того́", "Genitive f.": "той"}
+    )
+    assert _flagged_words(monkeypatch, collection) == [["той"]]
+
+
+def test_flagged_pronoun_n_form_card_resolves_to_the_stress_stripped_form(
+    monkeypatch,
+):
+    collection = _pronoun_collection(
+        9, **{"Russian": "он", "Genitive": "его́", "Genitive (н-)": "него́"}
+    )
+    assert _flagged_words(monkeypatch, collection) == [["него"]]
+
+
+@pytest.mark.parametrize("ord_", [0, 1])
+def test_flagged_pronoun_word_cards_still_resolve_to_the_headword(monkeypatch, ord_):
+    collection = _pronoun_collection(
+        ord_, **{"Russian": "тот", "Genitive": "того́", "Genitive f.": "той"}
+    )
+    assert _flagged_words(monkeypatch, collection) == [["тот"]]
+
+
 def _forbidden_regenerate(mode, words):
     raise AssertionError(f"regenerate called without --fix: {mode} {words}")
+
+
+class _FakePronounNote:
+    def __init__(self, values):
+        self._names = list(FIELD_NAMES["Pronouns"])
+        self.fields = [values.get(name, "") for name in self._names]
+        self._type = {"name": PRONOUNS, "flds": [{"name": n} for n in self._names]}
+
+    def note_type(self):
+        return self._type
 
 
 class _FakeNote:
@@ -210,8 +265,9 @@ class _FakeNote:
 
 
 class _FakeCard:
-    def __init__(self, card_id, flags, note):
+    def __init__(self, card_id, flags, note, ord_=0):
         self.id = card_id
+        self.ord = ord_
         self.flags = flags
         self._note = note
 
@@ -228,7 +284,11 @@ class _FakeDb:
 
 
 class _FakeCollection:
-    def __init__(self, rows, raise_on_scan=False):
+    def __init__(
+        self, rows, raise_on_scan=False, pronoun_ord=None, pronoun_values=None
+    ):
+        self._pronoun_ord = pronoun_ord
+        self._pronoun_values = pronoun_values
         self._rows = list(rows)
         self._raise = raise_on_scan
         self.closed = False
@@ -238,6 +298,9 @@ class _FakeCollection:
         if self._raise:
             raise RuntimeError("scan blew up")
         flags, note_type, headwords = self._rows[card_id]
+        if self._pronoun_ord is not None:
+            note = _FakePronounNote(self._pronoun_values)
+            return _FakeCard(card_id, flags, note, self._pronoun_ord)
         return _FakeCard(card_id, flags, _FakeNote(note_type, headwords))
 
     def set_user_flag_for_cards(self, flag, card_ids):

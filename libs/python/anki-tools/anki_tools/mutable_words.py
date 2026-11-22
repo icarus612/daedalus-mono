@@ -44,15 +44,17 @@ TEMPLATE_COUNTS_BY_SHEET: dict[str, int] = {
     "Verbs": 4,
     "Adjectives": 2,
     "Adverbs": 2,
-    "Pronouns": 2 + len(mutable_words_plan.PRONOUN_CASES),
+    "Pronouns": 2 + len(mutable_words_plan.PRONOUN_CARD_SLOTS),
     "Numerals": 2,
 }
+
+_CASE_PILL_SHEETS = frozenset({"Verbs", "Adverbs", "Pronouns"})
 
 _AUDIO_FIELD_NAMES = (
     "Audio",
     "Audio Imperfective",
     "Audio Perfective",
-    *mutable_words_plan.PRONOUN_CASE_AUDIO_FIELDS,
+    *mutable_words_plan.PRONOUN_FORM_AUDIO_FIELDS,
 )
 
 
@@ -86,7 +88,7 @@ def build_note_types(
             prompt_hint.PROMPT_HINT_CSS,
             mutable_words_plan.EXTRA_CSS,
         ]
-        if "Case" in mutable_words_plan.FIELD_NAMES[sheet]:
+        if sheet in _CASE_PILL_SHEETS:
             css_parts.insert(-1, case_pill.CASE_PILL_CSS)
         cloned["css"] = "\n\n".join(css_parts)
 

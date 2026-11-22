@@ -58,7 +58,7 @@ _PER_DECK_CARDS = {
     "Verbs": 856,
     "Adjectives": 348,
     "Adverbs": 282,
-    "Pronouns": 170,
+    "Pronouns": 303,
     "Numerals": 110,
 }
 _FILENAME_RE = re.compile(r"^[^/]+_(?:f1|m2)\.mp3$")
@@ -111,7 +111,7 @@ def test_full_pipeline_note_and_card_totals():
         "Numerals": len(numerals) * 2,
     }
     assert cards_by_sheet == _PER_DECK_CARDS
-    assert sum(cards_by_sheet.values()) == 3028
+    assert sum(cards_by_sheet.values()) == 3161
 
 
 def test_full_pipeline_base_word_and_slug_totals():
@@ -275,15 +275,15 @@ def test_real_source_reimport_is_idempotent_no_duplicate_notetypes(
         fresh_col.close()
 
 
-def test_real_source_predicted_audio_filenames_well_formed_and_number_2896():
+def test_real_source_predicted_audio_filenames_well_formed_and_number_3180():
     nouns, verbs, adjectives, adverbs, pronouns, numerals = _parse_all_rows()
 
     filenames: set[str] = set()
     for row in (*nouns, *verbs, *adjectives, *adverbs, *pronouns, *numerals):
-        for base_word in row.base_words:
+        for base_word in getattr(row, "audio_words", row.base_words):
             filenames.update(plan.audio_names(base_word))
 
-    assert len(filenames) == 2916
+    assert len(filenames) == 3180
     malformed = [name for name in filenames if not _FILENAME_RE.match(name)]
     assert malformed == []
 
@@ -323,7 +323,7 @@ def test_audio_dry_run_over_real_media_dir_reports_exact_pending_count(
     match = re.match(r"total (\d+) / present (\d+) / pending (\d+)$", lines[0])
     assert match is not None
     total, present, pending = (int(g) for g in match.groups())
-    assert total == 2918
+    assert total == 3206
     assert present + pending == total
     assert (
         lines[1]

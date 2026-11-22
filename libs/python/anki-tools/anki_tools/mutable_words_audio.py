@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Resumable, budget-safe ElevenLabs audio generation for the mutable-words
-deck (Nouns, Verbs, Adjectives, Adverbs).
+deck (Nouns, Verbs, Adjectives, Adverbs, Pronouns, Numerals).
 
 The pure half (`load_base_words`, `select_voices`, `pending_pairs`,
 `plan_requests`) only ever plans against the Anki media directory; `generate`
@@ -67,13 +67,14 @@ _TSV_FILENAMES = {
 
 
 def load_base_words(source_dir: str, sheets: Sequence[str] = SHEETS) -> list[str]:
-    """Flatten every row's `.base_words` across `sheets`' TSVs under
-    `source_dir`, in sheet order then row order."""
+    """Flatten every row's audio words across `sheets`' TSVs under
+    `source_dir`, in sheet order then row order. A Pronouns row contributes
+    its `.audio_words` (base words plus each distinct case form)."""
     words: list[str] = []
     for sheet in sheets:
         tsv_path = os.path.join(source_dir, _TSV_FILENAMES[sheet])
         for row in _PARSERS[sheet](tsv_path):
-            words.extend(row.base_words)
+            words.extend(row.audio_words if sheet == "Pronouns" else row.base_words)
     return words
 
 
@@ -164,8 +165,8 @@ def build_parser() -> argparse.ArgumentParser:
         prog="anki-mutable-words-audio",
         description=(
             "Generate missing audio for the mutable-words deck (Nouns, "
-            "Verbs, Adjectives, Adverbs) across the f1/m2 voice slots, "
-            "skipping every pair whose file already exists in the Anki "
+            "Verbs, Adjectives, Adverbs, Pronouns, Numerals) across the f1/m2 "
+            "voice slots, skipping every pair whose file already exists in the Anki "
             "media directory."
         ),
     )
@@ -173,14 +174,14 @@ def build_parser() -> argparse.ArgumentParser:
         "--source-dir",
         type=str,
         default=str(Path(__file__).parent / "data" / "russian-vocabulary"),
-        help="Directory holding nouns.tsv/verbs.tsv/adjectives.tsv/adverbs.tsv.",
+        help="Directory holding the per-sheet TSVs (nouns.tsv ... numerals.tsv).",
     )
     parser.add_argument(
         "--sheet",
         action="append",
         choices=SHEETS,
         default=None,
-        help="Limit to this sheet (repeatable). Default: all four, in order.",
+        help="Limit to this sheet (repeatable). Default: all sheets, in order.",
     )
     parser.add_argument(
         "--output-dir",

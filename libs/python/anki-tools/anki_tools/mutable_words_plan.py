@@ -7,10 +7,9 @@ passed in.
 """
 
 import csv
-import re
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import ClassVar
+from typing import ClassVar, NamedTuple
 
 from anki_tools import card_audio, case_pill, distinction, prompt_hint
 from anki_tools.anki_identity import guid_for_row, notetype_id_for_name
@@ -52,9 +51,51 @@ PRONOUN_CASES: tuple[str, ...] = (
     "Instrumental",
     "Prepositional",
 )
-PRONOUN_CASE_AUDIO_FIELDS: tuple[str, ...] = tuple(
-    f"Audio {case}" for case in PRONOUN_CASES
+
+
+class PronounSlot(NamedTuple):
+    field: str
+    case: str
+    qualifier: str | None
+    role: str | None
+
+
+PRONOUN_SLOTS: tuple[PronounSlot, ...] = (
+    PronounSlot("Genitive", "Genitive", None, None),
+    PronounSlot("Genitive f.", "Genitive", "feminine", "f"),
+    PronounSlot("Genitive pl.", "Genitive", "plural", "pl"),
+    PronounSlot("Genitive (н-)", "Genitive", "after a preposition", "after-prep"),
+    PronounSlot("Dative", "Dative", None, None),
+    PronounSlot("Dative f.", "Dative", "feminine", "f"),
+    PronounSlot("Dative pl.", "Dative", "plural", "pl"),
+    PronounSlot("Dative (н-)", "Dative", "after a preposition", "after-prep"),
+    PronounSlot("Accusative", "Accusative", None, None),
+    PronounSlot("Accusative m. living", "Accusative", "masculine, living", "mn"),
+    PronounSlot("Accusative n.", "Accusative", "neuter", "mn"),
+    PronounSlot("Accusative f.", "Accusative", "feminine", "f"),
+    PronounSlot("Accusative pl.", "Accusative", "plural, not living", "pl"),
+    PronounSlot("Accusative pl. living", "Accusative", "plural, living", "pl"),
+    PronounSlot("Accusative (н-)", "Accusative", "after a preposition", "after-prep"),
+    PronounSlot("Instrumental", "Instrumental", None, None),
+    PronounSlot("Instrumental f.", "Instrumental", "feminine", "f"),
+    PronounSlot("Instrumental pl.", "Instrumental", "plural", "pl"),
+    PronounSlot(
+        "Instrumental (н-)", "Instrumental", "after a preposition", "after-prep"
+    ),
+    PronounSlot("Prepositional", "Prepositional", None, None),
+    PronounSlot("Prepositional f.", "Prepositional", "feminine", "f"),
+    PronounSlot("Prepositional pl.", "Prepositional", "plural", "pl"),
 )
+PRONOUN_FORM_FIELDS: tuple[str, ...] = tuple(slot.field for slot in PRONOUN_SLOTS)
+PRONOUN_FORM_AUDIO_FIELDS: tuple[str, ...] = tuple(
+    f"Audio {field}" for field in PRONOUN_FORM_FIELDS
+)
+_PRIMARY_SLOT_FIELDS = frozenset(PRONOUN_CASES)
+PRONOUN_CARD_ENTRIES: tuple[PronounSlot, ...] = (
+    *(slot for slot in PRONOUN_SLOTS if slot.field in _PRIMARY_SLOT_FIELDS),
+    *(slot for slot in PRONOUN_SLOTS if slot.field not in _PRIMARY_SLOT_FIELDS),
+)
+PRONOUN_CARD_SLOTS: tuple[str, ...] = tuple(slot.field for slot in PRONOUN_CARD_ENTRIES)
 
 NOTE_TYPE_NAMES = {
     "Nouns": "Russian - Mutable Nouns (Ellis Version)",
@@ -142,15 +183,14 @@ FIELD_NAMES: dict[str, tuple[str, ...]] = {
         "Stress",
         "Pronoun Type",
         "Gender Forms",
-        "Oblique Forms",
         "Additional Info",
         "Examples",
         "Rank",
         "Audio",
         "Russian Distinction",
         "English Distinction",
-        *PRONOUN_CASES,
-        *(f"Audio {case}" for case in PRONOUN_CASES),
+        *PRONOUN_FORM_FIELDS,
+        *PRONOUN_FORM_AUDIO_FIELDS,
     ),
     "Numerals": (
         "Russian",
@@ -445,16 +485,25 @@ class PronounRow:
     stress: str
     pronoun_type: str
     gender_forms: str
-    oblique_forms: str
     additional_info: str
     examples: str
-    case_forms: tuple[str, ...] = ("",) * len(PRONOUN_CASES)
+    case_forms: tuple[str, ...] = ("",) * len(PRONOUN_SLOTS)
 
     SHEET: ClassVar[str] = "Pronouns"
 
     @property
     def base_words(self) -> tuple[str, ...]:
         return (self.russian,)
+
+    @property
+    def audio_words(self) -> tuple[str, ...]:
+        headword = strip_qualifier(self.russian)
+        words = list(self.base_words)
+        for form in self.case_forms:
+            word = bare_form(form)
+            if word and word != headword and word not in words:
+                words.append(word)
+        return tuple(words)
 
     @property
     def guid(self) -> str:
@@ -473,7 +522,6 @@ class PronounRow:
             self.stress,
             _pronoun_type_shown(self.russian, self.pronoun_type, cue),
             self.gender_forms,
-            self.oblique_forms,
             self.additional_info,
             self.examples,
             str(self.rank),
@@ -482,27 +530,15 @@ class PronounRow:
             cue,
             *self.case_forms,
             *(
-                audio_field_value(audio_names(spoken_case_text(form))) if form else ""
+                audio_field_value(audio_names(bare_form(form))) if form else ""
                 for form in self.case_forms
             ),
         ]
 
 
-_CASE_LABELS = re.compile(r"^(?:m\./n\.|m\.|n\.|f\.|pl\.|living)\s+")
-
-
-def spoken_case_text(form: str) -> str:
-    """What a case card's recording says: every distinct form in `form`,
-    stress marks and the m./f./pl./living labels dropped, comma-separated.
-    """
-    spoken: list[str] = []
-    for part in re.split(r"\s+·\s+|\s+/\s+|,\s+", form.replace("\u0301", "")):
-        word = part.strip()
-        while _CASE_LABELS.match(word):
-            word = _CASE_LABELS.sub("", word, count=1)
-        if word and word not in spoken:
-            spoken.append(word)
-    return ", ".join(spoken)
+def bare_form(form: str) -> str:
+    """`form` with its stress marks removed."""
+    return form.replace("\u0301", "")
 
 
 @dataclass(frozen=True)
@@ -752,10 +788,9 @@ def parse_pronouns(tsv_path: str) -> list[PronounRow]:
                     stress=row["Stress"],
                     pronoun_type=row["Pronoun Type"],
                     gender_forms=row["Gender Forms"],
-                    oblique_forms=row["Oblique Forms"],
                     additional_info=row["Additional Info"],
                     examples=row["Examples"],
-                    case_forms=tuple(row[case] for case in PRONOUN_CASES),
+                    case_forms=tuple(row[field] for field in PRONOUN_FORM_FIELDS),
                 )
             )
     return rows
@@ -881,8 +916,8 @@ def _detail_fields(sheet: str, primary_field: str) -> list[str]:
         distinction.RUSSIAN_FIELD,
         distinction.ENGLISH_FIELD,
         "Case",
-        *PRONOUN_CASES,
-        *PRONOUN_CASE_AUDIO_FIELDS,
+        *PRONOUN_FORM_FIELDS,
+        *PRONOUN_FORM_AUDIO_FIELDS,
     }
     if sheet == "Verbs":
         excluded |= set(_ASPECT_COUNTERPART)
@@ -1022,16 +1057,76 @@ _ASPECT_LINE_CSS = (
 )
 
 
+_FORM_ROLE_COLOURS: dict[str, tuple[str, str]] = {
+    "mn": ("#00796b", "#4db6ac"),
+    "f": ("#ad1457", "#f48fb1"),
+    "pl": ("#6d4c41", "#bcaaa4"),
+    "after-prep": ("#605C8B", "#b3aee0"),
+    "plain-prep": ("#656565", "#9e9e9e"),
+}
+
+
+_FORM_LINE_KEYS: tuple[str, ...] = (
+    "mn",
+    "f",
+    "pl",
+    "after-prep",
+    "plain-prep",
+    "m-living",
+    "neut",
+    "pl-living",
+)
+_FORM_LINE_IDS = ", ".join(f"#form-{key}" for key in _FORM_LINE_KEYS)
+_FORM_AUDIO_IDS = ", ".join(f"#form-{key}-audio" for key in _FORM_LINE_KEYS)
+_FORM_WORD_IDS = ", ".join(f"#form-{key}-word" for key in _FORM_LINE_KEYS)
+
+
+def _form_role_selector(role: str) -> str:
+    return f".aspect.form-{role}, .form-{role} .title, .form-{role} .body"
+
+
 PRONOUN_CASE_CSS = (
-    "#case-prompt {\n"
-    "\tfont-size: 1.4rem;\n"
-    "\tcolor: #656565;\n"
-    "\tpadding-top: .3rem;\n"
-    "}\n\n"
     "#case-form {\n"
-    "\tfont-size: 2rem;\n"
+    "\tfont-size: 2.2rem;\n"
     "\tpadding: .4rem 0;\n"
-    "}"
+    "}\n\n"
+    f".form-line, {_FORM_LINE_IDS} {{\n"
+    "\tpadding: .15rem 0;\n"
+    "\tdisplay: flex;\n"
+    "\tflex-wrap: wrap;\n"
+    "\tjustify-content: center;\n"
+    "\talign-items: center;\n"
+    "\tgap: .4rem;\n"
+    "\twidth: 100%;\n"
+    "\ttext-align: center;\n"
+    "\tline-height: 1.25;\n"
+    "}\n\n"
+    ".form-line .title {\n"
+    "\tfont-size: 1.2rem;\n"
+    "\tmargin-right: 0;\n"
+    "}\n\n"
+    ".form-line .body {\n"
+    "\tfont-size: 1.2rem;\n"
+    "\tdisplay: inline-flex;\n"
+    "\talign-items: center;\n"
+    "\tgap: .4rem;\n"
+    "}\n\n"
+    f".form-line > span, .form-line > div, {_FORM_AUDIO_IDS}, {_FORM_WORD_IDS} {{\n"
+    "\tdisplay: inline-flex;\n"
+    "\talign-items: center;\n"
+    "\tgap: .4rem;\n"
+    "}\n\n"
+    + "\n\n".join(
+        f"{_form_role_selector(role)} {{\n\tcolor: {day};\n}}"
+        for role, (day, _night) in _FORM_ROLE_COLOURS.items()
+    )
+    + "\n\n"
+    + "\n\n".join(
+        ".nightMode "
+        + ", .nightMode ".join(_form_role_selector(role).split(", "))
+        + f" {{\n\tcolor: {night};\n}}"
+        for role, (_day, night) in _FORM_ROLE_COLOURS.items()
+    )
 )
 
 
@@ -1144,8 +1239,8 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
             raise ValueError(f"Verbs card_index out of range: {card_index!r}")
         primary_field, audio_field, dom_id, state_key = _VERB_CARD_CONFIGS[card_index]
         audio_side = card_index % 2 == 0
-    elif sheet == "Pronouns" and card_index in range(2, 2 + len(PRONOUN_CASES)):
-        return _pronoun_case_template(PRONOUN_CASES[card_index - 2])
+    elif sheet == "Pronouns" and card_index in range(2, 2 + len(PRONOUN_CARD_ENTRIES)):
+        return _pronoun_case_template(PRONOUN_CARD_ENTRIES[card_index - 2])
     elif sheet in _PRIMARY_FIELD:
         if card_index not in (0, 1):
             raise ValueError(f"{sheet} card_index out of range: {card_index!r}")
@@ -1208,23 +1303,146 @@ def build_template(sheet: str, card_index: int) -> tuple[str, str]:
 PRONOUN_CASE_STATE_KEY = "__mutablePronounCaseChoice"
 
 
-def _pronoun_case_template(case: str) -> tuple[str, str]:
-    """A pronoun's case card: the headword and the case name on the front,
-    that case's form with its own recording on the back. Wrapped in the case
-    field's conditional, so a pronoun without that form makes no card.
+_PRIMARY_QUALIFIERS: dict[str, tuple[str, str]] = {
+    "Genitive": ("Genitive f.", "(masculine / neuter)"),
+    "Dative": ("Dative f.", "(masculine / neuter)"),
+    "Accusative": ("Accusative m. living", "(masculine, not living)"),
+    "Instrumental": ("Instrumental f.", "(masculine / neuter)"),
+    "Prepositional": ("Prepositional f.", "(masculine / neuter)"),
+}
+
+
+class _FormLine(NamedTuple):
+    key: str
+    field: str
+    label: str
+    role: str
+
+
+def _span(role: str, text: str) -> str:
+    return f' <span class="aspect form-{role}">{text}</span>'
+
+
+def _conditional(field: str, body: str) -> str:
+    return f"{{{{#{field}}}}}{body}{{{{/{field}}}}}"
+
+
+def _slot_key(slot: PronounSlot) -> str:
+    key = {
+        "Accusative m. living": "m-living",
+        "Accusative n.": "neut",
+        "Accusative pl. living": "pl-living",
+    }.get(slot.field)
+    return key or slot.role or "mn"
+
+
+def _primary_front_qualifier(case: str) -> str:
+    form_field, text = _PRIMARY_QUALIFIERS[case]
+    parts = [_conditional(form_field, _span("mn", text))]
+    if f"{case} (н-)" in PRONOUN_FORM_FIELDS:
+        parts.append(
+            _conditional(f"{case} (н-)", _span("plain-prep", "(without a preposition)"))
+        )
+    return "".join(parts)
+
+
+def _form_line(line: _FormLine) -> str:
+    slot_id = f"form-{line.key}-audio"
+    line_id = f"form-{line.key}"
+    play_fn = f"__pronounFormPlay_{line.key.replace('-', '_')}"
+    return _wrap(
+        line_id,
+        card_audio.audio_line_block(f"Audio {line.field}", slot_id, line_id, play_fn),
+        _wrap(f"{line_id}-word", f"{{{{{line.field}}}}}"),
+        attrs=(
+            f'class="form-line form-{line.role} {card_audio.TAPPABLE_CLASS}" '
+            f'onclick="{play_fn}(event)"'
+        ),
+    )
+
+
+def _pronoun_other_lines(entry: PronounSlot) -> tuple[list[str], list[str]]:
+    """(line HTML blocks, addTitle calls) for the other slots of `entry`'s case."""
+    blocks: list[str] = []
+    calls: list[str] = []
+    for slot in PRONOUN_SLOTS:
+        if slot.case != entry.case or slot.field == entry.field:
+            continue
+        if slot.qualifier is None:
+            plain_field = f"{entry.case} (н-)"
+            plain = _FormLine(
+                "plain-prep", slot.field, "without a preposition", "plain-prep"
+            )
+            masculine_label = (
+                "masculine, not living"
+                if entry.case == "Accusative"
+                else "masculine / neuter"
+            )
+            masculine = _FormLine("mn", slot.field, masculine_label, "mn")
+            body_parts = []
+            title_parts = []
+            if plain_field in PRONOUN_FORM_FIELDS:
+                body_parts.append(_conditional(plain_field, _form_line(plain)))
+                title_parts.append(_conditional(plain_field, _title_call(plain)))
+                body_parts.append(
+                    f"{{{{^{plain_field}}}}}{_form_line(masculine)}{{{{/{plain_field}}}}}"
+                )
+                title_parts.append(
+                    f"{{{{^{plain_field}}}}}{_title_call(masculine)}{{{{/{plain_field}}}}}"
+                )
+            else:
+                body_parts.append(_form_line(masculine))
+                title_parts.append(_title_call(masculine))
+            blocks.append(_conditional(slot.field, "".join(body_parts)))
+            calls.append(_conditional(slot.field, "".join(title_parts)))
+            continue
+        line = _FormLine(_slot_key(slot), slot.field, slot.qualifier, slot.role or "mn")
+        blocks.append(_conditional(slot.field, _form_line(line)))
+        calls.append(_conditional(slot.field, _title_call(line)))
+    return blocks, calls
+
+
+def _title_call(line: _FormLine) -> str:
+    return f'addTitle("form-{line.key}-word", "{line.label}");'
+
+
+def _pronoun_case_template(entry: PronounSlot) -> tuple[str, str]:
+    """One pronoun form's card: headword, then the case pill with the slot's
+    qualifier on the front; that form with its own recording, then the case's
+    other forms as counterpart lines, on the back. Wrapped in the slot's
+    conditional, so a pronoun without that form makes no card.
     """
+    qualifier = (
+        _span(entry.role or "mn", f"({entry.qualifier})")
+        if entry.qualifier
+        else _primary_front_qualifier(entry.case)
+    )
     front = _wrap(
         "front",
         _DECK_HEADER_HTML,
         '<div id="russian">{{Russian}}</div>',
-        f'<div id="case-prompt">{case}</div>',
+        case_pill.pill_block(entry.case, qualifier),
     )
     qfmt = _add_russian_cue(front + _DECK_HEADER_SCRIPT)
-    qfmt = f"{{{{#{case}}}}}{qfmt}{{{{/{case}}}}}"
+    qfmt = _conditional(entry.field, qfmt)
+    line_blocks, title_calls = _pronoun_other_lines(entry)
+    info_id, info_title = _detail_id_and_title("Additional Info")
     back = _wrap(
         "back",
-        card_audio.audio_block(f"Audio {case}", "audio", PRONOUN_CASE_STATE_KEY),
-        f'<div id="case-form">{{{{{case}}}}}</div>',
-        '<div id="translation">{{Translation}}</div>',
+        card_audio.audio_block(f"Audio {entry.field}", "audio", PRONOUN_CASE_STATE_KEY),
+        f'<div class="cue-row"><span id="case-form">{{{{{entry.field}}}}}</span></div>',
+        *line_blocks,
+        _translation_div("Pronouns", "Russian"),
+        f'<div id="{info_id}">{{{{Additional Info}}}}</div>',
     )
-    return qfmt, "\n".join(("{{FrontSide}}", back))
+    back = prompt_hint.add_prompt_hint(back, distinction.ENGLISH_FIELD)
+    script = "\n".join(
+        [
+            "<script>",
+            _ADD_TITLE_FUNCTION,
+            *title_calls,
+            f'addTitle("{info_id}", "{info_title}");',
+            "</script>",
+        ]
+    )
+    return qfmt, "\n".join(("{{FrontSide}}", back, script))

@@ -2,6 +2,7 @@ import unicodedata
 
 import pytest
 
+from anki_tools import mutable_words_plan as mwp
 from anki_tools import phrase_words as pw
 
 GOVORIT = pw.TaughtWord(
@@ -147,6 +148,35 @@ def test_taught_word_strips_an_immutable_qualifier_from_the_forms():
     word = pw.taught_word(9, ["Russian", "Translation"], ["как (conjunction)", "as"])
     assert word.forms == ("как",)
     assert word.headword == "как (conjunction)"
+
+
+def test_taught_word_reads_a_pronoun_slot_columns_as_forms():
+    word = pw.taught_word(
+        21,
+        ["Russian", "Translation", "Genitive", "Genitive (н-)", "Prepositional"],
+        ["он", "he", "его́", "него́", "нём"],
+    )
+    assert {"он", "его", "него", "нем"} <= set(word.forms)
+
+
+def test_every_pronoun_slot_field_is_read_as_a_form():
+    values = ["сл" + "а" * n for n in range(1, len(mwp.PRONOUN_FORM_FIELDS) + 1)]
+    word = pw.taught_word(
+        22, ["Russian", "Translation", *mwp.PRONOUN_FORM_FIELDS], ["он", "he", *values]
+    )
+    assert set(values) <= set(word.forms)
+
+
+def test_resolve_maps_a_phrase_word_nego_to_on_through_the_surface_tier():
+    word = pw.taught_word(
+        21,
+        ["Russian", "Translation", "Genitive", "Genitive (н-)"],
+        ["он", "he", "его́", "него́"],
+    )
+    tokens = pw.tokenize("я думаю о нём и без него")
+    assert "него" in tokens
+    got = pw.resolve("него", pw.build_index([word]))
+    assert got.word is word and got.via == pw.VIA_SURFACE
 
 
 def test_taught_word_ignores_prose_fields():

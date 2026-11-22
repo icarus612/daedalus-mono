@@ -74,6 +74,11 @@ _ELABORATES = (
     "so the label is not the same information"
 )
 
+_FOLDED_FORMS = (
+    "distinct word forms (masculine not-living form vs plural, e.g. мой / мои́) "
+    "that dedup.normalize folds to one spelling by dropping the final й / ь"
+)
+
 _CATEGORY_LABEL = "Category is a classification label"
 
 ALLOWED = {
@@ -161,6 +166,10 @@ ALLOWED = {
             ),
         ),
     ): _ELABORATES,
+    ("Mutable Pronouns", "весь", dedup.RULE_EQUAL, ("все", "все")): _FOLDED_FORMS,
+    ("Mutable Pronouns", "мой", dedup.RULE_EQUAL, ("мои", "мои")): _FOLDED_FORMS,
+    ("Mutable Pronouns", "свой", dedup.RULE_EQUAL, ("свои", "свои")): _FOLDED_FORMS,
+    ("Mutable Pronouns", "твой", dedup.RULE_EQUAL, ("твои", "твои")): _FOLDED_FORMS,
 }
 
 OPEN: dict = {}
@@ -501,3 +510,23 @@ def test_segments_split_gloss_into_senses_parentheticals_and_the_whole():
         (dedup.GLOSS_ALL, "more"),
         (dedup.SENSE, "more"),
     ]
+
+
+PRONOUN_CASE_CARDS = 243
+
+
+def test_case_cards_render_two_sides_for_every_filled_cell(tmp_path):
+    rows = current_mutable_rows()["Pronouns"]
+    assert sum(1 for r in rows for form in r.case_forms if form) == PRONOUN_CASE_CARDS
+    bench = Bench(str(tmp_path))
+    try:
+        bench.add_all_current()
+        sides = bench.sides()
+    finally:
+        bench.close()
+    case_sides = [
+        where
+        for name, _headword, where, _html in sides
+        if "Pronoun" in name and int(re.match(r"card(\d+)/", where).group(1)) >= 3
+    ]
+    assert len(case_sides) == PRONOUN_CASE_CARDS * 2

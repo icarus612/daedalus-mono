@@ -270,3 +270,29 @@ def test_source_drift_imports_nothing_from_anki():
 def test_dataclasses_are_frozen():
     with pytest.raises(AttributeError):
         note().guid = "other"
+
+
+def test_expected_pronoun_notes_carry_exactly_the_55_schema_fields(tmp_path):
+    text, source_dir = write_source(tmp_path)
+    assert len(mwp.FIELD_NAMES["Pronouns"]) == 55
+    notes = [
+        e
+        for e in sd.expected_notes(text, source_dir)
+        if e.note_type == mwp.NOTE_TYPE_NAMES["Pronouns"]
+    ]
+    assert len(notes) == FIXTURE_ROWS
+    for built in notes:
+        assert list(built.fields) == list(mwp.FIELD_NAMES["Pronouns"])
+        assert set(mwp.PRONOUN_FORM_FIELDS) <= set(built.fields)
+        assert "Oblique" + " Forms" not in built.fields
+
+
+def test_pronoun_collection_notes_from_the_same_rows_report_no_drift(tmp_path):
+    text, source_dir = write_source(tmp_path)
+    expected = sd.expected_notes(text, source_dir)
+    pronoun_type = mwp.NOTE_TYPE_NAMES["Pronouns"]
+    pronouns = [e for e in expected if e.note_type == pronoun_type]
+    assert pronouns
+    report = sd.compare(pronouns, collection_notes(pronouns))
+    assert [r for r in report.drift if r.note_type == pronoun_type] == []
+    assert report.drift == []

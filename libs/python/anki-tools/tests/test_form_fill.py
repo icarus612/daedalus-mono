@@ -84,7 +84,6 @@ class TestConstants:
             {
                 ("Numerals", "Gender Forms"),
                 ("Numerals", "Genitive"),
-                ("Pronouns", "Oblique Forms"),
                 ("Adverbs", "Formation"),
             }
         )
@@ -491,7 +490,7 @@ class TestGenerateNouns:
         "sheet, field",
         [
             ("Nouns", "Translation"),
-            ("Pronouns", "Oblique Forms"),
+            ("Pronouns", "Gender Forms"),
             ("Bogus", "Plural"),
             ("Verbs", "Perfective"),
         ],
@@ -1572,6 +1571,15 @@ PINNED_ORACLE = {
     ("Adjectives", "Comparative"): (3, 2, 0, 2, 0),
     ("Adverbs", "Comparative"): (60, 1, 0, 26, 7),
 }
+
+
+class TestRealPronounSlots:
+    def test_no_candidate_cell_is_a_slot_field(self):
+        tsv = fc.tsv_census_notes(REAL_DATA_DIR)
+        cells = ff.candidate_cells(tsv, all_sheets(), frozenset())
+        slots = set(mwp.PRONOUN_FORM_FIELDS)
+        assert len(slots) == 22
+        assert not [c for c in cells if c.sheet == "Pronouns" and c.field in slots]
 
 
 class TestRealArtifact:

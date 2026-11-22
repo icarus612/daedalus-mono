@@ -475,3 +475,75 @@ def test_tint_lines_preserves_text_once_tags_are_stripped(translation, mapping):
     out = case_pill.tint_lines(translation, mapping)
     assert out != translation
     assert _strip_tags(out) == _strip_tags(translation)
+
+
+def _pills(name):
+    return "".join(
+        f'<span class="case-pill case-{n.lower()}">{n}</span>' for n in CANONICAL
+    )
+
+
+def _flat(block):
+    return re.sub(r">\s+<", "><", block)
+
+
+def test_pill_block_none_matches_no_argument_output():
+    assert case_pill.pill_block(None) == case_pill.pill_block()
+    assert case_pill.pill_block(None, "") == case_pill.pill_block()
+    assert "{{#Case}}" in case_pill.pill_block()
+
+
+@pytest.mark.parametrize("name", CANONICAL)
+def test_pill_block_fixed_case_is_literal_and_unwrapped(name):
+    block = case_pill.pill_block(name)
+    assert f'data-case="{name}"' in block
+    assert "{{#Case}}" not in block
+    assert "{{/Case}}" not in block
+    assert "{{text:Case}}" not in block
+    assert block.count('class="case-pills"') == 1
+
+
+@pytest.mark.parametrize("name", CANONICAL)
+def test_pill_block_fixed_case_keeps_all_six_pills_in_order(name):
+    block = case_pill.pill_block(name)
+    assert re.findall(r'class="case-pill case-(\w+)"', block) == [
+        n.lower() for n in CANONICAL
+    ]
+    assert _pills(name) in _flat(block)
+
+
+def test_pill_block_fixed_case_is_exactly_the_specified_markup():
+    expected = (
+        f'<div class="case-pills" data-case="Genitive">{_pills("Genitive")}</div>'
+    )
+    assert _flat(case_pill.pill_block("Genitive")) == expected
+
+
+def test_pill_block_trailing_follows_last_pill_inside_the_div():
+    trailing = '<span class="extra">x</span>'
+    flat = _flat(case_pill.pill_block("Dative", trailing))
+    last_pill = '<span class="case-pill case-prepositional">Prepositional</span>'
+    assert last_pill + trailing + "</div>" in flat
+    assert flat.count(trailing) == 1
+    assert flat.index(trailing) > flat.index(last_pill)
+    assert flat.endswith("</div>")
+
+
+def test_pill_block_trailing_keyword_and_empty_default():
+    assert case_pill.pill_block("Dative", trailing="") == case_pill.pill_block("Dative")
+    with_trailing = case_pill.pill_block(case="Dative", trailing="TAIL")
+    assert "TAIL" in with_trailing
+    assert "TAIL" not in case_pill.pill_block("Dative")
+
+
+def test_pill_block_trailing_with_default_case_stays_inside_wrapper():
+    flat = _flat(case_pill.pill_block(None, "TAIL"))
+    assert "TAIL</div>{{/Case}}" in flat
+
+
+@pytest.mark.parametrize("bad", ["Genitiv", "genitive", "Locative", "", "Gen"])
+def test_pill_block_rejects_case_outside_case_order(bad):
+    with pytest.raises(ValueError, match=r".*"):
+        case_pill.pill_block(bad)
+    with pytest.raises(ValueError, match=r".*"):
+        case_pill.pill_block(bad, "tail")

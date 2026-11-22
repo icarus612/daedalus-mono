@@ -49,7 +49,7 @@ SHEET_CARD_COUNTS = {
     "Verbs": 4,
     "Adjectives": 2,
     "Adverbs": 2,
-    "Pronouns": 2,
+    "Pronouns": 24,
     "Numerals": 2,
 }
 
@@ -161,6 +161,7 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
     )
     adjectives_cards = len(adjectives) * 2
     adverbs_cards = len(adverbs) * 2
+    assert all(len(p.case_forms) == 22 for p in pronouns)
     pronouns_cards = len(pronouns) * 2 + sum(
         1 for p in pronouns for form in p.case_forms if form
     )
@@ -170,7 +171,7 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
     assert verbs_cards == 856
     assert adjectives_cards == 348
     assert adverbs_cards == 282
-    assert pronouns_cards == 170
+    assert pronouns_cards == 303
     assert numerals_cards == 110
     assert (
         nouns_cards
@@ -179,7 +180,7 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
         + adverbs_cards
         + pronouns_cards
         + numerals_cards
-        == 3028
+        == 3161
     )
 
 
@@ -209,10 +210,12 @@ def test_field_name_legality():
     for sheet, names in mutable_words_plan.FIELD_NAMES.items():
         if sheet == "Pronouns":
             case_tail = (
-                *mutable_words_plan.PRONOUN_CASES,
-                *mutable_words_plan.PRONOUN_CASE_AUDIO_FIELDS,
+                *mutable_words_plan.PRONOUN_FORM_FIELDS,
+                *mutable_words_plan.PRONOUN_FORM_AUDIO_FIELDS,
             )
-            assert tuple(names[-len(case_tail) :]) == case_tail
+            assert len(case_tail) == 44
+            assert tuple(names[-44:]) == case_tail
+            assert "Oblique Forms" not in names
             names = names[: -len(case_tail)]
         if sheet in CASE_SHEETS:
             assert tuple(names[-3:]) == (*tail, "Case"), sheet
@@ -225,7 +228,7 @@ def test_field_name_legality():
 
 def test_no_av_tag_in_any_template():
     sides = _all_sides()
-    assert len(sides) == 28
+    assert len(sides) == 72
     for _sheet, _card_index, _side_name, content in sides:
         assert "[sound:" not in content
         assert "[anki:tts" not in content
@@ -500,7 +503,10 @@ def test_structure_mirrors_reference_wrapper_divs_and_addtitle(tmp_path):
                 assert content.startswith(f'{{{{#{own}}}}}<div id="front">')
                 assert content.endswith(f"{{{{/{own}}}}}")
             else:
-                assert content.startswith('<div id="front">'), (sheet, card_index)
+                assert re.match(r'(\{\{#[^{}]+\}\})?<div id="front">', content), (
+                    sheet,
+                    card_index,
+                )
         else:
             assert re.search(r'<div id="back">.*?</div>\s*<script>', content, re.S), (
                 sheet,
@@ -732,6 +738,12 @@ def test_non_verb_sheets_keep_a_bare_translation():
             assert 'class="aspect' not in qfmt + afmt, sheet
 
 
+_WORD_CARDS = [
+    (sheet, card_index)
+    for sheet, count in SHEET_CARD_COUNTS.items()
+    for card_index in range(count)
+    if sheet != "Pronouns" or card_index in (0, 1)
+]
 _HEADWORD_SIDES = [
     (sheet, card_index)
     for sheet in mutable_words_plan.FIELD_NAMES
@@ -772,7 +784,7 @@ def test_every_sheet_cues_the_headword_on_at_least_one_question(sheet):
     assert cued
 
 
-@pytest.mark.parametrize("sheet,card_index", _HEADWORD_SIDES)
+@pytest.mark.parametrize("sheet,card_index", _WORD_CARDS)
 def test_the_answer_has_no_labelled_russian_distinction_row(sheet, card_index):
     _qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
     field = distinction.RUSSIAN_FIELD
@@ -965,7 +977,7 @@ def _ids(html):
     return re.findall(r'id="([^"]*)"', html)
 
 
-@pytest.mark.parametrize("sheet,card_index", _CARDS)
+@pytest.mark.parametrize("sheet,card_index", _WORD_CARDS)
 def test_details_is_one_container_after_the_aspect_line_before_standalone_rows(
     sheet, card_index
 ):
@@ -983,7 +995,7 @@ def test_details_is_one_container_after_the_aspect_line_before_standalone_rows(
         assert afmt.index(f'<div id="{slug}" ') < start
 
 
-@pytest.mark.parametrize("sheet,card_index", _CARDS)
+@pytest.mark.parametrize("sheet,card_index", _WORD_CARDS)
 def test_details_rows_are_conditional_static_labelled_and_exclude_cues(
     sheet, card_index
 ):
@@ -1001,7 +1013,7 @@ def test_details_rows_are_conditional_static_labelled_and_exclude_cues(
         assert block[block.index(opener) + len(opener) :].lstrip().startswith("<")
 
 
-@pytest.mark.parametrize("sheet,card_index", _CARDS)
+@pytest.mark.parametrize("sheet,card_index", _WORD_CARDS)
 def test_add_title_is_only_called_for_rows_outside_the_details_block(sheet, card_index):
     _qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
     detail_ids = set(_ids(_details_block(afmt)))
@@ -1011,7 +1023,7 @@ def test_add_title_is_only_called_for_rows_outside_the_details_block(sheet, card
     assert afmt.count("function addTitle") == 1
 
 
-@pytest.mark.parametrize("sheet,card_index", _CARDS)
+@pytest.mark.parametrize("sheet,card_index", _WORD_CARDS)
 def test_empty_detail_fields_leave_no_element_behind(sheet, card_index):
     _qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
     full = _details_block(_render(afmt, _full_fields(sheet)))
@@ -1085,7 +1097,7 @@ def test_gloss_front_has_the_english_cue_on_the_question_and_russian_cue_on_the_
     )
 
 
-@pytest.mark.parametrize("sheet,card_index", _CARDS)
+@pytest.mark.parametrize("sheet,card_index", _WORD_CARDS)
 def test_pill_placement_in_the_raw_templates(sheet, card_index):
     qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
     if sheet not in CASE_SHEETS:
@@ -1123,7 +1135,7 @@ def test_pill_positive_and_negative_controls():
         assert "case-pills" not in question + answer
 
 
-@pytest.mark.parametrize("sheet,card_index", _CARDS)
+@pytest.mark.parametrize("sheet,card_index", _WORD_CARDS)
 def test_cues_and_pills_render_exactly_once_on_the_answer_side(sheet, card_index):
     question, answer = _question_and_answer(sheet, card_index, _full_fields(sheet))
     assert answer.count('id="prompt-hint"') == 1, (sheet, card_index)
@@ -1271,9 +1283,9 @@ def _pronoun_row(russian, pronoun_type):
         stress=russian,
         pronoun_type=pronoun_type,
         gender_forms="",
-        oblique_forms="",
         additional_info="",
         examples="",
+        case_forms=("",) * 22,
     )
 
 
@@ -1316,3 +1328,382 @@ def test_exactly_the_ten_restating_pronouns_lose_their_type_row(pronouns):
         if row.pronoun_type and row.fields()[PRONOUN_TYPE_FIELD] == ""
     )
     assert emptied == sorted("ты вы кто себя тот какой который весь твой ваш".split())
+
+
+SLOT_FIELDS = (
+    "Genitive",
+    "Genitive f.",
+    "Genitive pl.",
+    "Genitive (н-)",
+    "Dative",
+    "Dative f.",
+    "Dative pl.",
+    "Dative (н-)",
+    "Accusative",
+    "Accusative m. living",
+    "Accusative n.",
+    "Accusative f.",
+    "Accusative pl.",
+    "Accusative pl. living",
+    "Accusative (н-)",
+    "Instrumental",
+    "Instrumental f.",
+    "Instrumental pl.",
+    "Instrumental (н-)",
+    "Prepositional",
+    "Prepositional f.",
+    "Prepositional pl.",
+)
+
+EXPECTED_QUALIFIERS = {
+    "Genitive f.": ("feminine", "f"),
+    "Genitive pl.": ("plural", "pl"),
+    "Genitive (н-)": ("after a preposition", "after-prep"),
+    "Dative f.": ("feminine", "f"),
+    "Dative pl.": ("plural", "pl"),
+    "Dative (н-)": ("after a preposition", "after-prep"),
+    "Accusative m. living": ("masculine, living", "mn"),
+    "Accusative n.": ("neuter", "mn"),
+    "Accusative f.": ("feminine", "f"),
+    "Accusative pl.": ("plural, not living", "pl"),
+    "Accusative pl. living": ("plural, living", "pl"),
+    "Accusative (н-)": ("after a preposition", "after-prep"),
+    "Instrumental f.": ("feminine", "f"),
+    "Instrumental pl.": ("plural", "pl"),
+    "Instrumental (н-)": ("after a preposition", "after-prep"),
+    "Prepositional f.": ("feminine", "f"),
+    "Prepositional pl.": ("plural", "pl"),
+}
+
+
+def test_slot_table_order_and_shape():
+    slots = mutable_words_plan.PRONOUN_SLOTS
+    assert len(slots) == 22
+    assert tuple(slot.field for slot in slots) == SLOT_FIELDS
+    for slot in slots:
+        assert slot.field.startswith(slot.case)
+        assert slot.case in mutable_words_plan.PRONOUN_CASES
+
+
+def test_slot_table_primaries_have_no_qualifier_or_role():
+    by_field = {slot.field: slot for slot in mutable_words_plan.PRONOUN_SLOTS}
+    for case in mutable_words_plan.PRONOUN_CASES:
+        assert by_field[case].qualifier is None
+        assert by_field[case].role is None
+
+
+@pytest.mark.parametrize("field", sorted(EXPECTED_QUALIFIERS))
+def test_slot_table_non_primary_qualifier_and_role(field):
+    by_field = {slot.field: slot for slot in mutable_words_plan.PRONOUN_SLOTS}
+    assert (by_field[field].qualifier, by_field[field].role) == EXPECTED_QUALIFIERS[
+        field
+    ]
+
+
+def test_slot_constants_lengths_and_order():
+    assert tuple(mutable_words_plan.PRONOUN_FORM_FIELDS) == SLOT_FIELDS
+    assert tuple(mutable_words_plan.PRONOUN_FORM_AUDIO_FIELDS) == tuple(
+        f"Audio {field}" for field in SLOT_FIELDS
+    )
+    assert len(mutable_words_plan.PRONOUN_CARD_SLOTS) == 22
+    assert len(mutable_words_plan.FIELD_NAMES["Pronouns"]) == 55
+
+
+def test_card_slots_order():
+    card_slots = tuple(mutable_words_plan.PRONOUN_CARD_SLOTS)
+    primaries = tuple(mutable_words_plan.PRONOUN_CASES)
+    assert len(primaries) == 5
+    assert card_slots[:5] == primaries
+    assert card_slots[5:] == tuple(f for f in SLOT_FIELDS if f not in primaries)
+    assert sorted(card_slots) == sorted(SLOT_FIELDS)
+
+
+def test_pronoun_field_names_layout():
+    names = mutable_words_plan.FIELD_NAMES["Pronouns"]
+    assert "Oblique Forms" not in names
+    assert tuple(names[11:33]) == SLOT_FIELDS
+    assert tuple(names[33:]) == tuple(f"Audio {f}" for f in SLOT_FIELDS)
+    assert len(set(names)) == 55
+
+
+def test_fields_aligned_with_field_names(pronouns):
+    for row in pronouns:
+        assert len(row.fields()) == len(mutable_words_plan.FIELD_NAMES["Pronouns"])
+        assert len(row.case_forms) == 22
+
+
+def test_removed_pronoun_helpers_are_gone():
+    for name in ("spoken_case_text", "_CASE_LABELS", "PRONOUN_CASE_AUDIO_FIELDS"):
+        assert not hasattr(mutable_words_plan, name), name
+
+
+def test_pronoun_oblique_forms_attribute_removed(pronouns):
+    assert not hasattr(pronouns[0], "oblique_forms")
+
+
+def test_bare_form_strips_only_the_stress_mark():
+    assert mutable_words_plan.bare_form("меня\u0301") == "меня"
+    assert mutable_words_plan.bare_form("тот") == "тот"
+    assert mutable_words_plan.bare_form("э\u0301того") == "этого"
+    assert mutable_words_plan.bare_form("нём-то") == "нём-то"
+    assert mutable_words_plan.bare_form("") == ""
+
+
+def _pronoun_fields(pronouns, russian):
+    row = next(p for p in pronouns if p.russian == russian)
+    return dict(zip(mutable_words_plan.FIELD_NAMES["Pronouns"], row.fields()))
+
+
+def test_that_pronoun_genitive_feminine_audio(pronouns):
+    fields = _pronoun_fields(pronouns, "тот")
+    assert fields["Genitive f."] == "той"
+    value = fields["Audio Genitive f."]
+    assert value == _audio_field_for("той")
+    assert "той_f1.mp3" in value
+    assert "той_m2.mp3" in value
+
+
+def test_etot_genitive_audio_is_unhyphenated(pronouns):
+    fields = _pronoun_fields(pronouns, "этот")
+    value = fields["Audio Genitive"]
+    assert value == _audio_field_for("этого")
+    assert "этого_" in value
+    assert "э-того" not in value
+
+
+def test_empty_slot_has_empty_audio(pronouns):
+    fields = _pronoun_fields(pronouns, "я")
+    for field in SLOT_FIELDS:
+        if not fields[field]:
+            assert fields[f"Audio {field}"] == ""
+        else:
+            assert fields[f"Audio {field}"] != ""
+    assert fields["Genitive f."] == ""
+    assert fields["Audio Genitive f."] == ""
+
+
+def test_filled_slot_audio_matches_bare_form(pronouns):
+    for row in pronouns:
+        fields = dict(zip(mutable_words_plan.FIELD_NAMES["Pronouns"], row.fields()))
+        for field in SLOT_FIELDS:
+            form = fields[field]
+            if form:
+                expected = _audio_field_for(mutable_words_plan.bare_form(form))
+                assert fields[f"Audio {field}"] == expected, (row.russian, field)
+
+
+def test_no_hyphenated_audio_names_in_pronoun_rows(pronouns):
+    for row in pronouns:
+        fields = dict(zip(mutable_words_plan.FIELD_NAMES["Pronouns"], row.fields()))
+        for field in SLOT_FIELDS:
+            assert "-" not in fields[f"Audio {field}"], (row.russian, field)
+
+
+def _expected_extra_words(row):
+    headword = strip_qualifier(row.russian)
+    extras = set()
+    for form in row.case_forms:
+        if not form:
+            continue
+        bare = mutable_words_plan.bare_form(form)
+        if bare != headword:
+            extras.add(bare)
+    return extras
+
+
+def test_audio_words_extend_base_words_with_distinct_forms(pronouns):
+    total_extra = 0
+    for row in pronouns:
+        words = list(row.audio_words)
+        base = list(row.base_words)
+        assert words[: len(base)] == base, row.russian
+        assert len(words) == len(set(words)), row.russian
+        extras = words[len(base) :]
+        assert set(extras) == _expected_extra_words(row) - set(base), row.russian
+        total_extra += len(extras)
+    assert total_extra == 144
+
+
+def test_audio_words_for_chto_pronoun_strip_the_qualifier(pronouns):
+    row = next(p for p in pronouns if p.russian == "что (pronoun)")
+    assert row.case_forms[SLOT_FIELDS.index("Accusative")] == "что"
+    words = list(row.audio_words)
+    assert "что" not in words[len(row.base_words) :]
+    assert words.count("что") <= 1
+    assert "чего" in words
+    assert "чему" in words
+    assert "чём" in words
+    assert "чем" in words
+
+
+def test_audio_words_exclude_headword_form_for_tot(pronouns):
+    row = next(p for p in pronouns if p.russian == "тот")
+    words = list(row.audio_words)
+    assert words.count("тот") == 1
+    assert words.count("той") == 1
+    assert words.count("того") == 1
+    assert words.count("тех") == 1
+
+
+CASE_TEMPLATE_ORDS = range(2, 2 + 22)
+PRONOUN_CASE_CSS_TEXT = "\n".join(
+    [
+        mutable_words_plan.EXTRA_CSS,
+        getattr(mutable_words_plan, "PRONOUN_CASE_CSS", ""),
+    ]
+)
+PALETTE = {
+    "mn": ("#00796b", "#4db6ac"),
+    "f": ("#ad1457", "#f48fb1"),
+    "pl": ("#6d4c41", "#bcaaa4"),
+    "after-prep": ("#605c8b", "#b3aee0"),
+    "plain-prep": ("#656565", "#9e9e9e"),
+}
+ASPECT_SPAN = re.compile(r'<span class="aspect form-([a-z-]+)">\(([^)]*)\)</span>')
+
+
+def _case_templates():
+    return {
+        slot: mutable_words_plan.build_template("Pronouns", ord_)
+        for ord_, slot in zip(
+            CASE_TEMPLATE_ORDS, mutable_words_plan.PRONOUN_CARD_SLOTS, strict=True
+        )
+    }
+
+
+def _slot_by_field():
+    return {slot.field: slot for slot in mutable_words_plan.PRONOUN_SLOTS}
+
+
+def test_case_templates_are_twenty_two_distinct_pairs():
+    templates = _case_templates()
+    assert len(templates) == 22
+    assert len({qfmt for qfmt, _ in templates.values()}) == 22
+    assert len({afmt for _, afmt in templates.values()}) == 22
+
+
+def test_card_slots_start_with_the_five_primaries_in_case_order():
+    slots = mutable_words_plan.PRONOUN_CARD_SLOTS
+    assert tuple(slots[:5]) == tuple(mutable_words_plan.PRONOUN_CASES)
+
+
+@pytest.mark.parametrize("slot", mutable_words_plan.PRONOUN_CARD_SLOTS)
+def test_case_qfmt_is_wrapped_in_its_slot_conditional(slot):
+    qfmt, _ = _case_templates()[slot]
+    text = qfmt.strip()
+    assert text.startswith("{{#" + slot + "}}")
+    assert text.endswith("{{/" + slot + "}}")
+
+
+@pytest.mark.parametrize("slot", mutable_words_plan.PRONOUN_CARD_SLOTS)
+def test_case_afmt_has_own_audio_once_and_lines_for_the_other_slots(slot):
+    _, afmt = _case_templates()[slot]
+    by_field = _slot_by_field()
+    case = by_field[slot].case
+    assert afmt.count("{{Audio " + slot + "}}") == 1
+    assert "{{FrontSide}}" in afmt
+    for other in mutable_words_plan.PRONOUN_FORM_FIELDS:
+        if other == slot:
+            continue
+        if by_field[other].case == case:
+            assert afmt.count("{{#" + other + "}}") >= 1, other
+            assert afmt.count("{{Audio " + other + "}}") >= 1, other
+            assert afmt.count("{{/" + other + "}}") >= 1, other
+        else:
+            assert "{{#" + other + "}}" not in afmt, other
+            assert "{{Audio " + other + "}}" not in afmt, other
+
+
+@pytest.mark.parametrize("slot", mutable_words_plan.PRONOUN_CARD_SLOTS)
+def test_case_afmt_shows_the_asked_form_in_case_form(slot):
+    _, afmt = _case_templates()[slot]
+    assert re.search(r'id="case-form"[^>]*>\s*\{\{' + re.escape(slot) + r"\}\}", afmt)
+
+
+@pytest.mark.parametrize("slot", mutable_words_plan.PRONOUN_CARD_SLOTS)
+def test_case_qfmt_has_the_fixed_case_pill_before_the_qualifier(slot):
+    qfmt, _ = _case_templates()[slot]
+    case = _slot_by_field()[slot].case
+    pill = qfmt.find(f'data-case="{case}"')
+    assert pill >= 0
+    assert qfmt.count("data-case=") == 1
+    assert "{{#Case}}" not in qfmt
+    spans = list(ASPECT_SPAN.finditer(qfmt))
+    assert spans
+    assert pill < spans[0].start()
+
+
+@pytest.mark.parametrize(
+    "entry",
+    [e for e in mutable_words_plan.PRONOUN_CARD_ENTRIES if e.qualifier is not None],
+    ids=lambda e: e.field,
+)
+def test_non_primary_qualifier_text_and_role_match_the_label_table(entry):
+    qfmt, _ = _case_templates()[entry.field]
+    spans = ASPECT_SPAN.findall(qfmt)
+    assert spans == [(entry.role, entry.qualifier)]
+
+
+PRIMARY_QUALIFIERS = {
+    "Genitive": {
+        "Genitive f.": ("mn", "masculine / neuter"),
+        "Genitive (н-)": ("plain-prep", "without a preposition"),
+    },
+    "Dative": {
+        "Dative f.": ("mn", "masculine / neuter"),
+        "Dative (н-)": ("plain-prep", "without a preposition"),
+    },
+    "Accusative": {
+        "Accusative m. living": ("mn", "masculine, not living"),
+        "Accusative (н-)": ("plain-prep", "without a preposition"),
+    },
+    "Instrumental": {
+        "Instrumental f.": ("mn", "masculine / neuter"),
+        "Instrumental (н-)": ("plain-prep", "without a preposition"),
+    },
+    "Prepositional": {
+        "Prepositional f.": ("mn", "masculine / neuter"),
+    },
+}
+
+
+@pytest.mark.parametrize("primary", sorted(PRIMARY_QUALIFIERS))
+def test_primary_qualifier_is_field_driven(primary):
+    qfmt, _ = _case_templates()[primary]
+    for trigger, (role, text) in PRIMARY_QUALIFIERS[primary].items():
+        pattern = (
+            r"\{\{#" + re.escape(trigger) + r"\}\}\s*"
+            rf'<span class="aspect form-{role}">\({re.escape(text)}\)</span>\s*'
+            r"\{\{/" + re.escape(trigger) + r"\}\}"
+        )
+        assert re.search(pattern, qfmt), trigger
+    assert len(ASPECT_SPAN.findall(qfmt)) == len(PRIMARY_QUALIFIERS[primary])
+
+
+def test_no_case_prompt_anywhere():
+    for qfmt, afmt in _case_templates().values():
+        assert "case-prompt" not in qfmt + afmt
+    assert "case-prompt" not in PRONOUN_CASE_CSS_TEXT
+
+
+def test_case_form_is_2_2_rem():
+    assert re.search(r"#case-form\s*\{[^}]*font-size:\s*2\.2rem", PRONOUN_CASE_CSS_TEXT)
+
+
+@pytest.mark.parametrize("role", sorted(PALETTE))
+def test_palette_role_has_day_and_night_colours(role):
+    css = PRONOUN_CASE_CSS_TEXT.lower()
+    day, night = PALETTE[role]
+    assert f"form-{role}" in css
+    assert day in css
+    assert night in css
+    assert re.search(r"\.nightmode[^{]*form-" + re.escape(role), css)
+
+
+def test_case_cards_carry_no_av_tags_or_duplicate_ids():
+    id_pattern = re.compile(r'id="([^"]*)"')
+    for qfmt, afmt in _case_templates().values():
+        for side in (qfmt, afmt):
+            ids = id_pattern.findall(side)
+            assert len(ids) == len(set(ids))
+            assert "[sound:" not in side

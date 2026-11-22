@@ -13,7 +13,7 @@ Resolution runs in two tiers, and the order is the whole point:
 
 1. **Surface** -- the normalized token is a form some taught note already
    spells out, either as its headword or in one of its inflection fields
-   (`Plural`, `Oblique Forms`, `я (1sg)`, ...). No guessing.
+   (`Plural`, `Genitive f.`, `я (1sg)`, ...). No guessing.
 2. **Lemma** -- an explicit ending table rewrites the token into candidate
    dictionary forms, and a candidate counts only if it is itself in the
    surface index. Nothing is invented: an untaught word produces candidates
@@ -34,6 +34,8 @@ import re
 import unicodedata
 from collections.abc import Iterable, Mapping, Sequence
 from typing import NamedTuple
+
+from anki_tools.mutable_words_plan import PRONOUN_FORM_FIELDS
 
 PHRASE_NOTE_TYPE = "Russian - Common Words (Ellis Version)"
 PHRASE_DECK = "Languages::Russian::6. Russian Phrases"
@@ -63,11 +65,11 @@ INFLECTION_FIELDS = (
     "Genitive Pl",
     "Genitive",
     "Gender Forms",
-    "Oblique Forms",
     "я (1sg)",
     "ты (2sg)",
     "они (3pl)",
     "Past (m / f)",
+    *PRONOUN_FORM_FIELDS,
 )
 
 STRESS_MARKS = ("́", "̀")
