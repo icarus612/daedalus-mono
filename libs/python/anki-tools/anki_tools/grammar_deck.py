@@ -67,26 +67,27 @@ _COLOUR_SCRIPT = """<script>(function () {
   })[0];
   if (asked) root.classList.add('g-' + asked.toLowerCase());
   paint(front, 'case-pill');
-  paint(root.querySelector('.target'), 'case-text');
+  function plain(t) { return t.replace(/\\u0301/g, ''); }
+  function mark(span, keep) {
+    var t = span.textContent, j = 0;
+    for (var seen = 0; j < t.length && seen < keep; j++) if (t[j] !== '\\u0301') seen++;
+    while (j < t.length && t[j] === '\\u0301') j++;
+    if (j < t.length) {
+      span.innerHTML = t.slice(0, j) + '<b class="g-end">' + t.slice(j) + '</b>';
+    }
+  }
   root.querySelectorAll('.ex-line').forEach(function (line) {
     var spans = line.querySelectorAll(':scope > span:not(.ex-note)');
     if (spans.length < 3) return;
-    var b = spans[2].textContent;
-    var plain = function (t) { return t.replace(/\\u0301/g, ''); };
-    var a = plain(spans[0].textContent), pb = plain(b), i = 0;
-    if (a === pb) return;
-    if (pb.indexOf('-') > 0) {
-      i = pb.indexOf('-');
-    } else {
-      var stem = a.replace(/(ый|ий|ой|[аяоеьй])$/, '');
-      while (i < stem.length && i < pb.length && a[i] === pb[i]) i++;
+    var a = plain(spans[0].textContent), b = plain(spans[2].textContent);
+    if (b.indexOf('-') > 0) {
+      mark(spans[2], b.indexOf('-'));
+      return;
     }
-    var j = 0;
-    for (var seen = 0; j < b.length && seen < i; j++) if (b[j] !== '\\u0301') seen++;
-    while (j < b.length && b[j] === '\\u0301') j++;
-    if (j < b.length) {
-      spans[2].innerHTML = b.slice(0, j) + '<b class="g-end">' + b.slice(j) + '</b>';
-    }
+    var stem = a.replace(/(ый|ий|ой|[аяоеьй])$/, ''), i = 0;
+    while (i < stem.length && i < b.length && a[i] === b[i]) i++;
+    mark(spans[0], i);
+    mark(spans[2], i);
   });
 })();</script>"""
 _COLOUR_SCRIPT = _COLOUR_SCRIPT.replace("@@CASES@@", _CASES_JSON)
@@ -111,16 +112,9 @@ def _grammar_colour_css() -> str:
         rules.append(f".g-{name.lower()} {{ color: {light}; }}")
         rules.append(f".nightMode .g-{name.lower()} {{ color: {dark}; }}")
     for name in case_pill.CASE_ORDER:
-        text, background, dark_text, dark_background = case_pill._PALETTE[name]
+        text, _, dark_text, _ = case_pill._PALETTE[name]
         slug = name.lower()
-        rules.append(
-            f".g-{slug} .target {{ color: {text}; background: {background}; }}"
-        )
         rules.append(f".g-{slug} .g-end {{ color: {text}; }}")
-        rules.append(
-            f".nightMode .g-{slug} .target "
-            f"{{ color: {dark_text}; background: {dark_background}; }}"
-        )
         rules.append(f".nightMode .g-{slug} .g-end {{ color: {dark_text}; }}")
     return "\n".join(rules) + "\n"
 
@@ -129,9 +123,8 @@ CSS = """.card { font-family: arial; font-size: 22px; text-align: center;
   color: black; background-color: white; }
 .type { font-size: 14px; color: #888; }
 .front { margin-top: 8px; }
-.target { font-size: 34px; font-weight: bold; margin: 12px auto; padding: 4px 16px;
-  border-radius: 14px; width: fit-content; max-width: 100%; box-sizing: border-box; }
-.example { font-size: min(22px, 5vw); color: #1a5fb4; display: grid;
+.target { font-size: 34px; font-weight: bold; margin: 12px 0; }
+.example { font-size: min(22px, 5vw); color: black; display: grid;
   grid-template-columns: repeat(5, max-content);
   align-items: center; column-gap: 8px; row-gap: 8px;
   width: fit-content; max-width: 100%; margin: 8px auto; }
@@ -142,7 +135,7 @@ CSS = """.card { font-family: arial; font-size: 22px; text-align: center;
 .ex-note { grid-column: 5; margin-top: -6px; font-size: 15px; color: #888; }
 .nightMode .card, .card.nightMode { color: white; background-color: #2f2f31; }
 .nightMode .type, .nightMode .notes { color: #aaa; }
-.nightMode .example, .nightMode .ex-line { color: #99c1f1; }
+.nightMode .example { color: white; }
 .front .case-pill { display: inline-block; font-size: .85em;
   padding: .05em .5em; border-radius: 999px; font-weight: bold; }
 .g-gender { font-weight: bold; }
