@@ -72,7 +72,8 @@ daedalus-mono
 ├── project-plans
 │   ├── anki-due-rebalance-08-12-26
 │   ├── completed
-│   └── mutable-words-09-25-26
+│   ├── mutable-words-09-25-26
+│   └── pronoun-two-sided-form-cards-11-22-26
 ├── templates
 │   └── <a href="/templates/next-js">next-js</a>
 
