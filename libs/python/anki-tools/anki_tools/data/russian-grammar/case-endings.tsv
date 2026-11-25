@@ -1,10 +1,10 @@
 Table	Type	Front	Target	Example 1 Base	Example 1 Form	Example 1 Note	Example 2 Base	Example 2 Form	Example 2 Note	Notes
-Singular Noun Endings	Grammar Rule	Singular Nouns: Masculine Hard (consonant) → Nominative ending?	no ending	телефон	телефон		студент	студент		
-Singular Noun Endings	Grammar Rule	Singular Nouns: Masculine Soft (-й / -ь) → Nominative ending?	-й / -ь	музей	музей		родитель	родитель		
-Singular Noun Endings	Grammar Rule	Singular Nouns: Feminine Hard (-а) → Nominative ending?	-а	машина	машина		школа	школа		
-Singular Noun Endings	Grammar Rule	Singular Nouns: Feminine Soft (-я / -ь) → Nominative ending?	-я / -ь	неделя	неделя		ночь	ночь		
-Singular Noun Endings	Grammar Rule	Singular Nouns: Neuter Hard (-о) → Nominative ending?	-о	место	место		слово	слово		
-Singular Noun Endings	Grammar Rule	Singular Nouns: Neuter Soft (-е) → Nominative ending?	-е	море	море		поле	поле		
+Singular Noun Endings	Grammar Rule	Singular Nouns: Masculine Hard (consonant) → Nominative ending?	no change	телефон	телефон		студент	студент		
+Singular Noun Endings	Grammar Rule	Singular Nouns: Masculine Soft (-й / -ь) → Nominative ending?	no change	музей	музей		родитель	родитель		
+Singular Noun Endings	Grammar Rule	Singular Nouns: Feminine Hard (-а) → Nominative ending?	no change	машина	машина		школа	школа		
+Singular Noun Endings	Grammar Rule	Singular Nouns: Feminine Soft (-я / -ь) → Nominative ending?	no change	неделя	неделя		ночь	ночь		
+Singular Noun Endings	Grammar Rule	Singular Nouns: Neuter Hard (-о) → Nominative ending?	no change	место	место		слово	слово		
+Singular Noun Endings	Grammar Rule	Singular Nouns: Neuter Soft (-е) → Nominative ending?	no change	море	море		поле	поле		
 Singular Noun Endings	Grammar Rule	Singular Nouns: Masculine Hard (consonant) → Genitive ending?	-а	телефон	телефона		студент	студента		
 Singular Noun Endings	Grammar Rule	Singular Nouns: Masculine Soft (-й / -ь) → Genitive ending?	-я	музей	музея		родитель	родителя		
 Singular Noun Endings	Grammar Rule	Singular Nouns: Feminine Hard (-а) → Genitive ending?	-ы	машина	машины		школа	школы		Spelling rule: after к, г, х, ж, ш, ч, щ write -и, never -ы. (книга → книги)
@@ -17,12 +17,12 @@ Singular Noun Endings	Grammar Rule	Singular Nouns: Feminine Hard (-а) → Dativ
 Singular Noun Endings	Grammar Rule	Singular Nouns: Feminine Soft (-я / -ь) → Dative ending?	-е / -и (for -ь)	неделя	неделе		ночь	ночи		Nouns in -ий / -ия / -ие take -ии here, not -е. (Россия → России)
 Singular Noun Endings	Grammar Rule	Singular Nouns: Neuter Hard (-о) → Dative ending?	-у	место	месту		слово	слову		
 Singular Noun Endings	Grammar Rule	Singular Nouns: Neuter Soft (-е) → Dative ending?	-ю	море	морю		поле	полю		
-Singular Noun Endings	Grammar Rule	Singular Nouns: Masculine Hard (consonant) → Accusative ending?	= Nominative (inanimate) / = Genitive (animate)	телефон	телефон	inanimate	студент	студента	animate	Animacy: inanimate = Nominative form, animate = Genitive form.
-Singular Noun Endings	Grammar Rule	Singular Nouns: Masculine Soft (-й / -ь) → Accusative ending?	= Nominative (inanimate) / = Genitive (animate)	музей	музей	inanimate	родитель	родителя	animate	Animacy: inanimate = Nominative form, animate = Genitive form.
+Singular Noun Endings	Grammar Rule	Singular Nouns: Masculine Hard (consonant) → Accusative ending?	no change (inanimate) / = Genitive (animate)	телефон	телефон	inanimate	студент	студента	animate	Animacy: inanimate = Nominative form, animate = Genitive form.
+Singular Noun Endings	Grammar Rule	Singular Nouns: Masculine Soft (-й / -ь) → Accusative ending?	no change (inanimate) / = Genitive (animate)	музей	музей	inanimate	родитель	родителя	animate	Animacy: inanimate = Nominative form, animate = Genitive form.
 Singular Noun Endings	Grammar Rule	Singular Nouns: Feminine Hard (-а) → Accusative ending?	-у	машина	машину		школа	школу		Applies to animate nouns too (мама → маму).
-Singular Noun Endings	Grammar Rule	Singular Nouns: Feminine Soft (-я / -ь) → Accusative ending?	-ю / = Nominative (for -ь)	неделя	неделю		ночь	ночь		
-Singular Noun Endings	Grammar Rule	Singular Nouns: Neuter Hard (-о) → Accusative ending?	= Nominative	место	место		слово	слово		
-Singular Noun Endings	Grammar Rule	Singular Nouns: Neuter Soft (-е) → Accusative ending?	= Nominative	море	море		поле	поле		
+Singular Noun Endings	Grammar Rule	Singular Nouns: Feminine Soft (-я / -ь) → Accusative ending?	-ю / no change (for -ь)	неделя	неделю		ночь	ночь		
+Singular Noun Endings	Grammar Rule	Singular Nouns: Neuter Hard (-о) → Accusative ending?	no change	место	место		слово	слово		
+Singular Noun Endings	Grammar Rule	Singular Nouns: Neuter Soft (-е) → Accusative ending?	no change	море	море		поле	поле		
 Singular Noun Endings	Grammar Rule	Singular Nouns: Masculine Hard (consonant) → Instrumental ending?	-ом	телефон	телефоном		студент	студентом		After ж, ш, ч, щ, ц an unstressed -о- in the ending becomes -е-. (месяц → месяцем, товарищ → товарищем)
 Singular Noun Endings	Grammar Rule	Singular Nouns: Masculine Soft (-й / -ь) → Instrumental ending?	-ем / -ём (stressed)	музей	музеем		родитель	родителем		
 Singular Noun Endings	Grammar Rule	Singular Nouns: Feminine Hard (-а) → Instrumental ending?	-ой	машина	машиной		школа	школой		After ж, ш, ч, щ, ц an unstressed -о- in the ending becomes -е-. (улица → улицей)
@@ -34,7 +34,7 @@ Singular Noun Endings	Grammar Rule	Singular Nouns: Masculine Soft (-й / -ь) �
 Singular Noun Endings	Grammar Rule	Singular Nouns: Feminine Hard (-а) → Prepositional ending?	-е	машина	машине		школа	школе		
 Singular Noun Endings	Grammar Rule	Singular Nouns: Feminine Soft (-я / -ь) → Prepositional ending?	-е / -и (for -ь)	неделя	неделе		ночь	ночи		Nouns in -ий / -ия / -ие take -ии here, not -е. (Россия → о России)
 Singular Noun Endings	Grammar Rule	Singular Nouns: Neuter Hard (-о) → Prepositional ending?	-е	место	месте		слово	слове		
-Singular Noun Endings	Grammar Rule	Singular Nouns: Neuter Soft (-е) → Prepositional ending?	-е	море	море		поле	поле		Nouns in -ий / -ия / -ие take -ии here, not -е. (здание → о здании)
+Singular Noun Endings	Grammar Rule	Singular Nouns: Neuter Soft (-е) → Prepositional ending?	no change	море	море		поле	поле		Nouns in -ий / -ия / -ие take -ии here, not -е. (здание → о здании)
 Plural Noun Endings	Grammar Rule	Plural Nouns: Masculine / Feminine Hard → Nominative ending?	-ы (-и after к, г, х, ж, ш, ч, щ)	студент	студенты		машина	машины		Spelling rule: after к, г, х, ж, ш, ч, щ write -и, never -ы.
 Plural Noun Endings	Grammar Rule	Plural Nouns: Masculine / Feminine Soft → Nominative ending?	-и	родитель	родители		неделя	недели		
 Plural Noun Endings	Grammar Rule	Plural Nouns: Neuter Hard (-о) → Nominative ending?	-а	место	места́		слово	слова́		
@@ -59,8 +59,8 @@ Plural Noun Endings	Grammar Rule	Plural Nouns: Masculine / Feminine Hard → Pre
 Plural Noun Endings	Grammar Rule	Plural Nouns: Masculine / Feminine Soft → Prepositional ending?	-ях	родитель	родителях		неделя	неделях		After ж, ш, ч, щ use -а- instead of -я- (ночь → ночам, ночами, ночах).
 Plural Noun Endings	Grammar Rule	Plural Nouns: Neuter Hard (-о) → Prepositional ending?	-ах	место	местах		слово	словах		
 Plural Noun Endings	Grammar Rule	Plural Nouns: Neuter Soft (-е) → Prepositional ending?	-ях	море	морях		поле	полях		
-Adjective Endings	Grammar Rule	Adjectives: Hard Masculine → Nominative ending?	-ый	красивый	красивый		интересный	интересный		Stressed ending is -ой (большой). Spelling rule: after к, г, х, ж, ш, ч, щ write -и, never -ы. (русский)
-Adjective Endings	Grammar Rule	Adjectives: Soft Masculine → Nominative ending?	-ий	поздний	поздний		синий	синий		
+Adjective Endings	Grammar Rule	Adjectives: Hard Masculine → Nominative ending?	no change	красивый	красивый		интересный	интересный		Stressed ending is -ой (большой). Spelling rule: after к, г, х, ж, ш, ч, щ write -и, never -ы. (русский)
+Adjective Endings	Grammar Rule	Adjectives: Soft Masculine → Nominative ending?	no change	поздний	поздний		синий	синий		
 Adjective Endings	Grammar Rule	Adjectives: Hard Feminine → Nominative ending?	-ая	красивый	красивая		интересный	интересная		
 Adjective Endings	Grammar Rule	Adjectives: Soft Feminine → Nominative ending?	-яя	поздний	поздняя		синий	синяя		
 Adjective Endings	Grammar Rule	Adjectives: Hard Neuter → Nominative ending?	-ое	красивый	красивое		интересный	интересное		After ж, ш, ч, щ, ц an unstressed -о- in the ending becomes -е-. (хорошее)
@@ -83,8 +83,8 @@ Adjective Endings	Grammar Rule	Adjectives: Hard Neuter → Dative ending?	-ом�
 Adjective Endings	Grammar Rule	Adjectives: Soft Neuter → Dative ending?	-ему	поздний	позднему		синий	синему		
 Adjective Endings	Grammar Rule	Adjectives: Hard Plural → Dative ending?	-ым	красивый	красивым		интересный	интересным		Spelling rule: after к, г, х, ж, ш, ч, щ write -и, never -ы. (русским)
 Adjective Endings	Grammar Rule	Adjectives: Soft Plural → Dative ending?	-им	поздний	поздним		синий	синим		
-Adjective Endings	Grammar Rule	Adjectives: Hard Masculine → Accusative ending?	= Nominative (inanimate) / = Genitive (animate)	красивый	красивый	inanimate	интересный	интересного	animate	Animacy: inanimate = Nominative form, animate = Genitive form.
-Adjective Endings	Grammar Rule	Adjectives: Soft Masculine → Accusative ending?	= Nominative (inanimate) / = Genitive (animate)	поздний	поздний	inanimate	синий	синего	animate	Animacy: inanimate = Nominative form, animate = Genitive form.
+Adjective Endings	Grammar Rule	Adjectives: Hard Masculine → Accusative ending?	no change (inanimate) / = Genitive (animate)	красивый	красивый	inanimate	интересный	интересного	animate	Animacy: inanimate = Nominative form, animate = Genitive form.
+Adjective Endings	Grammar Rule	Adjectives: Soft Masculine → Accusative ending?	no change (inanimate) / = Genitive (animate)	поздний	поздний	inanimate	синий	синего	animate	Animacy: inanimate = Nominative form, animate = Genitive form.
 Adjective Endings	Grammar Rule	Adjectives: Hard Feminine → Accusative ending?	-ую	красивый	красивую		интересный	интересную		
 Adjective Endings	Grammar Rule	Adjectives: Soft Feminine → Accusative ending?	-юю	поздний	позднюю		синий	синюю		
 Adjective Endings	Grammar Rule	Adjectives: Hard Neuter → Accusative ending?	= Nominative	красивый	красивое		интересный	интересное		
@@ -107,13 +107,13 @@ Adjective Endings	Grammar Rule	Adjectives: Hard Neuter → Prepositional ending?
 Adjective Endings	Grammar Rule	Adjectives: Soft Neuter → Prepositional ending?	-ем	поздний	позднем		синий	синем		
 Adjective Endings	Grammar Rule	Adjectives: Hard Plural → Prepositional ending?	-ых	красивый	красивых		интересный	интересных		Spelling rule: after к, г, х, ж, ш, ч, щ write -и, never -ы. (о русских)
 Adjective Endings	Grammar Rule	Adjectives: Soft Plural → Prepositional ending?	-их	поздний	поздних		синий	синих		
-Personal Pronouns	Grammar Rule	Pronoun: 'I' (Я) → Nominative?	я	я	я		я	я		
-Personal Pronouns	Grammar Rule	Pronoun: 'You, singular' (Ты) → Nominative?	ты	ты	ты		ты	ты		
-Personal Pronouns	Grammar Rule	Pronoun: 'He / It' (Он / Оно) → Nominative?	он / оно	он	он		он	он		
-Personal Pronouns	Grammar Rule	Pronoun: 'She' (Она) → Nominative?	она	она	она		она	она		
-Personal Pronouns	Grammar Rule	Pronoun: 'We' (Мы) → Nominative?	мы	мы	мы		мы	мы		
-Personal Pronouns	Grammar Rule	Pronoun: 'You, plural / formal' (Вы) → Nominative?	вы	вы	вы		вы	вы		
-Personal Pronouns	Grammar Rule	Pronoun: 'They' (Они) → Nominative?	они	они	они		они	они		
+Personal Pronouns	Grammar Rule	Pronoun: 'I' (Я) → Nominative?	no change	я	я		я	я		
+Personal Pronouns	Grammar Rule	Pronoun: 'You, singular' (Ты) → Nominative?	no change	ты	ты		ты	ты		
+Personal Pronouns	Grammar Rule	Pronoun: 'He / It' (Он / Оно) → Nominative?	no change	он	он		он	он		
+Personal Pronouns	Grammar Rule	Pronoun: 'She' (Она) → Nominative?	no change	она	она		она	она		
+Personal Pronouns	Grammar Rule	Pronoun: 'We' (Мы) → Nominative?	no change	мы	мы		мы	мы		
+Personal Pronouns	Grammar Rule	Pronoun: 'You, plural / formal' (Вы) → Nominative?	no change	вы	вы		вы	вы		
+Personal Pronouns	Grammar Rule	Pronoun: 'They' (Они) → Nominative?	no change	они	они		они	они		
 Personal Pronouns	Grammar Rule	Pronoun: 'I' (Я) → Genitive?	меня	я	меня		я	меня		
 Personal Pronouns	Grammar Rule	Pronoun: 'You, singular' (Ты) → Genitive?	тебя	ты	тебя		ты	тебя		
 Personal Pronouns	Grammar Rule	Pronoun: 'He / It' (Он / Оно) → Genitive?	его (него)	он	его		он	его		The н- form is used directly after a preposition (у него, к ней, с ними).
