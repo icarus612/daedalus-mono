@@ -44,7 +44,7 @@ TEMPLATE_COUNTS_BY_SHEET: dict[str, int] = {
     "Verbs": 4,
     "Adjectives": 2,
     "Adverbs": 2,
-    "Pronouns": 2 + len(mutable_words_plan.PRONOUN_CARD_SLOTS),
+    "Pronouns": 2 + 2 * mutable_words_plan.PRONOUN_FORM_SLOTS,
     "Numerals": 2,
 }
 
@@ -54,7 +54,7 @@ _AUDIO_FIELD_NAMES = (
     "Audio",
     "Audio Imperfective",
     "Audio Perfective",
-    *mutable_words_plan.PRONOUN_FORM_AUDIO_FIELDS,
+    *mutable_words_plan.PRONOUN_NOTE_AUDIO_FORM_FIELDS,
 )
 
 

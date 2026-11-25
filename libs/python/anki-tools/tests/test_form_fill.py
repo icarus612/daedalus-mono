@@ -490,7 +490,6 @@ class TestGenerateNouns:
         "sheet, field",
         [
             ("Nouns", "Translation"),
-            ("Pronouns", "Gender Forms"),
             ("Bogus", "Plural"),
             ("Verbs", "Perfective"),
         ],
@@ -1578,7 +1577,7 @@ class TestRealPronounSlots:
         tsv = fc.tsv_census_notes(REAL_DATA_DIR)
         cells = ff.candidate_cells(tsv, all_sheets(), frozenset())
         slots = set(mwp.PRONOUN_FORM_FIELDS)
-        assert len(slots) == 22
+        assert len(slots) == 25
         assert not [c for c in cells if c.sheet == "Pronouns" and c.field in slots]
 
 

@@ -228,10 +228,9 @@ def _small_rows_by_sheet(
             translation=f"pronoun{i}",
             stress="",
             pronoun_type="",
-            gender_forms="",
             additional_info="",
             examples="",
-            case_forms=("",) * 22,
+            case_forms=("",) * 25,
         )
         for i in range(pronouns)
     ]
@@ -414,13 +413,12 @@ def _write_pronouns_tsv(path, rows):
         "English",
         "Stress",
         "Pronoun Type",
-        "Gender Forms",
         "Additional Info",
         "Examples",
         *mutable_words_plan.PRONOUN_FORM_FIELDS,
         "Status",
     ]
-    assert len(header) == 31
+    assert len(header) == 33
     data = [
         [
             r.rank,
@@ -428,7 +426,6 @@ def _write_pronouns_tsv(path, rows):
             r.translation,
             r.stress,
             r.pronoun_type,
-            r.gender_forms,
             r.additional_info,
             r.examples,
             *r.case_forms,

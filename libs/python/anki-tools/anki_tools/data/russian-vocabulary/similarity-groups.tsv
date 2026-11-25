@@ -21,7 +21,7 @@ again	опять	Base Adverbs	again	the same action repeating	cue
 again	снова	Base Adverbs	again / anew	afresh, a new start	cue	anew
 age	век	Nouns	century / age	An era	cue	
 age	возраст	Nouns	age	how old someone is	cue	
-all	всё	Particles	still / all / constantly (keeps on)	Repeatedly	header	still
+all	всё (particle)	Particles	still / all / constantly (keeps on)	Repeatedly	header	still
 all	весь	Pronouns	all / the whole / everything	determinative	header	whole
 almost	почти	Base Adverbs	almost	nearly all the way	cue	
 almost	чуть	Base Adverbs	slightly / barely / almost	by a tiny amount	cue	barely | slightly
@@ -321,7 +321,7 @@ indeed	уж	Particles	really / indeed	adds intensity	header	really
 indeed	правда (adverb)	Base Adverbs	really / indeed / actually	asserts the whole clause	header	actually | really
 interesting	интересный	Adjectives	interesting		header	
 interesting	интересно	Derived Adverbs	interesting		header	
-it	это	Particles	this (is) / that (is) / it (is)		header	that | this
+it	это (particle)	Particles	this (is) / that (is) / it (is)		header	that | this
 it	он	Pronouns	he / it	masculine	cue	
 it	она	Pronouns	she / it	feminine	cue	
 it	оно	Pronouns	it	neuter	cue	
@@ -422,7 +422,7 @@ nice	приятный	Adjectives	pleasant / nice		header	pleasant
 nice	приятно	Derived Adverbs	nice(ly) / pleasant(ly)		header	pleasant
 night	ночь	Nouns	night		header	
 night	ночной	Adjectives	night		header	
-nothing	ничего	Particles	nothing / it's OK / no problem	nothing; also 'it's fine'	header	
+nothing	ничего (particle)	Particles	nothing / it's OK / no problem	nothing; also 'it's fine'	header	
 nothing	ничто	Pronouns	nothing	As the subject	header	
 now	сейчас	Base Adverbs	now / right now	this exact moment	cue	
 now	теперь	Base Adverbs	now / nowadays	as opposed to before	cue	
@@ -547,7 +547,7 @@ smile	улыбаться	Verbs	to smile		header
 so	итак	Conjunctions	so / thus		header	
 so	так (adverb)	Base Adverbs	so / like this	in this way	cue	
 so	настолько	Base Adverbs	so / so much / to such an extent	to such a degree	cue	so much
-so	такой	Pronouns	such / that kind of / so (so + adjective)	such a, so + adj.	header	
+so	такой	Pronouns	such / that kind of / so (+ adjective)		header	
 so much	настолько	Base Adverbs	so / so much / to such an extent	to such a degree	cue	so
 so much	столько	Base Adverbs	so much / so many	this many	cue	
 some day	как-нибудь	Base Adverbs	somehow / some day	any old way	cue	somehow
@@ -568,7 +568,7 @@ start	становиться	Verbs	to become / to start (doing)		header+pill
 stay	оставаться	Verbs	stay / remain	remain behind	cue	
 stay	останавливаться	Verbs	stop / stay (at a place)	come to a halt, or lodge	cue	stop
 still	всё-таки	Particles	still / nevertheless	all the same	cue	nevertheless
-still	всё	Particles	still / all / constantly (keeps on)	Repeatedly	cue	all
+still	всё (particle)	Particles	still / all / constantly (keeps on)	Repeatedly	cue	all
 still	ещё	Base Adverbs	still / yet (ongoing) / more (asking for more)	Not over yet	header	more
 stop	остановка	Nouns	stop		header	
 stop	останавливать	Verbs	stop	stop something else	cue	
@@ -602,7 +602,7 @@ terrible	страшный	Adjectives	terrible / frightful / scary	frightening	cu
 terribly	ужасно	Derived Adverbs	terribly / awfully / really	Very badly	cue	really
 terribly	страшно	Derived Adverbs	scary (it's scary) / terribly (very)	frighteningly	cue	scary
 that	что (conjunction)	Conjunctions	what / that	links a statement	header	what
-that	это	Particles	this (is) / that (is) / it (is)		header	it | this
+that	это (particle)	Particles	this (is) / that (is) / it (is)		header	it | this
 that	тот	Pronouns	that (one) / that (over there)	pointing at something farther	cue	
 that	который	Pronouns	which / who / that	refers back to a noun	cue	which | who
 the left	влево	Base Adverbs	to the left		header	
@@ -623,7 +623,7 @@ there is nowhere	негде	Base Adverbs	there is nowhere (to)	no place to be	cu
 there is nowhere	некуда	Base Adverbs	there is nowhere (to go)	no place to go	cue	
 therefore	поэтому	Conjunctions	therefore		header	
 therefore	следовательно	Base Adverbs	consequently / therefore		header	
-this	это	Particles	this (is) / that (is) / it (is)		header	it | that
+this	это (particle)	Particles	this (is) / that (is) / it (is)		header	it | that
 this	этот	Pronouns	this (one) / this (right here)		header	
 through	через	Prepositions	through / across (what/where) / in (when/time)	Crossing	cue	in
 through	сквозь	Prepositions	through (what/where)	Something dense	cue	

@@ -125,35 +125,44 @@ def real_words():
     return load_base_words(str(DATA_DIR), SHEETS)
 
 
-def test_load_base_words_matches_the_real_1603_word_set(real_words):
-    assert len(real_words) == 1603
+def test_load_base_words_matches_the_real_1664_word_set(real_words):
+    assert len(real_words) == 1664
+
+
+HOMOGRAPH_FORMS = {"самого", "самой", "самому", "самом"}
 
 
 def _pronoun_extra_forms():
     lines = (DATA_DIR / "pronouns.tsv").read_text(encoding="utf-8").splitlines()
     header = lines[0].split("\t")
-    first = header.index("Genitive")
+    first = header.index("Nominative f.")
+    last = header.index("Prepositional pl.") + 1
     extras = []
     for line in lines[1:]:
         cells = line.split("\t")
         headword = strip_qualifier(cells[header.index("Russian")])
-        row_forms = {
-            cell.replace("\u0301", "").strip() for cell in cells[first : first + 22]
-        }
-        extras.extend(sorted(row_forms - {"", headword}))
+        row_forms = {cell.replace("\u0301", "").strip() for cell in cells[first:last]}
+        for form in sorted(row_forms - {"", headword}):
+            homograph = headword == "самый" and form in HOMOGRAPH_FORMS
+            extras.append(f"{form}-{headword}" if homograph else form)
     return extras
 
 
-def test_pronoun_forms_add_144_audio_words_to_the_old_1459(real_words):
+def test_pronoun_forms_add_205_audio_words_to_the_old_1459(real_words):
     extras = _pronoun_extra_forms()
-    assert len(extras) == 144
+    assert len(extras) == 205
     assert len(real_words) == 1459 + len(extras)
     assert set(extras) <= set(real_words)
 
 
+def test_homograph_forms_of_samyj_get_their_own_audio_words(real_words):
+    for name in ("самого-самый", "самой-самый", "самому-самый", "самом-самый"):
+        assert name in real_words
+
+
 def test_plan_requests_total_pairs_over_the_real_word_set(real_words, tmp_path):
     plan = plan_requests(real_words, ("f1", "m2"), media_dir=str(tmp_path))
-    assert plan.total_pairs == 3206
+    assert plan.total_pairs == 3328
 
 
 def test_plan_requests_pending_excludes_present_pairs(tmp_path):
@@ -221,7 +230,7 @@ def test_main_dry_run_prints_the_real_environment_totals(real_words, tmp_path, c
     out = capsys.readouterr().out
     total_pairs = len(real_words) * 2
     present = len(present_pairs)
-    assert total_pairs == 3206
+    assert total_pairs == 3328
     assert (
         f"total {total_pairs} / present {present} / pending {total_pairs - present}"
         in out

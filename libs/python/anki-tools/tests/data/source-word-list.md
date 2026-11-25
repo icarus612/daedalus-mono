@@ -122,11 +122,11 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 14 | да | yes | — | — |
 | 15 | нет | no | Answers "no" | — |
 | 16 | лишь | merely / only | Similar to только, but more bookish and less flexible | — |
-| 17 | всё | still / all / constantly (keeps on) | Continuative — "keeps on, still" | — |
+| 17 | всё (particle) | still / all / constantly (keeps on) | Continuative — "keeps on, still" | — |
 | 18 | таки | after all / nevertheless | often hyphenated: всё-таки | — |
 | 19 | пожалуй | perhaps / I suppose | Hedges — "I suppose, perhaps" | — |
 | 20 | будто | as if / as though | — | — |
-| 21 | во | wow / look at that | Very colloquial exclamation | — |
+| 21 | во (particle) | wow / look at that | Very colloquial exclamation | — |
 | 22 | ну и | what a... | e.g., ну и день = what a day | — |
 | 23 | здравствуйте | hello | Formal/plural greeting; lit. imperative "be healthy" | — |
 | 24 | спасибо | thank you | — | — |
@@ -136,10 +136,10 @@ Short words that add grammatical function, emotion, or tone to speech.
 | 28 | привет | hello / hi | Informal only; do not use with strangers or superiors | — |
 | 29 | конечно | of course / certainly | Written with ч but pronounced [ш]: конешно | — |
 | 30 | ладно | OK / all right | Signals agreement or resignation ("fine, whatever") | — |
-| 31 | ничего | nothing / it's OK / no problem | Also a stand-alone reassuring reply | — |
+| 31 | ничего (particle) | nothing / it's OK / no problem | Also a stand-alone reassuring reply | — |
 | 32 | поздравляю | congratulations! | 1st-person present of поздравлять; often + с (с днём рождения!) | — |
 | 33 | помогите | help! | Imperative pl./formal of помочь; shouted in an emergency | — |
-| 34 | это | this (is) / that (is) / it (is) | Subject-less linking word: Э́то кни́га = This is a book. Invariable, unlike the pronoun э́тот (э́та, э́то, э́ти) which agrees with its noun | Это моя сестра |
+| 34 | это (particle) | this (is) / that (is) / it (is) | Subject-less linking word: Э́то кни́га = This is a book. Invariable, unlike the pronoun э́тот (э́та, э́то, э́ти) which agrees with its noun | Это моя сестра |
 | 35 | так (particle) | well then / alright | Colloquial — close to значит or хорошо; set off by a comma | Так, начнём |
 | 36 | аж | even / as much as | Colloquial | — |
 | 37 | вообще-то | actually / as a matter of fact | Colloquial | — |
@@ -267,7 +267,7 @@ A lone em dash there means "no extra info" and renders as nothing.
 | 60 | мало | little / few | — | мало времени |
 | 61 | много | many / much / a lot | — | много людей |
 | 62 | можно | one may / it is possible/allowed to | Impersonal predicate word, not a true adverb of manner | — |
-| 63 | надо | it is necessary / one must/needs to | Impersonal predicate word; synonym нужно | — |
+| 63 | надо (adverb) | it is necessary / one must/needs to | Impersonal predicate word; synonym нужно | — |
 | 64 | однажды | once / one day | Introduces a narrative event, like English "once upon a time" | — |
 | 65 | сколько | how much / how many | Also used in exclamations | сколько людей! |
 | 66 | сначала | at first / at the beginning | Contrast with снова ("again") — do not confuse | — |

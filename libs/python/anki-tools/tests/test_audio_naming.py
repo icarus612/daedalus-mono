@@ -109,12 +109,29 @@ def test_spoken_text_overrides_table_contents():
         "-ка": "ка",
         "ни... ни...": "ни, ни",
         "то... то...": "то, то",
+        "самого-самый": "са\u0301мого",
+        "самой-самый": "са\u0301мой",
+        "самому-самый": "са\u0301мому",
+        "самом-самый": "са\u0301мом",
     }
 
 
 @pytest.mark.parametrize("source,expected", list(SPOKEN_TEXT_OVERRIDES.items()))
 def test_spoken_text_for_returns_override_for_every_table_key(source, expected):
     assert spoken_text_for(source) == expected[0].upper() + expected[1:] + "."
+
+
+@pytest.mark.parametrize(
+    "name,spoken",
+    [
+        ("самого-самый", "Са\u0301мого."),
+        ("самой-самый", "Са\u0301мой."),
+        ("самому-самый", "Са\u0301мому."),
+        ("самом-самый", "Са\u0301мом."),
+    ],
+)
+def test_spoken_text_for_samyj_homograph_names_keeps_the_stress_mark(name, spoken):
+    assert spoken_text_for(name) == spoken
 
 
 def test_spoken_text_for_clitic_particles_do_not_collapse_with_their_examples():

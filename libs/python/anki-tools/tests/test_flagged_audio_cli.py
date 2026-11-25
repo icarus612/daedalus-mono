@@ -208,26 +208,56 @@ def _flagged_words(monkeypatch, collection):
     return calls
 
 
-def test_flagged_pronoun_genitive_f_card_resolves_to_its_one_form(monkeypatch):
+def test_flagged_pronoun_russian_side_card_resolves_to_its_form(monkeypatch):
     collection = _pronoun_collection(
-        7, **{"Russian": "тот", "Genitive": "того́", "Genitive f.": "той"}
+        2, **{"Russian": "тот", "Form 1": "того́", "Form 2": "той"}
     )
-    assert _flagged_words(monkeypatch, collection) == [["той"]]
+    assert _flagged_words(monkeypatch, collection) == [["того"]]
 
 
-def test_flagged_pronoun_n_form_card_resolves_to_the_stress_stripped_form(
+def test_flagged_pronoun_english_side_first_card_resolves_to_form_1(monkeypatch):
+    collection = _pronoun_collection(
+        13, **{"Russian": "тот", "Form 1": "того́", "Form 2": "той"}
+    )
+    assert _flagged_words(monkeypatch, collection) == [["того"]]
+
+
+def test_flagged_pronoun_english_side_card_resolves_to_its_own_form(monkeypatch):
+    values = {
+        "Russian": "тот",
+        **{f"Form {k}": f"ф{k}" for k in range(1, 8)},
+        "Form 8": "тем",
+    }
+    collection = _pronoun_collection(20, **values)
+    assert _flagged_words(monkeypatch, collection) == [["тем"]]
+
+
+def test_flagged_pronoun_russian_side_card_maps_ord_minus_one_to_the_form(
     monkeypatch,
 ):
+    values = {"Russian": "тот", "Form 1": "того́", "Form 3": "тому́"}
+    collection = _pronoun_collection(4, **values)
+    assert _flagged_words(monkeypatch, collection) == [["тому"]]
+
+
+def test_flagged_pronoun_form_is_stress_stripped(monkeypatch):
     collection = _pronoun_collection(
-        9, **{"Russian": "он", "Genitive": "его́", "Genitive (н-)": "него́"}
+        2, **{"Russian": "он", "Form 1": "его́", "Form 2": "него́"}
     )
-    assert _flagged_words(monkeypatch, collection) == [["него"]]
+    assert _flagged_words(monkeypatch, collection) == [["его"]]
+
+
+def test_flagged_homograph_form_resolves_to_the_disambiguated_audio_word(
+    monkeypatch,
+):
+    collection = _pronoun_collection(2, **{"Russian": "самый", "Form 1": "са́мого"})
+    assert _flagged_words(monkeypatch, collection) == [["самого-самый"]]
 
 
 @pytest.mark.parametrize("ord_", [0, 1])
 def test_flagged_pronoun_word_cards_still_resolve_to_the_headword(monkeypatch, ord_):
     collection = _pronoun_collection(
-        ord_, **{"Russian": "тот", "Genitive": "того́", "Genitive f.": "той"}
+        ord_, **{"Russian": "тот", "Form 1": "того́", "Form 2": "той"}
     )
     assert _flagged_words(monkeypatch, collection) == [["тот"]]
 

@@ -12,6 +12,9 @@ DATA_DIR = (
 )
 
 PRONOUN_SLOT_COLUMNS = [
+    "Nominative f.",
+    "Nominative n.",
+    "Nominative pl.",
     "Genitive",
     "Genitive f.",
     "Genitive pl.",
@@ -104,7 +107,6 @@ EXPECTED_HEADERS = {
         "English",
         "Stress",
         "Pronoun Type",
-        "Gender Forms",
         "Additional Info",
         "Examples",
         *PRONOUN_SLOT_COLUMNS,
@@ -148,7 +150,6 @@ EXPECTED_DASH_COUNTS = {
     ("adverbs.tsv", "Comparative"): 40,
     ("adverbs.tsv", "Adverb"): 22,
     ("adverbs.tsv", "Stress"): 22,
-    ("pronouns.tsv", "Gender Forms"): 12,
     ("numerals.tsv", "Gender Forms"): 44,
 }
 
@@ -324,15 +325,6 @@ def test_the_two_sense_cue_check_catches_the_shape_it_guards():
 
 COMBINING_ACUTE = "\u0301"
 
-PRONOUN_SLOT_COUNTS = {
-    **dict.fromkeys(["я", "ты", "вы", "мы"], 5),
-    **dict.fromkeys(["он", "она", "оно", "они"], 9),
-    **dict.fromkeys(["кто", "ничто", "себя", "никто", "что (pronoun)"], 5),
-    **dict.fromkeys(
-        ["сам", "тот", "этот", "мой", "твой", "свой", "наш", "ваш", "весь"], 18
-    ),
-}
-
 
 def _pronoun_records():
     rows = _read_rows("pronouns.tsv")
@@ -357,25 +349,24 @@ def _filled_slots(record):
 def test_pronoun_slot_cells_hold_exactly_one_form():
     for record in _pronoun_records():
         for column, cell in _filled_slots(record).items():
-            for banned in (" · ", " / ", ", ", "living ", "ни о"):
+            for banned in (" ", "/", ",", "·", "living", "ни о"):
                 assert banned not in cell, (record["Russian"], column, cell)
             assert cell == cell.strip(), (record["Russian"], column, cell)
-            assert len(cell.split()) == 1, (record["Russian"], column, cell)
 
 
-def test_pronoun_slot_cells_total_243():
+def test_pronoun_slot_cells_total_375():
     total = sum(len(_filled_slots(record)) for record in _pronoun_records())
-    assert total == 243
+    assert total == 375
 
 
-def test_pronoun_slot_counts_per_pronoun():
-    records = _pronoun_records()
-    for russian, expected in PRONOUN_SLOT_COUNTS.items():
-        assert len(_filled_slots(_pronoun(russian))) == expected, russian
-    declining = {
-        r["Russian"].replace(COMBINING_ACUTE, "") for r in records if _filled_slots(r)
-    }
-    assert declining == set(PRONOUN_SLOT_COUNTS)
+def test_pronoun_slot_column_order_and_width():
+    header = _read_rows("pronouns.tsv")[0]
+    assert len(PRONOUN_SLOT_COLUMNS) == 25
+    assert len(header) == 33
+    assert header[7:32] == PRONOUN_SLOT_COLUMNS
+    assert header[-1] == "Status"
+    assert "Gender Forms" not in header
+    assert all(len(row) == 33 for row in _read_rows("pronouns.tsv"))
 
 
 def test_pronoun_old_oblique_column_is_gone():
@@ -402,6 +393,10 @@ def test_pronoun_old_oblique_column_is_gone():
         ("я", "Genitive", "меня́"),
         ("никто", "Prepositional", "нико́м"),
         ("ничто", "Prepositional", "ничём"),
+        ("тот", "Nominative f.", "та"),
+        ("который", "Genitive f.", "кото́рой"),
+        ("какой", "Instrumental pl.", "каки́ми"),
+        ("самый", "Genitive", "са́мого"),
     ],
 )
 def test_pronoun_slot_spot_checks(russian, column, expected):

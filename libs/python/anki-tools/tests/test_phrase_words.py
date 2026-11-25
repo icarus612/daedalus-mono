@@ -150,29 +150,79 @@ def test_taught_word_strips_an_immutable_qualifier_from_the_forms():
     assert word.headword == "как (conjunction)"
 
 
-def test_taught_word_reads_a_pronoun_slot_columns_as_forms():
-    word = pw.taught_word(
-        21,
-        ["Russian", "Translation", "Genitive", "Genitive (н-)", "Prepositional"],
-        ["он", "he", "его́", "него́", "нём"],
-    )
-    assert {"он", "его", "него", "нем"} <= set(word.forms)
+def pronoun_note_fields(**values):
+    names = list(mwp.FIELD_NAMES["Pronouns"])
+    return names, [values.get(name, "") for name in names]
 
 
-def test_every_pronoun_slot_field_is_read_as_a_form():
-    values = ["сл" + "а" * n for n in range(1, len(mwp.PRONOUN_FORM_FIELDS) + 1)]
-    word = pw.taught_word(
-        22, ["Russian", "Translation", *mwp.PRONOUN_FORM_FIELDS], ["он", "he", *values]
+def test_pronoun_note_has_56_fields_without_gender_forms():
+    names, _ = pronoun_note_fields()
+    assert len(names) == 56
+    assert "Gender Forms" not in names
+
+
+def test_numerals_keep_gender_forms_as_an_inflection_field():
+    assert "Gender Forms" in pw.INFLECTION_FIELDS
+
+
+def test_taught_word_reads_a_pronoun_form_field_as_a_form():
+    names, values = pronoun_note_fields(
+        Russian="он", Translation="he", **{"Form 3": "ему́"}
     )
-    assert set(values) <= set(word.forms)
+    word = pw.taught_word(21, names, values)
+    assert "ему" in word.forms
+
+
+def test_every_pronoun_form_field_is_read_as_a_form():
+    spelled = {
+        f"Form {k}": "сл" + "а" * k for k in range(1, mwp.PRONOUN_FORM_SLOTS + 1)
+    }
+    names, values = pronoun_note_fields(Russian="он", Translation="he", **spelled)
+    word = pw.taught_word(22, names, values)
+    assert set(spelled.values()) <= set(word.forms)
+
+
+def test_phrase_words_does_not_reference_the_removed_slot_constant():
+    assert not hasattr(pw, "PRONOUN_FORM_FIELDS")
+
+
+def test_pronoun_audio_and_tag_fields_are_not_read_as_forms():
+    names, values = pronoun_note_fields(
+        Russian="он",
+        Translation="he",
+        **{
+            "Audio Form 1": "[sound:x.mp3]",
+            "Form 1 Tag": "(plural)",
+            "Form 1 Cases": "zzz",
+        },
+    )
+    word = pw.taught_word(23, names, values)
+    assert set(word.forms) == {"он"}
+
+
+def test_a_phrase_word_koto_royi_resolves_to_kotoryi_through_a_form_field():
+    names, values = pronoun_note_fields(
+        Russian="который", Translation="which", **{"Form 1": "кото́рой"}
+    )
+    word = pw.taught_word(24, names, values)
+    got = pw.resolve("которой", pw.build_index([word]))
+    assert got.word is word
+
+
+def test_a_phrase_word_ta_resolves_to_tot_through_a_form_field():
+    names, values = pronoun_note_fields(
+        Russian="тот", Translation="that", **{"Form 2": "та"}
+    )
+    word = pw.taught_word(25, names, values)
+    got = pw.resolve("та", pw.build_index([word]))
+    assert got.word is word
 
 
 def test_resolve_maps_a_phrase_word_nego_to_on_through_the_surface_tier():
-    word = pw.taught_word(
-        21,
-        ["Russian", "Translation", "Genitive", "Genitive (н-)"],
-        ["он", "he", "его́", "него́"],
+    names, values = pronoun_note_fields(
+        Russian="он", Translation="he", **{"Form 1": "его́", "Form 2": "него́"}
     )
+    word = pw.taught_word(21, names, values)
     tokens = pw.tokenize("я думаю о нём и без него")
     assert "него" in tokens
     got = pw.resolve("него", pw.build_index([word]))

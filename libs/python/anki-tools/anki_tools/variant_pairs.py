@@ -46,15 +46,6 @@ FIELD_NAMES = (
 
 TEMPLATE_NAMES = ("Russian", "Variant", "English")
 
-# One-consonant words cannot be voiced alone, so their audio speaks a short phrase.
-AUDIO_STEMS = {
-    ("Prepositions", "в"): "в дом",
-    ("Prepositions", "с"): "с другом",
-    ("Prepositions", "к"): "к нам",
-    ("Particles", "б"): "сказал б",
-    ("Particles", "ж"): "ты ж",
-}
-
 
 @dataclass(frozen=True)
 class VariantPair:
@@ -81,9 +72,6 @@ class VariantPair:
     def part_of_speech(self) -> str:
         return immutable_words_plan.POS_FIELD_VALUE[self.deck_leaf]
 
-    def audio_stem(self, word: str) -> str:
-        return AUDIO_STEMS.get((self.deck_leaf, word), word)
-
     def fields(
         self, government: Mapping[str, case_field.CaseGovernment] | None = None
     ) -> list[str]:
@@ -102,12 +90,8 @@ class VariantPair:
             translation,
             "",
             self.part_of_speech,
-            audio_field_value(
-                build_filename(self.audio_stem(self.russian), slot) for slot in SLOTS
-            ),
-            audio_field_value(
-                build_filename(self.audio_stem(self.variant), slot) for slot in SLOTS
-            ),
+            audio_field_value(build_filename(self.russian, slot) for slot in SLOTS),
+            audio_field_value(build_filename(self.variant, slot) for slot in SLOTS),
             case_field.residual_info_for_row(self.deck_leaf, self.additional_info),
             self.examples,
             self.russian_distinction,
@@ -280,7 +264,8 @@ PAIR_CSS = """.pair-lines {
 
 .pair-line {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  align-items: baseline;
   justify-content: center;
   gap: .5rem;
   margin: .4rem 0;

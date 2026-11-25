@@ -30,6 +30,7 @@ from anki_tools import (
     mutable_words_plan,
     phrase_words,
 )
+from anki_tools.audio_naming import strip_qualifier
 
 _PACKAGE = Path(__file__).resolve().parents[1]
 _VOCAB_DIR = _PACKAGE / "anki_tools" / "data" / "russian-vocabulary"
@@ -74,12 +75,8 @@ _ELABORATES = (
     "so the label is not the same information"
 )
 
-_FOLDED_FORMS = (
-    "distinct word forms (masculine not-living form vs plural, e.g. мой / мои́) "
-    "that dedup.normalize folds to one spelling by dropping the final й / ь"
-)
-
 _CATEGORY_LABEL = "Category is a classification label"
+_RUSSIAN_LABEL = "Russian-side look-alike label, approved 2026-11-24"
 
 ALLOWED = {
     (
@@ -166,10 +163,73 @@ ALLOWED = {
             ),
         ),
     ): _ELABORATES,
-    ("Mutable Pronouns", "весь", dedup.RULE_EQUAL, ("все", "все")): _FOLDED_FORMS,
-    ("Mutable Pronouns", "мой", dedup.RULE_EQUAL, ("мои", "мои")): _FOLDED_FORMS,
-    ("Mutable Pronouns", "свой", dedup.RULE_EQUAL, ("свои", "свои")): _FOLDED_FORMS,
-    ("Mutable Pronouns", "твой", dedup.RULE_EQUAL, ("твои", "твои")): _FOLDED_FORMS,
+    (
+        "Mutable Pronouns",
+        "его",
+        dedup.RULE_CONTAINED,
+        ("possessive", "possessive 3rd sg m n indeclinable"),
+    ): _RUSSIAN_LABEL,
+    (
+        "Mutable Pronouns",
+        "её",
+        dedup.RULE_CONTAINED,
+        ("possessive", "possessive 3rd sg f indeclinable"),
+    ): _RUSSIAN_LABEL,
+    (
+        "Mutable Pronouns",
+        "их",
+        dedup.RULE_CONTAINED,
+        ("possessive", "possessive 3rd pl indeclinable"),
+    ): _RUSSIAN_LABEL,
+    (
+        "Mutable Pronouns",
+        "он",
+        dedup.RULE_CONTAINED,
+        ("masculine", "masculine"),
+    ): _RUSSIAN_LABEL,
+    (
+        "Mutable Pronouns",
+        "он",
+        dedup.RULE_EQUAL,
+        ("masculine", "masculine"),
+    ): _RUSSIAN_LABEL,
+    (
+        "Mutable Pronouns",
+        "оно",
+        dedup.RULE_CONTAINED,
+        ("neuter", "neuter"),
+    ): _RUSSIAN_LABEL,
+    ("Mutable Pronouns", "оно", dedup.RULE_EQUAL, ("neuter", "neuter")): _RUSSIAN_LABEL,
+    (
+        "Mutable Pronouns",
+        "сам",
+        dedup.RULE_CONTAINED,
+        ("emphatic", "emphatic"),
+    ): _RUSSIAN_LABEL,
+    (
+        "Mutable Pronouns",
+        "сам",
+        dedup.RULE_EQUAL,
+        ("emphatic", "emphatic"),
+    ): _RUSSIAN_LABEL,
+    (
+        "Mutable Pronouns",
+        "самый",
+        dedup.RULE_CONTAINED,
+        (
+            "superlative",
+            (
+                "forms the analytic superlative with an adjective "
+                "самыи большои the biggest"
+            ),
+        ),
+    ): _RUSSIAN_LABEL,
+    (
+        "Mutable Pronouns",
+        "самый",
+        dedup.RULE_CONTAINED,
+        ("superlative", "intensifier superlative particle"),
+    ): _RUSSIAN_LABEL,
 }
 
 OPEN: dict = {}
@@ -338,7 +398,7 @@ def test_every_note_type_and_template_is_rendered(all_current_keys):
     for sheet, rows in current_mutable_rows().items():
         if sheet == "Pronouns":
             expected += len(rows) * 2 * 2
-            expected += sum(1 for r in rows for form in r.case_forms if form) * 2
+            expected += sum(len(r.forms()) * 2 for r in rows) * 2
             continue
         expected += len(rows) * templates[sheet] * 2
         if sheet == "Verbs":
@@ -397,7 +457,7 @@ SEEDED_CASES = {
         "rules": {dedup.RULE_CASE, dedup.RULE_CONTAINED},
     },
     "всё": {
-        "row": "всё",
+        "row": "всё (particle)",
         "overrides": {
             "Translation": "still / all / constantly (keeps on)",
             "English Distinction": "keeps on",
@@ -425,7 +485,7 @@ def test_the_screenshot_cases_pass_as_shipped(case, tmp_path):
     bench = Bench(str(tmp_path))
     try:
         bench.add_immutable(_rows_by_russian()[spec["row"]])
-        assert _violation_rules(bench, spec["row"]) == set()
+        assert _violation_rules(bench, strip_qualifier(spec["row"])) == set()
     finally:
         bench.close()
 
@@ -436,7 +496,7 @@ def test_the_screenshot_cases_fail_when_their_old_duplicate_is_restored(case, tm
     bench = Bench(str(tmp_path))
     try:
         bench.add_immutable(_rows_by_russian()[spec["row"]], spec["overrides"])
-        rules = _violation_rules(bench, spec["row"])
+        rules = _violation_rules(bench, strip_qualifier(spec["row"]))
     finally:
         bench.close()
     assert spec["rules"] <= rules
@@ -512,12 +572,12 @@ def test_segments_split_gloss_into_senses_parentheticals_and_the_whole():
     ]
 
 
-PRONOUN_CASE_CARDS = 243
+PRONOUN_CASE_CARDS = 410
 
 
 def test_case_cards_render_two_sides_for_every_filled_cell(tmp_path):
     rows = current_mutable_rows()["Pronouns"]
-    assert sum(1 for r in rows for form in r.case_forms if form) == PRONOUN_CASE_CARDS
+    assert sum(len(r.forms()) * 2 for r in rows) == PRONOUN_CASE_CARDS
     bench = Bench(str(tmp_path))
     try:
         bench.add_all_current()

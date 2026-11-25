@@ -88,7 +88,7 @@ ENGLISH_DISTINCTIONS: dict[str, str] = {
     "встреча": "any meeting",
     "встречать": "run into someone",
     "встречаться": "an arranged meeting",
-    "всё": "Repeatedly",
+    "всё (particle)": "Repeatedly",
     "всё-таки": "all the same",
     "второй": "Numeric",
     "вы": "several people, or polite",
@@ -198,7 +198,7 @@ ENGLISH_DISTINCTIONS: dict[str, str] = {
     "нести": "on foot, one way",
     "ни": "Not even one",
     "ни... ни...": "Both options",
-    "ничего": "nothing; also 'it's fine'",
+    "ничего (particle)": "nothing; also 'it's fine'",
     "ничто": "As the subject",
     "но": "direct contrast",
     "номер": "an assigned number",
@@ -309,7 +309,6 @@ ENGLISH_DISTINCTIONS: dict[str, str] = {
     "так как": "because",
     "также": "same subject, an extra thing; more formal",
     "таки": "Colloquial",
-    "такой": "such a, so + adj.",
     "там": "location, not direction",
     "твой": "one person's, casual",
     "твёрдый": "solid, not soft",
@@ -462,6 +461,29 @@ ENGLISH_DISTINCTIONS: dict[str, str] = {
     "однажды": "one particular time",
     "против": "in conflict with",
 }
+
+
+# Pronouns whose spelling, or one of whose forms, another card also shows.
+# Kept out of the `Russian` text because `guid_for_row` hashes that text.
+PRONOUN_RUSSIAN_DISTINCTIONS: dict[str, str] = {
+    "весь": "pronoun",
+    "ничто": "pronoun",
+    "тот": "pronoun",
+    "этот": "pronoun",
+    "его": "possessive",
+    "её": "possessive",
+    "их": "possessive",
+    "он": "masculine",
+    "оно": "neuter",
+    "сам": "emphatic",
+    "самый": "superlative",
+}
+
+
+def russian_distinction(russian: str) -> str:
+    """The Russian-side label for a pronoun row: its headword qualifier, else
+    its `PRONOUN_RUSSIAN_DISTINCTIONS` entry."""
+    return qualifier_of(russian) or PRONOUN_RUSSIAN_DISTINCTIONS.get(russian, "")
 
 
 def english_distinction(russian: str) -> str:

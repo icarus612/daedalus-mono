@@ -209,6 +209,11 @@ GUID_PINS: dict[tuple[str, str], str] = {
     ("Base Adverbs", "так (adverb)"): "p[f.<aMxja",
     ("Conjunctions", "чем (conjunction)"): "ekK$Z9-T+-",
     ("Conjunctions", "что (conjunction)"): "s-(vnZ$JU=",
+    ("Particles", "всё (particle)"): "Lg%gNBJ$6m",
+    ("Particles", "во (particle)"): "yl>Di.+#$H",
+    ("Particles", "ничего (particle)"): "d:/Oppcf(9",
+    ("Particles", "это (particle)"): "wl)uQ86OIg",
+    ("Base Adverbs", "надо (adverb)"): "QT*;XCgS!i",
 }
 
 

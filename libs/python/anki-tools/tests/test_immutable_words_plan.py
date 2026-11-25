@@ -1674,6 +1674,11 @@ QUALIFIED_ROWS = (
     ("Base Adverbs", "так (adverb)", "так", "adverb", "p[f.<aMxja"),
     ("Base Adverbs", "правда (adverb)", "правда", "adverb", "kaU+d{l/fy"),
     ("Base Adverbs", "прежде (adverb)", "прежде", "adverb", "uCVxB6est7"),
+    ("Particles", "всё (particle)", "всё", "particle", "Lg%gNBJ$6m"),
+    ("Particles", "во (particle)", "во", "particle", "yl>Di.+#$H"),
+    ("Particles", "ничего (particle)", "ничего", "particle", "d:/Oppcf(9"),
+    ("Particles", "это (particle)", "это", "particle", "wl)uQ86OIg"),
+    ("Base Adverbs", "надо (adverb)", "надо", "adverb", "QT*;XCgS!i"),
 )
 
 RUSSIAN_INDEX = 0
@@ -1725,7 +1730,7 @@ def test_every_source_row_carrying_a_qualifier_is_in_the_table(real_rows):
 
 def test_no_russian_field_in_the_real_document_carries_a_parenthetical(real_rows):
     assert len(real_rows) == 348
-    assert len(QUALIFIED_ROWS) == 19
+    assert len(QUALIFIED_ROWS) == 24
     offenders = [row.russian for row in real_rows if "(" in row.fields()[RUSSIAN_INDEX]]
     assert offenders == []
 

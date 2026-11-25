@@ -157,7 +157,12 @@ class _Collector(HTMLParser):
     def _classify(self, tag: str, attrs: dict[str, str]) -> tuple[str, bool]:
         element_id = attrs.get("id", "")
         classes = attrs.get("class", "").split()
-        if tag in _IGNORED_TAGS or "hidden" in classes or element_id in _IGNORED_IDS:
+        if (
+            tag in _IGNORED_TAGS
+            or "hidden" in classes
+            or "hidden" in attrs
+            or element_id in _IGNORED_IDS
+        ):
             return OTHER, True
         if "case-pills" in classes:
             return PILL, True

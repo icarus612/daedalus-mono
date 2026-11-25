@@ -19,7 +19,7 @@ VOCAB = DATA / "russian-vocabulary"
 GOVERNMENT = DATA / "case-government.tsv"
 SOURCE_LIST = PACKAGE_ROOT / "tests" / "data" / "source-word-list.md"
 
-EXCLUDED_SHEETS = ("Nouns", "Adjectives", "Pronouns", "Numerals")
+EXCLUDED_SHEETS = ("Nouns", "Adjectives", "Numerals")
 QUANTITY_WORDS = ("нет", "немного", "чуть-чуть", "вроде", "мало", "много", "сколько")
 
 
@@ -192,6 +192,12 @@ def test_governing_note_types_do_carry_pill_markup(sheet):
         sheet, 0
     ) + mutable_words_plan.build_template(sheet, 1)
     assert any(case_pill.PILL_WRAPPER_CLASS in side for side in sides)
+
+
+@pytest.mark.parametrize("card_index", [0, 1])
+def test_pronoun_word_cards_carry_the_base_cases_pill_block(card_index):
+    sides = mutable_words_plan.build_template("Pronouns", card_index)
+    assert any('<div class="case-pills">{{Base Cases}}</div>' in side for side in sides)
 
 
 def test_a_seeded_noun_with_pill_markup_fails():

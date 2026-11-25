@@ -30,7 +30,7 @@ INFLECTION_FIELDS: dict[str, tuple[str, ...]] = {
     ),
     "Adjectives": ("Feminine", "Neuter", "Plural", "Short Form", "Comparative"),
     "Adverbs": ("Comparative",),
-    "Pronouns": ("Gender Forms",),
+    "Pronouns": (),
     "Numerals": ("Gender Forms", "Genitive"),
 }
 

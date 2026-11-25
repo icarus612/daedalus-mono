@@ -556,9 +556,9 @@ def test_load_notes_fields(notes: list[Note]) -> None:
 
 def test_every_english_distinction_key_matches_a_headword(notes: list[Note]) -> None:
     headwords = {n.headword for n in notes}
-    assert len(ENGLISH_DISTINCTIONS) == 410
+    assert len(ENGLISH_DISTINCTIONS) == 409
     assert set(ENGLISH_DISTINCTIONS) <= headwords
-    assert sum(1 for n in notes if n.english_distinction) == 424
+    assert sum(1 for n in notes if n.english_distinction) == 423
 
 
 def test_provisional_cases(notes: list[Note], governed_notes: list[Note]) -> None:
@@ -717,7 +717,7 @@ def test_map_cues_separates_needs_one_side_nonempty() -> None:
 def test_map_cues_real_entry_count(
     notes: list[Note], groups: list[collisions.CollisionGroup]
 ) -> None:
-    assert len(collisions.map_cues(notes, groups)) == 424
+    assert len(collisions.map_cues(notes, groups)) == 423
 
 
 def test_classify_row_columns_are_declared() -> None:
@@ -1178,10 +1178,11 @@ def test_real_screenshot_cases(rows: list[collisions.ClassificationRow]) -> None
     assert until_cue.action == "keep"
 
     everything = {
-        r.qualifier_text: r.action for r in rows_of(rows, "всё", "Translation")
+        r.qualifier_text: r.action
+        for r in rows_of(rows, "всё (particle)", "Translation")
     }
     assert everything["keeps on"] == "keep-inline"
-    [everything_cue] = rows_of(rows, "всё", "English Distinction")
+    [everything_cue] = rows_of(rows, "всё (particle)", "English Distinction")
     assert everything_cue.qualifier_text == "Repeatedly"
     assert everything_cue.action == "keep"
 

@@ -272,9 +272,9 @@ def test_dataclasses_are_frozen():
         note().guid = "other"
 
 
-def test_expected_pronoun_notes_carry_exactly_the_55_schema_fields(tmp_path):
+def test_expected_pronoun_notes_carry_exactly_the_56_schema_fields(tmp_path):
     text, source_dir = write_source(tmp_path)
-    assert len(mwp.FIELD_NAMES["Pronouns"]) == 55
+    assert len(mwp.FIELD_NAMES["Pronouns"]) == 56
     notes = [
         e
         for e in sd.expected_notes(text, source_dir)
@@ -283,7 +283,8 @@ def test_expected_pronoun_notes_carry_exactly_the_55_schema_fields(tmp_path):
     assert len(notes) == FIXTURE_ROWS
     for built in notes:
         assert list(built.fields) == list(mwp.FIELD_NAMES["Pronouns"])
-        assert set(mwp.PRONOUN_FORM_FIELDS) <= set(built.fields)
+        assert set(mwp.PRONOUN_NOTE_FORM_FIELDS) <= set(built.fields)
+        assert "Gender Forms" not in built.fields
         assert "Oblique" + " Forms" not in built.fields
 
 
@@ -296,3 +297,20 @@ def test_pronoun_collection_notes_from_the_same_rows_report_no_drift(tmp_path):
     report = sd.compare(pronouns, collection_notes(pronouns))
     assert [r for r in report.drift if r.note_type == pronoun_type] == []
     assert report.drift == []
+
+
+def test_pronoun_notes_carry_the_new_form_and_nominative_columns(tmp_path):
+    text, source_dir = write_source(tmp_path)
+    header = (
+        open(os.path.join(source_dir, "pronouns.tsv"), encoding="utf-8")
+        .readline()
+        .rstrip("\n")
+        .split("\t")
+    )
+    assert "Gender Forms" not in header
+    assert len(header) == 33
+    assert header[7:10] == ["Nominative f.", "Nominative n.", "Nominative pl."]
+    rows = mwp.parse_pronouns(os.path.join(source_dir, "pronouns.tsv"))
+    assert len(rows) == FIXTURE_ROWS
+    assert all(len(row.case_forms) == 25 for row in rows)
+    assert all(len(row.fields()) == 56 for row in rows)

@@ -58,9 +58,19 @@ _PER_DECK_CARDS = {
     "Verbs": 856,
     "Adjectives": 348,
     "Adverbs": 282,
-    "Pronouns": 303,
+    "Pronouns": 470,
     "Numerals": 110,
 }
+
+
+def _filled_pronoun_form_slots(pronouns) -> int:
+    names = plan.FIELD_NAMES["Pronouns"]
+    form_indexes = [
+        i for i, name in enumerate(names) if re.fullmatch(r"Form \d+", name)
+    ]
+    return sum(1 for row in pronouns for i in form_indexes if row.fields()[i].strip())
+
+
 _FILENAME_RE = re.compile(r"^[^/]+_(?:f1|m2)\.mp3$")
 
 # See test_mutable_words_plan.py's identically-named table for why these
@@ -106,12 +116,11 @@ def test_full_pipeline_note_and_card_totals():
         ),
         "Adjectives": len(adjectives) * 2,
         "Adverbs": len(adverbs) * 2,
-        "Pronouns": len(pronouns) * 2
-        + sum(1 for p in pronouns for form in p.case_forms if form),
+        "Pronouns": len(pronouns) * 2 + 2 * _filled_pronoun_form_slots(pronouns),
         "Numerals": len(numerals) * 2,
     }
     assert cards_by_sheet == _PER_DECK_CARDS
-    assert sum(cards_by_sheet.values()) == 3161
+    assert sum(cards_by_sheet.values()) == 3328
 
 
 def test_full_pipeline_base_word_and_slug_totals():
@@ -275,7 +284,7 @@ def test_real_source_reimport_is_idempotent_no_duplicate_notetypes(
         fresh_col.close()
 
 
-def test_real_source_predicted_audio_filenames_well_formed_and_number_3180():
+def test_real_source_predicted_audio_filenames_well_formed_and_number_3302():
     nouns, verbs, adjectives, adverbs, pronouns, numerals = _parse_all_rows()
 
     filenames: set[str] = set()
@@ -283,7 +292,7 @@ def test_real_source_predicted_audio_filenames_well_formed_and_number_3180():
         for base_word in getattr(row, "audio_words", row.base_words):
             filenames.update(plan.audio_names(base_word))
 
-    assert len(filenames) == 3180
+    assert len(filenames) == 3302
     malformed = [name for name in filenames if not _FILENAME_RE.match(name)]
     assert malformed == []
 
@@ -323,7 +332,7 @@ def test_audio_dry_run_over_real_media_dir_reports_exact_pending_count(
     match = re.match(r"total (\d+) / present (\d+) / pending (\d+)$", lines[0])
     assert match is not None
     total, present, pending = (int(g) for g in match.groups())
-    assert total == 3206
+    assert total == 3328
     assert present + pending == total
     assert (
         lines[1]

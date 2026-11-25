@@ -36,12 +36,11 @@ def case_slug(name: str) -> str:
     return name.lower()
 
 
-def pill_block(case: str | None = None, trailing: str = "") -> str:
+def pill_block(case: str | None = None) -> str:
     """The template block: six pills in a wrapper.
 
     Without `case` the wrapper is rendered only when the `Case` field is set.
-    With `case` it is unconditional, carries that literal case, and `trailing`
-    is placed after the last pill inside the wrapper.
+    With `case` it is unconditional and carries that literal case.
     """
     if case is not None and case not in CASE_ORDER:
         raise ValueError(f"not a canonical case name: {case!r}")
@@ -50,14 +49,11 @@ def pill_block(case: str | None = None, trailing: str = "") -> str:
         for name in CASE_ORDER
     )
     if case is not None:
-        return (
-            f'<div class="{PILL_WRAPPER_CLASS}" data-case="{case}">'
-            f"{pills}{trailing}</div>"
-        )
+        return f'<div class="{PILL_WRAPPER_CLASS}" data-case="{case}">{pills}</div>'
     return (
         f"{{{{#{_CASE_FIELD}}}}}"
         f'<div class="{PILL_WRAPPER_CLASS}" data-case="{{{{text:{_CASE_FIELD}}}}}">'
-        f"{pills}{trailing}</div>"
+        f"{pills}</div>"
         f"{{{{/{_CASE_FIELD}}}}}"
     )
 
@@ -70,6 +66,18 @@ def _anchor_pattern(anchor_id: str) -> re.Pattern[str]:
     )
 
 
+def insert_after_anchor(
+    template_html: str, block: str, anchor_id: str = PROMPT_HINT_ANCHOR
+) -> str:
+    """Insert `block` on its own line right after the anchor's line div.
+
+    Returns the template unchanged when the anchor is absent.
+    """
+    return _anchor_pattern(anchor_id).sub(
+        lambda match: f"{match.group(1)}\n{block}", template_html, count=1
+    )
+
+
 def add_pill_block(template_html: str, anchor_id: str = PROMPT_HINT_ANCHOR) -> str:
     """Insert the pill block on its own line right after the anchor div.
 
@@ -78,10 +86,7 @@ def add_pill_block(template_html: str, anchor_id: str = PROMPT_HINT_ANCHOR) -> s
     """
     if f'class="{PILL_WRAPPER_CLASS}"' in template_html:
         return template_html
-    block = pill_block()
-    return _anchor_pattern(anchor_id).sub(
-        lambda match: f"{match.group(1)}\n{block}", template_html, count=1
-    )
+    return insert_after_anchor(template_html, pill_block(), anchor_id)
 
 
 def _css() -> str:

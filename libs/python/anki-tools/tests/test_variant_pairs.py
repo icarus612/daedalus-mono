@@ -126,16 +126,16 @@ def test_russian_backs_show_only_the_other_word_under_a_heading():
     assert "Alternative Russian:" not in variant_pairs.TEMPLATES["English"][1]
 
 
-def test_one_consonant_words_speak_a_phrase():
+def test_one_consonant_words_speak_just_the_word():
     by_key = {(p.deck_leaf, p.russian): p for p in variant_pairs.load_pairs()}
     fields = dict(
         zip(variant_pairs.FIELD_NAMES, by_key[("Prepositions", "в")].fields())
     )
-    assert 'src="в-дом_f1.mp3"' in fields["Audio"]
+    assert 'src="в_f1.mp3"' in fields["Audio"]
     assert 'src="во_f1.mp3"' in fields["Variant Audio"]
     fields = dict(zip(variant_pairs.FIELD_NAMES, by_key[("Particles", "бы")].fields()))
     assert 'src="бы_m1.mp3"' in fields["Audio"]
-    assert 'src="сказал-б_m1.mp3"' in fields["Variant Audio"]
+    assert 'src="б_m1.mp3"' in fields["Variant Audio"]
 
 
 def test_prepositions_carry_their_case():

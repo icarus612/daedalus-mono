@@ -1,3 +1,4 @@
+import inspect
 import itertools
 import re
 
@@ -489,7 +490,6 @@ def _flat(block):
 
 def test_pill_block_none_matches_no_argument_output():
     assert case_pill.pill_block(None) == case_pill.pill_block()
-    assert case_pill.pill_block(None, "") == case_pill.pill_block()
     assert "{{#Case}}" in case_pill.pill_block()
 
 
@@ -519,31 +519,22 @@ def test_pill_block_fixed_case_is_exactly_the_specified_markup():
     assert _flat(case_pill.pill_block("Genitive")) == expected
 
 
-def test_pill_block_trailing_follows_last_pill_inside_the_div():
-    trailing = '<span class="extra">x</span>'
-    flat = _flat(case_pill.pill_block("Dative", trailing))
-    last_pill = '<span class="case-pill case-prepositional">Prepositional</span>'
-    assert last_pill + trailing + "</div>" in flat
-    assert flat.count(trailing) == 1
-    assert flat.index(trailing) > flat.index(last_pill)
-    assert flat.endswith("</div>")
+def test_pill_block_has_no_trailing_argument():
+    assert "trailing" not in inspect.signature(case_pill.pill_block).parameters
+    with pytest.raises(TypeError):
+        case_pill.pill_block("Dative", trailing="x")
+    with pytest.raises(TypeError):
+        case_pill.pill_block("Dative", "x")
 
 
-def test_pill_block_trailing_keyword_and_empty_default():
-    assert case_pill.pill_block("Dative", trailing="") == case_pill.pill_block("Dative")
-    with_trailing = case_pill.pill_block(case="Dative", trailing="TAIL")
-    assert "TAIL" in with_trailing
-    assert "TAIL" not in case_pill.pill_block("Dative")
-
-
-def test_pill_block_trailing_with_default_case_stays_inside_wrapper():
-    flat = _flat(case_pill.pill_block(None, "TAIL"))
-    assert "TAIL</div>{{/Case}}" in flat
+def test_pill_block_wrapper_closes_right_after_the_last_pill():
+    flat = _flat(case_pill.pill_block("Dative"))
+    assert flat.endswith(
+        '<span class="case-pill case-prepositional">Prepositional</span></div>'
+    )
 
 
 @pytest.mark.parametrize("bad", ["Genitiv", "genitive", "Locative", "", "Gen"])
 def test_pill_block_rejects_case_outside_case_order(bad):
     with pytest.raises(ValueError, match=r".*"):
         case_pill.pill_block(bad)
-    with pytest.raises(ValueError, match=r".*"):
-        case_pill.pill_block(bad, "tail")

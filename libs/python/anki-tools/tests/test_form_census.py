@@ -102,7 +102,7 @@ class TestConstants:
             "Nouns": ("Plural", "Genitive Sg", "Genitive Pl"),
             "Adjectives": ("Feminine", "Neuter", "Plural", "Short Form", "Comparative"),
             "Adverbs": ("Comparative",),
-            "Pronouns": ("Gender Forms",),
+            "Pronouns": (),
             "Numerals": ("Gender Forms", "Genitive"),
             "Verbs": (
                 "Perfective",
@@ -247,7 +247,6 @@ TSV_HEADERS = {
         "English",
         "Stress",
         "Pronoun Type",
-        "Gender Forms",
         "Additional Info",
         "Examples",
         *mwp.PRONOUN_FORM_FIELDS,
@@ -273,6 +272,9 @@ def write_tsvs(data_dir, rows_per_sheet=2):
         for n in range(1, rows_per_sheet + 1):
             cells = [f"{sheet[:2]}{n}-{name}" for name in header]
             cells[0] = str(n)
+            if sheet == "Pronouns":
+                for name in mwp.PRONOUN_FORM_FIELDS:
+                    cells[header.index(name)] = f"{sheet[:2]}{n}-form"
             if sheet == "Adverbs":
                 cells[header.index("Formation")] = "regular"
                 cells[header.index("Status")] = "ok"
@@ -576,7 +578,7 @@ class TestClassifyCells:
 
     @pytest.mark.parametrize("marker", ["—", "–", "-", "--"])
     @pytest.mark.parametrize(
-        "sheet", ["Nouns", "Verbs", "Adjectives", "Adverbs", "Pronouns", "Numerals"]
+        "sheet", ["Nouns", "Verbs", "Adjectives", "Adverbs", "Numerals"]
     )
     def test_explicit_dash_is_not_applicable(self, sheet, marker):
         name = fc.INFLECTION_FIELDS[sheet][0]
@@ -593,7 +595,7 @@ class TestClassifyCells:
         ]
 
     @pytest.mark.parametrize(
-        "sheet", ["Nouns", "Verbs", "Adjectives", "Adverbs", "Pronouns", "Numerals"]
+        "sheet", ["Nouns", "Verbs", "Adjectives", "Adverbs", "Numerals"]
     )
     def test_blank_with_no_rule_is_missing_control(self, sheet):
         name = fc.INFLECTION_FIELDS[sheet][1 if sheet == "Verbs" else 0]
@@ -816,7 +818,6 @@ PLANNED_EMPTY_COUNTS = {
     "Nouns": {"Plural": 134, "Genitive Sg": 622, "Genitive Pl": 623},
     "Adjectives": {"Short Form": 159, "Comparative": 166},
     "Adverbs": {"Comparative": 43},
-    "Pronouns": {"Gender Forms": 12},
     "Numerals": {"Gender Forms": 44},
     "Verbs": {
         "Perfective": 17,

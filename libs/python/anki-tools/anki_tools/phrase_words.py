@@ -35,7 +35,7 @@ import unicodedata
 from collections.abc import Iterable, Mapping, Sequence
 from typing import NamedTuple
 
-from anki_tools.mutable_words_plan import PRONOUN_FORM_FIELDS
+from anki_tools.mutable_words_plan import PRONOUN_NOTE_FORM_FIELDS
 
 PHRASE_NOTE_TYPE = "Russian - Common Words (Ellis Version)"
 PHRASE_DECK = "Languages::Russian::6. Russian Phrases"
@@ -69,7 +69,7 @@ INFLECTION_FIELDS = (
     "ты (2sg)",
     "они (3pl)",
     "Past (m / f)",
-    *PRONOUN_FORM_FIELDS,
+    *PRONOUN_NOTE_FORM_FIELDS,
 )
 
 STRESS_MARKS = ("́", "̀")

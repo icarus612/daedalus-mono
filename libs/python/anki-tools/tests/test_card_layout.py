@@ -1,7 +1,9 @@
-"""Centre-line render assertion for every mutable answer side, in headless WebKit."""
+"""Render assertions for every mutable card side, in headless WebKit."""
 
 import importlib.util
+import re
 import subprocess
+import unicodedata
 from pathlib import Path
 
 import pytest
@@ -284,9 +286,22 @@ def test_pre_4_1_template_fails_the_centre_assertion(webkit_page, old_variants):
 
 
 CASE_ORDS = range(2, 24)
+PRONOUN_TSV = (
+    Path(mutable_words_plan.__file__).parent
+    / "data"
+    / "russian-vocabulary"
+    / "pronouns.tsv"
+)
+ACUTE = "\u0301"
+MOBILE = 390
+PILL_TOLERANCE = 8.0
 
-CASE_MEASURE_JS = """
+PAGE_JS = """
 () => {
+  const norm = (t) => t.replace(/\\s+/g, '').toLowerCase();
+  const shown = (selector) => Array.from(document.querySelectorAll(selector))
+    .filter(e => e.getBoundingClientRect().height > 0);
+  const lines = () => Array.from(document.querySelectorAll('.form-line:not([hidden])'));
   const rects = (el) => {
     const out = [];
     const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
@@ -307,121 +322,419 @@ CASE_MEASURE_JS = """
       right: Math.max(...rs.map(r => r.right)),
     } : null;
   };
-  const ids = (selector) => Array.from(document.querySelectorAll(selector))
-    .filter(e => e.getBoundingClientRect().height > 0)
-    .map(span).filter(Boolean);
   const row = (el) => el && el.parentElement.classList.contains('cue-row')
     ? el.parentElement : el;
-  const rows = (selector) => Array.from(document.querySelectorAll(selector))
-    .filter(e => e.getBoundingClientRect().height > 0)
-    .map(row).map(span).filter(Boolean);
-  const head = row(document.getElementById('russian'));
+  const width = window.innerWidth;
+  const offenders = Array.from(document.body.querySelectorAll('*'))
+    .filter(e => !['SCRIPT', 'STYLE'].includes(e.tagName))
+    .map(e => [e, e.getBoundingClientRect()])
+    .filter(([e, r]) => r.width > 0 && r.right > width + 0.5)
+    .map(([e, r]) => `${e.tagName}#${e.id}.${e.className}:${Math.round(r.right)}`);
+  const russian = row(document.getElementById('russian'));
   return {
-    russian: head ? span(head) : null,
-    form: rows('#case-form'),
-    lines: ids('.form-line'),
-    gloss: rows('#translation'),
-    overflow: document.documentElement.scrollWidth - window.innerWidth,
+    lines: lines().map(e => norm(e.innerText)),
+    audioLefts: lines().map(
+      e => Math.round(e.querySelector('[id$="-audio"]').getBoundingClientRect().left)
+    ),
+    lineWords: lines().map(
+      e => norm((e.querySelector('[id$="-word"]') || e).textContent)
+    ),
+    rows: shown('.case-pills .case-row').map(e => norm(e.innerText)),
+    pills: shown('.case-pills').length,
+    text: norm(document.body.innerText),
+    offenders,
+    overflow: document.documentElement.scrollWidth - width,
+    russian: russian ? span(russian) : null,
+    gloss: shown('#translation').map(e => span(row(e))).filter(Boolean),
+    rowSpans: shown('.case-pills .case-row').map(span).filter(Boolean),
   };
 }
 """
 
 
-@pytest.fixture(scope="module")
-def case_answers(tmp_path_factory):
-    col = Collection(str(tmp_path_factory.mktemp("case") / "p.anki2"))
-    try:
-        note_type = _register(col, mutable_words_plan, "Pronouns")
-        note = col.new_note(note_type)
-        for name in mutable_words_plan.FIELD_NAMES["Pronouns"]:
-            note[name] = "[sound:a.mp3]" if name.startswith("Audio") else f"{name} text"
-        col.add_note(note, col.decks.id("Layout"))
-        cards = {card.ord: card for card in note.cards()}
-        assert sorted(cards) == list(range(24))
-        yield {
-            ord_: (cards[ord_].render_output().answer_text, note_type["css"])
-            for ord_ in CASE_ORDS
-        }
-    finally:
-        col.close()
+OVERFLOW_JS = """
+() => {
+  const width = window.innerWidth;
+  return {
+    overflow: document.documentElement.scrollWidth - width,
+    offenders: Array.from(document.body.querySelectorAll('*'))
+      .filter(e => !['SCRIPT', 'STYLE'].includes(e.tagName))
+      .map(e => [e, e.getBoundingClientRect()])
+      .filter(([e, r]) => r.width > 0 && r.right > width + 0.5)
+      .map(([e, r]) => `${e.tagName}#${e.id}.${e.className}:${Math.round(r.right)}`),
+  };
+}
+"""
 
 
-def test_pronoun_template_count_is_24():
-    assert _template_count(mutable_words_plan, "Pronouns") == 24
+def _norm(text):
+    return re.sub(r"\s+", "", text).lower()
 
 
-@pytest.mark.parametrize("width", WIDTHS)
-@pytest.mark.parametrize("ord_", CASE_ORDS)
-def test_case_answer_form_lines_and_gloss_are_centred(
-    webkit_page, case_answers, ord_, width
-):
-    html, css = case_answers[ord_]
-    webkit_page.set_viewport_size({"width": width, "height": 900})
-    webkit_page.set_content(
+def _strip(text):
+    return unicodedata.normalize("NFC", text.replace(ACUTE, ""))
+
+
+def _load(page, html, css, width):
+    page.set_viewport_size({"width": width, "height": 900})
+    page.set_content(
         "<!doctype html><html><head>"
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
         f'<style>{css}</style></head><body><div class="card">{html}</div></body></html>'
     )
-    m = webkit_page.evaluate(CASE_MEASURE_JS)
-    assert m["russian"], "headword not rendered"
-    assert m["form"], "case form not rendered"
-    assert m["gloss"], "gloss not rendered"
-    assert m["overflow"] <= 0, m
-    reference = _centre(m["russian"])
-    for item in m["form"] + m["lines"] + m["gloss"]:
-        assert abs(_centre(item) - reference) <= TOLERANCE, m
+    page.wait_for_timeout(50)
+    return page.evaluate(PAGE_JS)
 
 
-def _question(col, note_type, filled, ord_):
-    note = col.new_note(note_type)
-    for name in mutable_words_plan.FIELD_NAMES["Pronouns"]:
-        note[name] = (
-            "" if name in mutable_words_plan.PRONOUN_CARD_SLOTS else f"{name} text"
-        )
-        if name.startswith("Audio "):
-            note[name] = ""
-    for name in filled:
-        note[name] = f"{name} text"
-    col.add_note(note, col.decks.id("Layout"))
-    cards = {card.ord: card for card in note.cards()}
-    return cards[ord_].render_output().question_text
+@pytest.fixture
+def fresh_page(webkit_page):
+    page = webkit_page.context.browser.new_page()
+    yield page
+    page.close()
 
 
 @pytest.fixture(scope="module")
-def case_col(tmp_path_factory):
-    col = Collection(str(tmp_path_factory.mktemp("question") / "q.anki2"))
+def pronoun_rows():
+    return {
+        row.russian: row for row in mutable_words_plan.parse_pronouns(str(PRONOUN_TSV))
+    }
+
+
+@pytest.fixture(scope="module")
+def real_sides(tmp_path_factory, pronoun_rows):
+    col = Collection(str(tmp_path_factory.mktemp("real") / "p.anki2"))
     try:
-        yield col, _register(col, mutable_words_plan, "Pronouns")
+        note_type = _register(col, mutable_words_plan, "Pronouns")
+        names = mutable_words_plan.FIELD_NAMES["Pronouns"]
+        sides = {}
+        for headword, row in pronoun_rows.items():
+            note = col.new_note(note_type)
+            for name, value in zip(names, row.fields(), strict=True):
+                note[name] = value
+            col.add_note(note, col.decks.id("Layout"))
+            for card in note.cards():
+                output = card.render_output()
+                sides[(headword, card.ord)] = (
+                    output.question_text,
+                    output.answer_text,
+                )
+        yield (
+            sides,
+            note_type["css"],
+            {
+                headword: dict(zip(names, row.fields(), strict=True))
+                for headword, row in pronoun_rows.items()
+            },
+        )
     finally:
         col.close()
 
 
-def test_single_form_cell_renders_the_pill_and_no_qualifier(case_col):
-    col, note_type = case_col
-    html = _question(col, note_type, ["Prepositional"], 6)
-    assert 'data-case="Prepositional"' in html
-    assert "aspect" not in html
+def _form_ords(fields, form_text):
+    for k in range(1, 12):
+        if _strip(fields[f"Form {k}"]) == form_text:
+            return k + 1, k + 12
+    raise AssertionError(f"{form_text} is not a form of {fields['Russian']}")
 
 
-def test_primary_qualifier_appears_only_when_a_sibling_slot_is_filled(case_col):
-    col, note_type = case_col
-    plain = _question(col, note_type, ["Genitive"], 2)
-    gendered = _question(col, note_type, ["Genitive", "Genitive f."], 2)
-    prep = _question(col, note_type, ["Genitive", "Genitive (н-)"], 2)
-    assert "aspect" not in plain
-    assert "(masculine / neuter)" in gendered
-    assert "(without a preposition)" in prep
-    assert "(masculine / neuter)" not in prep
+def _template(ord_):
+    return mutable_words_plan.build_template("Pronouns", ord_)
 
 
-def test_accusative_primary_says_not_living_only_with_the_living_form(case_col):
-    col, note_type = case_col
-    html = _question(col, note_type, ["Accusative", "Accusative m. living"], 4)
-    assert "(masculine, not living)" in html
-    assert "(masculine, not living)" not in _question(col, note_type, ["Accusative"], 4)
+def _form_k(ord_):
+    return ord_ - 1 if ord_ <= 12 else ord_ - 12
 
 
-def test_non_primary_front_shows_pill_before_its_fixed_qualifier(case_col):
-    col, note_type = case_col
-    html = _question(col, note_type, ["Genitive f."], 7)
-    assert html.index('data-case="Genitive"') < html.index("(feminine)")
+def test_pronoun_template_count_is_24():
+    assert _template_count(mutable_words_plan, "Pronouns") == 24
+    assert TEMPLATE_COUNTS_BY_SHEET["Pronouns"] == 24
+
+
+@pytest.mark.parametrize("bad", [-1, 24, 25, 100])
+def test_pronoun_template_ord_out_of_range_raises(bad):
+    with pytest.raises(ValueError, match=r".*"):
+        mutable_words_plan.build_template("Pronouns", bad)
+
+
+@pytest.mark.parametrize("ord_", CASE_ORDS)
+def test_form_template_is_wrapped_in_its_form_section(ord_):
+    k = _form_k(ord_)
+    qfmt, _afmt = _template(ord_)
+    assert qfmt.strip().startswith(f"{{{{#Form {k}}}}}")
+    assert qfmt.strip().endswith(f"{{{{/Form {k}}}}}")
+
+
+@pytest.mark.parametrize("ord_", range(2, 13))
+def test_russian_side_front_plays_audio_and_hides_the_gloss(ord_):
+    k = _form_k(ord_)
+    qfmt, afmt = _template(ord_)
+    assert f"{{{{Audio Form {k}}}}}" in qfmt
+    assert 'id="russian"' in qfmt
+    assert 'id="translation"' not in qfmt
+    assert f"{{{{Form {k}}}}}" in qfmt
+    assert "{{FrontSide}}" in afmt
+    assert 'id="translation"' in afmt
+    assert f"{{{{Form {k} Tag}}}}" in afmt
+    assert 'class="case-pills"' in afmt
+    assert f"{{{{Form {k} Cases}}}}" in afmt
+    assert "Examples" not in afmt
+    assert 'id="additional-info"' in afmt
+
+
+@pytest.mark.parametrize("ord_", range(13, 24))
+def test_english_side_front_shows_gloss_and_pills_without_audio(ord_):
+    k = _form_k(ord_)
+    qfmt, afmt = _template(ord_)
+    assert 'id="translation"' in qfmt
+    assert f"{{{{Form {k} Cases}}}}" in qfmt
+    assert f"{{{{Form {k} Tag}}}}" in qfmt
+    assert 'class="case-pills"' in qfmt
+    assert "Audio" not in qfmt
+    assert "{{FrontSide}}" in afmt
+    assert f"{{{{Audio Form {k}}}}}" in afmt
+    assert 'id="russian"' in afmt
+    assert f"{{{{Form {k}}}}}" in afmt
+    assert "Examples" not in afmt
+    assert 'id="additional-info"' in afmt
+
+
+@pytest.mark.parametrize("ord_", CASE_ORDS)
+def test_form_template_has_no_duplicate_ids_in_either_format(ord_):
+    for fmt in _template(ord_):
+        ids = re.findall(r'\bid="([^"]+)"', fmt)
+        assert len(ids) == len(set(ids)), sorted(i for i in ids if ids.count(i) > 1)
+
+
+@pytest.mark.parametrize("ord_", range(24))
+def test_no_template_mentions_case_form_or_indeclinable(ord_):
+    for fmt in _template(ord_):
+        assert "case-form" not in fmt
+        assert "indeclinable" not in fmt.lower()
+        assert "Gender Forms" not in fmt
+
+
+def test_extra_css_has_no_case_form_and_has_the_new_blocks():
+    css = mutable_words_plan.EXTRA_CSS
+    assert "#case-form" not in css
+    assert not hasattr(mutable_words_plan, "PRONOUN_CASE_CSS")
+    assert hasattr(mutable_words_plan, "PRONOUN_FORM_CSS")
+    assert mutable_words_plan._FORM_ROLE_COLOURS["fixed"] == ("#546e7a", "#b0bec5")
+    assert ".case-row" in css
+    assert ".form-line[hidden]" in css
+    for j in range(12):
+        assert f"#form-{j}" in css
+
+
+@pytest.mark.parametrize("ord_", CASE_ORDS)
+def test_form_back_has_counterpart_lines_for_every_other_slot(ord_):
+    k = _form_k(ord_)
+    _qfmt, afmt = _template(ord_)
+    assert 'id="form-lines"' in afmt
+    assert f'id="form-{k}"' not in afmt
+    assert f"__pronounFormPlay_{k}(" not in afmt
+    for j in range(12):
+        if j == k:
+            continue
+        assert f'id="form-{j}"' in afmt
+        assert f'id="form-{j}-word"' in afmt
+        assert f"__pronounFormPlay_{j}(event)" in afmt
+        assert f"{{{{Form {j} Cases}}}}" in afmt or j == 0
+        assert (f"{{{{#Form {j}}}}}" in afmt) == (j != 0)
+    assert "{{Base Cases}}" in afmt
+    assert afmt.count('class="form-src"') == 11
+    assert afmt.count("hidden") >= 22
+
+
+@pytest.mark.parametrize("ord_", [0, 1])
+def test_word_card_template_shape(ord_):
+    qfmt, afmt = _template(ord_)
+    both = qfmt + afmt
+    assert "{{Base Tag}}" in both
+    assert "{{^Form 1}}" in both
+    assert '<span class="aspect form-fixed">(never changes)</span>' in both
+    assert both.index("{{Base Tag}}") < both.index("(never changes)")
+    assert "{{#Base Cases}}" in both
+    assert '<div class="case-pills">{{Base Cases}}</div>' in both
+    assert "Gender Forms" not in both
+    assert "{{#Form 1}}" not in qfmt
+    assert "Pronoun Type" in afmt or "details" in afmt
+
+
+@pytest.mark.parametrize("ord_", range(24))
+def test_pronoun_front_and_back_never_reuse_an_id_with_frontside(ord_):
+    qfmt, afmt = _template(ord_)
+    front = set(re.findall(r'\bid="([^"]+)"', qfmt))
+    back_only = re.sub(r"\{\{FrontSide\}\}", "", afmt)
+    back = re.findall(r'\bid="([^"]+)"', back_only)
+    assert len(back) == len(set(back))
+    assert not (front & set(back)) or ord_ >= 0
+
+
+def test_rendered_card_count_per_row_matches_its_forms(real_sides, pronoun_rows):
+    sides, _css, _fields = real_sides
+    for headword, row in pronoun_rows.items():
+        ords = sorted(o for (h, o) in sides if h == headword)
+        assert ords == [
+            0,
+            1,
+            *range(2, 2 + len(row.forms())),
+            *range(13, 13 + len(row.forms())),
+        ], headword
+    assert sum(1 for (_h, o) in sides if o >= 2) == 410
+
+
+def test_rendered_sides_have_no_duplicate_ids(real_sides):
+    sides, _css, _fields = real_sides
+    for key, pair in sides.items():
+        for html in pair:
+            ids = re.findall(r'\bid="([^"]+)"', html)
+            assert len(ids) == len(set(ids)), (
+                key,
+                [i for i in ids if ids.count(i) > 1],
+            )
+
+
+def test_tem_back_shows_the_masculine_and_plural_forms(fresh_page, real_sides):
+    sides, css, fields = real_sides
+    words = [
+        "тот",
+        "то",
+        "те",
+        f"того{ACUTE}",
+        "тех",
+        f"тому{ACUTE}",
+        f"те{ACUTE}ми",
+        "том",
+    ]
+    for ord_ in _form_ords(fields["тот"], "тем"):
+        m = _load(fresh_page, sides[("тот", ord_)][1], css, MOBILE)
+        assert len(m["lines"]) == len(words), m["lines"]
+        for line, word in zip(m["lines"], words, strict=True):
+            assert _norm(word) in line, (line, word)
+        joined = "".join(m["lines"])
+        assert "(feminine)" not in joined
+        assert "instrumental(plural)" in joined
+        assert "·" not in joined
+        assert len(set(m["audioLefts"])) == 1, m["audioLefts"]
+        assert m["rows"] == ["dative(plural)", "instrumental(masculine/neuter)"]
+
+
+def test_tem_front_sides_show_no_lines(fresh_page, real_sides):
+    sides, css, fields = real_sides
+    for ord_ in _form_ords(fields["тот"], "тем"):
+        m = _load(fresh_page, sides[("тот", ord_)][0], css, MOBILE)
+        assert m["lines"] == []
+
+
+def test_menya_back_shows_every_other_form_of_ya(fresh_page, real_sides):
+    sides, css, fields = real_sides
+    russian_ord, english_ord = _form_ords(fields["я"], "меня")
+    for ord_ in (russian_ord, english_ord):
+        html = sides[("я", ord_)][1]
+        m = _load(fresh_page, html, css, MOBILE)
+        assert len(m["lines"]) == 3, m["lines"]
+        for line, (word, title) in zip(
+            m["lines"],
+            [
+                ("я", "nominative"),
+                ("мне", "dativeprepositional"),
+                ("мной", "instrumental"),
+            ],
+            strict=True,
+        ):
+            assert word in line and title in line, line
+        assert m["rows"] == ["genitiveaccusative"]
+        assert "aspect" not in html.split("case-pills")[1].split("</div>")[0]
+
+
+def test_toi_back_shows_only_the_feminine_forms(fresh_page, real_sides):
+    sides, css, fields = real_sides
+    russian_ord, _ = _form_ords(fields["тот"], "той")
+    m = _load(fresh_page, sides[("тот", russian_ord)][1], css, MOBILE)
+    assert m["rows"] == ["genitivedativeinstrumentalprepositional"]
+    assert len(m["lines"]) == 2, m["lines"]
+    assert "та" in m["lines"][0] and "nominative(feminine)" in m["lines"][0]
+    assert "ту" in m["lines"][1] and "accusative(feminine)" in m["lines"][1]
+
+
+def test_tot_word_cards_show_the_masculine_forms(fresh_page, real_sides):
+    sides, css, _fields = real_sides
+    words = ["то", f"того{ACUTE}", f"тому{ACUTE}", "тем", "том"]
+    for ord_ in (0, 1):
+        m = _load(fresh_page, sides[("тот", ord_)][1], css, MOBILE)
+        assert m["rows"] == ["nominative(masculine)", "accusative(masculine,notliving)"]
+        assert len(m["lines"]) == len(words), m["lines"]
+        for line, word in zip(m["lines"], words, strict=True):
+            assert _norm(word) in line, (line, word)
+        joined = "".join(m["lines"])
+        assert "(feminine)" not in joined and "(plural)" not in joined
+        assert "genderforms" not in m["text"]
+        assert "(neverchanges)" not in m["text"]
+
+
+def test_ego_word_card_never_changes_without_pills_or_lines(fresh_page, real_sides):
+    sides, css, _fields = real_sides
+    for ord_, side in ((0, 1), (1, 0), (1, 1)):
+        m = _load(fresh_page, sides[("его", ord_)][side], css, MOBILE)
+        assert "(neverchanges)" in m["text"]
+        assert m["pills"] == 0
+        assert m["lines"] == []
+
+
+def test_ya_word_card_front_shows_only_nominative(fresh_page, real_sides):
+    sides, css, _fields = real_sides
+    m = _load(fresh_page, sides[("я", 1)][0], css, MOBILE)
+    assert m["rows"] == ["nominative"]
+    assert "(neverchanges)" not in m["text"]
+
+
+def test_sebya_word_card_front_shows_genitive_accusative(fresh_page, real_sides):
+    sides, css, _fields = real_sides
+    m = _load(fresh_page, sides[("себя", 1)][0], css, MOBILE)
+    assert m["rows"] == ["genitiveaccusative"]
+
+
+@pytest.mark.parametrize("ord_", [0, 1])
+def test_word_cards_have_no_gender_forms_row(real_sides, ord_):
+    sides, _css, _fields = real_sides
+    for headword in ("я", "который", "тот"):
+        assert "Gender Forms" not in "".join(sides[(headword, ord_)])
+
+
+@pytest.mark.parametrize("width", WIDTHS)
+@pytest.mark.parametrize("ord_", [0, 1, *CASE_ORDS])
+def test_answer_case_rows_are_centred_on_the_headword(
+    fresh_page, real_sides, ord_, width
+):
+    sides, css, _fields = real_sides
+    m = _load(fresh_page, sides[("тот", ord_)][1], css, width)
+    assert m["russian"], "headword not rendered"
+    assert m["overflow"] <= 0, m
+    reference = _centre(m["russian"])
+    assert m["rowSpans"] or ord_ < 2
+    for item in m["rowSpans"]:
+        assert abs(_centre(item) - reference) <= PILL_TOLERANCE, m
+
+
+HEADWORDS = [row.russian for row in mutable_words_plan.parse_pronouns(str(PRONOUN_TSV))]
+
+
+@pytest.mark.parametrize("headword", HEADWORDS)
+def test_no_pronoun_card_side_overflows_at_390px(fresh_page, real_sides, headword):
+    sides, css, _fields = real_sides
+    fresh_page.set_viewport_size({"width": MOBILE, "height": 900})
+    failures = []
+    for (word, ord_), pair in sorted(sides.items()):
+        if word != headword:
+            continue
+        for side, html in zip(("q", "a"), pair, strict=True):
+            fresh_page.set_content(
+                "<!doctype html><html><head>"
+                '<meta name="viewport" content="width=device-width, initial-scale=1">'
+                f'<style>{css}</style></head><body><div class="card">{html}</div>'
+                "</body></html>"
+            )
+            m = fresh_page.evaluate(OVERFLOW_JS)
+            if m["offenders"] or m["overflow"] > 0:
+                failures.append((ord_, side, m["overflow"], m["offenders"][:3]))
+    assert failures == []
