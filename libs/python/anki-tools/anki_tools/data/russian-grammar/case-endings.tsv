@@ -1,5 +1,5 @@
 Table	Type	Front	Target	Example 1 Base	Example 1 Form	Example 1 Note	Example 2 Base	Example 2 Form	Example 2 Note	Notes
-Singular Noun Endings	Grammar Rule	Singular Nouns: Masculine Hard (consonant) → Nominative ending?	no ending (base form)	телефон	телефон		студент	студент		
+Singular Noun Endings	Grammar Rule	Singular Nouns: Masculine Hard (consonant) → Nominative ending?	no ending	телефон	телефон		студент	студент		
 Singular Noun Endings	Grammar Rule	Singular Nouns: Masculine Soft (-й / -ь) → Nominative ending?	-й / -ь	музей	музей		родитель	родитель		
 Singular Noun Endings	Grammar Rule	Singular Nouns: Feminine Hard (-а) → Nominative ending?	-а	машина	машина		школа	школа		
 Singular Noun Endings	Grammar Rule	Singular Nouns: Feminine Soft (-я / -ь) → Nominative ending?	-я / -ь	неделя	неделя		ночь	ночь		
@@ -20,7 +20,7 @@ Singular Noun Endings	Grammar Rule	Singular Nouns: Neuter Soft (-е) → Dative 
 Singular Noun Endings	Grammar Rule	Singular Nouns: Masculine Hard (consonant) → Accusative ending?	= Nominative (inanimate) / = Genitive (animate)	телефон	телефон	inanimate	студент	студента	animate	Animacy: inanimate = Nominative form, animate = Genitive form.
 Singular Noun Endings	Grammar Rule	Singular Nouns: Masculine Soft (-й / -ь) → Accusative ending?	= Nominative (inanimate) / = Genitive (animate)	музей	музей	inanimate	родитель	родителя	animate	Animacy: inanimate = Nominative form, animate = Genitive form.
 Singular Noun Endings	Grammar Rule	Singular Nouns: Feminine Hard (-а) → Accusative ending?	-у	машина	машину		школа	школу		Applies to animate nouns too (мама → маму).
-Singular Noun Endings	Grammar Rule	Singular Nouns: Feminine Soft (-я / -ь) → Accusative ending?	-ю / -ь (unchanged)	неделя	неделю		ночь	ночь		
+Singular Noun Endings	Grammar Rule	Singular Nouns: Feminine Soft (-я / -ь) → Accusative ending?	-ю / = Nominative (for -ь)	неделя	неделю		ночь	ночь		
 Singular Noun Endings	Grammar Rule	Singular Nouns: Neuter Hard (-о) → Accusative ending?	= Nominative	место	место		слово	слово		
 Singular Noun Endings	Grammar Rule	Singular Nouns: Neuter Soft (-е) → Accusative ending?	= Nominative	море	море		поле	поле		
 Singular Noun Endings	Grammar Rule	Singular Nouns: Masculine Hard (consonant) → Instrumental ending?	-ом	телефон	телефоном		студент	студентом		After ж, ш, ч, щ, ц an unstressed -о- in the ending becomes -е-. (месяц → месяцем, товарищ → товарищем)

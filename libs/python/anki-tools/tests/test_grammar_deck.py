@@ -160,3 +160,15 @@ def test_apply_updates_changed_field_without_new_note(col):
     result = apply_rows(col, changed + rows[1:])
     assert (result.added, result.updated) == (0, 1)
     assert col.note_count() == 153
+
+
+def test_examples_form_one_aligned_grid_and_cards_are_coloured():
+    from anki_tools import grammar_deck
+
+    assert "display: grid" in grammar_deck.CSS
+    assert ".ex-line { display: contents; }" in grammar_deck.CSS
+    assert ".case-pill.case-genitive" in grammar_deck.CSS
+    for template in (grammar_deck.QFMT, grammar_deck.AFMT):
+        assert template.count("<script>") == 1
+        assert "root.dataset.coloured" in template
+        assert "RegExp('\\\\b('" in template

@@ -17,10 +17,9 @@ from anki.collection import Collection
 from anki.errors import AnkiException, DBError
 from anki.utils import to_json_bytes
 
-from anki_tools import card_audio
+from anki_tools import card_audio, case_pill
 from anki_tools.anki_identity import guid_for_row, notetype_id_for_name
-from anki_tools.audio_naming import build_filename
-from anki_tools.audio_naming import get_anki_collection_path
+from anki_tools.audio_naming import build_filename, get_anki_collection_path
 
 DATA_PATH = Path(__file__).parent / "data" / "russian-grammar" / "case-endings.tsv"
 DECK_ROOT = "Languages::Russian::2. Grammar"
@@ -39,27 +38,117 @@ TABLE_SUBDECKS = {
     "Particles": "e. Particles",
 }
 
-QFMT = '<div class="type">{{Type}}</div>\n<div class="front">{{Front}}</div>'
+_GENDER_COLOURS = {
+    "Masculine": ("#00796b", "#4db6ac"),
+    "Neuter": ("#00796b", "#4db6ac"),
+    "Feminine": ("#ad1457", "#f48fb1"),
+    "Plural": ("#6d4c41", "#bcaaa4"),
+}
+_CASES_JSON = "[" + ",".join(f'"{c}"' for c in case_pill.CASE_ORDER) + "]"
+_GENDERS_JSON = "[" + ",".join(f'"{g}"' for g in _GENDER_COLOURS) + "]"
+_COLOUR_SCRIPT = """<script>(function () {
+  var root = document.querySelector('.g-card');
+  if (!root || root.dataset.coloured) return;
+  root.dataset.coloured = '1';
+  var cases = @@CASES@@, genders = @@GENDERS@@;
+  var words = new RegExp('\\\\b(' + cases.concat(genders).join('|') + ')\\\\b', 'g');
+  function paint(el, kind) {
+    if (!el) return;
+    el.innerHTML = el.innerHTML.replace(words, function (w) {
+      var slug = w.toLowerCase();
+      return cases.indexOf(w) >= 0
+        ? '<span class="' + kind + ' case-' + slug + '">' + w + '</span>'
+        : '<span class="g-gender g-' + slug + '">' + w + '</span>';
+    });
+  }
+  var front = root.querySelector('.front');
+  var asked = cases.filter(function (c) {
+    return front && front.textContent.indexOf('→ ' + c) >= 0;
+  })[0];
+  if (asked) root.classList.add('g-' + asked.toLowerCase());
+  paint(front, 'case-pill');
+  paint(root.querySelector('.target'), 'case-text');
+  root.querySelectorAll('.ex-line').forEach(function (line) {
+    var spans = line.querySelectorAll(':scope > span:not(.ex-note)');
+    if (spans.length < 3) return;
+    var b = spans[2].textContent;
+    var plain = function (t) { return t.replace(/\\u0301/g, ''); };
+    var a = plain(spans[0].textContent), pb = plain(b), i = 0;
+    if (a === pb) return;
+    if (pb.indexOf('-') > 0) {
+      i = pb.indexOf('-');
+    } else {
+      var stem = a.replace(/(ый|ий|ой|[аяоеьй])$/, '');
+      while (i < stem.length && i < pb.length && a[i] === pb[i]) i++;
+    }
+    var j = 0;
+    for (var seen = 0; j < b.length && seen < i; j++) if (b[j] !== '\\u0301') seen++;
+    while (j < b.length && b[j] === '\\u0301') j++;
+    if (j < b.length) {
+      spans[2].innerHTML = b.slice(0, j) + '<b class="g-end">' + b.slice(j) + '</b>';
+    }
+  });
+})();</script>"""
+_COLOUR_SCRIPT = _COLOUR_SCRIPT.replace("@@CASES@@", _CASES_JSON)
+_COLOUR_SCRIPT = _COLOUR_SCRIPT.replace("@@GENDERS@@", _GENDERS_JSON)
+
+QFMT = (
+    '<div class="g-card"><div class="type">{{Type}}</div>\n'
+    '<div class="front">{{Front}}</div></div>\n' + _COLOUR_SCRIPT
+)
 AFMT = (
-    "{{FrontSide}}\n<hr id=answer>\n"
+    '<div class="g-card"><div class="type">{{Type}}</div>\n'
+    '<div class="front">{{Front}}</div>\n<hr id=answer>\n'
     '<div class="target">{{Target}}</div>\n'
     '{{#Example}}<div class="example">{{Example}}</div>{{/Example}}\n'
-    '{{#Notes}}<div class="notes">{{Notes}}</div>{{/Notes}}'
+    '{{#Notes}}<div class="notes">{{Notes}}</div>{{/Notes}}</div>\n' + _COLOUR_SCRIPT
 )
+
+
+def _grammar_colour_css() -> str:
+    rules = []
+    for name, (light, dark) in _GENDER_COLOURS.items():
+        rules.append(f".g-{name.lower()} {{ color: {light}; }}")
+        rules.append(f".nightMode .g-{name.lower()} {{ color: {dark}; }}")
+    for name in case_pill.CASE_ORDER:
+        text, background, dark_text, dark_background = case_pill._PALETTE[name]
+        slug = name.lower()
+        rules.append(
+            f".g-{slug} .target {{ color: {text}; background: {background}; }}"
+        )
+        rules.append(f".g-{slug} .g-end {{ color: {text}; }}")
+        rules.append(
+            f".nightMode .g-{slug} .target "
+            f"{{ color: {dark_text}; background: {dark_background}; }}"
+        )
+        rules.append(f".nightMode .g-{slug} .g-end {{ color: {dark_text}; }}")
+    return "\n".join(rules) + "\n"
+
+
 CSS = """.card { font-family: arial; font-size: 22px; text-align: center;
   color: black; background-color: white; }
 .type { font-size: 14px; color: #888; }
 .front { margin-top: 8px; }
-.target { font-size: 34px; font-weight: bold; margin: 12px 0; }
-.example { font-size: 22px; color: #1a5fb4; }
+.target { font-size: 34px; font-weight: bold; margin: 12px auto; padding: 4px 16px;
+  border-radius: 14px; width: fit-content; max-width: 100%; box-sizing: border-box; }
+.example { font-size: min(22px, 5vw); color: #1a5fb4; display: grid;
+  grid-template-columns: repeat(5, max-content);
+  align-items: center; column-gap: 8px; row-gap: 8px;
+  width: fit-content; max-width: 100%; margin: 8px auto; }
 .notes { font-size: 16px; color: #666; margin-top: 12px; }
-.ex-line { display: flex; align-items: center; justify-content: center; gap: 10px;
-  font-size: 22px; color: #1a5fb4; margin: 8px 0; }
-.ex-note { font-size: 15px; color: #888; }
+.ex-line { display: contents; }
+.ex-line > :first-child { grid-column: 1; }
+.ex-line > span { justify-self: start; text-align: left; }
+.ex-note { grid-column: 5; margin-top: -6px; font-size: 15px; color: #888; }
 .nightMode .card, .card.nightMode { color: white; background-color: #2f2f31; }
 .nightMode .type, .nightMode .notes { color: #aaa; }
 .nightMode .example, .nightMode .ex-line { color: #99c1f1; }
-""" + card_audio.AUDIO_BUTTON_CSS
+.front .case-pill { display: inline-block; font-size: .85em;
+  padding: .05em .5em; border-radius: 999px; font-weight: bold; }
+.g-gender { font-weight: bold; }
+"""
+CSS += _grammar_colour_css() + card_audio.AUDIO_BUTTON_CSS
+CSS += "\n" + case_pill.CASE_PILL_CSS
 
 
 @dataclass(frozen=True)
