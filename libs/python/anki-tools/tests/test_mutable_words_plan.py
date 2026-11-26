@@ -1377,7 +1377,7 @@ SLOT_FIELDS = (
 )
 EXPECTED_QUALIFIERS = {
     "Nominative f.": ("feminine", "f"),
-    "Nominative n.": ("neuter", "mn"),
+    "Nominative n.": ("neutral", "mn"),
     "Nominative pl.": ("plural", "pl"),
     "Genitive f.": ("feminine", "f"),
     "Genitive pl.": ("plural", "pl"),
@@ -1386,7 +1386,7 @@ EXPECTED_QUALIFIERS = {
     "Dative pl.": ("plural", "pl"),
     "Dative (н-)": ("after a preposition", "after-prep"),
     "Accusative m. living": ("masculine, living", "mn"),
-    "Accusative n.": ("neuter", "mn"),
+    "Accusative n.": ("neutral", "mn"),
     "Accusative f.": ("feminine", "f"),
     "Accusative pl.": ("plural, not living", "pl"),
     "Accusative pl. living": ("plural, living", "pl"),
@@ -1401,7 +1401,7 @@ ALLOWED_QUAL_ROLE = {
     (None, None),
     ("masculine", "mn"),
     ("masculine, not living", "mn"),
-    ("masculine / neuter", "mn"),
+    ("masculine / neutral", "mn"),
     ("without a preposition", "plain-prep"),
     *EXPECTED_QUALIFIERS.values(),
 }
@@ -1658,12 +1658,12 @@ def test_form_row_expectations(pronouns):
     row_tot = _pronoun(pronouns, "тот")
     assert _triples(_form(row_tot, "тем").rows) == [
         ("plural", "pl", ("Dative",)),
-        ("masculine / neuter", "mn", ("Instrumental",)),
+        ("masculine / neutral", "mn", ("Instrumental",)),
     ]
     togo = _form(row_tot, "того")
     assert togo.text == "того́"
     assert _triples(togo.rows) == [
-        ("masculine / neuter", "mn", ("Genitive",)),
+        ("masculine / neutral", "mn", ("Genitive",)),
         ("masculine, living", "mn", ("Accusative",)),
     ]
     assert _triples(_form(row_tot, "тех").rows) == [
@@ -1674,7 +1674,7 @@ def test_form_row_expectations(pronouns):
         ("feminine", "f", ("Genitive", "Dative", "Instrumental", "Prepositional"))
     ]
     assert _triples(_form(row_tot, "то").rows) == [
-        ("neuter", "mn", ("Nominative", "Accusative"))
+        ("neutral", "mn", ("Nominative", "Accusative"))
     ]
     assert _triples(_form(row_tot, "те").rows) == [
         ("plural", "pl", ("Nominative",)),

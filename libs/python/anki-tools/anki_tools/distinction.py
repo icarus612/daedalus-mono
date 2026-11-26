@@ -211,7 +211,7 @@ ENGLISH_DISTINCTIONS: dict[str, str] = {
     "около": "Roughly",
     "он": "masculine",
     "она": "feminine",
-    "оно": "neuter",
+    "оно": "neutral",
     "опять": "the same action repeating",
     "оставаться": "remain behind",
     "останавливать": "stop something else",
@@ -474,7 +474,7 @@ PRONOUN_RUSSIAN_DISTINCTIONS: dict[str, str] = {
     "её": "possessive",
     "их": "possessive",
     "он": "masculine",
-    "оно": "neuter",
+    "оно": "neutral",
     "сам": "emphatic",
     "самый": "superlative",
 }

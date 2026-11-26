@@ -54,10 +54,10 @@ def test_source_covers_every_table_cell():
             assert any(case in row.front for case in CASES)
 
 
-def test_corrected_neuter_instrumental_endings():
+def test_corrected_neutral_instrumental_endings():
     by_front = {row.front: row.target for row in parse_rows()}
-    assert by_front["Singular Nouns: Neuter Hard (-о) → Instrumental ending?"] == "-ом"
-    assert by_front["Singular Nouns: Neuter Soft (-е) → Instrumental ending?"] == "-ем"
+    assert by_front["Singular Nouns: Neutral Hard (-о) → Instrumental ending?"] == "-ом"
+    assert by_front["Singular Nouns: Neutral Soft (-е) → Instrumental ending?"] == "-ем"
 
 
 def test_pronoun_answers_match_table():

@@ -158,7 +158,7 @@ ALLOWED = {
         (
             "impersonal",
             (
-                "irregular impersonal used only in 3sg neuter "
+                "irregular impersonal used only in 3sg neutral "
                 "придется пришлось and the infinitive"
             ),
         ),
@@ -197,9 +197,14 @@ ALLOWED = {
         "Mutable Pronouns",
         "оно",
         dedup.RULE_CONTAINED,
-        ("neuter", "neuter"),
+        ("neutral", "neutral"),
     ): _RUSSIAN_LABEL,
-    ("Mutable Pronouns", "оно", dedup.RULE_EQUAL, ("neuter", "neuter")): _RUSSIAN_LABEL,
+    (
+        "Mutable Pronouns",
+        "оно",
+        dedup.RULE_EQUAL,
+        ("neutral", "neutral"),
+    ): _RUSSIAN_LABEL,
     (
         "Mutable Pronouns",
         "сам",

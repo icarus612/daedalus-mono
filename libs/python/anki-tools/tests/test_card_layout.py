@@ -616,7 +616,7 @@ def test_tem_back_shows_the_masculine_and_plural_forms(fresh_page, real_sides):
         assert "instrumental(plural)" in joined
         assert "·" not in joined
         assert len(set(m["audioLefts"])) == 1, m["audioLefts"]
-        assert m["rows"] == ["dative(plural)", "instrumental(masculine/neuter)"]
+        assert m["rows"] == ["dative(plural)", "instrumental(masculine/neutral)"]
 
 
 def test_tem_front_sides_show_no_lines(fresh_page, real_sides):

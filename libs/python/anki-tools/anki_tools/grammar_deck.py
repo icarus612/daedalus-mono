@@ -50,7 +50,7 @@ PARTS_OF_SPEECH = {
 
 _GENDER_COLOURS = {
     "Masculine": ("#00796b", "#4db6ac"),
-    "Neuter": ("#00796b", "#4db6ac"),
+    "Neutral": ("#00796b", "#4db6ac"),
     "Feminine": ("#ad1457", "#f48fb1"),
     "Plural": ("#6d4c41", "#bcaaa4"),
 }

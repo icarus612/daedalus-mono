@@ -63,7 +63,7 @@ class PronounSlot(NamedTuple):
 
 PRONOUN_SLOTS: tuple[PronounSlot, ...] = (
     PronounSlot("Nominative f.", "Nominative", "feminine", "f"),
-    PronounSlot("Nominative n.", "Nominative", "neuter", "mn"),
+    PronounSlot("Nominative n.", "Nominative", "neutral", "mn"),
     PronounSlot("Nominative pl.", "Nominative", "plural", "pl"),
     PronounSlot("Genitive", "Genitive", None, None),
     PronounSlot("Genitive f.", "Genitive", "feminine", "f"),
@@ -75,7 +75,7 @@ PRONOUN_SLOTS: tuple[PronounSlot, ...] = (
     PronounSlot("Dative (н-)", "Dative", "after a preposition", "after-prep"),
     PronounSlot("Accusative", "Accusative", None, None),
     PronounSlot("Accusative m. living", "Accusative", "masculine, living", "mn"),
-    PronounSlot("Accusative n.", "Accusative", "neuter", "mn"),
+    PronounSlot("Accusative n.", "Accusative", "neutral", "mn"),
     PronounSlot("Accusative f.", "Accusative", "feminine", "f"),
     PronounSlot("Accusative pl.", "Accusative", "plural, not living", "pl"),
     PronounSlot("Accusative pl. living", "Accusative", "plural, living", "pl"),
@@ -527,7 +527,7 @@ _QUALIFIER_ROLES: dict[str, str] = {
         if slot.qualifier and slot.role
     },
     "masculine": "mn",
-    "masculine / neuter": "mn",
+    "masculine / neutral": "mn",
     "masculine, not living": "mn",
     "without a preposition": "plain-prep",
 }
@@ -633,7 +633,7 @@ class PronounRow:
                     qualifier = (
                         "masculine, not living"
                         if slot.case == "Accusative"
-                        else "masculine / neuter"
+                        else "masculine / neutral"
                     )
                     role = "mn"
             cell = _Cell(slot.case, text, qualifier, role)
@@ -1274,6 +1274,9 @@ def _detail_fields(sheet: str, primary_field: str) -> list[str]:
     return [name for name in FIELD_NAMES[sheet] if name not in excluded]
 
 
+_DETAIL_LABELS = {"Neuter": "Neutral"}
+
+
 def _detail_row(field_name: str) -> str:
     """One labelled row, label included inside the field's own conditional so
     an empty field leaves no element behind.
@@ -1282,7 +1285,7 @@ def _detail_row(field_name: str) -> str:
     return (
         f"{{{{#{field_name}}}}}"
         f'<div id="{slug}">'
-        f'<div class="detail-label">{field_name}</div>'
+        f'<div class="detail-label">{_DETAIL_LABELS.get(field_name, field_name)}</div>'
         f'<div class="detail-value">{{{{{field_name}}}}}</div>'
         f"</div>"
         f"{{{{/{field_name}}}}}"
