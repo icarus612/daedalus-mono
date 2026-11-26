@@ -1450,7 +1450,7 @@ PRONOUN_FORM_CSS = (
     "}\n\n"
     ".case-row {\n"
     "\ttext-align: center;\n"
-    "\tpadding: .1rem 0;\n"
+    "\tpadding: calc(.1rem + 3px) 0;\n"
     "}\n\n"
     ".case-row .case-pill, .title-row .case-pill {\n"
     "\tdisplay: inline-block;\n"
