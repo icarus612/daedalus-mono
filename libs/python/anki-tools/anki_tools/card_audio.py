@@ -70,7 +70,9 @@ _TEMPLATE = r"""<!-- The Audio field holds one hidden <audio> element per record
      on the question side `#back` does not exist yet -- hence the deferral
      by one macrotask, since at parse time neither element is in the page
      yet. The stored voice must also be one of THIS note's own files, so a
-     global left by another note can never silence a render. -->
+     global left by another note can never silence a render.
+     The `?v=` query stops a device replaying its cached copy of a re-recorded
+     file that kept its name; `onerror` retries the bare name. -->
 <div id="@@DOM_ID@@"><span id="@@DOM_ID@@-data" class="hidden">{{@@FIELD@@}}</span>
 <span id="@@DOM_ID@@-controls"></span></div>
 <script>
@@ -98,7 +100,12 @@ _TEMPLATE = r"""<!-- The Audio field holds one hidden <audio> element per record
     var audio = document.createElement("audio");
     audio.id = "@@DOM_ID@@-player";
     audio.autoplay = !echo;
-    audio.src = chosen;
+    audio.onerror = function () {
+      audio.onerror = null;
+      audio.src = chosen;
+      if (audio.autoplay) audio.play();
+    };
+    audio.src = chosen + "?v=" + Date.now();
     var button = document.createElement("button");
     button.className = "@@BUTTON_CLASS@@";
     button.textContent = "▶";
@@ -155,7 +162,12 @@ _LINE_TEMPLATE = (
     if (!slot || !line || document.getElementById("@@SLOT_ID@@-player")) return;
     var player = document.createElement("audio");
     player.id = "@@SLOT_ID@@-player";
-    player.src = files[Math.floor(Math.random() * files.length)];
+    var picked = files[Math.floor(Math.random() * files.length)];
+    player.onerror = function () {
+      player.onerror = null;
+      player.src = picked;
+    };
+    player.src = picked + "?v=" + Date.now();
     var button = document.createElement("button");
     button.type = "button";
     button.className = "@@BUTTON_CLASS@@ @@SMALL_BUTTON_CLASS@@";

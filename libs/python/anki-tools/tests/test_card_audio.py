@@ -274,6 +274,13 @@ Math.random = function () { return 0.0; };
 SCRIPT_BODY
 var player = slotKids.filter(function (e) { return e.tagName === "audio"; })[0];
 var button = slotKids.filter(function (e) { return e.tagName === "button"; })[0];
+var fallbackSrc = null;
+if (player && player.onerror) {
+  var busted = player.src;
+  player.onerror();
+  fallbackSrc = player.src;
+  player.src = busted;
+}
 var plays = null;
 if (typeof window.__fn === "function") {
   window.__fn({ stopPropagation: function () {}, preventDefault: function () {} });
@@ -283,6 +290,7 @@ console.log(JSON.stringify({
   buttonCreated: !!button,
   buttonClass: button ? button.className : null,
   playerSrc: player ? player.src : null,
+  fallbackSrc: fallbackSrc,
   lineClasses: lineClasses,
   playsOnTap: plays,
 }));
@@ -313,7 +321,8 @@ def test_audio_line_block_builds_its_button_from_the_fields_audio_elements(
     result = _run_line_block(node_executable, ["простить_f1.mp3", "простить_m2.mp3"])
     assert result["buttonCreated"] is True
     assert result["buttonClass"] == f"{BUTTON_CLASS} {SMALL_BUTTON_CLASS}"
-    assert result["playerSrc"] == "простить_f1.mp3"
+    assert result["playerSrc"].startswith("простить_f1.mp3?v=")
+    assert result["fallbackSrc"] == "простить_f1.mp3"
     assert result["lineClasses"] == [LINE_CLASS]
 
 
