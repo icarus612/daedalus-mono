@@ -23,6 +23,7 @@ EXPECTED_COUNTS = {
     "Adjective Endings": 48,
     "Personal Pronouns": 42,
     "Particles": 3,
+    "Verb Endings": 24,
 }
 CASES = (
     "Nominative",
@@ -49,7 +50,7 @@ def test_source_covers_every_table_cell():
     assert counts == EXPECTED_COUNTS
     for row in rows:
         assert row.type == "Grammar Rule"
-        if row.table != "Particles":
+        if row.table not in ("Particles", "Verb Endings"):
             assert any(case in row.front for case in CASES)
 
 
@@ -84,8 +85,10 @@ def test_example_bases_come_from_the_mutable_deck():
     words = {_plain(r["Russian"]) for r in _vocab("nouns.tsv")}
     words |= {_plain(r["Russian (m)"]) for r in _vocab("adjectives.tsv")}
     words |= {_plain(r["Russian"]) for r in _vocab("pronouns.tsv")}
+    words |= {r["Imperfective"] for r in _vocab("verbs.tsv")}
+    words |= {r["Perfective"] for r in _vocab("verbs.tsv")}
     for row in parse_rows():
-        if row.table == "Particles":
+        if row.table == "Particles" or row.front.startswith("Reflexive"):
             continue
         for example in row.examples:
             assert _plain(example.base) in words, (row.front, example.base)
@@ -101,6 +104,14 @@ def test_particle_examples_attach_the_target_to_the_base():
             assert example.form == example.base + row.target
             if row.target == "-ка":
                 assert example.note in verbs
+
+
+def test_reflexive_examples_attach_the_target_to_the_base():
+    reflexive = [row for row in parse_rows() if row.front.startswith("Reflexive")]
+    assert [row.target for row in reflexive] == ["-ся", "-сь"]
+    for row in reflexive:
+        for example in row.examples:
+            assert example.form == example.base + row.target.lstrip("-")
 
 
 def test_noun_example_forms_match_the_deck_columns():
@@ -141,7 +152,7 @@ def test_rejects_duplicate_front(tmp_path):
 def test_apply_builds_decks_and_is_idempotent(col):
     rows = parse_rows()
     first = apply_rows(col, rows)
-    assert (first.added, first.updated, first.unchanged) == (153, 0, 0)
+    assert (first.added, first.updated, first.unchanged) == (177, 0, 0)
     for table, subdeck in TABLE_SUBDECKS.items():
         deck_id = col.decks.id_for_name(f"{DECK_ROOT}::{subdeck}")
         assert len(col.decks.cids(deck_id)) == EXPECTED_COUNTS[table]
@@ -149,8 +160,8 @@ def test_apply_builds_decks_and_is_idempotent(col):
     assert all(card.type == 0 for card in map(col.get_card, col.find_cards("")))
 
     second = apply_rows(col, rows)
-    assert (second.added, second.updated, second.unchanged) == (0, 0, 153)
-    assert col.note_count() == 153
+    assert (second.added, second.updated, second.unchanged) == (0, 0, 177)
+    assert col.note_count() == 177
 
 
 def test_apply_updates_changed_field_without_new_note(col):
@@ -159,7 +170,7 @@ def test_apply_updates_changed_field_without_new_note(col):
     changed = [dataclasses.replace(rows[0], notes="edited")]
     result = apply_rows(col, changed + rows[1:])
     assert (result.added, result.updated) == (0, 1)
-    assert col.note_count() == 153
+    assert col.note_count() == 177
 
 
 def test_examples_form_one_aligned_grid_and_cards_are_coloured():
@@ -169,6 +180,8 @@ def test_examples_form_one_aligned_grid_and_cards_are_coloured():
     assert ".ex-line { display: contents; }" in grammar_deck.CSS
     assert ".case-pill.case-genitive" in grammar_deck.CSS
     for template in (grammar_deck.QFMT, grammar_deck.AFMT):
-        assert template.count("<script>") == 1
+        assert template.count("<script>") == 2
+        assert template.startswith('<div id="path"></div>')
+        assert "'Russian Grammar'" in template
         assert "root.dataset.coloured" in template
         assert "RegExp('\\\\b('" in template

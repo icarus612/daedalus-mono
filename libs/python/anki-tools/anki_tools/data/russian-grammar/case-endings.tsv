@@ -152,3 +152,27 @@ Personal Pronouns	Grammar Rule	Pronoun: 'They' (Они) → Prepositional?	ни�
 Particles	Grammar Rule	Indefinite: a specific person/thing you can't or won't name (some-) → suffix?	-то	кто	кто-то		что	что-то		Кто-то звонил = Someone called (a particular person, identity unknown). Contrast -нибудь = any-.
 Particles	Grammar Rule	Indefinite: any one at all, it doesn't matter which (any-) → suffix?	-нибудь	кто	кто-нибудь		где	где-нибудь		Mostly in questions, requests and the future: Позвони кому-нибудь = Call anyone. Contrast -то = some-.
 Particles	Grammar Rule	Soften a command into a friendly nudge (go on / just) → particle?	-ка	скажи	скажи-ка	сказать	подожди	подожди-ка	подождать	Attaches to an imperative. Colloquial: Скажи-ка = Go on, tell me.
+Verb Endings	Grammar Rule	Present Tense: First conjugation (ends in -ать / -ять) → я ending?	-ю	делать	делаю		читать	читаю		-у after a consonant stem (писать → пишу)
+Verb Endings	Grammar Rule	Present Tense: First conjugation (ends in -ать / -ять) → ты ending?	-ешь	делать	делаешь		читать	читаешь		-ёшь when the ending is stressed (нести → несёшь)
+Verb Endings	Grammar Rule	Present Tense: First conjugation (ends in -ать / -ять) → он / она / оно ending?	-ет	делать	делает		читать	читает		
+Verb Endings	Grammar Rule	Present Tense: First conjugation (ends in -ать / -ять) → мы ending?	-ем	делать	делаем		читать	читаем		
+Verb Endings	Grammar Rule	Present Tense: First conjugation (ends in -ать / -ять) → вы ending?	-ете	делать	делаете		читать	читаете		
+Verb Endings	Grammar Rule	Present Tense: First conjugation (ends in -ать / -ять) → они ending?	-ют	делать	делают		читать	читают		-ут after a consonant stem (писать → пишут)
+Verb Endings	Grammar Rule	Present Tense: Second conjugation (ends in -ить / -еть) → я ending?	-ю	говорить	говорю		смотреть	смотрю		-у after ж / ш / ч / щ (слышать → слышу); the stem can change in the я form only (любить → люблю)
+Verb Endings	Grammar Rule	Present Tense: Second conjugation (ends in -ить / -еть) → ты ending?	-ишь	говорить	говоришь		смотреть	смотришь		
+Verb Endings	Grammar Rule	Present Tense: Second conjugation (ends in -ить / -еть) → он / она / оно ending?	-ит	говорить	говорит		смотреть	смотрит		
+Verb Endings	Grammar Rule	Present Tense: Second conjugation (ends in -ить / -еть) → мы ending?	-им	говорить	говорим		смотреть	смотрим		
+Verb Endings	Grammar Rule	Present Tense: Second conjugation (ends in -ить / -еть) → вы ending?	-ите	говорить	говорите		смотреть	смотрите		
+Verb Endings	Grammar Rule	Present Tense: Second conjugation (ends in -ить / -еть) → они ending?	-ят	говорить	говорят		смотреть	смотрят		-ат after ж / ш / ч / щ (слышать → слышат)
+Verb Endings	Grammar Rule	Past Tense → Masculine (он) ending?	-л	делать	делал		читать	читал		consonant-stem verbs drop -л (мочь → мог, нести → нёс)
+Verb Endings	Grammar Rule	Past Tense → Feminine (она) ending?	-ла	делать	делала		читать	читала		
+Verb Endings	Grammar Rule	Past Tense → Neuter (оно) ending?	-ло	делать	делало		читать	читало		
+Verb Endings	Grammar Rule	Past Tense → Plural (они) ending?	-ли	делать	делали		читать	читали		
+Verb Endings	Grammar Rule	Imperative: stem ends in a vowel → ты ending?	-й	делать	делай		читать	читай		
+Verb Endings	Grammar Rule	Imperative: stem ends in a consonant, ending stressed → ты ending?	-и	говорить	говори		смотреть	смотри		
+Verb Endings	Grammar Rule	Imperative: stem ends in a consonant, stem stressed → ты ending?	-ь	готовить	готовь		верить	верь		
+Verb Endings	Grammar Rule	Imperative → вы ending?	ты form + -те	делать	делайте		говорить	говорите		
+Verb Endings	Grammar Rule	Reflexive: after a consonant → ending?	-ся	учит	учится		учил	учился		infinitive: учить → учиться
+Verb Endings	Grammar Rule	Reflexive: after a vowel → ending?	-сь	учила	училась		учили	учились		
+Verb Endings	Grammar Rule	Future Tense: imperfective verb → я form?	буду + infinitive	делать	буду делать		говорить	буду говорить		буду, будешь, будет, будем, будете, будут + infinitive
+Verb Endings	Grammar Rule	Future Tense: perfective verb → я ending?	-ю (same endings as the present tense)	сделать	сделаю		посмотреть	посмотрю		perfective verbs have no present tense; their present-tense forms mean the future

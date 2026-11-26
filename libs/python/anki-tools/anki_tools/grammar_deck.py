@@ -36,6 +36,16 @@ TABLE_SUBDECKS = {
     "Adjective Endings": "c. Adjective Endings",
     "Personal Pronouns": "d. Personal Pronouns",
     "Particles": "e. Particles",
+    "Verb Endings": "f. Verb Endings",
+}
+
+PARTS_OF_SPEECH = {
+    "a. Singular Noun Endings": "Nouns",
+    "b. Plural Noun Endings": "Nouns",
+    "c. Adjective Endings": "Adjectives",
+    "d. Personal Pronouns": "Pronouns",
+    "e. Particles": "Particles",
+    "f. Verb Endings": "Verbs",
 }
 
 _GENDER_COLOURS = {
@@ -44,29 +54,47 @@ _GENDER_COLOURS = {
     "Feminine": ("#ad1457", "#f48fb1"),
     "Plural": ("#6d4c41", "#bcaaa4"),
 }
+_TENSE_COLOURS = {
+    "Present": ("#1565c0", "#90caf9"),
+    "Past": ("#9a6700", "#ffb74d"),
+    "Future": ("#c62828", "#ef9a9a"),
+    "Imperative": ("#6a1b9a", "#ce93d8"),
+    "Reflexive": ("#2e7d32", "#a5d6a7"),
+}
+_TENSES_JSON = "[" + ",".join(f'"{t}"' for t in _TENSE_COLOURS) + "]"
 _CASES_JSON = "[" + ",".join(f'"{c}"' for c in case_pill.CASE_ORDER) + "]"
 _GENDERS_JSON = "[" + ",".join(f'"{g}"' for g in _GENDER_COLOURS) + "]"
 _COLOUR_SCRIPT = """<script>(function () {
   var root = document.querySelector('.g-card');
   if (!root || root.dataset.coloured) return;
   root.dataset.coloured = '1';
-  var cases = @@CASES@@, genders = @@GENDERS@@;
-  var words = new RegExp('\\\\b(' + cases.concat(genders).join('|') + ')\\\\b', 'g');
+  var cases = @@CASES@@, genders = @@GENDERS@@, tenses = @@TENSES@@;
+  var all = cases.concat(genders, tenses);
+  var words = new RegExp('\\\\b(' + all.join('|') + ')\\\\b', 'g');
   function paint(el, kind) {
     if (!el) return;
     el.innerHTML = el.innerHTML.replace(words, function (w) {
       var slug = w.toLowerCase();
-      return cases.indexOf(w) >= 0
-        ? '<span class="' + kind + ' case-' + slug + '">' + w + '</span>'
-        : '<span class="g-gender g-' + slug + '">' + w + '</span>';
+      if (cases.indexOf(w) >= 0) {
+        return '<span class="' + kind + ' case-' + slug + '">' + w + '</span>';
+      }
+      if (tenses.indexOf(w) >= 0) {
+        return '<span class="g-tense t-' + slug + '">' + w + '</span>';
+      }
+      return '<span class="g-gender g-' + slug + '">' + w + '</span>';
     });
   }
   var front = root.querySelector('.front');
+  var text = front ? front.textContent : '';
   var asked = cases.filter(function (c) {
-    return front && front.textContent.indexOf('→ ' + c) >= 0;
+    return text.indexOf('→ ' + c) >= 0;
   })[0];
+  var tense = tenses.filter(function (t) {
+    return text.indexOf(t) === 0;
+  })[0];
+  asked = asked || tense;
   if (asked) root.classList.add('g-' + asked.toLowerCase());
-  paint(front, 'case-pill');
+  paint(front, 'case-text');
   function plain(t) { return t.replace(/\\u0301/g, ''); }
   function mark(span, keep) {
     var t = span.textContent, j = 0;
@@ -84,7 +112,17 @@ _COLOUR_SCRIPT = """<script>(function () {
       mark(spans[2], b.indexOf('-'));
       return;
     }
-    var stem = a.replace(/(ый|ий|ой|[аяоеьй])$/, ''), i = 0;
+    if (b.length > a.length && b.slice(-a.length - 1) === ' ' + a) {
+      var head = spans[2].textContent.length - spans[0].textContent.length;
+      var t = spans[2].textContent;
+      spans[2].innerHTML =
+        '<b class="g-end">' + t.slice(0, head) + '</b>' + t.slice(head);
+      return;
+    }
+    var stem = tense
+      ? a.replace(/(ить|еть|ть)$/, '')
+      : a.replace(/(ый|ий|ой|[аяоеьй])$/, '');
+    var i = 0;
     while (i < stem.length && i < b.length && a[i] === b[i]) i++;
     mark(spans[0], i);
     mark(spans[2], i);
@@ -92,17 +130,32 @@ _COLOUR_SCRIPT = """<script>(function () {
 })();</script>"""
 _COLOUR_SCRIPT = _COLOUR_SCRIPT.replace("@@CASES@@", _CASES_JSON)
 _COLOUR_SCRIPT = _COLOUR_SCRIPT.replace("@@GENDERS@@", _GENDERS_JSON)
+_COLOUR_SCRIPT = _COLOUR_SCRIPT.replace("@@TENSES@@", _TENSES_JSON)
+
+_PARTS_JSON = "{" + ",".join(f'"{k}":"{v}"' for k, v in PARTS_OF_SPEECH.items()) + "}"
+_HEADER_HTML = '<div id="path"></div>\n<div id="deck">{{Deck}}</div>\n'
+_HEADER_SCRIPT = (
+    "<script>(function () {\n"
+    "  var deck = document.getElementById('deck');\n"
+    "  var parts = deck.innerText.split('::');\n"
+    f"  var pos = {_PARTS_JSON}[parts[parts.length - 1]];\n"
+    "  deck.innerHTML = 'Russian Grammar' + (pos ? ' - ' + pos : '');\n"
+    "  document.getElementById('path').innerHTML = parts.join(' > ');\n"
+    "})();</script>\n"
+)
 
 QFMT = (
-    '<div class="g-card"><div class="type">{{Type}}</div>\n'
-    '<div class="front">{{Front}}</div></div>\n' + _COLOUR_SCRIPT
+    _HEADER_HTML + '<div class="g-card">\n'
+    '<div class="front">{{Front}}</div></div>\n' + _HEADER_SCRIPT + _COLOUR_SCRIPT
 )
 AFMT = (
-    '<div class="g-card"><div class="type">{{Type}}</div>\n'
+    _HEADER_HTML + '<div class="g-card">\n'
     '<div class="front">{{Front}}</div>\n<hr id=answer>\n'
     '<div class="target">{{Target}}</div>\n'
     '{{#Example}}<div class="example">{{Example}}</div>{{/Example}}\n'
-    '{{#Notes}}<div class="notes">{{Notes}}</div>{{/Notes}}</div>\n' + _COLOUR_SCRIPT
+    '{{#Notes}}<div class="notes">{{Notes}}</div>{{/Notes}}</div>\n'
+    + _HEADER_SCRIPT
+    + _COLOUR_SCRIPT
 )
 
 
@@ -111,6 +164,11 @@ def _grammar_colour_css() -> str:
     for name, (light, dark) in _GENDER_COLOURS.items():
         rules.append(f".g-{name.lower()} {{ color: {light}; }}")
         rules.append(f".nightMode .g-{name.lower()} {{ color: {dark}; }}")
+    for name, (light, dark) in _TENSE_COLOURS.items():
+        slug = name.lower()
+        rules.append(f".t-{slug}, .g-{slug} .g-end {{ color: {light}; }}")
+        night = f".nightMode .t-{slug}, .nightMode .g-{slug} .g-end"
+        rules.append(f"{night} {{ color: {dark}; }}")
     for name in case_pill.CASE_ORDER:
         text, _, dark_text, _ = case_pill._PALETTE[name]
         slug = name.lower()
@@ -121,7 +179,9 @@ def _grammar_colour_css() -> str:
 
 CSS = """.card { font-family: arial; font-size: 22px; text-align: center;
   color: black; background-color: white; }
-.type { font-size: 14px; color: #888; }
+#path { color: #605C8B; font-size: .9rem; text-align: left; }
+#deck { text-align: center; font-weight: bold; padding-bottom: 10px;
+  margin-top: 20px; margin-bottom: 8px; border-bottom: 1px solid #555; }
 .front { margin-top: 8px; }
 .target { font-size: 34px; font-weight: bold; margin: 12px 0; }
 .example { font-size: min(22px, 5vw); color: black; display: grid;
@@ -134,11 +194,10 @@ CSS = """.card { font-family: arial; font-size: 22px; text-align: center;
 .ex-line > span { justify-self: start; text-align: left; }
 .ex-note { grid-column: 5; margin-top: -6px; font-size: 15px; color: #888; }
 .nightMode .card, .card.nightMode { color: white; background-color: #2f2f31; }
-.nightMode .type, .nightMode .notes { color: #aaa; }
+.nightMode .notes { color: #aaa; }
 .nightMode .example { color: white; }
-.front .case-pill { display: inline-block; font-size: .85em;
-  padding: .05em .5em; border-radius: 999px; font-weight: bold; }
-.g-gender { font-weight: bold; }
+.front .case-text { font-weight: bold; }
+.g-gender, .g-tense { font-weight: bold; }
 """
 CSS += _grammar_colour_css() + card_audio.AUDIO_BUTTON_CSS
 CSS += "\n" + case_pill.CASE_PILL_CSS
