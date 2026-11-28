@@ -362,7 +362,7 @@ def test_bare_case_cells_collapse_and_commentary_survives(real_rows):
         for head, p in pairs.items()
         if p.deck_leaf == "Prepositions"
     }
-    assert pair_residual["о / об"] == "обо before мне / всём"
+    assert pair_residual["о / об"] == "о́бо before мне / всём"
     assert pair_residual["из / изо"] == ""
     assert pair_residual["в / во"] == ""
     assert pair_residual["к / ко"] == "always"

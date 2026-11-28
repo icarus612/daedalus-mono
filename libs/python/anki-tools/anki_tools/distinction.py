@@ -1130,6 +1130,8 @@ ENGLISH_DISTINCTIONS: dict[str, str] = {
     "щётка": "for cleaning, hair or teeth",
     "утюг": "for clothes",
     "железо": "the metal",
+    "экзамен": "a test of knowledge",
+    "обследование": "a medical check or survey",
 }
 
 

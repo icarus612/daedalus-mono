@@ -304,7 +304,7 @@ collection	сборник	Nouns	collection	a published compilation of writings	c
 come	приходить	Verbs	come / arrive	on foot	cue	arrive
 come	жаловать	Verbs	come / visit	formal invitation	cue	visit
 come on	ну	Particles	well / come on (urging)	Filler	cue	well
-come on	давай / давайте	Particles	let's / come on		cue	
+come on	давай / давайте	Particles	let's / come on	inviting someone to act together	cue	
 command	приказ	Nouns	order / command	a superior's binding demand	cue	order
 command	команда	Nouns	team / command	a squad; also a spoken signal	cue	team
 command	командование	Nouns	command	the officers in charge	cue	
@@ -516,8 +516,8 @@ everywhere	везде	Base Adverbs	everywhere	everyday	cue
 everywhere	всюду	Base Adverbs	everywhere	a touch bookish	cue	
 evil	зло (noun)	Nouns	evil		header	
 evil	злой	Adjectives	mean / evil / angry		header	mean
-examination	экзамен	Nouns	exam / examination		cue	
-examination	обследование	Nouns	examination		cue	
+examination	экзамен	Nouns	exam / examination	a test of knowledge	cue	
+examination	обследование	Nouns	examination	a medical check or survey	cue	
 exchange	обмен	Nouns	exchange		header	
 exchange	менять	Verbs	change / exchange		header	change
 excuse me	извините	Particles	excuse me / sorry	excuse my action / minor	cue	sorry

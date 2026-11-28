@@ -1101,7 +1101,7 @@ def test_tozhe_row_present_standalone(real_rows):
     assert len(matches) == 1
     assert matches[0].english == TOZHE_TRANSLATION
     assert matches[0].fields()[-1] == TOZHE_CUE
-    assert matches[0].examples == "Я тоже иду"
+    assert matches[0].examples == "Я то́же иду́"
 
 
 def test_takzhe_row_present_standalone(real_rows):
@@ -1111,7 +1111,7 @@ def test_takzhe_row_present_standalone(real_rows):
     assert len(matches) == 1
     assert matches[0].english == TAKZHE_TRANSLATION
     assert matches[0].fields()[-1] == TAKZHE_CUE
-    assert matches[0].examples == "Я также купил хлеб"
+    assert matches[0].examples == "Я та́кже купи́л хлеб"
 
 
 def test_original_combined_split_strings_no_longer_appear(real_rows):

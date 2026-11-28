@@ -1,6 +1,6 @@
 #	Russian	English	Stress	Gender	Plural	Genitive Sg	Genitive Pl	Animate	Category	Additional Info	Examples	Status	Degrees
-1	год	year	год	m	го́ды	го́да	лет (годо́в)	No	Time	в прошлом году; после чисел: 5 лет		New	3
-2	время	time	вре́мя	n	времена́	вре́мени	времён	No	Time	neutral -мя noun: времени, временем		New	3
+1	год	year	год	m	го́ды	го́да	лет (годо́в)	No	Time	в про́шлом году́; по́сле чи́сел: 5 лет		New	3
+2	время	time	вре́мя	n	времена́	вре́мени	времён	No	Time	neutral -мя noun: вре́мени, вре́менем		New	3
 3	день	day	день	m	дни	дня	дней	No	Time			New	3
 4	час	hour	час	m	часы́	ча́са	часо́в	No	Time			New	3
 5	минута	minute	мину́та	f	мину́ты	мину́ты	мину́т	No	Time			New	1
@@ -21,26 +21,26 @@
 20	середина	middle	середи́на	f	середи́ны	середи́ны	середи́н	No	Space & Parts			New	3
 21	часть	part	часть	f	ча́сти	ча́сти	часте́й	No	Space & Parts			New	3
 22	половина	half	полови́на	f	полови́ны	полови́ны	полови́н	No	Space & Parts			New	3
-23	человек	person	челове́к	m	лю́ди	челове́ка	люде́й	Yes	People	irregular plural: люди (5 человек after numbers)		New	3
-24	люди	people	лю́ди	pl form	—		люде́й	Yes	People	plural of человек		New	3
-25	друг	friend	друг	m	друзья́	дру́га	друзе́й	Yes	People	irregular plural: друзья		New	3
+23	человек	person	челове́к	m	лю́ди	челове́ка	люде́й	Yes	People	irregular plural: лю́ди (5 челове́к after numbers)		New	3
+24	люди	people	лю́ди	pl form	—		люде́й	Yes	People	plural of челове́к		New	3
+25	друг	friend	друг	m	друзья́	дру́га	друзе́й	Yes	People	irregular plural: друзья́		New	3
 26	подруга	friend	подру́га	f	подру́ги	подру́ги	подру́г	Yes	People			New	3
 27	мужчина	man	мужчи́на	m	мужчи́ны	мужчи́ны	мужчи́н	Yes	People	masculine despite -а ending		New	3
 28	женщина	woman	же́нщина	f	же́нщины	же́нщины	же́нщин	Yes	People			New	3
-29	ребёнок	child	ребёнок	m	де́ти	ребёнка	дете́й	Yes	People	irregular plural: дети		New	3
+29	ребёнок	child	ребёнок	m	де́ти	ребёнка	дете́й	Yes	People	irregular plural: де́ти		New	3
 30	дети	children	де́ти	pl form	—			Yes	People	plural of ребёнок		New	3
 31	мальчик	boy	ма́льчик	m	ма́льчики	ма́льчика	ма́льчиков	Yes	People			New	3
 32	девочка	girl	де́вочка	f	де́вочки	де́вочки	де́вочек	Yes	People			New	3
 33	парень	guy / boyfriend	па́рень	m	па́рни	па́рня	парне́й	Yes	People			New	3
 34	девушка	young woman / girlfriend	де́вушка	f	де́вушки	де́вушки	де́вушек	Yes	People			New	3
-35	отец	father	оте́ц	m	отцы́	отца́	отцо́в	Yes	Family	fleeting vowel: отца		New	3
+35	отец	father	оте́ц	m	отцы́	отца́	отцо́в	Yes	Family	fleeting vowel: отца́		New	3
 36	папа	dad	па́па	m	па́пы	па́пы	пап	Yes	Family	masculine despite -а ending		New	0
-37	мать	mother	мать	f	ма́тери	ма́тери	матере́й	Yes	Family	oblique cases add -ер-: матери, матерью		New	2
+37	мать	mother	мать	f	ма́тери	ма́тери	матере́й	Yes	Family	oblique cases add -ер-: ма́тери, ма́терью		New	2
 38	мама	mom	ма́ма	f	ма́мы	ма́мы	мам	Yes	Family			New	0
-39	брат	brother	брат	m	бра́тья	бра́та	бра́тьев	Yes	Family	plural: братья		New	2
+39	брат	brother	брат	m	бра́тья	бра́та	бра́тьев	Yes	Family	plural: бра́тья		New	2
 40	сестра	sister	сестра́	f	сёстры	сестры́	сестёр	Yes	Family			New	2
-41	сын	son	сын	m	сыновья́	сы́на	сынове́й	Yes	Family	plural: сыновья		New	2
-42	дочь	daughter	дочь	f	до́чери	до́чери	дочере́й	Yes	Family	oblique cases add -ер-: дочери, дочерью		New	2
+41	сын	son	сын	m	сыновья́	сы́на	сынове́й	Yes	Family	plural: сыновья́		New	2
+42	дочь	daughter	дочь	f	до́чери	до́чери	дочере́й	Yes	Family	oblique cases add -ер-: до́чери, до́черью		New	2
 43	дед	grandfather	дед	m	де́ды	де́да	де́дов	Yes	Family			New	3
 44	дедушка	grandpa	де́душка	m	де́душки	де́душки	де́душек	Yes	Family	masculine despite -а ending		New	3
 45	бабушка	grandma	ба́бушка	f	ба́бушки	ба́бушки	ба́бушек	Yes	Family			New	1
@@ -54,22 +54,22 @@
 53	коллега	colleague	колле́га	common	колле́ги	колле́ги	колле́г	Yes	People	common gender (m/f by referent)		New	1
 54	голова	head	голова́	f	го́ловы	головы́	голо́в	No	Body			New	3
 55	лицо	face	лицо́	n	ли́ца	лица́	лиц	No	Body			New	3
-56	глаз	eye	глаз	m	глаза́	гла́за	глаз	No	Body	plural: глаза		New	3
+56	глаз	eye	глаз	m	глаза́	гла́за	глаз	No	Body	plural: глаза́		New	3
 57	нос	nose	нос	m	носы́	но́са	носо́в	No	Body			New	2
 58	рот	mouth	рот	m	рты	рта	ртов	No	Body			New	3
 59	губа	lip	губа́	f	гу́бы	губы́	губ	No	Body			New	3
 60	зуб	tooth	зуб	m	зу́бы	зу́ба	зубо́в	No	Body			New	3
-61	ухо	ear	у́хо	n	у́ши	у́ха	уше́й	No	Body	irregular plural: уши		New	3
+61	ухо	ear	у́хо	n	у́ши	у́ха	уше́й	No	Body	irregular plural: у́ши		New	3
 62	волос	hair	во́лос	m	во́лосы	во́лоса	воло́с	No	Body			New	3
 63	шея	neck	ше́я	f	ше́и	ше́и	шей	No	Body			New	3
-64	плечо	shoulder	плечо́	n	пле́чи	плеча́	плеч	No	Body	plural: плечи		New	3
+64	плечо	shoulder	плечо́	n	пле́чи	плеча́	плеч	No	Body	plural: пле́чи		New	3
 65	рука	hand / arm	рука́	f	ру́ки	руки́	рук	No	Body			New	3
-66	палец	finger / toe	па́лец	m	па́льцы	па́льца	па́льцев	No	Body	fleeting vowel: пальца		New	3
+66	палец	finger / toe	па́лец	m	па́льцы	па́льца	па́льцев	No	Body	fleeting vowel: па́льца		New	3
 67	грудь	chest / breast	грудь	f	гру́ди	груди́	груде́й	No	Body			New	3
 68	спина	back	спина́	f	спи́ны	спины́	спин	No	Body			New	3
 69	живот	belly / stomach	живо́т	m	животы́	живота́	живото́в	No	Body			New	3
 70	нога	leg / foot	нога́	f	но́ги	ноги́	ног	No	Body			New	3
-71	колено	knee	коле́но	n	коле́ни	коле́на	коле́ней	No	Body	plural: колени		New	3
+71	колено	knee	коле́но	n	коле́ни	коле́на	коле́ней	No	Body	plural: коле́ни		New	3
 72	кровь	blood	кровь	f	—	кро́ви	крове́й	No	Body			New	3
 73	сердце	heart	се́рдце	n	сердца́	се́рдца	серде́ц	No	Body			New	3
 74	горло	throat	го́рло	n	го́рла	го́рла	горл	No	Body			New	3
@@ -90,18 +90,18 @@
 89	солнце	sun	со́лнце	n	—	со́лнца	солнц	No	Nature & Weather			New	3
 90	луна	moon	луна́	f	лу́ны	луны́	лун	No	Nature & Weather			New	1
 91	звезда	star	звезда́	f	звёзды	звезды́	звёзд	No	Nature & Weather			New	3
-92	небо	sky	не́бо	n	небеса́	не́ба	небе́с	No	Nature & Weather	plural: небеса (poetic)		New	3
+92	небо	sky	не́бо	n	небеса́	не́ба	небе́с	No	Nature & Weather	plural: небеса́ (poetic)		New	3
 93	облако	cloud	о́блако	n	облака́	о́блака	облако́в	No	Nature & Weather			New	3
 94	дождь	rain	дождь	m	дожди́	дождя́	дожде́й	No	Nature & Weather			New	3
 95	снег	snow	снег	m	снега́	сне́га	снего́в	No	Nature & Weather			New	2
-96	ветер	wind	ве́тер	m	ве́тры	ве́тра	ветро́в	No	Nature & Weather	fleeting vowel: ветра		New	3
+96	ветер	wind	ве́тер	m	ве́тры	ве́тра	ветро́в	No	Nature & Weather	fleeting vowel: ве́тра		New	3
 97	гроза	thunderstorm	гроза́	f	гро́зы	грозы́	гроз	No	Nature & Weather			New	3
 98	буря	storm	бу́ря	f	бу́ри	бу́ри	бурь	No	Nature & Weather			New	3
 99	погода	weather	пого́да	f	—	пого́ды	пого́д	No	Nature & Weather			New	3
 100	природа	nature	приро́да	f	—	приро́ды	приро́д	No	Nature & Weather			New	3
-101	дерево	tree / wood	де́рево	n	дере́вья	де́рева	дере́вьев	No	Nature & Weather	plural: деревья		New	3
+101	дерево	tree / wood	де́рево	n	дере́вья	де́рева	дере́вьев	No	Nature & Weather	plural: дере́вья		New	3
 102	лес	forest	лес	m	леса́	ле́са	лесо́в	No	Nature & Weather	в лесу́		New	3
-103	лист	leaf / sheet (of paper)	лист	m	ли́стья (leaves) / листы́ (sheets)	листа́	ли́стьев	No	Nature & Weather	листья (leaves) vs листы (sheets)		New	3
+103	лист	leaf / sheet (of paper)	лист	m	ли́стья (leaves) / листы́ (sheets)	листа́	ли́стьев	No	Nature & Weather	ли́стья (leaves) vs листы́ (sheets)		New	3
 104	трава	grass	трава́	f	тра́вы	травы́	трав	No	Nature & Weather			New	3
 105	цветок	flower	цвето́к	m	цветы́	цветка́	цвето́в	No	Nature & Weather			New	3
 106	камень	stone	ка́мень	m	ка́мни	ка́мня	камне́й	No	Nature & Weather			New	3
@@ -151,7 +151,7 @@
 150	ключ	key	ключ	m	ключи́	ключа́	ключе́й	No	Home & Household			New	3
 151	замок (stressed о)	lock	замо́к	m	замки́	замка́	замко́в	No	Home & Household	different word: за́мок (stressed а) = castle		New	3
 152	стол	table	стол	m	столы́	стола́	столо́в	No	Home & Household			New	3
-153	стул	chair / stool	стул	m	сту́лья	сту́ла	сту́льев	No	Home & Household	plural: стулья		New	3
+153	стул	chair / stool	стул	m	сту́лья	сту́ла	сту́льев	No	Home & Household	plural: сту́лья		New	3
 154	кровать	bed	крова́ть	f	крова́ти	крова́ти	крова́тей	No	Home & Household			New	3
 155	диван	sofa / couch	дива́н	m	дива́ны	дива́на	дива́нов	No	Home & Household			New	1
 156	шкаф	wardrobe / cupboard	шкаф	m	шкафы́	шка́фа	шкафо́в	No	Home & Household			New	3
@@ -210,10 +210,10 @@
 210	город	city / town	го́род	m	города́	го́рода	городо́в	No	City & Places			New	3
 211	столица	capital	столи́ца	f	столи́цы	столи́цы	столи́ц	No	City & Places			New	3
 212	деревня	village	дере́вня	f	дере́вни	дере́вни	дереве́нь	No	City & Places			New	3
-213	улица	street	у́лица	f	у́лицы	у́лицы	у́лиц	No	City & Places	на улице = outside		New	3
+213	улица	street	у́лица	f	у́лицы	у́лицы	у́лиц	No	City & Places	на у́лице = outside		New	3
 214	площадь	square / area	пло́щадь	f	пло́щади	пло́щади	площаде́й	No	City & Places			New	3
 215	дорога	road	доро́га	f	доро́ги	доро́ги	доро́г	No	City & Places			New	3
-216	путь	way / path	путь	m	пути́	пути́	путе́й	No	City & Places	irregular masculine -ь noun: пути, путём		New	3
+216	путь	way / path	путь	m	пути́	пути́	путе́й	No	City & Places	irregular masculine -ь noun: пути́, путём		New	3
 217	мост	bridge	мост	m	мосты́	моста́	мосто́в	No	City & Places			New	3
 218	парк	park	парк	m	па́рки	па́рка	па́рков	No	City & Places			New	0
 219	сад	garden	сад	m	сады́	са́да	садо́в	No	City & Places	в саду́		New	3
@@ -233,11 +233,11 @@
 235	гостиница	hotel	гости́ница	f	гости́ницы	гости́ницы	гости́ниц	No	City & Places			New	3
 236	отель	hotel	оте́ль	m	оте́ли	оте́ля	оте́лей	No	City & Places			New	0
 237	банк	bank	банк	m	ба́нки	ба́нка	ба́нков	No	City & Places			New	0
-238	почта	post office / mail	по́чта	f	—	по́чты	почт	No	City & Places	на почте		New	3
+238	почта	post office / mail	по́чта	f	—	по́чты	почт	No	City & Places	на по́чте		New	3
 239	центр	center	центр	m	це́нтры	це́нтра	це́нтров	No	City & Places			New	0
-240	станция	station	ста́нция	f	ста́нции	ста́нции	ста́нций	No	City & Places	на станции		New	1
+240	станция	station	ста́нция	f	ста́нции	ста́нции	ста́нций	No	City & Places	на ста́нции		New	1
 241	остановка	stop	остано́вка	f	остано́вки	остано́вки	остано́вок	No	City & Places			New	3
-242	вокзал	train station	вокза́л	m	вокза́лы	вокза́ла	вокза́лов	No	City & Places	на вокзале		New	3
+242	вокзал	train station	вокза́л	m	вокза́лы	вокза́ла	вокза́лов	No	City & Places	на вокза́ле		New	3
 243	аэропорт	airport	аэропо́рт	m	аэропо́рты	аэропо́рта	аэропо́ртов	No	City & Places			New	1
 245	машина	machine / car	маши́на	f	маши́ны	маши́ны	маши́н	No	Transport & Travel			New	1
 246	автомобиль	automobile	автомоби́ль	m	автомоби́ли	автомоби́ля	автомоби́лей	No	Transport & Travel			New	1
@@ -282,12 +282,12 @@
 286	апельсин	orange	апельси́н	m	апельси́ны	апельси́на	апельси́нов	No	Food & Drink			New	3
 287	лимон	lemon	лимо́н	m	лимо́ны	лимо́на	лимо́нов	No	Food & Drink			New	1
 288	овощ	vegetable	о́вощ	m	о́вощи	о́воща	овоще́й	No	Food & Drink			New	3
-289	картошка	potatoes	карто́шка	f	—	карто́шки	карто́шек	No	Food & Drink	collective: картошка = potatoes (одна картофелина = one potato)		New	3
+289	картошка	potatoes	карто́шка	f	—	карто́шки	карто́шек	No	Food & Drink	collective: карто́шка = potatoes (одна́ карто́фелина = one potato)		New	3
 290	помидор	tomato	помидо́р	m	помидо́ры	помидо́ра	помидо́ров	No	Food & Drink			New	2
 291	огурец	cucumber	огуре́ц	m	огурцы́	огурца́	огурцо́в	No	Food & Drink			New	3
 292	лук	onion	лук	m	—	лу́ка	лу́ков	No	Food & Drink			New	3
 293	чеснок	garlic	чесно́к	m	—	чеснока́	чесноко́в	No	Food & Drink			New	3
-294	морковь	carrot(s)	морко́вь	f	—	морко́ви	морко́вей	No	Food & Drink	collective: морковь = carrots (одна морковка = one carrot)		New	3
+294	морковь	carrot(s)	морко́вь	f	—	морко́ви	морко́вей	No	Food & Drink	collective: морко́вь = carrots (одна́ морко́вка = one carrot)		New	3
 295	врач	doctor	врач	m	врачи́	врача́	враче́й	Yes	Jobs & Roles			New	3
 296	доктор	doctor	до́ктор	m	доктора́	до́ктора	докторо́в	Yes	Jobs & Roles			New	0
 297	медсестра	nurse	медсестра́	f	медсёстры	медсестры́	медсестёр	Yes	Jobs & Roles			New	2
@@ -348,7 +348,7 @@
 352	секрет	secret	секре́т	m	секре́ты	секре́та	секре́тов	No	Life & Mind			New	0
 353	тайна	mystery / secret	та́йна	f	та́йны	та́йны	тайн	No	Life & Mind			New	3
 354	дело	matter / affair / business	де́ло	n	дела́	де́ла	дел	No	Work, Law & Rules			New	3
-355	работа	work / job	рабо́та	f	рабо́ты	рабо́ты	рабо́т	No	Work, Law & Rules	на работе		New	3
+355	работа	work / job	рабо́та	f	рабо́ты	рабо́ты	рабо́т	No	Work, Law & Rules	на рабо́те		New	3
 356	труд	labor	труд	m	труды́	труда́	трудо́в	No	Work, Law & Rules			New	3
 357	отдых	rest / vacation	о́тдых	m	—	о́тдыха	о́тдыхов	No	Work, Law & Rules			New	3
 358	сон	sleep / dream	сон	m	сны	сна	снов	No	Work, Law & Rules	fleeting vowel: сна		New	3
@@ -536,7 +536,7 @@
 540	большинство	majority	большинство́	n	—	большинства́		No	Groups & Quantity			New	3
 541	меньшинство	minority	меньшинство́	n	меньши́нства	меньшинства́	меньши́нств	No	Groups & Quantity			New	3
 542	банкомат	ATM	банкома́т	m	банкома́ты	банкома́та	банкома́тов	No	Money & Economy			New	1
-543	бронь	reservation	бронь	f	—	бро́ни	бро́ней	No	Transport & Travel	colloquial; formal = бронирование		New	3
+543	бронь	reservation	бронь	f	—	бро́ни	бро́ней	No	Transport & Travel	colloquial; formal = брони́рование		New	3
 544	имя	name	и́мя	n	имена́	и́мени	имён	No	People	irregular -мя noun: и́мени, и́менем (like вре́мя)		New	2
 545	москва	Moscow	москва́	f	—			No	City & Places			New	1
 546	полиция	police	поли́ция	f	—	поли́ции	поли́ций	No	Society & Politics			New	1
@@ -666,7 +666,7 @@
 670	структура	structure	структу́ра	f	структу́ры	структу́ры	структу́р	No	Concepts			New	1
 671	пример	example	приме́р	m	приме́ры	приме́ра	приме́ров	No	Concepts			New	3
 672	исследование	research / study	иссле́дование	n	иссле́дования	иссле́дования	иссле́дований	No	Knowledge & Culture			New	3
-673	гражданин	citizen	граждани́н	m	гра́ждане	граждани́на	гра́ждан	Yes	People	irregular plural: граждане		New	3
+673	гражданин	citizen	граждани́н	m	гра́ждане	граждани́на	гра́ждан	Yes	People	irregular plural: гра́ждане		New	3
 674	игра	game / play	игра́	f	и́гры	игры́	игр	No	Sports & Games			New	3
 675	тема	topic / theme	те́ма	f	те́мы	те́мы	тем	No	Knowledge & Culture			New	1
 676	принцип	principle	при́нцип	m	при́нципы	при́нципа	при́нципов	No	Concepts			New	1
@@ -681,17 +681,17 @@
 685	территория	territory	террито́рия	f	террито́рии	террито́рии	террито́рий	No	City & Places			New	1
 686	изменение	change	измене́ние	n	измене́ния	измене́ния	измене́ний	No	Concepts			New	3
 687	направление	direction	направле́ние	n	направле́ния	направле́ния	направле́ний	No	Space & Parts			New	3
-688	рисунок	drawing	рису́нок	m	рису́нки	рису́нка	рису́нков	No	Knowledge & Culture	fleeting vowel: рисунка		New	3
+688	рисунок	drawing	рису́нок	m	рису́нки	рису́нка	рису́нков	No	Knowledge & Culture	fleeting vowel: рису́нка		New	3
 689	течение	current / flow	тече́ние	n	тече́ния	тече́ния	тече́ний	No	Nature & Weather			New	3
 690	церковь	church	це́рковь	f	це́ркви	це́ркви	церкве́й	No	Beliefs & Emotions			New	1
 691	сцена	stage / scene	сце́на	f	сце́ны	сце́ны	сцен	No	Knowledge & Culture			New	1
 692	население	population	населе́ние	n	населе́ния	населе́ния	населе́ний	No	Society & Politics			New	3
 693	команда	team / command	кома́нда	f	кома́нды	кома́нды	кома́нд	No	Sports & Games			New	1
 694	союз	union	сою́з	m	сою́зы	сою́за	сою́зов	No	Society & Politics			New	3
-695	хозяин	owner / host	хозя́ин	m	хозя́ева	хозя́ина	хозя́ев	Yes	Jobs & Roles	irregular plural: хозяева		New	3
+695	хозяин	owner / host	хозя́ин	m	хозя́ева	хозя́ина	хозя́ев	Yes	Jobs & Roles	irregular plural: хозя́ева		New	3
 696	позиция	position	пози́ция	f	пози́ции	пози́ции	пози́ций	No	Concepts			New	1
 697	объём	volume	объём	m	объёмы	объёма	объёмов	No	Shapes & Measures			New	3
-698	род	kind / gender	род	m	ро́ды	ро́да	родо́в	No	Concepts	plural of kinds: рода		New	3
+698	род	kind / gender	род	m	ро́ды	ро́да	родо́в	No	Concepts	plural of kinds: рода́		New	3
 699	спектакль	performance / show	спекта́кль	m	спекта́кли	спекта́кля	спекта́клей	No	Knowledge & Culture			New	1
 700	завод	factory / plant	заво́д	m	заво́ды	заво́да	заво́дов	No	City & Places			New	3
 701	руководитель	manager / leader	руководи́тель	m	руководи́тели	руководи́теля	руководи́телей	Yes	Jobs & Roles			New	3
@@ -704,7 +704,7 @@
 708	роман	novel	рома́н	m	рома́ны	рома́на	рома́нов	No	Knowledge & Culture			New	2
 709	анализ	analysis	ана́лиз	m	ана́лизы	ана́лиза	ана́лизов	No	Knowledge & Culture			New	1
 710	стихи	poems / verse	стихи́	pl-only	—		стихо́в	No	Knowledge & Culture	plural-only noun		New	3
-711	господин	mister / gentleman	господи́н	m	господа́	господи́на	госпо́д	Yes	People	irregular plural: господа		New	3
+711	господин	mister / gentleman	господи́н	m	господа́	господи́на	госпо́д	Yes	People	irregular plural: господа́		New	3
 712	вариант	variant / option	вариа́нт	m	вариа́нты	вариа́нта	вариа́нтов	No	Concepts			New	1
 713	название	name / title	назва́ние	n	назва́ния	назва́ния	назва́ний	No	Knowledge & Culture			New	3
 714	повод	reason / occasion	по́вод	m	по́воды	по́вода	по́водов	No	Concepts			New	3
@@ -718,7 +718,7 @@
 722	руководство	leadership / guide	руково́дство	n	руково́дства	руково́дства	руково́дств	No	Work, Law & Rules			New	3
 723	сознание	consciousness	созна́ние	n	созна́ния	созна́ния	созна́ний	No	Life & Mind			New	3
 724	участник	participant	уча́стник	m	уча́стники	уча́стника	уча́стников	Yes	People			New	3
-725	участок	plot / section	уча́сток	m	уча́стки	уча́стка	уча́стков	No	City & Places	fleeting vowel: участка		New	3
+725	участок	plot / section	уча́сток	m	уча́стки	уча́стка	уча́стков	No	City & Places	fleeting vowel: уча́стка		New	3
 726	пункт	point / item	пункт	m	пу́нкты	пу́нкта	пу́нктов	No	Concepts			New	2
 727	среда	Wednesday / environment	среда́	f	сре́ды	среды́	сред	No	Time			New	3
 728	председатель	chairman	председа́тель	m	председа́тели	председа́теля	председа́телей	Yes	Jobs & Roles			New	3
@@ -747,7 +747,7 @@
 751	воля	will	во́ля	f	во́ли	во́ли	воль	No	Character & Values			New	3
 752	мужик	man / peasant	мужи́к	m	мужики́	мужика́	мужико́в	Yes	People			New	3
 753	элемент	element	элеме́нт	m	элеме́нты	элеме́нта	элеме́нтов	No	Concepts			New	1
-754	немец	German	не́мец	m	не́мцы	не́мца	не́мцев	Yes	People	fleeting vowel: немца		New	3
+754	немец	German	не́мец	m	не́мцы	не́мца	не́мцев	Yes	People	fleeting vowel: не́мца		New	3
 755	источник	source	исто́чник	m	исто́чники	исто́чника	исто́чников	No	Concepts			New	3
 756	масса	mass	ма́сса	f	ма́ссы	ма́ссы	масс	No	Shapes & Measures			New	1
 757	итог	result / total	ито́г	m	ито́ги	ито́га	ито́гов	No	Concepts			New	3
@@ -757,7 +757,7 @@
 761	кухня	kitchen	ку́хня	f	ку́хни	ку́хни	ку́хонь	No	Home & Household			New	2
 762	определение	definition	определе́ние	n	определе́ния	определе́ния	определе́ний	No	Knowledge & Culture			New	3
 763	функция	function	фу́нкция	f	фу́нкции	фу́нкции	фу́нкций	No	Concepts			New	1
-764	войско	army / troops	во́йско	n	войска́	во́йска	войск	No	Conflict	plural: войска		New	3
+764	войско	army / troops	во́йско	n	войска́	во́йска	войск	No	Conflict	plural: войска́		New	3
 765	комиссия	commission	коми́ссия	f	коми́ссии	коми́ссии	коми́ссий	No	Society & Politics			New	1
 766	применение	application / use	примене́ние	n	примене́ния	примене́ния	примене́ний	No	Concepts			New	3
 767	работник	worker	рабо́тник	m	рабо́тники	рабо́тника	рабо́тников	Yes	Jobs & Roles			New	3
@@ -806,7 +806,7 @@
 810	вирус	virus	ви́рус	m	ви́русы	ви́руса	ви́русов	No	Health			New	0
 811	выражение	expression	выраже́ние	n	выраже́ния	выраже́ния	выраже́ний	No	Knowledge & Culture			New	3
 812	зима	winter	зима́	f	зи́мы	зимы́	зим	No	Time			New	3
-813	десяток	set of ten	деся́ток	m	деся́тки	деся́тка	деся́тков	No	Groups & Quantity	fleeting vowel: десятка		New	3
+813	десяток	set of ten	деся́ток	m	деся́тки	деся́тка	деся́тков	No	Groups & Quantity	fleeting vowel: деся́тка		New	3
 814	глубина	depth	глубина́	f	глуби́ны	глубины́	глуби́н	No	Shapes & Measures			New	3
 815	сеть	network / net	сеть	f	се́ти	се́ти	сете́й	No	Objects			New	3
 816	поиск	search	по́иск	m	по́иски	по́иска	по́исков	No	Concepts			New	3
@@ -910,11 +910,11 @@
 914	сомнение	doubt	сомне́ние	n	сомне́ния	сомне́ния	сомне́ний	No	Life & Mind			New	3
 915	понимание	understanding	понима́ние	n	понима́ния	понима́ния	понима́ний	No	Life & Mind			New	3
 916	апрель	April	апре́ль	m	—	апре́ля		No	Time			New	1
-917	князь	prince	князь	m	князья́	кня́зя	князе́й	Yes	People	irregular plural: князья		New	3
+917	князь	prince	князь	m	князья́	кня́зя	князе́й	Yes	People	irregular plural: князья́		New	3
 918	дума	duma / thought	ду́ма	f	ду́мы	ду́мы	дум	No	Society & Politics			New	3
 919	кодекс	code	ко́декс	m	ко́дексы	ко́декса	ко́дексов	No	Work, Law & Rules			New	1
 920	сутки	24 hours	су́тки	pl-only	—		су́ток	No	Time	plural-only noun		New	3
-921	чудо	miracle	чу́до	n	чудеса́	чу́да	чуде́с	No	Beliefs & Emotions	irregular plural: чудеса		New	3
+921	чудо	miracle	чу́до	n	чудеса́	чу́да	чуде́с	No	Beliefs & Emotions	irregular plural: чудеса́		New	3
 922	судья	judge	судья́	m	су́дьи	судьи́	суде́й	Yes	Jobs & Roles	masculine despite -я ending		New	3
 923	настроение	mood	настрое́ние	n	настрое́ния	настрое́ния	настрое́ний	No	Beliefs & Emotions			New	3
 924	поток	stream / flow	пото́к	m	пото́ки	пото́ка	пото́ков	No	Nature & Weather			New	3
@@ -928,7 +928,7 @@
 932	установка	installation / setup	устано́вка	f	устано́вки	устано́вки	устано́вок	No	Work, Law & Rules			New	3
 933	появление	appearance	появле́ние	n	появле́ния	появле́ния	появле́ний	No	Concepts			New	3
 934	получение	receipt	получе́ние	n	получе́ния	получе́ния	получе́ний	No	Concepts			New	3
-935	образец	sample	образе́ц	m	образцы́	образца́	образцо́в	No	Objects	fleeting vowel: образца		New	3
+935	образец	sample	образе́ц	m	образцы́	образца́	образцо́в	No	Objects	fleeting vowel: образца́		New	3
 936	труба	pipe	труба́	f	тру́бы	трубы́	труб	No	Objects			New	3
 937	главное	the main thing	гла́вное	n	гла́вные	гла́вного	гла́вных	No	Concepts	declines like an adjective		New	3
 938	осень	autumn	о́сень	f	о́сени	о́сени	о́сеней	No	Time			New	3
@@ -953,7 +953,7 @@
 957	спор	dispute	спор	m	спо́ры	спо́ра	спо́ров	No	Conflict			New	3
 958	признак	sign / symptom	при́знак	m	при́знаки	при́знака	при́знаков	No	Concepts			New	3
 959	промышленность	industry	промы́шленность	f	промы́шленности	промы́шленности	промы́шленностей	No	Money & Economy			New	3
-960	американец	American	америка́нец	m	америка́нцы	америка́нца	америка́нцев	Yes	People	fleeting vowel: американца		New	1
+960	американец	American	америка́нец	m	америка́нцы	америка́нца	америка́нцев	Yes	People	fleeting vowel: америка́нца		New	1
 961	лоб	forehead	лоб	m	лбы	лба	лбов	No	Body	fleeting vowel: лба		New	3
 962	заключение	conclusion	заключе́ние	n	заключе́ния	заключе́ния	заключе́ний	No	Concepts			New	3
 963	восток	east	восто́к	m	—	восто́ка		No	Nature & Weather			New	3
@@ -965,7 +965,7 @@
 969	перевод	translation / transfer	перево́д	m	перево́ды	перево́да	перево́дов	No	Knowledge & Culture			New	3
 970	секретарь	secretary	секрета́рь	m	секретари́	секретаря́	секретаре́й	Yes	Jobs & Roles			New	1
 971	слух	hearing / rumor	слух	m	слу́хи	слу́ха	слу́хов	No	Body			New	3
-972	звонок	bell / call	звоно́к	m	звонки́	звонка́	звонко́в	No	Objects	fleeting vowel: звонка		New	3
+972	звонок	bell / call	звоно́к	m	звонки́	звонка́	звонко́в	No	Objects	fleeting vowel: звонка́		New	3
 973	обстановка	situation / setting	обстано́вка	f	обстано́вки	обстано́вки	обстано́вок	No	Concepts			New	3
 974	чиновник	official	чино́вник	m	чино́вники	чино́вника	чино́вников	Yes	Jobs & Roles			New	3
 975	соглашение	agreement	соглаше́ние	n	соглаше́ния	соглаше́ния	соглаше́ний	No	Work, Law & Rules			New	3
@@ -1071,14 +1071,14 @@
 1075	обучение	training / education	обуче́ние	n	обуче́ния	обуче́ния	обуче́ний	No	Knowledge & Culture			New	3
 1076	ожидание	waiting / expectation	ожида́ние	n	ожида́ния	ожида́ния	ожида́ний	No	Concepts			New	3
 1077	памятник	monument	па́мятник	m	па́мятники	па́мятника	па́мятников	No	City & Places			New	3
-1078	корень	root	ко́рень	m	ко́рни	ко́рня	корне́й	No	Nature & Weather	fleeting vowel: корня		New	3
+1078	корень	root	ко́рень	m	ко́рни	ко́рня	корне́й	No	Nature & Weather	fleeting vowel: ко́рня		New	3
 1079	наблюдение	observation	наблюде́ние	n	наблюде́ния	наблюде́ния	наблюде́ний	No	Knowledge & Culture			New	3
 1080	буква	letter	бу́ква	f	бу́квы	бу́квы	букв	No	Knowledge & Culture			New	3
 1081	доказательство	proof / evidence	доказа́тельство	n	доказа́тельства	доказа́тельства	доказа́тельств	No	Knowledge & Culture			New	3
 1082	признание	recognition / confession	призна́ние	n	призна́ния	призна́ния	призна́ний	No	Concepts			New	3
 1083	постель	bed / bedding	посте́ль	f	посте́ли	посте́ли	посте́лей	No	Home & Household			New	3
 1084	штаб	headquarters / staff	штаб	m	штабы́	шта́ба	штабо́в	No	Work, Law & Rules			New	2
-1085	владелец	owner	владе́лец	m	владе́льцы	владе́льца	владе́льцев	Yes	Jobs & Roles	fleeting vowel: владельца		New	3
+1085	владелец	owner	владе́лец	m	владе́льцы	владе́льца	владе́льцев	Yes	Jobs & Roles	fleeting vowel: владе́льца		New	3
 1086	старуха	old woman	стару́ха	f	стару́хи	стару́хи	стару́х	Yes	People			New	3
 1087	ракета	rocket / missile	раке́та	f	раке́ты	раке́ты	раке́т	No	Weapons & Hazards			New	1
 1088	серия	series	се́рия	f	се́рии	се́рии	се́рий	No	Knowledge & Culture			New	1
@@ -1090,7 +1090,7 @@
 1094	нефть	oil / petroleum	нефть	f	не́фти	не́фти	не́фтей	No	Money & Economy			New	3
 1095	молодёжь	young people	молодёжь	f	—	молодёжи		No	People			New	3
 1096	корпус	building / hull / body	ко́рпус	m	ко́рпусы	ко́рпуса	ко́рпусов	No	City & Places			New	2
-1097	недостаток	shortage / defect	недоста́ток	m	недоста́тки	недоста́тка	недоста́тков	No	Concepts	fleeting vowel: недостатка		New	3
+1097	недостаток	shortage / defect	недоста́ток	m	недоста́тки	недоста́тка	недоста́тков	No	Concepts	fleeting vowel: недоста́тка		New	3
 1098	сущность	essence	су́щность	f	су́щности	су́щности	су́щностей	No	Concepts			New	3
 1099	талант	talent	тала́нт	m	тала́нты	тала́нта	тала́нтов	No	Character & Values			New	0
 1100	эффективность	effectiveness	эффекти́вность	f	эффекти́вности	эффекти́вности	эффекти́вностей	No	Character & Values			New	1
@@ -1101,12 +1101,12 @@
 1105	штат	state / staff	штат	m	шта́ты	шта́та	шта́тов	No	Society & Politics			New	1
 1106	следователь	investigator	сле́дователь	m	сле́дователи	сле́дователя	сле́дователей	Yes	Jobs & Roles			New	3
 1107	жильё	housing	жильё	n	—	жилья́		No	Home & Household			New	3
-1108	мешок	sack	мешо́к	m	мешки́	мешка́	мешко́в	No	Objects	fleeting vowel: мешка		New	3
+1108	мешок	sack	мешо́к	m	мешки́	мешка́	мешко́в	No	Objects	fleeting vowel: мешка́		New	3
 1109	описание	description	описа́ние	n	описа́ния	описа́ния	описа́ний	No	Knowledge & Culture			New	3
 1110	куст	bush	куст	m	кусты́	куста́	кусто́в	No	Nature & Weather			New	3
 1111	отказ	refusal	отка́з	m	отка́зы	отка́за	отка́зов	No	Concepts			New	3
 1112	редактор	editor	реда́ктор	m	реда́кторы	реда́ктора	реда́кторов	Yes	Jobs & Roles			New	0
-1113	дворец	palace	дворе́ц	m	дворцы́	дворца́	дворцо́в	No	City & Places	fleeting vowel: дворца		New	3
+1113	дворец	palace	дворе́ц	m	дворцы́	дворца́	дворцо́в	No	City & Places	fleeting vowel: дворца́		New	3
 1114	забота	care / concern	забо́та	f	забо́ты	забо́ты	забо́т	No	Beliefs & Emotions			New	3
 1115	столик	small table	сто́лик	m	сто́лики	сто́лика	сто́ликов	No	Home & Household			New	3
 1116	эксперимент	experiment	экспериме́нт	m	экспериме́нты	экспериме́нта	экспериме́нтов	No	Knowledge & Culture			New	0
@@ -1178,7 +1178,7 @@
 1182	монастырь	monastery	монасты́рь	m	монастыри́	монастыря́	монастыре́й	No	City & Places			New	1
 1183	хозяйка	hostess / landlady	хозя́йка	f	хозя́йки	хозя́йки	хозя́ек	Yes	Jobs & Roles			New	3
 1184	дочка	daughter	до́чка	f	до́чки	до́чки	до́чек	Yes	Family			New	2
-1185	танец	dance	та́нец	m	та́нцы	та́нца	та́нцев	No	Knowledge & Culture	fleeting vowel: танца		New	2
+1185	танец	dance	та́нец	m	та́нцы	та́нца	та́нцев	No	Knowledge & Culture	fleeting vowel: та́нца		New	2
 1186	эксплуатация	exploitation / operation	эксплуата́ция	f	эксплуата́ции	эксплуата́ции	эксплуата́ций	No	Work, Law & Rules			New	1
 1187	коммунист	communist	коммуни́ст	m	коммуни́сты	коммуни́ста	коммуни́стов	Yes	People			New	0
 1188	пенсия	pension	пе́нсия	f	пе́нсии	пе́нсии	пе́нсий	No	Money & Economy			New	1
@@ -1196,7 +1196,7 @@
 1200	препарат	preparation / drug	препара́т	m	препара́ты	препара́та	препара́тов	No	Health			New	1
 1201	действительность	reality	действи́тельность	f	действи́тельности	действи́тельности	действи́тельностей	No	Concepts			New	3
 1202	москвич	Muscovite	москви́ч	m	москвичи́	москвича́	москвиче́й	Yes	People			New	1
-1203	остаток	remainder / rest	оста́ток	m	оста́тки	оста́тка	оста́тков	No	Concepts	fleeting vowel: остатка		New	3
+1203	остаток	remainder / rest	оста́ток	m	оста́тки	оста́тка	оста́тков	No	Concepts	fleeting vowel: оста́тка		New	3
 1204	изображение	image / picture	изображе́ние	n	изображе́ния	изображе́ния	изображе́ний	No	Knowledge & Culture			New	3
 1205	сделка	deal / transaction	сде́лка	f	сде́лки	сде́лки	сде́лок	No	Money & Economy			New	3
 1206	сочинение	composition / essay	сочине́ние	n	сочине́ния	сочине́ния	сочине́ний	No	Knowledge & Culture			New	3
@@ -1247,7 +1247,7 @@
 1251	пауза	pause	па́уза	f	па́узы	па́узы	па́уз	No	Time			New	1
 1252	дата	date	да́та	f	да́ты	да́ты	дат	No	Time			New	0
 1253	постановка	staging / production	постано́вка	f	постано́вки	постано́вки	постано́вок	No	Knowledge & Culture			New	3
-1254	поступок	act / deed	посту́пок	m	посту́пки	посту́пка	посту́пков	No	Character & Values	fleeting vowel: поступка		New	3
+1254	поступок	act / deed	посту́пок	m	посту́пки	посту́пка	посту́пков	No	Character & Values	fleeting vowel: посту́пка		New	3
 1255	ствол	trunk / barrel	ствол	m	стволы́	ствола́	стволо́в	No	Nature & Weather			New	3
 1256	готовность	readiness	гото́вность	f	гото́вности	гото́вности	гото́вностей	No	Character & Values			New	3
 1257	тепло (noun)	warmth / heat	тепло́	n	—	тепла́		No	Nature & Weather			New	3
@@ -1266,7 +1266,7 @@
 1270	публикация	publication	публика́ция	f	публика́ции	публика́ции	публика́ций	No	Knowledge & Culture			New	1
 1271	стихотворение	poem	стихотворе́ние	n	стихотворе́ния	стихотворе́ния	стихотворе́ний	No	Knowledge & Culture			New	3
 1272	отчёт	report	отчёт	m	отчёты	отчёта	отчётов	No	Work, Law & Rules			New	3
-1273	узел	knot / junction	у́зел	m	узлы́	узла́	узло́в	No	Shapes & Measures	fleeting vowel: узла		New	3
+1273	узел	knot / junction	у́зел	m	узлы́	узла́	узло́в	No	Shapes & Measures	fleeting vowel: узла́		New	3
 1274	обмен	exchange	обме́н	m	обме́ны	обме́на	обме́нов	No	Money & Economy			New	3
 1275	порода	breed / rock	поро́да	f	поро́ды	поро́ды	поро́д	No	Animals			New	3
 1276	прибыль	profit	при́быль	f	при́были	при́были	при́былей	No	Money & Economy			New	3
@@ -1279,7 +1279,7 @@
 1283	мебель	furniture	ме́бель	f	—	ме́бели		No	Home & Household			New	3
 1284	мороз	frost / freezing cold	моро́з	m	моро́зы	моро́за	моро́зов	No	Nature & Weather			New	3
 1285	перемена	change / break	переме́на	f	переме́ны	переме́ны	переме́н	No	Concepts			New	3
-1286	костёр	campfire / bonfire	костёр	m	костры́	костра́	костро́в	No	Nature & Weather	fleeting vowel: костра		New	3
+1286	костёр	campfire / bonfire	костёр	m	костры́	костра́	костро́в	No	Nature & Weather	fleeting vowel: костра́		New	3
 1287	марка	stamp / brand	ма́рка	f	ма́рки	ма́рки	ма́рок	No	Objects			New	1
 1288	протокол	minutes / protocol	протоко́л	m	протоко́лы	протоко́ла	протоко́лов	No	Work, Law & Rules			New	1
 1289	привычка	habit	привы́чка	f	привы́чки	привы́чки	привы́чек	No	Life & Mind			New	3
@@ -1378,13 +1378,13 @@
 1382	мина	mine / grimace	ми́на	f	ми́ны	ми́ны	мин	No	Weapons & Hazards			New	1
 1383	орден	medal / order	о́рден	m	ордена́	о́рдена	ордено́в	No	Society & Politics	plural: ордена́ (medals), о́рдены (orders)		New	1
 1384	пластинка	record / plate	пласти́нка	f	пласти́нки	пласти́нки	пласти́нок	No	Objects			New	3
-1385	крестьянин	peasant	крестья́нин	m	крестья́не	крестья́нина	крестья́н	Yes	Jobs & Roles	plural: крестьяне		New	3
+1385	крестьянин	peasant	крестья́нин	m	крестья́не	крестья́нина	крестья́н	Yes	Jobs & Roles	plural: крестья́не		New	3
 1386	юноша	youth / young man	ю́ноша	m	ю́ноши	ю́ноши	ю́ношей	Yes	People	masculine despite -а ending		New	3
 1387	бабка	granny	ба́бка	f	ба́бки	ба́бки	ба́бок	Yes	Family			New	3
 1388	вызов	call / challenge	вы́зов	m	вы́зовы	вы́зова	вы́зовов	No	Concepts			New	3
 1389	издательство	publisher	изда́тельство	n	изда́тельства	изда́тельства	изда́тельств	No	Jobs & Roles			New	3
 1390	полка	shelf	по́лка	f	по́лки	по́лки	по́лок	No	Home & Household			New	3
-1391	дитя	child	дитя́	n	—	дитя́ти		Yes	Family	no plural: use дети		New	3
+1391	дитя	child	дитя́	n	—	дитя́ти		Yes	Family	no plural: use де́ти		New	3
 1392	покупка	purchase	поку́пка	f	поку́пки	поку́пки	поку́пок	No	Money & Economy			New	3
 1393	бровь	eyebrow	бровь	f	бро́ви	бро́ви	брове́й	No	Body			New	3
 1394	доверие	trust	дове́рие	n	дове́рия	дове́рия	дове́рий	No	Character & Values			New	3
@@ -1527,7 +1527,7 @@
 1531	собеседник	conversation partner	собесе́дник	m	собесе́дники	собесе́дника	собесе́дников	Yes	People			New	3
 1532	сопротивление	resistance	сопротивле́ние	n	сопротивле́ния	сопротивле́ния	сопротивле́ний	No	Conflict			New	3
 1533	халат	bathrobe	хала́т	m	хала́ты	хала́та	хала́тов	No	Clothing			New	3
-1534	вуз	university / college	вуз	m	ву́зы	ву́за	ву́зов	No	Knowledge & Culture	abbreviation of высшее учебное заведение		New	3
+1534	вуз	university / college	вуз	m	ву́зы	ву́за	ву́зов	No	Knowledge & Culture	abbreviation of вы́сшее уче́бное заведе́ние		New	3
 1535	жанр	genre	жанр	m	жа́нры	жа́нра	жа́нров	No	Knowledge & Culture			New	1
 1536	идеал	ideal	идеа́л	m	идеа́лы	идеа́ла	идеа́лов	No	Character & Values			New	0
 1537	поправка	amendment / correction	попра́вка	f	попра́вки	попра́вки	попра́вок	No	Work, Law & Rules			New	3
@@ -1724,7 +1724,7 @@
 1728	пёс	male dog	пёс	m	псы	пса	псов	Yes	Animals	fleeting vowel: пса		New	3
 1729	скала	rock / cliff	скала́	f	ска́лы	скалы́	скал	No	Nature & Weather			New	3
 1730	грузовик	truck	грузови́к	m	грузовики́	грузовика́	грузовико́в	No	Transport & Travel			New	3
-1731	перечень	list / inventory	пе́речень	m	пе́речни	пе́речня	пе́речней	No	Concepts	fleeting vowel: перечня		New	3
+1731	перечень	list / inventory	пе́речень	m	пе́речни	пе́речня	пе́речней	No	Concepts	fleeting vowel: пе́речня		New	3
 1732	ритм	rhythm	ритм	m	ри́тмы	ри́тма	ри́тмов	No	Knowledge & Culture			New	1
 1733	улучшение	improvement	улучше́ние	n	улучше́ния	улучше́ния	улучше́ний	No	Concepts			New	3
 1734	философ	philosopher	фило́соф	m	фило́софы	фило́софа	фило́софов	Yes	Jobs & Roles			New	1
@@ -1740,7 +1740,7 @@
 1744	платёж	payment	платёж	m	платежи́	платежа́	платеже́й	No	Money & Economy			New	3
 1745	потребление	consumption	потребле́ние	n	потребле́ния	потребле́ния	потребле́ний	No	Money & Economy			New	3
 1746	кафедра	university department	ка́федра	f	ка́федры	ка́федры	ка́федр	No	Knowledge & Culture			New	2
-1747	напиток	drink	напи́ток	m	напи́тки	напи́тка	напи́тков	No	Food & Drink	fleeting vowel: напитка		New	3
+1747	напиток	drink	напи́ток	m	напи́тки	напи́тка	напи́тков	No	Food & Drink	fleeting vowel: напи́тка		New	3
 1748	яма	pit	я́ма	f	я́мы	я́мы	ям	No	Nature & Weather			New	3
 1749	англичанин	Englishman	англича́нин	m	англича́не	англича́нина	англича́н	Yes	People			New	2
 1750	лицензия	license	лице́нзия	f	лице́нзии	лице́нзии	лице́нзий	No	Work, Law & Rules			New	1
@@ -1752,7 +1752,7 @@
 1756	убеждение	conviction	убежде́ние	n	убежде́ния	убежде́ния	убежде́ний	No	Beliefs & Emotions			New	3
 1757	форум	forum	фо́рум	m	фо́румы	фо́рума	фо́румов	No	Knowledge & Culture			New	0
 1758	шампанское	champagne	шампа́нское	n	—	шампа́нского		No	Food & Drink	declines like an adjective		New	1
-1759	оттенок	shade / tint	отте́нок	m	отте́нки	отте́нка	отте́нков	No	Shapes & Measures	fleeting vowel: оттенка		New	3
+1759	оттенок	shade / tint	отте́нок	m	отте́нки	отте́нка	отте́нков	No	Shapes & Measures	fleeting vowel: отте́нка		New	3
 1760	пустыня	desert	пусты́ня	f	пусты́ни	пусты́ни	пусты́нь	No	Nature & Weather			New	3
 1761	сборник	collection	сбо́рник	m	сбо́рники	сбо́рника	сбо́рников	No	Knowledge & Culture			New	3
 1762	военнослужащий	serviceman	военнослу́жащий	m	военнослу́жащие	военнослу́жащего	военнослу́жащих	Yes	Jobs & Roles	declines like an adjective		New	3
@@ -1964,7 +1964,7 @@
 1968	учёба	studies	учёба	f	учёбы	учёбы	учёб	No	Knowledge & Culture			New	3
 1969	шинель	overcoat	шине́ль	f	шине́ли	шине́ли	шине́лей	No	Clothing			New	3
 1970	конструктор	designer	констру́ктор	m	констру́кторы	констру́ктора	констру́кторов	Yes	Jobs & Roles			New	1
-1971	ноготь	fingernail	но́готь	m	но́гти	но́гтя	ногте́й	No	Body	fleeting vowel: ногтя		New	3
+1971	ноготь	fingernail	но́готь	m	но́гти	но́гтя	ногте́й	No	Body	fleeting vowel: но́гтя		New	3
 1972	предупреждение	warning	предупрежде́ние	n	предупрежде́ния	предупрежде́ния	предупрежде́ний	No	Work, Law & Rules			New	3
 1973	национальность	nationality	национа́льность	f	национа́льности	национа́льности	национа́льностей	No	Society & Politics			New	1
 1974	отечество	fatherland	оте́чество	n	оте́чества	оте́чества	оте́честв	No	Society & Politics			New	3

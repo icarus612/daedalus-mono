@@ -62,8 +62,8 @@ def test_corrected_neutral_instrumental_endings():
 
 def test_pronoun_answers_match_table():
     by_front = {row.front: row.target for row in parse_rows()}
-    assert by_front["Pronoun: 'She' (Она) → Instrumental?"] == "ей (ней)"
-    assert by_front["Pronoun: 'He / It' (Он / Оно) → Prepositional?"] == "нём"
+    assert by_front["Pronoun: 'She' (Она́) → Instrumental?"] == "ей (ней)"
+    assert by_front["Pronoun: 'He / It' (Он / Оно́) → Prepositional?"] == "нём"
 
 
 def test_example_words_are_russian():
@@ -103,7 +103,7 @@ def test_particle_examples_attach_the_target_to_the_base():
         for example in row.examples:
             assert example.form == example.base + row.target
             if row.target == "-ка":
-                assert example.note in verbs
+                assert example.note.replace("\u0301", "") in verbs
 
 
 def test_reflexive_examples_attach_the_target_to_the_base():

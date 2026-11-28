@@ -19,9 +19,27 @@ from anki.utils import to_json_bytes
 
 from anki_tools import card_audio, case_pill
 from anki_tools.anki_identity import guid_for_row, notetype_id_for_name
-from anki_tools.audio_naming import build_filename, get_anki_collection_path
+from anki_tools.audio_naming import (
+    build_filename,
+    get_anki_collection_path,
+    strip_stress,
+)
 
 DATA_PATH = Path(__file__).parent / "data" / "russian-grammar" / "case-endings.tsv"
+STRESS_PATH = Path(__file__).parent / "data" / "russian-grammar" / "example-stress.tsv"
+
+
+def load_example_stress(path: str | os.PathLike = STRESS_PATH) -> dict[str, str]:
+    """Example form as stored -> as displayed. Recordings are named after the
+    stored form, so the stress marks live only in what the card shows."""
+    with open(path, encoding="utf-8", newline="") as handle:
+        return {
+            row["form"]: row["displayed"]
+            for row in csv.DictReader(handle, delimiter="\t")
+        }
+
+
+EXAMPLE_STRESS = load_example_stress()
 DECK_ROOT = "Languages::Russian::2. Grammar"
 OPTIONS_SOURCE_DECK = "Languages::Russian"
 NOTE_TYPE_NAME = "Russian - Grammar Rules (Ellis Version)"
@@ -223,9 +241,11 @@ def example_line(example: Example) -> str:
     note = f' <span class="ex-note">({example.note})</span>' if example.note else ""
     return (
         '<div class="ex-line">'
-        f"{_play(example.base, example.slot)}<span>{example.base}</span>"
+        f"{_play(example.base, example.slot)}"
+        f"<span>{EXAMPLE_STRESS.get(example.base, example.base)}</span>"
         "<span>&rarr;</span>"
-        f"{_play(example.form, example.slot)}<span>{example.form}</span>{note}"
+        f"{_play(example.form, example.slot)}"
+        f"<span>{EXAMPLE_STRESS.get(example.form, example.form)}</span>{note}"
         "</div>"
     )
 
@@ -241,7 +261,7 @@ class GrammarRow:
 
     @property
     def guid(self) -> str:
-        return guid_for_row(self.front, GUID_NAMESPACE)
+        return guid_for_row(strip_stress(self.front), GUID_NAMESPACE)
 
     @property
     def deck(self) -> str:

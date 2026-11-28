@@ -41,7 +41,6 @@ ASPECT_SPLIT_RUNS = {
     "nGuzyLiKzQ": ["бежать", "по"],
     "u.A920{X_Z": ["нести", "понести"],
     "w],J){q5o7": ["вести", "повести"],
-    "upa@NcF;x7": ["ездить"],
 }
 DELETED_NOTE_RUNS = {
     "G,NZbr!zQV": ["что"],
@@ -51,9 +50,12 @@ DELETED_NOTE_RUNS = {
     "GzoPl`NFmi": ["мол"],
 }
 EXPECTED_LOST_RUNS = {
-    **ROUTED_AWAY_RUNS,
-    **ASPECT_SPLIT_RUNS,
-    **DELETED_NOTE_RUNS,
+    guid: sorted({run.replace("\u0301", "") for run in runs})
+    for guid, runs in {
+        **ROUTED_AWAY_RUNS,
+        **ASPECT_SPLIT_RUNS,
+        **DELETED_NOTE_RUNS,
+    }.items()
 }
 ALLOWED_CYRILLIC_TRANSLATIONS: list[str] = []
 
@@ -101,7 +103,9 @@ def _translations_with_cyrillic(translations):
 
 
 def _runs(*texts):
-    return {run for text in texts for run in RUSSIAN_RUN.findall(text)}
+    return {
+        run.replace("\u0301", "") for text in texts for run in RUSSIAN_RUN.findall(text)
+    }
 
 
 def test_no_translation_contains_cyrillic():
@@ -131,10 +135,13 @@ def test_cyrillic_guard_flags_a_tsv_translation_end_to_end(tmp_path):
 
 
 def _lost_runs(before, after):
+    before = {
+        guid: {r.replace("\u0301", "") for r in runs} for guid, runs in before.items()
+    }
     return {
-        guid: sorted(set(runs) - after.get(guid, set()))
+        guid: sorted(runs - after.get(guid, set()))
         for guid, runs in before.items()
-        if set(runs) - after.get(guid, set())
+        if runs - after.get(guid, set())
     }
 
 
@@ -170,11 +177,11 @@ def test_round_trip_check_reports_a_dropped_run():
 @pytest.mark.parametrize(
     ("sheet", "word", "field", "text"),
     [
-        ("Indeclinable Nouns", "кофе", "examples", "чёрный кофе"),
-        ("Indeclinable Nouns", "кино", "examples", "новое кино"),
-        ("Conjunctions", "как (conjunction)", "examples", "белый как снег"),
-        ("Conjunctions", "тоже", "examples", "Я тоже иду"),
-        ("Base Adverbs", "много", "examples", "много людей"),
+        ("Indeclinable Nouns", "кофе", "examples", "чёрный ко́фе"),
+        ("Indeclinable Nouns", "кино", "examples", "но́вое кино́"),
+        ("Conjunctions", "как (conjunction)", "examples", "бе́лый как снег"),
+        ("Conjunctions", "тоже", "examples", "Я то́же иду́"),
+        ("Base Adverbs", "много", "examples", "мно́го люде́й"),
     ],
 )
 def test_immutable_standalone_examples_moved(sheet, word, field, text):
@@ -186,14 +193,14 @@ def test_immutable_standalone_examples_moved(sheet, word, field, text):
 
 def test_immutable_lexeme_references_stay_inline():
     rows = {(r.pos, r.russian): r for r in _immutable_rows()}
-    assert "потому что" in rows[("Conjunctions", "так как")].info
+    assert "потому́ что" in rows[("Conjunctions", "так как")].info
     assert rows[("Conjunctions", "так как")].examples == ""
-    assert "пока не" in rows[("Conjunctions", "пока (conjunction)")].info
+    assert "пока́ не" in rows[("Conjunctions", "пока (conjunction)")].info
 
 
 def test_mutable_standalone_examples_moved_and_glossed_russian_kept():
     verbs = {r.imperfective: r for r in _mutable_rows()["Verbs"]}
-    assert verbs["касаться"].examples == "это тебя не каса́ется"
+    assert verbs["касаться"].examples == "э́то тебя́ не каса́ется"
     assert "каса́ется" not in verbs["касаться"].additional_info
     assert "звони́ть кому́" in verbs["звонить"].case_preposition
     assert verbs["звонить"].examples == ""
@@ -202,7 +209,7 @@ def test_mutable_standalone_examples_moved_and_glossed_russian_kept():
     assert adverbs["хорошо"].examples == ""
     assert "Всё хорошо́ = everything's fine" in adverbs["хорошо"].additional_info
     adjectives = {r.russian_m: r for r in _mutable_rows()["Adjectives"]}
-    assert adjectives["иной"].additional_info == "more literary than другой"
+    assert adjectives["иной"].additional_info == "more literary than друго́й"
     assert adjectives["иной"].translation == "different / other"
 
 

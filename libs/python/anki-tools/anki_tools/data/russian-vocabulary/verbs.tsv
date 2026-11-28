@@ -61,7 +61,7 @@
 60	менять	поменять	change / exchange	меня́ть / поменя́ть	1st (-ешь)	меня́ю	меня́ешь	меня́ют	меня́л / меня́ла				New	Accusative
 61	выбирать	выбрать	choose	выбира́ть / вы́брать	1st (-ешь)	выбира́ю	выбира́ешь	выбира́ют	выбира́л / выбира́ла				New	Accusative
 62	готовить	приготовить	prepare / cook&nbsp;	гото́вить / пригото́вить	2nd (-ишь)	гото́влю	гото́вишь	гото́вят	гото́вил / гото́вила				New	Accusative
-63	учить	выучить	learn (memorize) / teach	учи́ть / вы́учить	2nd (-ишь)	учу́	у́чишь	у́чат	учи́л / учи́ла		учить что = learn/memorize; учить кого чему = teach		New	Accusative, Dative
+63	учить	выучить	learn (memorize) / teach	учи́ть / вы́учить	2nd (-ишь)	учу́	у́чишь	у́чат	учи́л / учи́ла		учи́ть что = learn/memorize; учи́ть кого́ чему́ = teach		New	Accusative, Dative
 64	учиться	научиться	study / learn how to	учи́ться / научи́ться	2nd (-ишь)	учу́сь	у́чишься	у́чатся	учи́лся / учи́лась	a subject; где for a school			New	Dative
 65	строить	построить	build	стро́ить / постро́ить	2nd (-ишь)	стро́ю	стро́ишь	стро́ят	стро́ил / стро́ила				New	Accusative
 66	ломать	сломать	break	лома́ть / слома́ть	1st (-ешь)	лома́ю	лома́ешь	лома́ют	лома́л / лома́ла				New	Accusative
@@ -123,13 +123,13 @@
 122	передавать	передать	pass / hand over / convey	передава́ть / переда́ть	1st (-ешь)	передаю́	передаёшь	передаю́т	передава́л / передава́ла				New	Accusative
 123	вставать	встать	get up / stand up	встава́ть / встать	1st (-ешь)	встаю́	встаёшь	встаю́т	встава́л / встава́ла				New	
 124	убивать	убить	kill	убива́ть / уби́ть	1st (-ешь)	убива́ю	убива́ешь	убива́ют	убива́л / убива́ла				New	Accusative
-125	умирать	умереть	die	умира́ть / умере́ть	1st (-ешь)	умира́ю	умира́ешь	умира́ют	умира́л / умира́ла		умереть: past у́мер, умерла́, у́мерли		New	
-126	существовать	просуществовать	exist	существова́ть / просуществова́ть	1st (-ешь)	существу́ю	существу́ешь	существу́ют	существова́л / существова́ла		no true perfective; просуществовать = exist for a period		New	
+125	умирать	умереть	die	умира́ть / умере́ть	1st (-ешь)	умира́ю	умира́ешь	умира́ют	умира́л / умира́ла		умере́ть: past у́мер, умерла́, у́мерли		New	
+126	существовать	просуществовать	exist	существова́ть / просуществова́ть	1st (-ешь)	существу́ю	существу́ешь	существу́ют	существова́л / существова́ла		no true perfective; просуществова́ть = exist for a period		New	
 127	оказываться	оказаться	turn out / end up	ока́зываться / оказа́ться	1st (-ешь)	ока́зываюсь	ока́зываешься	ока́зываются	ока́зывался / ока́зывалась	кем / чем			New	Instrumental
 128	случаться	случиться	happen	случа́ться / случи́ться	1st (-ешь)	случа́юсь	случа́ешься	случа́ются	случа́лся / случа́лась				New	Instrumental
 129	собирать	собрать	collect / gather	собира́ть / собра́ть	1st (-ешь)	собира́ю	собира́ешь	собира́ют	собира́л / собира́ла				New	Accusative
-130	собираться	собраться	gather<br>intend to	собира́ться / собра́ться	1st (-ешь)	собира́юсь	собира́ешься	собира́ются	собира́лся / собира́лась		собираться + infinitive = plan/intend to		New	
-131	касаться	коснуться	touch / concern	каса́ться / косну́ться	1st (-ешь)	каса́юсь	каса́ешься	каса́ются	каса́лся / каса́лась			это тебя не каса́ется	New	Genitive
+130	собираться	собраться	gather<br>intend to	собира́ться / собра́ться	1st (-ешь)	собира́юсь	собира́ешься	собира́ются	собира́лся / собира́лась		собира́ться + infinitive = plan/intend to		New	
+131	касаться	коснуться	touch / concern	каса́ться / косну́ться	1st (-ешь)	каса́юсь	каса́ешься	каса́ются	каса́лся / каса́лась			э́то тебя́ не каса́ется	New	Genitive
 132	замечать	заметить	notice	замеча́ть / заме́тить	1st (-ешь)	замеча́ю	замеча́ешь	замеча́ют	замеча́л / замеча́ла				New	Accusative
 133	признавать	признать	admit / recognize	признава́ть / призна́ть	1st (-ешь)	признаю́	признаёшь	признаю́т	признава́л / признава́ла				New	Accusative
 134	готовиться	подготовиться	prepare	гото́виться / подгото́виться	2nd (-ишь)	гото́влюсь	гото́вишься	гото́вятся	гото́вился / гото́вилась				New	Dative
@@ -138,9 +138,9 @@
 137	отличаться	отличиться	differ / distinguish oneself	отлича́ться / отличи́ться	1st (-ешь)	отлича́юсь	отлича́ешься	отлича́ются	отлича́лся / отлича́лась	от	the perfective has a different meaning		New	Genitive
 138	ошибаться	ошибиться	make a mistake / be wrong	ошиба́ться / ошиби́ться	1st (-ешь)	ошиба́юсь	ошиба́ешься	ошиба́ются	ошиба́лся / ошиба́лась	в			New	Prepositional
 139	прятать	спрятать	hide	пря́тать / спря́тать	1st (-ешь)	пря́чу	пря́чешь	пря́чут	пря́тал / пря́тала				New	Accusative
-140	сдавать	сдать	take / pass / hand in	сдава́ть / сдать	1st (-ешь)	сдаю́	сдаёшь	сдаю́т	сдава́л / сдава́ла		сдавать экзамен = take; сдать экзамен = pass		New	Accusative
+140	сдавать	сдать	take / pass / hand in	сдава́ть / сдать	1st (-ешь)	сдаю́	сдаёшь	сдаю́т	сдава́л / сдава́ла		сдава́ть экза́мен = take; сдать экза́мен = pass		New	Accusative
 141	молчать	промолчать	be silent / keep quiet	молча́ть / промолча́ть	2nd (-ишь)	молчу́	молчи́шь	молча́т	молча́л / молча́ла				New	
-142	кричать	крикнуть	shout / give a shout	крича́ть / кри́кнуть	2nd (-ишь)	кричу́	кричи́шь	крича́т	крича́л / крича́ла		крикнуть = give a single shout		New	
+142	кричать	крикнуть	shout / give a shout	крича́ть / кри́кнуть	2nd (-ишь)	кричу́	кричи́шь	крича́т	крича́л / крича́ла		кри́кнуть = give a single shout		New	
 143	соглашаться	согласиться	agree	соглаша́ться / согласи́ться	1st (-ешь)	соглаша́юсь	соглаша́ешься	соглаша́ются	соглаша́лся / соглаша́лась	с			New	Instrumental
 144	отказываться	отказаться	refuse / decline	отка́зываться / отказа́ться	1st (-ешь)	отка́зываюсь	отка́зываешься	отка́зываются	отка́зывался / отка́зывалась				New	Genitive
 145	жаловаться	пожаловаться	complain	жа́ловаться / пожа́ловаться	1st (-ешь)	жа́луюсь	жа́луешься	жа́луются	жа́ловался / жа́ловалась				New	Accusative
@@ -157,7 +157,7 @@
 156	прощать	простить	forgive / excuse	проща́ть / прости́ть	1st (-ешь)	проща́ю	проща́ешь	проща́ют	проща́л / проща́ла				New	Accusative
 157	ценить	оценить	value / evaluate	цени́ть / оцени́ть	2nd (-ишь)	ценю́	це́нишь	це́нят	цени́л / цени́ла				New	Accusative
 158	проверять	проверить	check / verify	проверя́ть / прове́рить	1st (-ешь)	проверя́ю	проверя́ешь	проверя́ют	проверя́л / проверя́ла				New	Accusative
-159	спорить	поспорить	to argue / to bet	спо́рить / поспо́рить	2nd (-ишь)	спо́рю	спо́ришь	спо́рят	спо́рил / спо́рила		поспорить also = make a bet		New	Instrumental, Prepositional
+159	спорить	поспорить	to argue / to bet	спо́рить / поспо́рить	2nd (-ишь)	спо́рю	спо́ришь	спо́рят	спо́рил / спо́рила		поспо́рить also = make a bet		New	Instrumental, Prepositional
 160	сравнивать	сравнить	compare	сра́внивать / сравни́ть	1st (-ешь)	сра́вниваю	сра́вниваешь	сра́внивают	сра́внивал / сра́внивала				New	Accusative
 161	приглашать	пригласить	invite	приглаша́ть / пригласи́ть	1st (-ешь)	приглаша́ю	приглаша́ешь	приглаша́ют	приглаша́л / приглаша́ла				New	Accusative
 162	поздравлять	поздравить	congratulate	поздравля́ть / поздра́вить	1st (-ешь)	поздравля́ю	поздравля́ешь	поздравля́ют	поздравля́л / поздравля́ла				New	Accusative, Instrumental
@@ -179,21 +179,21 @@
 178	копить	накопить	save up	копи́ть / накопи́ть	2nd (-ишь)	коплю́	ко́пишь	ко́пят	копи́л / копи́ла				New	Accusative
 179	делиться	поделиться	share	дели́ться / подели́ться	2nd (-ишь)	делю́сь	де́лишься	де́лятся	дели́лся / дели́лась	чем; с кем			New	Instrumental
 180	бежать	побежать	to run / to set off running	бежа́ть / побежа́ть	irregular (mixed: бегу́/бежи́шь/бегу́т)	бегу́	бежи́шь	бегу́т	бежа́л / бежа́ла	в/на (destination)	unidirectional (cf. multidirectional бе́гать, already in this deck)		New	Accusative
-181	быть	побыть	to be	быть / побы́ть	irregular (no present tense in modern use; future: бу́ду/бу́дешь/бу́дет/бу́дут)	бу́ду	бу́дешь	бу́дут	был / была́	for a predicate noun/adj. (был врачо́м)	no true perfective; побыть = be for a period (delimitative, like просуществовать)		New	Instrumental
+181	быть	побыть	to be	быть / побы́ть	irregular (no present tense in modern use; future: бу́ду/бу́дешь/бу́дет/бу́дут)	бу́ду	бу́дешь	бу́дут	был / была́	for a predicate noun/adj. (был врачо́м)	no true perfective; побы́ть = be for a period (delimitative, like просуществова́ть)		New	Instrumental
 182	держать	подержать	to hold / keep	держа́ть / подержа́ть	2nd (держу́/де́ржишь; ж in 1sg)	держу́	де́ржишь	де́ржат	держа́л / держа́ла				New	Accusative
 183	ехать	поехать	to go / ride / drive / travel	е́хать / пое́хать	irregular (suppletive present stem: е́ду/е́дешь/е́дут)	е́ду	е́дешь	е́дут	е́хал / е́хала	в/на (destination); на (means of transport)	unidirectional (cf. multidirectional е́здить, already in this deck)		New	Accusative, Prepositional
-184	значить		mean / signify	зна́чить	2nd (regular)	зна́чу	зна́чишь	зна́чат	зна́чил / зна́чила	no case; often + a что-clause (это значит, что...)	imperfective only, no perfective	что э́то зна́чит?	New	
+184	значить		mean / signify	зна́чить	2nd (regular)	зна́чу	зна́чишь	зна́чат	зна́чил / зна́чила	no case; often + a что-clause (э́то зна́чит, что...)	imperfective only, no perfective	что э́то зна́чит?	New	
 185	иметь		to have / possess	име́ть	1st (regular, -еть)	име́ю	име́ешь	име́ют	име́л / име́ла		imperfectivum tantum -- no perfective exists		New	Accusative
 186	нравиться	понравиться	to enjoy / to like	нра́виться / понра́виться	2nd (в→вл in 1sg: нра́влюсь)	нра́влюсь	нра́вишься	нра́вятся	нра́вился / нра́вилась	(experiencer); the liked thing is the subject: мне нра́вится фильм			New	Dative
 187	оставлять	оставить	to leave / abandon	оставля́ть / оста́вить	2nd (perf. future, в→вл: оста́влю)	оста́влю	оста́вишь	оста́вят	оста́вил / оста́вила				New	Accusative
 188	подходить	подойти	to approach / come up to	подходи́ть / подойти́	irregular (-йти verb like идти́; impf. 2nd: подхожу́/подхо́дишь)	подхожу́	подхо́дишь	подхо́дят	подошёл / подошла́	к	past шёл/шла irregularity inherited from идти́		New	Dative
-189	попадать	попасть	to hit / to end up / find oneself	попада́ть / попа́сть	1st (impf. regular; perf. future: попаду́/попадёшь/попадут)	попада́ю	попада́ешь	попада́ют	попа́л / попа́ла	в/на (попа́сть в ава́рию = to get into an accident)			New	Accusative
-190	приезжать	приехать	to arrive	приезжа́ть / прие́хать	irregular (suppletive present stem, like ехать: приезжа́ю/прие́ду)	приезжа́ю	приезжа́ешь	приезжа́ют	прие́хал / прие́хала	в/на (destination); из/с (origin)			New	Accusative, Genitive
-191	приходиться	прийтись	to have to / to fit / fall to	приходи́ться / прийти́сь	irregular; impersonal -- used only in 3sg neutral (придётся/пришло́сь) and the infinitive	—	—	—	—	(experiencer): мне придётся	impersonal: 3sg neutral only -- придётся (fut.), приходится (pres.), пришло́сь (past); no personal m/f/pl forms exist		New	Dative
+189	попадать	попасть	to hit / to end up / find oneself	попада́ть / попа́сть	1st (impf. regular; perf. future: попаду́/попадёшь/попаду́т)	попада́ю	попада́ешь	попада́ют	попа́л / попа́ла	в/на (попа́сть в ава́рию = to get into an accident)			New	Accusative
+190	приезжать	приехать	to arrive	приезжа́ть / прие́хать	irregular (suppletive present stem, like е́хать: приезжа́ю/прие́ду)	приезжа́ю	приезжа́ешь	приезжа́ют	прие́хал / прие́хала	в/на (destination); из/с (origin)			New	Accusative, Genitive
+191	приходиться	прийтись	to have to / to fit / fall to	приходи́ться / прийти́сь	irregular; impersonal -- used only in 3sg neutral (придётся/пришло́сь) and the infinitive	—	—	—	—	(experiencer): мне придётся	impersonal: 3sg neutral only -- придётся (fut.), прихо́дится (pres.), пришло́сь (past); no personal m/f/pl forms exist		New	Dative
 192	садиться	сесть	to sit down	сади́ться / сесть	2nd (д→ж in 1sg: сажу́сь)	сажу́сь	сади́шься	садя́тся	сади́лся / сади́лась	в/на (destination)	perfective се́сть: сел / се́ла (irregular short stem)		New	Accusative
 193	становиться (verb)	стать	to become / to start (doing)	станови́ться / стать	irregular (perf. future: ста́ну/ста́нешь/ста́нут)	становлю́сь	стано́вишься	стано́вятся	стал / стала́	for a predicate noun/adj. (стал изве́стным)	стал / стала́ has mobile past stress, like был / была́		New	Instrumental
 194	удаваться	удаться	to succeed / turn out well / manage	удава́ться / уда́ться	irregular (д-verb; impersonal -- 3sg only: уда́стся/удало́сь)	—	—	—	—	(experiencer): мне удало́сь	impersonal, like прийти́сь; present is удаётся; no personal m/f/pl forms exist		New	Dative
-195	хотеть	захотеть	to want	хоте́ть / захоте́ть	irregular (mixed: хочу́/хо́чешь/хотя́т)	хочу́	хо́чешь	хотя́т	хоте́л / хоте́ла	(partitive); + infinitive	mixed conjugation: singular forms use 1st-conj. endings, plural uses 2nd-conj. (хотя́т, not "хочут")		New	Genitive, Accusative
+195	хотеть	захотеть	to want	хоте́ть / захоте́ть	irregular (mixed: хочу́/хо́чешь/хотя́т)	хочу́	хо́чешь	хотя́т	хоте́л / хоте́ла	(partitive); + infinitive	mixed conjugation: singular forms use 1st-conj. endings, plural uses 2nd-conj. (хотя́т, not "хо́чут")		New	Genitive, Accusative
 196	разговаривать		talk / have a conversation	разгова́ривать	1st (-ешь)	разгова́риваю	разгова́риваешь	разгова́ривают	разгова́ривал / разгова́ривала	с			New	Instrumental
 197	уметь	суметь	can / be able to / know how to	уме́ть / суме́ть	1st (-ешь)	уме́ю	уме́ешь	уме́ют	уме́л / уме́ла	+ infinitive	Unlike мочь = to be physically able		New	
 198	ненавидеть	возненавидеть	hate	ненави́деть / возненави́деть	2nd (-ишь)	ненави́жу	ненави́дишь	ненави́дят	ненави́дел / ненави́дела		д→ж in the 1sg		New	Accusative
