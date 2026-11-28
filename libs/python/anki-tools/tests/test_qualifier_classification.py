@@ -54,6 +54,7 @@ UNBUILT_BASELINE_GUIDS = {
     "O0]+_v[FK=",
 }
 NEW_HEADWORDS = {
+    "замок (stressed а)",
     "лично",
     "страшно",
     "по-другому",

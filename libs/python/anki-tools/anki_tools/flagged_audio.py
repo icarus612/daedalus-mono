@@ -17,7 +17,7 @@ Pure module: standard library and `audio_naming` only, no `anki` import.
 
 from collections.abc import Iterable, Sequence
 
-from anki_tools.audio_naming import strip_stress
+from anki_tools.audio_naming import STRESSED_AUDIO_WORDS, strip_stress
 
 FLAG_MASK = 7
 UNFLAGGED = 0
@@ -59,7 +59,8 @@ def clean_headwords(headwords: Sequence[str]) -> list[str]:
     """
     seen: list[str] = []
     for raw in headwords:
-        word = strip_stress(raw or "").strip()
+        raw = (raw or "").strip()
+        word = STRESSED_AUDIO_WORDS.get(raw) or strip_stress(raw).strip()
         variants = {part.strip() for part in word.split(" / ")}
         if len(variants) == 1:
             word = variants.pop()

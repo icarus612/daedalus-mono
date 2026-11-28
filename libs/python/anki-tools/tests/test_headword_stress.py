@@ -46,8 +46,8 @@ def _assert_only_stress_differs(names, before, after, headword_fields):
         if name == "Stress":
             continue
         if name in headword_fields:
-            plain = clean_headwords([new])
-            assert (plain[0] if plain else strip_stress(new)) == old, name
+            parts = {part.strip() for part in strip_stress(new).split(" / ")}
+            assert (parts.pop() if len(parts) == 1 else strip_stress(new)) == old, name
         else:
             assert new == old, name
 
@@ -86,18 +86,19 @@ def test_mutable_identity_is_byte_identical(sheet):
         assert row.guid == (
             mwp.GUID_PINS.get((sheet, source)) or guid_for_row(source, sheet)
         )
-        for field in headword_fields:
+        for index, field in enumerate(headword_fields):
             displayed = after[names.index(field)]
             if not displayed:
                 continue
             displayed = clean_headwords([displayed])[0]
-            for slot in mwp.VOICE_SLOTS:
-                assert build_filename(displayed, slot) == (
-                    build_filename(before[names.index(field)], slot)
-                )
-            assert spoken_text_for(displayed) == spoken_text_for(
-                strip_qualifier(before[names.index(field)])
+            stored = (
+                row.base_words[index]
+                if index < len(row.base_words)
+                else before[names.index(field)]
             )
+            for slot in mwp.VOICE_SLOTS:
+                assert build_filename(displayed, slot) == build_filename(stored, slot)
+            assert spoken_text_for(displayed) == spoken_text_for(stored)
 
 
 def test_immutable_identity_is_byte_identical():

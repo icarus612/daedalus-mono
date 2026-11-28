@@ -125,8 +125,8 @@ def real_words():
     return load_base_words(str(DATA_DIR), SHEETS)
 
 
-def test_load_base_words_matches_the_real_3178_word_set(real_words):
-    assert len(real_words) == 3178
+def test_load_base_words_matches_the_real_3179_word_set(real_words):
+    assert len(real_words) == 3179
 
 
 HOMOGRAPH_FORMS = {"самого", "самой", "самому", "самом"}
@@ -148,10 +148,10 @@ def _pronoun_extra_forms():
     return extras
 
 
-def test_pronoun_forms_add_205_audio_words_to_the_old_2973(real_words):
+def test_pronoun_forms_add_205_audio_words_to_the_old_2974(real_words):
     extras = _pronoun_extra_forms()
     assert len(extras) == 205
-    assert len(real_words) == 2973 + len(extras)
+    assert len(real_words) == 2974 + len(extras)
     assert set(extras) <= set(real_words)
 
 
@@ -162,7 +162,7 @@ def test_homograph_forms_of_samyj_get_their_own_audio_words(real_words):
 
 def test_plan_requests_total_pairs_over_the_real_word_set(real_words, tmp_path):
     plan = plan_requests(real_words, ("f1", "m2"), media_dir=str(tmp_path))
-    assert plan.total_pairs == 6356
+    assert plan.total_pairs == 6358
 
 
 def test_plan_requests_pending_excludes_present_pairs(tmp_path):
@@ -230,7 +230,7 @@ def test_main_dry_run_prints_the_real_environment_totals(real_words, tmp_path, c
     out = capsys.readouterr().out
     total_pairs = len(real_words) * 2
     present = len(present_pairs)
-    assert total_pairs == 6356
+    assert total_pairs == 6358
     assert (
         f"total {total_pairs} / present {present} / pending {total_pairs - present}"
         in out

@@ -521,7 +521,7 @@ def test_format_groups_table_empty_has_header_only() -> None:
 
 
 def test_load_notes_counts_and_order(notes: list[Note]) -> None:
-    assert len(notes) == 3137
+    assert len(notes) == 3138
     assert [n.family for n in notes[:369]] == ["immutable"] * 369
     assert [n.note_type for n in notes[348:369]] == [variant_pairs.NOTE_TYPE_NAME] * 21
     assert {n.family for n in notes[369:]} == {"mutable"}
@@ -535,7 +535,7 @@ def test_load_notes_counts_and_order(notes: list[Note]) -> None:
         "Numerals",
     ]
     counts = Counter(n.section for n in notes[227:])
-    assert [counts[s] for s in mutable_sections] == [2120, 223, 193, 147, 30, 55]
+    assert [counts[s] for s in mutable_sections] == [2121, 223, 193, 147, 30, 55]
 
 
 def test_load_notes_fields(notes: list[Note]) -> None:
@@ -554,7 +554,7 @@ def test_load_notes_fields(notes: list[Note]) -> None:
         assert note.english_distinction == ENGLISH_DISTINCTIONS.get(note.headword, "")
         if note.family == "mutable":
             assert note.note_type == mutable_words_plan.NOTE_TYPE_NAMES[note.section]
-    assert len({n.guid for n in notes}) == 3137
+    assert len({n.guid for n in notes}) == 3138
 
 
 def test_every_english_distinction_key_matches_a_headword(notes: list[Note]) -> None:

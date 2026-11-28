@@ -120,7 +120,7 @@ def sanitize_word_slug(word: str) -> str:
     strings sanitizing to the same slug), that must be reported and
     resolved explicitly, never silently patched by re-adding a hash here.
     """
-    normalized = unicodedata.normalize("NFC", strip_qualifier(word))
+    normalized = unicodedata.normalize("NFC", audio_word(word))
     slug = _UNSAFE_RUN.sub("-", normalized)
     slug = _MULTI_HYPHEN.sub("-", slug).strip("-")
     if not slug:
@@ -148,7 +148,28 @@ def build_filename(word: str, slot: str, dir_name: str | None = None) -> str:
 # as combined strings any more -- they are split into standalone single-word
 # rows upstream, in `immutable_words_plan.py`'s `ROW_SPLITS` -- so they need
 # no override here; each split word speaks itself.
+# Homographs told apart only by stress get their own recordings, so their
+# rows map to distinct audio words instead of sharing the stripped spelling.
+AUDIO_WORD_OVERRIDES: dict[str, str] = {
+    "замок (stressed а)": "замок-а",
+    "замок (stressed о)": "замок-о",
+}
+
+STRESSED_AUDIO_WORDS: dict[str, str] = {
+    "за́мок": "замок-а",
+    "замо́к": "замок-о",
+}
+
+
+def audio_word(source_text: str) -> str:
+    """The word a row's recordings are named and voiced after."""
+    source_text = source_text.strip()
+    return AUDIO_WORD_OVERRIDES.get(source_text, strip_qualifier(source_text))
+
+
 SPOKEN_TEXT_OVERRIDES: dict[str, str] = {
+    "замок-а": "за́мок",
+    "замок-о": "замо́к",
     "в / во": "во",
     "с / со": "со",
     "к / ко": "ко",
@@ -178,7 +199,7 @@ def spoken_text_for(source_text: str) -> str:
     table is keyed on the stripped text, so "как (conjunction)" and plain
     "как" resolve through the same entry rather than needing one each.
     """
-    stripped = strip_qualifier(source_text)
+    stripped = audio_word(source_text)
     return _sentence_form(SPOKEN_TEXT_OVERRIDES.get(stripped, stripped))
 
 

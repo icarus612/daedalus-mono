@@ -149,7 +149,7 @@
 148	окно	window	окно́	n	о́кна	окна́	о́кон	No	Home & Household			New	3
 149	стекло	glass	стекло́	n	стёкла	стекла́	стёкол	No	Home & Household			New	3
 150	ключ	key	ключ	m	ключи́	ключа́	ключе́й	No	Home & Household			New	3
-151	замок	lock / castle	за́мок / замо́к	m	за́мки / замки́	за́мка / замка́	за́мков / замко́в	No	Home & Household	за́мок = castle, замо́к = lock		New	3
+151	замок (stressed о)	lock	замо́к	m	замки́	замка́	замко́в	No	Home & Household	different word: за́мок (stressed а) = castle		New	3
 152	стол	table	стол	m	столы́	стола́	столо́в	No	Home & Household			New	3
 153	стул	chair / stool	стул	m	сту́лья	сту́ла	сту́льев	No	Home & Household	plural: стулья		New	3
 154	кровать	bed	крова́ть	f	крова́ти	крова́ти	крова́тей	No	Home & Household			New	3
@@ -2119,3 +2119,4 @@
 2123	рюкзак	backpack	рюкза́к	m	рюкзаки́	рюкзака́	рюкзако́в	No	Objects	from German Rucksack		New	1
 2124	коляска	pram	коля́ска	f	коля́ски	коля́ски	коля́сок	No	Transport & Travel	also a wheelchair (инвали́дная коля́ска)		New	3
 2125	мультфильм	cartoon	мультфи́льм	m	мультфи́льмы	мультфи́льма	мультфи́льмов	No	Knowledge & Culture	short: мульт; from мультипликацио́нный фильм		New	2
+2126	замок (stressed а)	castle	за́мок	m	за́мки	за́мка	за́мков	No	City & Places	different word: замо́к (stressed о) = lock		New	3

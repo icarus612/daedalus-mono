@@ -872,7 +872,7 @@ class TestRealData:
 
     def test_tsv_note_counts(self, tsv_notes):
         assert fc.note_counts(tsv_notes) == {
-            "Nouns": 2120,
+            "Nouns": 2121,
             "Verbs": 223,
             "Adjectives": 193,
             "Adverbs": 147,

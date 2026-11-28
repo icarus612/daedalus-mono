@@ -103,7 +103,7 @@ def _audio_field_for(word):
 
 
 def test_row_counts(nouns, verbs, adjectives, adverbs, pronouns, numerals):
-    assert len(nouns) == 2120
+    assert len(nouns) == 2121
     assert len(verbs) == 223
     assert len(adjectives) == 193
     assert len(adverbs) == 147
@@ -167,7 +167,7 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
     pronouns_cards = len(pronouns) * 2 + 2 * sum(len(p.forms()) for p in pronouns)
     numerals_cards = len(numerals) * 2
 
-    assert nouns_cards == 4240
+    assert nouns_cards == 4242
     assert verbs_cards == 856
     assert adjectives_cards == 386
     assert adverbs_cards == 294
@@ -180,7 +180,7 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
         + adverbs_cards
         + pronouns_cards
         + numerals_cards
-        == 6356
+        == 6358
     )
 
 
@@ -269,12 +269,12 @@ def test_no_slug_collisions_across_all_base_words(
         + [w for row in pronouns for w in row.base_words]
         + [w for row in numerals for w in row.base_words]
     )
-    assert len(all_words) == 2973
+    assert len(all_words) == 2974
 
     slugs = [sanitize_word_slug(w) for w in all_words]
     dupes = {slug: c for slug, c in Counter(slugs).items() if c > 1}
     assert set(dupes) == _EXPECTED_DUPLICATE_SLUGS, dupes
-    assert len(set(slugs)) == 2958
+    assert len(set(slugs)) == 2959
 
 
 def test_named_media_overlap_slugs_present(nouns, verbs, adjectives, adverbs):
@@ -860,6 +860,8 @@ _QUALIFIED_HEADWORD_GUIDS = {
     ("Nouns", "учёный (noun)"): "O$7z7Z?Aaf",
     ("Numerals", "первый (numeral)"): "B.OZ`5x]dH",
     ("Numerals", "тысяча (numeral)"): "gb){z{|eCX",
+    ("Nouns", "замок (stressed о)"): "H#2JogQ-qe",
+    ("Nouns", "замок (stressed а)"): "ycc5p#wxe%",
     ("Pronouns", "что (pronoun)"): "gJ6S@(5[xc",
     ("Verbs", "печь (verb)"): "kSl#$v8`X`",
     ("Verbs", "становиться (verb)"): "m<ByTC4uI[",
@@ -2039,7 +2041,7 @@ def test_pronoun_card_count_derivation(
         + form_cards
         + 2 * len(numerals)
     )
-    assert total == 6356
+    assert total == 6358
 
 
 def test_form_lines_stay_top_aligned_and_wrap_normally() -> None:
@@ -2060,6 +2062,7 @@ _HEAD_GUIDS_OF_RENAMED_ROWS = {
     ("Verbs", "печь (verb)"): "kSl#$v8`X`",
     ("Verbs", "становиться (verb)"): "m<ByTC4uI[",
     ("Numerals", "тысяча (numeral)"): "gb){z{|eCX",
+    ("Nouns", "замок (stressed о)"): "H#2JogQ-qe",
 }
 
 

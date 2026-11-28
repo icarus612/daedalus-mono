@@ -101,6 +101,8 @@ def test_sanitize_word_slug_deterministic():
 
 def test_spoken_text_overrides_table_contents():
     assert SPOKEN_TEXT_OVERRIDES == {
+        "замок-а": "за\u0301мок",
+        "замок-о": "замо\u0301к",
         "в / во": "во",
         "с / со": "со",
         "к / ко": "ко",

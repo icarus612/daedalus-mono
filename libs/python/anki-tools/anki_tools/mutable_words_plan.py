@@ -52,6 +52,7 @@ GUID_PINS: dict[tuple[str, str], str] = {
     ("Verbs", "печь (verb)"): "kSl#$v8`X`",
     ("Verbs", "становиться (verb)"): "m<ByTC4uI[",
     ("Numerals", "тысяча (numeral)"): "gb){z{|eCX",
+    ("Nouns", "замок (stressed о)"): "H#2JogQ-qe",
 }
 
 VOICE_SLOTS: tuple[str, ...] = ("f1", "m2")
