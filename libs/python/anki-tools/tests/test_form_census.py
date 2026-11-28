@@ -815,9 +815,9 @@ class TestCensusCells:
 REAL_DATA_DIR = Path(fc.__file__).resolve().parent / "data" / "russian-vocabulary"
 
 PLANNED_EMPTY_COUNTS = {
-    "Nouns": {"Plural": 134, "Genitive Sg": 622, "Genitive Pl": 623},
-    "Adjectives": {"Short Form": 159, "Comparative": 166},
-    "Adverbs": {"Comparative": 43},
+    "Nouns": {"Plural": 206, "Genitive Sg": 639, "Genitive Pl": 677},
+    "Adjectives": {"Short Form": 170, "Comparative": 181},
+    "Adverbs": {"Comparative": 48},
     "Numerals": {"Gender Forms": 44},
     "Verbs": {
         "Perfective": 17,
@@ -848,6 +848,16 @@ EXPECTED_EMPTY_COUNTS = {
 }
 
 
+PENDING_LIVE_GUIDS = Path(__file__).resolve().parent / "data" / "pending-live-guids.txt"
+
+
+def _pending_live_guids():
+    """Notes added to the TSVs but not yet built into the live collection."""
+    if not PENDING_LIVE_GUIDS.exists():
+        return set()
+    return set(PENDING_LIVE_GUIDS.read_text(encoding="utf-8").splitlines())
+
+
 def _live_collection_path():
     from anki_tools.audio_naming import get_anki_collection_path
 
@@ -862,10 +872,10 @@ class TestRealData:
 
     def test_tsv_note_counts(self, tsv_notes):
         assert fc.note_counts(tsv_notes) == {
-            "Nouns": 631,
+            "Nouns": 2120,
             "Verbs": 223,
-            "Adjectives": 174,
-            "Adverbs": 141,
+            "Adjectives": 193,
+            "Adverbs": 147,
             "Pronouns": 30,
             "Numerals": 55,
         }
@@ -894,7 +904,7 @@ class TestRealData:
             if strict[sheet][field] != count
         ]
         assert ("Adjectives", "Short Form") in differing
-        assert strict["Adjectives"]["Short Form"] == 22
+        assert strict["Adjectives"]["Short Form"] == 33
 
     def test_every_empty_cell_is_classified_and_totals_match(self, tsv_notes):
         cells = fc.census_cells(tsv_notes)
@@ -914,7 +924,10 @@ class TestRealData:
         assert (path.stat().st_mtime_ns, path.stat().st_size) == before
         result = fc.reconcile(tsv_notes, collection)
         assert result.mismatches == {}
-        assert result.unbuilt == {s: () for s in fc.SHEETS}
+        pending = _pending_live_guids()
+        assert {s: set(result.unbuilt[s]) - pending for s in fc.SHEETS} == {
+            s: set() for s in fc.SHEETS
+        }
         assert result.orphans == {s: () for s in fc.SHEETS}
         assert sum(len(notes) for notes in collection.values()) > 0
         dropped_sheet = "Verbs"
@@ -937,4 +950,4 @@ class TestRealData:
         loose = fc.reconcile(tsv_notes, collection, dash_rule=True)
         strict = fc.reconcile(tsv_notes, collection, dash_rule=False)
         assert loose.tsv_counts != strict.tsv_counts
-        assert loose.tsv_counts["Adjectives"]["Short Form"] == 29
+        assert loose.tsv_counts["Adjectives"]["Short Form"] == 40

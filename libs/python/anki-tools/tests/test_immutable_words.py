@@ -77,6 +77,7 @@ from anki_tools.audio_naming import (
     audio_field_value,
     parse_audio_filenames,
     strip_qualifier,
+    strip_stress,
 )
 from anki_tools.immutable_words import (
     NEW_NOTE_TYPE_ID,
@@ -107,6 +108,15 @@ from anki_tools.immutable_words_plan import (
 # by name, to sidestep that entirely") -- the synthetic fixture copies that
 # quirk so "renamed with no trailing space" actually proves something.
 SOURCE_NOTE_TYPE_NAME = "Russian - Common Words (Ellis Version) "
+
+
+def _find_russian(col, word, deck=None):
+    scope = f'deck:"{deck}" ' if deck else ""
+    return [
+        note_id
+        for note_id in col.find_notes(f'{scope}"Russian:nc:{word}"')
+        if strip_stress(col.get_note(note_id)["Russian"]) == word
+    ]
 
 
 def _untinted(text: str) -> str:
@@ -795,8 +805,8 @@ def test_build_deck_tree_duplicate_russian_text_both_notes_exist_in_own_decks(
 
     conjunctions_deck = subdeck_name("Conjunctions")
     particles_deck = subdeck_name("Particles")
-    conjunctions_da = build_col.find_notes('deck:"%s" Russian:да' % conjunctions_deck)
-    particles_da = build_col.find_notes('deck:"%s" Russian:да' % particles_deck)
+    conjunctions_da = _find_russian(build_col, "да", conjunctions_deck)
+    particles_da = _find_russian(build_col, "да", particles_deck)
 
     # Both notes exist, one per deck, and they are not the same note --
     # two intended notes, not a duplicate bug (a synthetic fixture; the
@@ -832,7 +842,7 @@ def test_build_deck_tree_audio_field_predicts_four_filenames(cloned, build_col):
     assert len(note_ids) == len(rows)
     for note_id in note_ids:
         note = build_col.get_note(note_id)
-        russian = note["Russian"]
+        russian = strip_stress(note["Russian"])
         expected_names = [build_filename(russian, slot) for slot in SLOTS]
         assert _audio_srcs(note["Audio"]) == expected_names
         assert note["Audio"] != ""
@@ -858,9 +868,7 @@ def test_build_deck_tree_every_note_guid_matches_its_row_guid(cloned, build_col)
     checked = 0
     for row in rows:
         deck_name = subdeck_name(row.pos)
-        note_ids = build_col.find_notes(
-            'deck:"%s" Russian:"%s"' % (deck_name, row.russian)
-        )
+        note_ids = _find_russian(build_col, row.russian, deck_name)
         assert len(note_ids) == 1, (
             f"expected exactly one note for pos={row.pos!r} "
             f"russian={row.russian!r}, got {len(note_ids)}"
@@ -1456,7 +1464,7 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
     russian_to_audio = {}
     for note_id in build_col.find_notes(""):
         note = build_col.get_note(note_id)
-        russian_to_audio[note["Russian"]] = note["Audio"]
+        russian_to_audio[strip_stress(note["Russian"])] = note["Audio"]
 
     for russian in ("то... то...", "словно", "будто", "да"):
         assert russian in russian_to_audio, f"missing note for {russian!r}"
@@ -1539,12 +1547,12 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
         # `Russian`, different subdeck, told apart by `Russian Distinction`
         # -- and both notes on that same single note type.
         for word in ("как", "когда", "пока"):
-            note_ids = fresh_col.find_notes(f"Russian:{word}")
+            note_ids = _find_russian(fresh_col, word)
             assert len(note_ids) == 2, (
                 f"{word}: expected a conjunction and an adverb note, "
                 f"found {len(note_ids)}"
             )
-            assert {fresh_col.get_note(nid)["Russian"] for nid in note_ids} == {word}
+            assert {strip_stress(fresh_col.get_note(nid)["Russian"]) for nid in note_ids} == {word}
             assert {
                 fresh_col.get_note(nid)["Russian Distinction"] for nid in note_ids
             } == {"conjunction", "adverb"}
@@ -1560,20 +1568,17 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
 
         # Spot-checked note, verbatim against the real document.
         last_indeclinable = [r for r in rows if r.pos == "Indeclinable Nouns"][-1]
-        spot_note_ids = fresh_col.find_notes(
-            f'deck:"{subdeck_name("Indeclinable Nouns")}" '
-            f'Russian:"{last_indeclinable.russian}"'
+        spot_note_ids = _find_russian(
+            fresh_col, last_indeclinable.russian, subdeck_name("Indeclinable Nouns")
         )
         assert spot_note_ids
         spot_note = fresh_col.get_note(spot_note_ids[0])
-        assert spot_note["Russian"] == last_indeclinable.russian
+        assert strip_stress(spot_note["Russian"]) == last_indeclinable.russian
         assert spot_note["Translation"] == last_indeclinable.english
 
         # Spot-checked against the fresh import, not `rows`/`build_col`.
         particles_deck = subdeck_name("Particles")
-        budto_note_ids = fresh_col.find_notes(
-            f'deck:"{particles_deck}" Russian:"будто"'
-        )
+        budto_note_ids = _find_russian(fresh_col, "будто", particles_deck)
         assert len(budto_note_ids) == 1
         budto_note = fresh_col.get_note(budto_note_ids[0])
         assert budto_note["Translation"] == "as if / as though"
@@ -1593,7 +1598,7 @@ def test_e2e_real_document_round_trip_import_asserts_on_imported_result(
         for note_id in all_note_ids:
             note = fresh_col.get_note(note_id)
             audio_value = note["Audio"]
-            russian = note["Russian"]
+            russian = strip_stress(note["Russian"])
 
             # Every field yields exactly 4 filenames -- the same elements
             # the card template's own JS reads -- proving the template will
@@ -1662,9 +1667,7 @@ def _build_real_package_with_guids(rows, collection_snapshot_copy, tmp_path, out
 
     guids = {}
     for row in rows:
-        note_ids = build_col.find_notes(
-            'deck:"%s" Russian:"%s"' % (row.deck, strip_qualifier(row.russian))
-        )
+        note_ids = _find_russian(build_col, strip_qualifier(row.russian), row.deck)
         assert len(note_ids) == 1, (
             f"expected exactly one note for pos={row.pos!r} "
             f"russian={row.russian!r}, got {len(note_ids)}"
@@ -1823,9 +1826,7 @@ def test_e2e_rebuild_after_translation_edit_reimports_in_place_not_duplicated(
         )
 
         edited_row = rows_v2[edited_index]
-        note_ids = fresh_col.find_notes(
-            'deck:"%s" Russian:"%s"' % (edited_row.deck, edited_row.russian)
-        )
+        note_ids = _find_russian(fresh_col, edited_row.russian, edited_row.deck)
         assert len(note_ids) == 1, (
             "the edited row must still resolve to exactly ONE note after "
             "the rebuild+reimport -- more than one means it duplicated "
@@ -2627,9 +2628,7 @@ def test_e2e_live_rebuild_translation_and_template_edit_update_in_place_default_
 
         # Content updated on the EXISTING note, not a new one.
         edited_row = rows_v2[edited_index]
-        note_ids = fresh_col.find_notes(
-            'deck:"%s" Russian:"%s"' % (edited_row.deck, edited_row.russian)
-        )
+        note_ids = _find_russian(fresh_col, edited_row.russian, edited_row.deck)
         assert len(note_ids) == 1, (
             "the edited row must still resolve to exactly ONE note after "
             "the rebuild+reimport -- more than one means it duplicated "
@@ -2745,7 +2744,7 @@ def test_e2e_every_imported_translation_exactly_matches_source_document(
             deck_leaf = fresh_col.decks.name(
                 fresh_col.get_card(card_ids[0]).did
             ).rsplit("::", 1)[-1]
-            key = f"{note['Russian']}||{deck_leaf}"
+            key = f"{strip_stress(note['Russian'])}||{deck_leaf}"
             seen_keys.add(key)
             expected = expected_by_key.get(key)
             if expected is None:
@@ -2770,18 +2769,12 @@ def test_e2e_every_imported_translation_exactly_matches_source_document(
         assert total_notes == 348
         assert total_cards == 696
 
-        conjunctions_da = fresh_col.find_notes(
-            f'deck:"{subdeck_name("Conjunctions")}" Russian:да'
-        )
-        particles_da = fresh_col.find_notes(
-            f'deck:"{subdeck_name("Particles")}" Russian:да'
-        )
+        conjunctions_da = _find_russian(fresh_col, "да", subdeck_name("Conjunctions"))
+        particles_da = _find_russian(fresh_col, "да", subdeck_name("Particles"))
         assert conjunctions_da == []
         assert len(particles_da) == 1
 
-        so_note_ids = fresh_col.find_notes(
-            f'deck:"{subdeck_name("Prepositions")}" Russian:"из-за"'
-        )
+        so_note_ids = _find_russian(fresh_col, "из-за", subdeck_name("Prepositions"))
         assert len(so_note_ids) == 1
         so_note = fresh_col.get_note(so_note_ids[0])
         assert _untinted(so_note["Translation"]).endswith(
@@ -3082,7 +3075,9 @@ def _rendered_hint_texts(build_col):
     texts = {}
     for note_id in build_col.find_notes(""):
         note = build_col.get_note(note_id)
-        found = texts.setdefault((note["Russian"], note["Russian Distinction"]), set())
+        found = texts.setdefault(
+            (strip_stress(note["Russian"]), note["Russian Distinction"]), set()
+        )
         for card in note.cards():
             output = card.render_output()
             for rendered in (output.question_text, output.answer_text):

@@ -17,7 +17,9 @@ from anki_tools.anki_identity import guid_for_row, notetype_id_for_name
 from anki_tools.audio_naming import (
     audio_field_value,
     build_filename,
+    stressed_headword,
     strip_qualifier,
+    strip_stress,
 )
 from anki_tools.examples_field import EXAMPLES_FIELD
 
@@ -39,6 +41,17 @@ SUBDECK_LEAVES = {
 # the primitives (тут, вчера), this leaf holds the ones built off an adjective.
 SUBDECK_OVERRIDES = {
     "Adverbs": "Languages::Russian::3. Immutable Words::f. Derived Adverbs",
+}
+
+GUID_PINS: dict[tuple[str, str], str] = {
+    ("Adjectives", "больной (adjective)"): "zYsym)dH|j",
+    ("Adjectives", "русский (adjective)"): "OgFsH,_*(?",
+    ("Adjectives", "знакомый (adjective)"): "t^.>wMddYw",
+    ("Adverbs", "зло (adverb)"): "EsD+YgsXnc",
+    ("Adverbs", "тепло (adverb)"): "rD}7l|Qntg",
+    ("Verbs", "печь (verb)"): "kSl#$v8`X`",
+    ("Verbs", "становиться (verb)"): "m<ByTC4uI[",
+    ("Numerals", "тысяча (numeral)"): "gb){z{|eCX",
 }
 
 VOICE_SLOTS: tuple[str, ...] = ("f1", "m2")
@@ -286,7 +299,10 @@ class NounRow:
 
     @property
     def guid(self) -> str:
-        return guid_for_row(self.base_words[0], self.SHEET)
+        headword = self.base_words[0]
+        return GUID_PINS.get((self.SHEET, headword)) or guid_for_row(
+            headword, self.SHEET
+        )
 
     @property
     def deck(self) -> str:
@@ -295,7 +311,7 @@ class NounRow:
     def fields(self) -> list[str]:
         names = audio_names(self.russian)
         return [
-            headword_text(self.russian),
+            headword_text(self.russian, self.stress),
             self.translation,
             self.stress,
             self.gender,
@@ -347,7 +363,10 @@ class VerbRow:
 
     @property
     def guid(self) -> str:
-        return guid_for_row(self.base_words[0], self.SHEET)
+        headword = self.base_words[0]
+        return GUID_PINS.get((self.SHEET, headword)) or guid_for_row(
+            headword, self.SHEET
+        )
 
     @property
     def deck(self) -> str:
@@ -357,8 +376,8 @@ class VerbRow:
         imperfective_names = audio_names(self.imperfective)
         perfective_names = audio_names(self.perfective)
         return [
-            headword_text(self.imperfective),
-            headword_text(self.perfective),
+            headword_text(self.imperfective, self.stress),
+            headword_text(self.perfective, self.stress),
             self.translation,
             self.stress,
             self.conjugation,
@@ -402,7 +421,10 @@ class AdjectiveRow:
 
     @property
     def guid(self) -> str:
-        return guid_for_row(self.base_words[0], self.SHEET)
+        headword = self.base_words[0]
+        return GUID_PINS.get((self.SHEET, headword)) or guid_for_row(
+            headword, self.SHEET
+        )
 
     @property
     def deck(self) -> str:
@@ -411,7 +433,7 @@ class AdjectiveRow:
     def fields(self) -> list[str]:
         names = audio_names(self.russian_m)
         return [
-            headword_text(self.russian_m),
+            headword_text(self.russian_m, self.stress),
             self.translation,
             self.stress,
             self.feminine,
@@ -451,7 +473,10 @@ class AdverbRow:
 
     @property
     def guid(self) -> str:
-        return guid_for_row(self.base_words[0], self.SHEET)
+        headword = self.base_words[0]
+        return GUID_PINS.get((self.SHEET, headword)) or guid_for_row(
+            headword, self.SHEET
+        )
 
     @property
     def deck(self) -> str:
@@ -460,7 +485,7 @@ class AdverbRow:
     def fields(self) -> list[str]:
         names = audio_names(self.adverb)
         return [
-            headword_text(self.adverb),
+            headword_text(self.adverb, self.stress),
             self.translation,
             self.stress,
             self.from_adjective,
@@ -509,8 +534,8 @@ def pronoun_audio_word(headword: str, form_text: str) -> str:
     """The audio word for a form: its bare spelling, except the forms of
     `самый` that spell like forms of `сам` and so need their own clips.
     """
-    bare = bare_form(form_text)
-    if strip_qualifier(headword) == "самый" and bare in _SAMYJ_HOMOGRAPHS:
+    bare = strip_stress(form_text)
+    if strip_stress(strip_qualifier(headword)) == "самый" and bare in _SAMYJ_HOMOGRAPHS:
         return f"{bare}-самый"
     return bare
 
@@ -637,7 +662,7 @@ class PronounRow:
                     )
                     role = "mn"
             cell = _Cell(slot.case, text, qualifier, role)
-            (base if bare_form(text) == headword else forms).append(cell)
+            (base if strip_stress(text) == headword else forms).append(cell)
         return base, forms
 
     def base_rows(self) -> tuple[CaseRow, ...]:
@@ -648,7 +673,7 @@ class PronounRow:
         """The distinct non-headword words, at most `PRONOUN_FORM_SLOTS`."""
         groups: dict[str, list[_Cell]] = {}
         for cell in self._cells()[1]:
-            groups.setdefault(bare_form(cell.text), []).append(cell)
+            groups.setdefault(strip_stress(cell.text), []).append(cell)
         if len(groups) > PRONOUN_FORM_SLOTS:
             raise ValueError(
                 f"{self.russian!r} has {len(groups)} forms, "
@@ -673,7 +698,10 @@ class PronounRow:
 
     @property
     def guid(self) -> str:
-        return guid_for_row(self.base_words[0], self.SHEET)
+        headword = self.base_words[0]
+        return GUID_PINS.get((self.SHEET, headword)) or guid_for_row(
+            headword, self.SHEET
+        )
 
     @property
     def deck(self) -> str:
@@ -698,7 +726,7 @@ class PronounRow:
             else:
                 form_fields += ["", "", "", ""]
         return [
-            headword_text(self.russian),
+            headword_text(self.russian, self.stress),
             self.translation,
             self.stress,
             _pronoun_type_shown(self.russian, self.pronoun_type, cue),
@@ -712,11 +740,6 @@ class PronounRow:
             base_cases,
             *form_fields,
         ]
-
-
-def bare_form(form: str) -> str:
-    """`form` with its stress marks removed."""
-    return form.replace("\u0301", "")
 
 
 @dataclass(frozen=True)
@@ -740,7 +763,10 @@ class NumeralRow:
 
     @property
     def guid(self) -> str:
-        return guid_for_row(self.base_words[0], self.SHEET)
+        headword = self.base_words[0]
+        return GUID_PINS.get((self.SHEET, headword)) or guid_for_row(
+            headword, self.SHEET
+        )
 
     @property
     def deck(self) -> str:
@@ -749,7 +775,7 @@ class NumeralRow:
     def fields(self) -> list[str]:
         names = audio_names(self.russian)
         return [
-            headword_text(self.russian),
+            headword_text(self.russian, self.stress),
             self.translation,
             self.stress,
             self.numeral_type,
@@ -793,16 +819,26 @@ def audio_names(base_word: str) -> list[str]:
     return [build_filename(base_word, slot) for slot in VOICE_SLOTS]
 
 
-def headword_text(stored: str) -> str:
-    """The headword as a note stores it: bare, with the editorial qualifier
-    carried by `Russian Distinction` instead of printed twice.
+def headword_text(stored: str, stress: str = "") -> str:
+    """The headword as a note displays it: stressed from the row's `Stress`
+    cell, with the editorial qualifier carried by `Russian Distinction`
+    instead of printed twice.
 
-    Deliberately decoupled from `base_words`, which keeps the QUALIFIED text
-    because `guid_for_row` hashes it -- stripping it there would re-GUID
-    `первый (adjective)` and its four siblings, and the next import would
-    insert duplicates instead of updating the user's scheduling.
+    Deliberately decoupled from `base_words`, which keeps the plain QUALIFIED
+    text because `guid_for_row` hashes it and audio names derive from it.
     """
-    return strip_qualifier(stored)
+    return stressed_headword(strip_qualifier(stored), stress_for(stored, stress))
+
+
+def stress_for(word: str, stress: str) -> str:
+    """The `stress` part (a verb's is `imperf / perf`) that spells `word`,
+    or "" when none does."""
+    bare = strip_qualifier(word)
+    matches: list[str] = []
+    for part in stress.split(" / "):
+        if strip_stress(part.strip()) == bare and part.strip() not in matches:
+            matches.append(part.strip())
+    return " / ".join(matches)
 
 
 def parse_nouns(tsv_path: str) -> list[NounRow]:
@@ -1266,9 +1302,9 @@ def _detail_fields(sheet: str, primary_field: str) -> list[str]:
         distinction.RUSSIAN_FIELD,
         distinction.ENGLISH_FIELD,
         "Case",
-        *PRONOUN_FORM_FIELDS,
-        *PRONOUN_DERIVED_FIELDS,
     }
+    if sheet == "Pronouns":
+        excluded |= {*PRONOUN_FORM_FIELDS, *PRONOUN_DERIVED_FIELDS}
     if sheet == "Verbs":
         excluded |= set(_ASPECT_COUNTERPART)
     return [name for name in FIELD_NAMES[sheet] if name not in excluded]

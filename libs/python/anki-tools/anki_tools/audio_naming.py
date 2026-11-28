@@ -73,6 +73,35 @@ def strip_qualifier(word: str) -> str:
     return _TRAILING_QUALIFIER.sub("", word.strip())
 
 
+STRESS_MARK = "\u0301"
+
+
+def strip_stress(text: str) -> str:
+    """`text` without stress marks: the plain spelling every identity key
+    (GUID, audio filename, TTS text, cue and case lookups) is built from.
+
+    Deliberately NOT applied inside `strip_qualifier`/`build_filename`: the
+    grammar deck names recordings of stress-only homographs (`ме́ста` vs
+    `места́`) from their stressed text, so stripping there would merge them.
+    Code that reads a displayed headword back must call this first.
+    """
+    return text.replace(STRESS_MARK, "")
+
+
+def stressed_headword(plain: str, stressed: str) -> str:
+    """`plain` with its word replaced by `stressed`, keeping any qualifier
+    suffix. Falls back to `plain` when `stressed` is blank or spells a
+    different word.
+    """
+    plain = plain.strip()
+    bare = strip_qualifier(plain)
+    candidate = stressed.strip()
+    parts = [part.strip() for part in candidate.split(" / ")]
+    if not candidate or any(strip_stress(part) != bare for part in parts):
+        return plain
+    return candidate + plain[len(bare) :]
+
+
 def sanitize_word_slug(word: str) -> str:
     """Turn a Russian word/phrase into a filesystem-safe, readable slug.
 
@@ -132,6 +161,7 @@ SPOKEN_TEXT_OVERRIDES: dict[str, str] = {
     "самой-самый": "са́мой",
     "самому-самый": "са́мому",
     "самом-самый": "са́мом",
+    "вместо": "вме́ста",
 }
 
 

@@ -20,7 +20,11 @@ from anki_tools import (
     immutable_words_plan,
 )
 from anki_tools.anki_identity import notetype_id_for_name
-from anki_tools.audio_naming import audio_field_value, build_filename
+from anki_tools.audio_naming import (
+    audio_field_value,
+    build_filename,
+    stressed_headword,
+)
 from anki_tools.immutable_words_plan import SLOTS
 
 NOTE_TYPE_NAME = "Russian - Variant Pairs (Ellis Version)"
@@ -59,6 +63,8 @@ class VariantPair:
     russian_distinction: str
     english_distinction: str
     guid: str
+    russian_stressed: str = ""
+    variant_stressed: str = ""
 
     @property
     def deck(self) -> str:
@@ -84,8 +90,8 @@ class VariantPair:
             else self.translation
         )
         return [
-            self.russian,
-            self.variant,
+            stressed_headword(self.russian, self.russian_stressed),
+            stressed_headword(self.variant, self.variant_stressed),
             self.register,
             translation,
             "",
@@ -115,6 +121,8 @@ def load_pairs(path: Path | str = TABLE) -> list[VariantPair]:
             russian_distinction=row["Russian Distinction"],
             english_distinction=row["English Distinction"],
             guid=row["GUID"],
+            russian_stressed=row.get("Russian Stressed") or "",
+            variant_stressed=row.get("Variant Stressed") or "",
         )
         for row in rows
     ]

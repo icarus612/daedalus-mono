@@ -30,7 +30,7 @@ from anki_tools import (
     mutable_words_plan,
     phrase_words,
 )
-from anki_tools.audio_naming import strip_qualifier
+from anki_tools.audio_naming import strip_qualifier, strip_stress
 
 _PACKAGE = Path(__file__).resolve().parents[1]
 _VOCAB_DIR = _PACKAGE / "anki_tools" / "data" / "russian-vocabulary"
@@ -77,6 +77,7 @@ _ELABORATES = (
 
 _CATEGORY_LABEL = "Category is a classification label"
 _RUSSIAN_LABEL = "Russian-side look-alike label, approved 2026-11-24"
+_POS_LABEL = "Russian-side part-of-speech label, requested 2026-11-26"
 
 ALLOWED = {
     (
@@ -122,6 +123,23 @@ ALLOWED = {
         ("to the touch", "hot to the touch жаркии hot weather"),
     ): _ELABORATES,
     ("Mutable Nouns", "время", dedup.RULE_EQUAL, ("time", "time")): _CATEGORY_LABEL,
+    ("Mutable Nouns", "пора", dedup.RULE_EQUAL, ("time", "time")): _CATEGORY_LABEL,
+    (
+        "Mutable Nouns",
+        "конфликт",
+        dedup.RULE_EQUAL,
+        ("conflict", "conflict"),
+    ): _CATEGORY_LABEL,
+    (
+        "Mutable Numerals",
+        "тысяча",
+        dedup.RULE_CONTAINED,
+        (
+            "numeral",
+            "declines and is counted like a feminine noun not a true numeral "
+            "a thousand of x genitive plural of x",
+        ),
+    ): _POS_LABEL,
     (
         "Mutable Nouns",
         "люди",
@@ -342,7 +360,7 @@ class Bench:
             note = self.col.get_note(note_id)
             name = note.note_type()["name"]
             name = name.removeprefix("Russian - ").removesuffix(" (Ellis Version)")
-            headword = re.sub(r"<[^>]*>", "", note.fields[0]).strip()
+            headword = strip_stress(re.sub(r"<[^>]*>", "", note.fields[0])).strip()
             for card in note.cards():
                 output = card.render_output()
                 for side, html in (

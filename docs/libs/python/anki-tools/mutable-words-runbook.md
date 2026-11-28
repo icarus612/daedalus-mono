@@ -126,3 +126,20 @@ card counts are unchanged (1082/716/304/264).
    the furthest-back restore point from this run.
 5. **The generated `.mp3` files are additive and need no reversal** — they only ever fill previously
    missing slots in `~/Desktop/russian-audio` and the Anki media directory.
+
+## Importing new notes without replacing live note types
+
+The live note types carry templates and styling that were applied directly (the pronoun
+layout, per-device tweaks), and the live pronoun note type's template ids differ from the
+built ones. A full `--stage rebuild` merges note types: it replaces that styling and, for
+pronouns, appends a second set of templates (24 → 46) and stray cards. To add or update
+notes only:
+
+```
+uv run python -c "import anki_sync_and_restore as a; a.rebuild(PATH, keep_live_notetypes=True)"
+```
+
+It imports with `update_notetypes=NEVER` and no merge, and tolerates conflicts only on
+pronoun notes (they are left as they are). Run it on a scratch copy first and diff note
+types, fields and card scheduling against the backup before running it on the live profile.
+

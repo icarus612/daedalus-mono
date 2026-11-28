@@ -26,7 +26,8 @@ from anki_tools.flagged_audio import (
     UNFLAGGED,
     count_by_flag,
     flag_of,
-    words_to_regenerate,
+    slots_for_gender,
+    words_by_gender,
 )
 from anki_tools.mutable_words_plan import (
     NOTE_TYPE_NAMES,
@@ -123,13 +124,15 @@ def clear_flags(path, card_ids):
         col.close()
 
 
-def regenerate(mode, words):
+def regenerate(mode, gender, words):
     command = [
         sys.executable,
         "-m",
         "anki_tools.word_audio",
         "--mode",
         mode,
+        "--gender",
+        gender,
         "--replace",
         "--no-sync",
         "--yes",
@@ -164,21 +167,22 @@ def main(argv=None):
     for flag, count in counts.items():
         print(f"  {FLAG_NAMES[flag]:10} {count}")
 
-    picked = words_to_regenerate(rows, flags_wanted=args.flags)
+    picked = words_by_gender(rows, flags_wanted=args.flags)
     if not picked:
         print("no words matched the requested flags")
         return 0
 
-    total_files = sum(len(words) * len(SLOTS[mode]) for mode, words in picked.items())
+    slots = {key: slots_for_gender(SLOTS[key[0]], key[1]) for key in picked}
+    total_files = sum(len(words) * len(slots[key]) for key, words in picked.items())
     print(f"\n{sum(len(w) for w in picked.values())} word(s), {total_files} file(s):")
-    for mode, words in picked.items():
-        print(f"  {mode} ({'/'.join(SLOTS[mode])}): {', '.join(words)}")
+    for key, words in picked.items():
+        print(f"  {key[0]} ({'/'.join(slots[key])}): {', '.join(words)}")
 
     if not args.fix:
         print("\nreport only -- pass --fix to regenerate")
         return 0
 
-    failed = [mode for mode, words in picked.items() if regenerate(mode, words)]
+    failed = ["/".join(key) for key, words in picked.items() if regenerate(*key, words)]
     if failed:
         print(f"\nregeneration failed for: {', '.join(failed)}", file=sys.stderr)
         return 1
@@ -186,9 +190,9 @@ def main(argv=None):
     print(f"\ncleared the flag on {len(card_ids)} regenerated card(s)")
     names = [
         os.path.basename(build_filename(word, slot))
-        for mode, words in picked.items()
+        for key, words in picked.items()
         for word in words
-        for slot in SLOTS[mode]
+        for slot in slots[key]
     ]
     try:
         anki_sync.sync(names, path)

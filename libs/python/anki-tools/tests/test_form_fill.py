@@ -1603,10 +1603,17 @@ class TestRealArtifact:
     def test_unresolved_rows_target_missing_cells_and_filled_rows_are_written(
         self, rows, tsv_notes
     ):
+        data_dir = Path(__file__).resolve().parent / "data"
+        pending_file = data_dir / "pending-live-guids.txt"
+        added = (
+            set(pending_file.read_text(encoding="utf-8").splitlines())
+            if pending_file.exists()
+            else set()
+        )
         missing = {
             (c.sheet, c.guid, c.field)
             for c in fc.census_cells(tsv_notes)
-            if c.status == fc.MISSING
+            if c.status == fc.MISSING and c.guid not in added
         }
         unresolved = {
             (r.note_type, r.guid, r.field)

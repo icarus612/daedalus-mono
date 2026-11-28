@@ -5,13 +5,26 @@ about	где-то	Base Adverbs	somewhere / about / roughly	a place I can't name	
 about	о / об	Prepositions	about (whom/what)	Neutral	header+pill	
 above	наверху	Base Adverbs	above / upstairs	being up there	header	upstairs
 above	над / надо	Prepositions	above / over (where/what/whom)	Not touching	header	over
-according to	по	Prepositions	along / around (where) / according to (what/whom)	Over a surface	cue	along | around
-according to	согласно (preposition)	Prepositions	according to (what/whom)	Formal	cue	
+accident	случайность	Nouns	chance / accident	a coincidence	cue	chance
+accident	авария	Nouns	accident / crash	a technical mishap with damage	cue	
+according to	по	Prepositions	along / around (where) / according to (what/whom)	Over a surface	header+pill	along | around
+according to	согласно (preposition)	Prepositions	according to (what/whom)	Formal	header+pill	
 according to	согласно (adverb)	Derived Adverbs	according to		header	
+act	действие	Nouns	action / act	doing, a process in progress	cue	
+act	акт	Nouns	act	formal document or stage of a play	cue	
+act	поступок	Nouns	act / deed	seen as a mark of character	cue	
+activity	деятельность	Nouns	activity	ongoing work in a field	cue	
+activity	занятие	Nouns	activity / class	a pastime or a lesson	cue	class
+activity	активность	Nouns	activity	level of energetic action	cue	
 actually	вообще-то	Particles	actually / as a matter of fact		header	
 actually	правда (adverb)	Base Adverbs	really / indeed / actually	asserts the whole clause	header	indeed | really
-address	адрес	Nouns	address	the postal kind	header	
+address	адрес	Nouns	address	the postal kind	cue	
+address	обращение	Nouns	appeal / address	a plea to authorities; a salutation	cue	appeal
 address	обращаться	Verbs	turn to / address (direct words to someone) / treat (behave towards)		header	treat
+administration	управление	Nouns	management / administration	the act of directing; also a department	cue	management
+administration	администрация	Nouns	administration	the executive body of an institution	cue	
+adult	взрослый (noun)	Nouns	adult		header	
+adult	взрослый (adjective)	Adjectives	adult / grown-up		header	
 after	после	Prepositions	after (whom/what/when)		pill	
 after	спустя	Prepositions	later / after (how long)		pill	later
 after all	ведь	Particles	you see / after all	asserting a known fact	cue	
@@ -19,10 +32,14 @@ after all	таки	Particles	after all / nevertheless	Colloquial	cue	nevertheles
 after all	же / ж	Particles	but / then / after all	Emphasis, not time	cue	but | then
 again	опять	Base Adverbs	again	the same action repeating	cue	
 again	снова	Base Adverbs	again / anew	afresh, a new start	cue	anew
-age	век	Nouns	century / age	An era	cue	
+age	век	Nouns	century / age	An era	cue	century
 age	возраст	Nouns	age	how old someone is	cue	
-all	всё (particle)	Particles	still / all / constantly (keeps on)	Repeatedly	header	still
-all	весь	Pronouns	all / the whole / everything	determinative	header	whole
+agency	орган	Nouns	organ / agency	an organ, or any official body	cue	
+agency	ведомство	Nouns	department / agency	government department running a field	cue	department
+agency	агентство	Nouns	agency	a business acting for clients	cue	
+agreement	договор	Nouns	agreement / contract	a treaty or accord	cue	contract
+agreement	соглашение	Nouns	agreement	an understanding reached by parties	cue	
+agreement	согласие	Nouns	consent / agreement	giving the go-ahead, or harmony	cue	
 almost	почти	Base Adverbs	almost	nearly all the way	cue	
 almost	чуть	Base Adverbs	slightly / barely / almost	by a tiny amount	cue	barely | slightly
 along	по	Prepositions	along / around (where) / according to (what/whom)	Over a surface	pill	according to | around
@@ -43,12 +60,36 @@ answer	ответ	Nouns	answer		header
 answer	отвечать	Verbs	to answer		header	
 anywhere	где-нибудь	Base Adverbs	somewhere / anywhere	any place at all	cue	somewhere
 anywhere	куда-нибудь	Base Adverbs	somewhere / anywhere	to any place	cue	somewhere
+appeal	обращение	Nouns	appeal / address	a plea to authorities; a salutation	cue	address
+appeal	призыв	Nouns	call / appeal	a rallying cry	cue	call
+appearance	вид	Nouns	view / appearance / kind	Scenery, looks	cue	kind | view
+appearance	появление	Nouns	appearance	the moment of showing up	cue	
+appearance	облик	Nouns	appearance / look	overall image, literary	cue	look
+appearance	внешность	Nouns	appearance	a person's physical features	cue	
+application	применение	Nouns	application / use	putting a method to work	cue	use
+application	заявление	Nouns	statement / application	formal written submission	cue	statement
+application	приложение	Nouns	appendix / application	an attached extra	cue	
+appointment	приём	Nouns	reception / appointment	being received by a doctor or official	cue	
+appointment	назначение	Nouns	appointment / purpose	assignment to a post; intended role	cue	
+approach	подход	Nouns	approach		header	
+approach	подходить	Verbs	to approach / come up to		header	
+area	площадь	Nouns	square / area	an open city space, or size of a surface	cue	
+area	местность	Nouns	area / terrain	a stretch of countryside	cue	
+army	армия	Nouns	army	a whole national military	cue	
+army	войско	Nouns	army / troops	a historic or field force	cue	
 around	по	Prepositions	along / around (where) / according to (what/whom)	Over a surface	header+pill	according to | along
 around	вокруг	Prepositions	around (whom/what/where)	all the way round	cue	
 around	около	Prepositions	near / around (whom/what/where/when)	Roughly	cue	near
 around	кругом	Base Adverbs	around / all around		header	
+arrival	прибытие	Nouns	arrival	official: reaching the destination	cue	
+arrival	приход	Nouns	arrival / income	coming on foot; money received	cue	income
+arrival	приезд	Nouns	arrival	everyday: coming by vehicle	cue	
 arrive	приходить	Verbs	come / arrive	on foot	pill	come
 arrive	приезжать	Verbs	to arrive	by vehicle	pill	
+article	статья	Nouns	article / clause	a published text or legal point	cue	
+article	изделие	Nouns	product / article	a manufactured item	cue	product
+artist	художник	Nouns	artist / painter	a visual creator	cue	
+artist	артист	Nouns	performer / artist	a stage or screen entertainer	cue	performer
 as	как (conjunction)	Conjunctions	like / as	Real comparison	cue	like
 as	когда (conjunction)	Conjunctions	when / while / as	at the time that	cue	when | while
 as	так как	Conjunctions	since / as	because	cue	since
@@ -59,7 +100,12 @@ as though	как будто	Conjunctions	as if / as though	neutral, unreal compa
 as though	будто	Particles	as if / as though	often implies doubt	header	as if
 ask	спрашивать	Verbs	ask	a question	pill	
 ask	просить	Verbs	ask (for) / request	ask for something	pill	request
-ask	задавать	Verbs	ask (a question) / set	set a question or task	pill	
+ask	задавать	Verbs	ask (a question) / set	set a question or task	pill	set
+assistant	ассистент	Nouns	assistant	an academic or technical aide	cue	
+assistant	заместитель	Nouns	deputy / assistant	second-in-command	cue	deputy
+assistant	помощник	Nouns	assistant / helper	anyone who lends a hand	cue	
+association	объединение	Nouns	association / union	a combined body; the joining of groups	cue	union
+association	ассоциация	Nouns	association	a mental link; a formal society	cue	
 at	на	Prepositions	on / at (where) / onto (where/what)	on a surface	cue	
 at	у	Prepositions	by / at (where/whom) / to have (possessed by whom)	at someone's; to have	pill	by | have
 at	в / во	Prepositions	in / at (where) / into (where/what)	inside	cue	in
@@ -71,20 +117,44 @@ at the same time	заодно	Base Adverbs	while you're at it / at the same time
 at the same time	разом	Base Adverbs	all at once / at the same time	all in one go	cue	
 attack	атака	Nouns	attack		header	
 attack	нападать	Verbs	to attack		header	
+audience	публика	Nouns	audience / public	spectators gathered at an event	cue	public
+audience	аудитория	Nouns	lecture hall / audience	a teaching room, or a target group of listeners	cue	
+aunt	тётя	Nouns	aunt	everyday, warm	cue	
+aunt	тётка	Nouns	aunt	casual, a bit rough	cue	
+authority	власть	Nouns	power / authority	ruling control over people	cue	power
+authority	полномочие	Nouns	authority / powers	the right to act granted by someone	cue	
+authority	авторитет	Nouns	authority	respect earned by standing	cue	
+authority	инстанция	Nouns	authority / instance	an official body at one level of decision	cue	
+autumn	осень	Nouns	autumn		header	
+autumn	осенний	Adjectives	autumn		header	
+average	среднее	Nouns	the average		header	
+average	средний	Adjectives	middle / average / medium		header	middle
 backwards	назад	Base Adverbs	backwards (direction) / ago (time past)	The way you came	cue	
 backwards	наоборот	Base Adverbs	vice versa / backwards	the other way round	cue	
+bag	сумка	Nouns	bag	carried by handle or strap	cue	
+bag	пакет	Nouns	package / bag	thin disposable sack	cue	
+ball	шар	Nouns	ball / sphere	a perfectly round solid body	cue	sphere
+ball	мяч	Nouns	ball	the round item used in a sport or game	cue	
 bank	берег	Nouns	shore / bank	Of a river	cue	
 bank	банк	Nouns	bank	the financial one	cue	
 barely	едва	Base Adverbs	barely	only just	cue	
 barely	еле	Base Adverbs	barely / hardly	with great effort	cue	
 barely	чуть	Base Adverbs	slightly / barely / almost	by a tiny amount	cue	almost | slightly
+barrel	ствол	Nouns	trunk / barrel	a main stem of a tree, or a gun's tube	cue	
+barrel	бочка	Nouns	barrel	a large container for liquids	cue	
+basis	основа	Nouns	basis	the underlying core	cue	
+basis	основание	Nouns	foundation / basis	a reason, or the bottom support	cue	
 be able to	мочь	Verbs	be able to / can	Physically able	cue	can
 be able to	уметь	Verbs	can / be able to / know how to	a learned skill	cue	can
 beautiful	красивый	Adjectives	beautiful / handsome	good-looking	cue	
 beautiful	прекрасный	Adjectives	wonderful / beautiful	Fine, excellent	cue	wonderful
+beauty	красота	Nouns	beauty	loveliness as a quality	cue	
+beauty	красавица	Nouns	beauty / beautiful woman	admired for her looks	cue	
 because	потому что	Conjunctions	because	Neutral	cue	
 because	поскольку	Conjunctions	since / because	given that	cue	since
 because	ибо	Conjunctions	for / because	bookish	cue	for
+bed	кровать	Nouns	bed	the furniture frame	cue	
+bed	постель	Nouns	bed / bedding	the made-up sleeping place	cue	
 before	до	Prepositions	up to (where/what) / until / before (when)	As far as	cue	until
 before	прежде (preposition)	Prepositions	before (what)	formal	cue	
 before	до того, как	Conjunctions	before	Any time earlier	header	
@@ -94,15 +164,54 @@ behind	за	Prepositions	behind (where/whom/what) / for (whom/what)	Beyond; in e
 behind	позади	Prepositions	behind (whom/what/where)	At the back	pill	
 below	внизу	Base Adverbs	below / downstairs	being down there	header	downstairs
 below	под / подо	Prepositions	under / below (where/what/whom)		header	
+belt	пояс	Nouns	belt	a waistband, or a geographic zone	cue	
+belt	ремень	Nouns	belt / strap	with a buckle	cue	
+benefit	польза	Nouns	benefit / use	the gain it brings	cue	use
+benefit	благо	Nouns	good / benefit	bookish: welfare, wellbeing	cue	good
 besides	кроме	Prepositions	except / besides (whom/what)	Excluding	cue	
 besides	помимо	Prepositions	besides / apart from (whom/what)	on top of	cue	
 besides	притом	Conjunctions	besides	and besides that	header	
 bet	пари	Indeclinable Nouns	bet / wager	a wager on an outcome	header	
+bet	ставка	Nouns	bet / rate	a wager or fixed charge	header	rate
 bet	спорить	Verbs	to argue / to bet		header	
+bill	счёт	Nouns	bill / account	an invoice or tally	cue	
+bill	законопроект	Nouns	bill / draft law	not yet passed	cue	
+block	блок	Nouns	block	a unit of a system	cue	
+block	квартал	Nouns	block / quarter	a city area; three months	cue	quarter
+board	доска	Nouns	board / plank	a flat piece of wood	cue	
+board	борт	Nouns	side / board	the edge of a ship or plane	cue	side
+board	правление	Nouns	board / rule	a governing committee	cue	rule
+body	тело	Nouns	body	a person's physical form	cue	
+body	корпус	Nouns	building / hull / body	a wing of a complex; torso; shell	cue	building
+book	книга	Nouns	book	standard, full-size	cue	
+book	книжка	Nouns	book	casual, small	cue	
 boot	ботинок	Nouns	boot / shoe	ankle-height	cue	
 boot	сапог	Nouns	boot	tall	cue	
+border	граница	Nouns	border	line between countries or areas	cue	
+border	рубеж	Nouns	border / boundary	literary: a limit or turning point	cue	
 boring	скучный	Adjectives	boring		header	
 boring	скучно	Derived Adverbs	boring		header	
+boss	начальник	Nouns	boss	a formal superior over staff	cue	
+boss	шеф	Nouns	boss / chef	informal head; head of a kitchen	cue	chef
+box	коробка	Nouns	box	a light container of cardboard	cue	
+box	ящик	Nouns	box / drawer	a sturdy wooden crate	cue	
+boy	мальчик	Nouns	boy	the ordinary, polite word	cue	
+boy	мальчишка	Nouns	boy / lad	informal, a rascal	cue	
+branch	отделение	Nouns	department / branch	a smaller sub-unit of an institution	cue	department
+branch	отрасль	Nouns	branch / industry	a sector of economy or science	cue	industry
+branch	ветка	Nouns	branch	everyday: a limb of a tree	cue	
+branch	ветвь	Nouns	branch	bookish: a limb of a tree or of a family	cue	
+break	перемена	Nouns	change / break	a school recess, or a turn in circumstances	cue	change
+break	перерыв	Nouns	break	a pause in work or activity	cue	
+break	ломать	Verbs	break		header	
+brush	кисть	Nouns	brush / hand	the end part past the wrist	cue	hand
+brush	щётка	Nouns	brush	for cleaning, hair or teeth	cue	
+brush	чистить	Verbs	to clean / to brush / to peel		header	clean
+build	стать (noun)	Nouns	build / physique		header	
+build	строить	Verbs	build		header	
+building	здание	Nouns	building	a sizable standalone one	cue	
+building	корпус	Nouns	building / hull / body	a wing of a complex; torso; shell	cue	body
+building	строение	Nouns	structure / building	any built thing; also inner makeup	cue	structure
 business	дело	Nouns	matter / affair / business	An undertaking	cue	
 business	бизнес	Nouns	business	commerce	cue	
 but	а	Conjunctions	but / and	Side by side	cue	and
@@ -113,68 +222,236 @@ by	возле	Prepositions	by / near (whom/what/where)	right beside	cue	near
 by	мимо	Prepositions	past / by (whom/what/where)	Going past	cue	past
 by means of	путём	Prepositions	by means of (what)	through a process	cue	
 by means of	посредством	Prepositions	by means of (what)	using a tool	cue	
-call	называть	Verbs	name / call	give a name to	pill	name
-call	звонить	Verbs	call (phone) / ring		pill	
-call	звать	Verbs	call / summon / be named	Invite over	pill	summon
+call	звонок	Nouns	bell / call	a short ringing signal	cue	
+call	вызов	Nouns	call / challenge	a summons; a dare	cue	
+call	призыв	Nouns	call / appeal	a rallying cry	cue	appeal
+call	называть	Verbs	name / call	give a name to	header+pill	name
+call	звонить	Verbs	call (phone) / ring		header+pill	ring
+call	звать	Verbs	call / summon / be named	Invite over	header+pill	summon
+campaign	акция	Nouns	share / campaign	a company stock; also a one-off event	cue	share
+campaign	кампания	Nouns	campaign	a long organized drive	cue	
+can	банка	Nouns	jar / can		header	
 can	мочь	Verbs	be able to / can	Physically able	cue	be able to
 can	уметь	Verbs	can / be able to / know how to	a learned skill	cue	be able to
+capital	столица	Nouns	capital	the seat of government	cue	
+capital	капитал	Nouns	capital	accumulated wealth	cue	
+card	карта	Nouns	map / card	chart of terrain; also a payment or game piece	cue	
+card	карточка	Nouns	card	small record slip	cue	
+care	забота	Nouns	care / concern	looking after someone's wellbeing	cue	concern
+care	уход	Nouns	care / leaving	tending upkeep, or going away	cue	
 carry	носить	Verbs	carry / wear	habitually, round trips	cue	
 carry	нести	Verbs	carry	on foot, one way	cue	
 cat	кошка	Nouns	cat	female	cue	
 cat	кот	Nouns	cat / tomcat	Male	cue	
 cause	причина	Nouns	cause / reason	the why	header	reason
 cause	вызывать	Verbs	call out / summon / cause	Send for	header	summon
+century	век	Nouns	century / age	An era	cue	age
+century	столетие	Nouns	century	exactly one hundred years	cue	
 certainly	конечно	Particles	of course / certainly	obviously so	header	of course
 certainly	наверняка	Base Adverbs	for sure / certainly	confident of it	header	
-chance	случайность	Nouns	chance / accident	a coincidence	cue	
+certificate	свидетельство	Nouns	certificate / testimony	official proof, or evidence in general	cue	testimony
+certificate	справка	Nouns	certificate / reference	quick note from an office	cue	reference
+chain	цепь	Nouns	chain	a heavy or large-scale one	cue	
+chain	цепочка	Nouns	chain	a delicate or short one	cue	
+champagne	шампанское	Nouns	champagne		header	
+champagne	шампанский	Adjectives	champagne (as a modifier)		header	
+chance	случайность	Nouns	chance / accident	a coincidence	cue	accident
 chance	шанс	Nouns	chance	an opportunity	cue	
+change	изменение	Nouns	change	an alteration made or undergone	cue	
+change	смена	Nouns	change / shift	one thing replacing another	cue	
+change	перемена	Nouns	change / break	a school recess, or a turn in circumstances	cue	break
+change	менять	Verbs	change / exchange		header	exchange
+character	характер	Nouns	character / personality	temperament and moods	cue	personality
+character	персонаж	Nouns	character	a figure in a story	cue	
+character	натура	Nouns	nature / character	inborn makeup	cue	nature
 cheap	дешёвый	Adjectives	cheap		header	
 cheap	дёшево	Derived Adverbs	cheap		header	
-check	чек	Nouns	receipt / check		header	
+check	чек	Nouns	receipt / check	a printed slip of payment proof	cue	receipt
+check	проверка	Nouns	check / inspection	verifying that something is correct	cue	
 check	проверять	Verbs	check / verify		header	
-clean	чистить	Verbs	to clean / to brush / to peel		header	
+chef	повар	Nouns	cook / chef	the person	cue	cook
+chef	шеф	Nouns	boss / chef	informal head; head of a kitchen	cue	boss
+chief	вождь	Nouns	leader / chief	a tribal or historic ruler, lofty	header	leader
+chief	главный	Adjectives	main / chief	the highest in rank	header	main
+child	ребёнок	Nouns	child	everyday word	cue	
+child	дитя	Nouns	child	literary, tender	cue	
+circle	круг	Nouns	circle	the round shape itself	cue	
+circle	окружение	Nouns	surroundings / circle	those around you	cue	
+claim	утверждение	Nouns	approval / claim	asserting something is true; or confirming	cue	
+claim	иск	Nouns	lawsuit / claim	a court filing demanding redress	cue	
+claim	претензия	Nouns	claim / complaint	a demand to put right a fault	cue	complaint
+class	класс	Nouns	class / grade / classroom	school group or rank	cue	grade
+class	занятие	Nouns	activity / class	a pastime or a lesson	cue	activity
+clean	чистить	Verbs	to clean / to brush / to peel		header	brush
 clean	чистый	Adjectives	clean / pure		header	
 clearly	толком	Base Adverbs	properly / clearly		header	
 clearly	понятно	Derived Adverbs	clearly		header	
+client	клиент	Nouns	client	user of a service or firm	cue	
+client	заказчик	Nouns	customer / client	one who commissions work	cue	customer
+close	закрывать	Verbs	(to) close		header	
+close	близкий	Adjectives	close / near / dear	bound by family or friendship	header	dear | near
+close	близко	Derived Adverbs	close / near (it is nearby)		header	near
 closed	закрытый	Adjectives	closed		header	
 closed	закрыто	Derived Adverbs	closed		header	
+cold	холод	Nouns	cold		header	
 cold	холодный	Adjectives	cold		header	
 cold	холодно	Derived Adverbs	cold		header	
+colleague	коллега	Nouns	colleague	same profession, any workplace	cue	
+colleague	сотрудник	Nouns	employee / colleague	employee of an organization	cue	
+collection	сбор	Nouns	collection / gathering	taking in funds or crops	cue	
+collection	коллекция	Nouns	collection	items gathered as a hobby	cue	
+collection	сборник	Nouns	collection	a published compilation of writings	cue	
 come	приходить	Verbs	come / arrive	on foot	cue	arrive
-come	жаловать	Verbs	come / visit	formal invitation	cue	
-command	приказ	Nouns	order / command		header	order
+come	жаловать	Verbs	come / visit	formal invitation	cue	visit
+come on	ну	Particles	well / come on (urging)	Filler	cue	well
+come on	давай / давайте	Particles	let's / come on		cue	
+command	приказ	Nouns	order / command	a superior's binding demand	cue	order
+command	команда	Nouns	team / command	a squad; also a spoken signal	cue	team
+command	командование	Nouns	command	the officers in charge	cue	
 command	приказывать	Verbs	to order / to command		header	order
+companion	товарищ	Nouns	comrade / companion	a friend in a shared cause	cue	
+companion	спутник	Nouns	satellite / companion	a travelling partner; an orbiting body	cue	
+competition	конкурс	Nouns	competition	a judged contest for prizes	cue	
+competition	соревнование	Nouns	competition	a sporting event with a winner	cue	
+competition	конкуренция	Nouns	competition	rivalry between businesses	cue	
+complaint	жалоба	Nouns	complaint	a grievance voiced to an authority	cue	
+complaint	претензия	Nouns	claim / complaint	a demand to put right a fault	cue	claim
 completely	совсем	Base Adverbs	completely / entirely	utterly	cue	entirely
 completely	сплошь	Base Adverbs	completely / all over / nothing but	all over, no gaps	cue	
 completely	полностью	Derived Adverbs	completely / fully	in full	header	fully
-complicated	сложный	Adjectives	complicated / complex		header	
+completion	выполнение	Nouns	performance / completion	carrying out a task or plan	cue	performance
+completion	окончание	Nouns	end / completion	a process coming to a close	cue	end
+completion	завершение	Nouns	completion	wrapping up fully and successfully	cue	
+complex	комплекс	Nouns	complex		header	
+complex	сложный	Adjectives	complicated / complex		header	complicated
+complicated	сложный	Adjectives	complicated / complex		header	complex
 complicated	сложно	Derived Adverbs	complicated		header	
-contract	договор	Nouns	agreement / contract	a treaty or accord	cue	
+composition	состав	Nouns	composition	what something consists of	cue	
+composition	сочинение	Nouns	composition / essay	a written school or literary piece	cue	essay
+composition	композиция	Nouns	composition	an arranged artistic whole	cue	
+concern	забота	Nouns	care / concern	looking after someone's wellbeing	header	care
+concern	касаться	Verbs	touch / concern		header	
+conclusion	вывод	Nouns	conclusion	what you infer	cue	
+conclusion	заключение	Nouns	conclusion	the end, or an official finding	cue	
+condition	условие	Nouns	condition	a requirement attached to something	cue	
+condition	состояние	Nouns	state / condition	how something currently is	cue	state
+conference	конференция	Nouns	conference	a large scholarly event	cue	
+conference	совещание	Nouns	meeting / conference	a working discussion of officials	cue	meeting
+connection	связь	Nouns	connection / link	relationship or communication between things	cue	link
+connection	соединение	Nouns	connection / joint	physical joining, or a compound	cue	
+consequence	следствие	Nouns	consequence / investigation	a logical effect, or a formal criminal inquiry	cue	investigation
+consequence	последствие	Nouns	consequence	the aftermath, often harmful	cue	
+consideration	рассмотрение	Nouns	consideration / review	formal review of a matter	cue	
+consideration	соображение	Nouns	consideration	a reason weighed in a decision	cue	
+construction	строительство	Nouns	construction	the process of erecting	cue	
+construction	конструкция	Nouns	construction / structure	the assembled framework	cue	structure
+construction	построение	Nouns	construction	the abstract act of assembling	cue	
+construction	сооружение	Nouns	structure / construction	a large engineering work	cue	structure
+contract	договор	Nouns	agreement / contract	a treaty or accord	cue	agreement
 contract	контракт	Nouns	contract	the formal document	cue	
-cook	повар	Nouns	cook / chef	the person	header	
+conversation	разговор	Nouns	conversation	everyday talk between people	cue	
+conversation	беседа	Nouns	conversation	unhurried serious talk	cue	
+cook	повар	Nouns	cook / chef	the person	header	chef
 cook	готовить	Verbs	prepare / cook	any cooking method	cue	prepare
 cook	варить	Verbs	boil / cook	In water	cue	
 cool	прохладный	Adjectives	cool		header	
 cool	прохладно	Derived Adverbs	cool		header	
+copy	экземпляр	Nouns	copy / specimen	one of many identical items	cue	
+copy	копия	Nouns	copy	a reproduction of an original	cue	
+corner	угол	Nouns	corner / angle	where two edges meet	cue	
+corner	уголок	Nouns	corner / nook	a small cozy place	cue	
 cost	стоимость	Nouns	cost		header	
 cost	стоить	Verbs	to cost / to be worth		header	
+count	граф	Nouns	count		header	
+count	считать	Verbs	count / consider		header	
+course	ход	Nouns	move / course	a step in a game or process	cue	move
+course	курс	Nouns	course / rate	heading, study programme, currency price	cue	rate
+crew	бригада	Nouns	crew / team / brigade	a work gang under a foreman	cue	team
+crew	экипаж	Nouns	crew	people aboard a ship or aircraft	cue	
 crying	плач	Nouns	weeping / crying	The noun	header	
 crying	плачущий	Adjectives	crying	describing someone	header	
+current	течение	Nouns	current / flow	a drift; also a trend	cue	flow
+current	ток	Nouns	current	electric	cue	
+customer	покупатель	Nouns	buyer / customer	one who buys goods in a shop	cue	
+customer	заказчик	Nouns	customer / client	one who commissions work	cue	client
+dance	танец	Nouns	dance		header	
+dance	танцевать	Verbs	dance		header	
+darkness	темнота	Nouns	darkness	everyday: absence of light	cue	
+darkness	тьма	Nouns	darkness	literary: deep gloom	cue	
 date	число	Nouns	number / date	A numeral; calendar day	cue	number
 date	свидание	Nouns	date / meeting	romantic	cue	meeting
+date	дата	Nouns	date	a day named in a record	cue	
 date	встречаться	Verbs	meet / date	an arranged meeting	header	meet
+daughter	дочь	Nouns	daughter	formal: female child of parents	cue	
+daughter	дочка	Nouns	daughter	affectionate: female child of parents	cue	
 day	день	Nouns	day		header	
 day	дневной	Adjectives	day / daytime		header	
+dear	дорогой	Adjectives	expensive / dear	high-priced, or cherished	cue	expensive
+dear	близкий	Adjectives	close / near / dear	bound by family or friendship	cue	close | near
+death	смерть	Nouns	death	the end of a life	cue	
+death	гибель	Nouns	death / destruction	perishing in a disaster, often sudden	cue	destruction
+decree	постановление	Nouns	decree	issued by a council or court	cue	
+decree	указ	Nouns	decree	issued by the head of state	cue	
+defect	недостаток	Nouns	shortage / defect	too little, or a flaw in a person	cue	
+defect	брак	Nouns	marriage / defect	spoiled output; also wedlock	cue	
+defense	защита	Nouns	defense / protection	shielding against harm	cue	protection
+defense	оборона	Nouns	defense	organized military resistance	cue	
+degree	степень	Nouns	degree / extent	a level reached; also academic rank	cue	extent
+degree	градус	Nouns	degree	unit of angle or temperature	cue	
+delight	восторг	Nouns	delight / rapture	an outburst of excited joy	cue	
+delight	наслаждение	Nouns	delight	slow savouring of pleasure	cue	
+delivery	поставка	Nouns	delivery / supply	a contracted shipment of goods	cue	supply
+delivery	подача	Nouns	serve / delivery	handing over at a point of use	cue	
+demand	требование	Nouns	requirement / demand	firm insistence by someone	cue	
+demand	спрос	Nouns	demand	consumer appetite in a market	cue	
+demand	требовать	Verbs	demand		header	
+department	отдел	Nouns	department	a section of a firm or shop	cue	
+department	отделение	Nouns	department / branch	a smaller sub-unit of an institution	cue	branch
+department	ведомство	Nouns	department / agency	government department running a field	cue	agency
+department	департамент	Nouns	department	large unit of a ministry or city hall	cue	
+department	факультет	Nouns	faculty / department	at a university	cue	
+deposit	вклад	Nouns	contribution / deposit	a sum placed in a bank, or an input	cue	
+deposit	месторождение	Nouns	deposit / field	an underground mineral resource site	cue	field
+deputy	депутат	Nouns	deputy	an elected legislator	cue	
+deputy	заместитель	Nouns	deputy / assistant	second-in-command	cue	assistant
+design	разработка	Nouns	development / design	working out in detail	cue	development
+design	оформление	Nouns	processing / design	giving a finished look or official form	cue	processing
+destruction	гибель	Nouns	death / destruction	perishing in a disaster, often sudden	cue	death
+destruction	уничтожение	Nouns	destruction	deliberate wiping out	cue	
+detail	частность	Nouns	detail / particular	a single minor point within a bigger matter	cue	particular
+detail	деталь	Nouns	detail / part	a single component, or a fine feature	cue	part
+detail	подробность	Nouns	detail	fine points of a full account	cue	
+development	развитие	Nouns	development	growth over time	cue	
+development	разработка	Nouns	development / design	working out in detail	cue	design
+device	устройство	Nouns	device / structure	a mechanism, or how it is arranged	cue	structure
+device	прибор	Nouns	device / instrument	a measuring or household apparatus	cue	instrument
+difference	разница	Nouns	difference	a gap in size or amount	cue	
+difference	отличие	Nouns	difference	a distinguishing mark	cue	
+difference	различие	Nouns	difference	a bookish contrast in kind	cue	
 different	разный	Adjectives	different / various	Assorted	cue	
 different	другой	Adjectives	other / different	another one	cue	other
 different	иной	Adjectives	different / other	of another kind	cue	other
 differently	иначе	Base Adverbs	otherwise / differently (or else)		header	
 differently	по-разному	Derived Adverbs	differently	in various ways	cue	
 differently	по-другому	Derived Adverbs	differently / another way	conversational	cue	
+difficulty	трудность	Nouns	difficulty	effort needed to overcome	cue	
+difficulty	сложность	Nouns	complexity / difficulty	many tangled parts	cue	
+dinner	обед	Nouns	lunch / dinner	the main meal around midday	cue	
+dinner	ужин	Nouns	dinner	the late evening meal	cue	
 directly	напрямую	Base Adverbs	directly / straight		header	straight
 directly	прямо	Derived Adverbs	straight / directly		header	straight
+director	директор	Nouns	director / principal	head of an organization	cue	
+director	режиссёр	Nouns	director	one who directs stage or film	cue	
 dirty	грязный	Adjectives	dirty		header	
 dirty	грязно	Derived Adverbs	dirty		header	
+discussion	обсуждение	Nouns	discussion	going over a topic together	cue	
+discussion	дискуссия	Nouns	discussion	a structured exchange of opposing views	cue	
+distribution	распределение	Nouns	distribution	sharing out in portions	cue	
+distribution	распространение	Nouns	spread / distribution	dispersal over a wide area	cue	
+district	район	Nouns	district	an everyday area of a city	cue	
+district	округ	Nouns	district	an official administrative region	cue	
+division	подразделение	Nouns	division / unit	a sub-part of an organization	cue	unit
+division	дивизия	Nouns	division	a large military formation	cue	
 doctor	врач	Nouns	doctor	medical profession	cue	
 doctor	доктор	Nouns	doctor	as a title or form of address	cue	
 downstairs	вниз	Base Adverbs	down / downwards / downstairs	going down	cue	
@@ -182,25 +459,50 @@ downstairs	внизу	Base Adverbs	below / downstairs	being down there	cue	below
 dream	сон	Nouns	sleep / dream	While asleep	cue	sleep
 dream	мечта	Nouns	dream	aspiration	cue	
 dream	мечтать	Verbs	to dream	to aspire	header	
+drink	напиток	Nouns	drink		header	
+drink	пить	Verbs	drink		header	
 drive	водить	Verbs	lead / drive (a car)	Habitually	cue	lead
 drive	возить	Verbs	transport / drive (someone)	by vehicle, habitually	cue	transport
 drive	ехать	Verbs	to go / ride / drive / travel	by vehicle, one way	pill	go | ride
 drive	везти	Verbs	transport / drive (someone)	by vehicle, one way	cue	transport
 driver	водитель	Nouns	driver	the one driving	cue	
 driver	шофёр	Nouns	chauffeur / driver	a hired driver	cue	
+drug	препарат	Nouns	preparation / drug	a medical or lab product	cue	preparation
+drug	наркотик	Nouns	drug	an addictive banned substance	cue	
+duty	долг	Nouns	debt / duty	owed, morally or financially	cue	
+duty	обязанность	Nouns	duty	assigned job responsibility	cue	
 early	ранний	Adjectives	early		header	
 early	рано	Derived Adverbs	early		header	
 easily	запросто	Base Adverbs	easily / just like that		header	
 easily	легко	Derived Adverbs	easily / lightly		header	lightly
+economy	экономика	Nouns	economy	a country's overall system of money	cue	
+economy	хозяйство	Nouns	household / economy	managed home or farm and its upkeep	cue	household
+edge	край	Nouns	edge / region	outer rim; a distant land	cue	region
+edge	грань	Nouns	edge / facet	a side of a solid, or a fine line	cue	
+education	образование	Nouns	education	the level of schooling achieved	cue	
+education	обучение	Nouns	training / education	the process of being taught	cue	
+effect	воздействие	Nouns	influence / effect	direct action upon something	cue	influence
+effect	эффект	Nouns	effect	a result produced	cue	
 empty	пустой	Adjectives	empty		header	
 empty	пусто	Derived Adverbs	empty		header	
-end	конец	Nouns	end		header	
+end	конец	Nouns	end	the very last point	cue	
+end	окончание	Nouns	end / completion	a process coming to a close	cue	completion
 end	заканчивать	Verbs	to finish / to end		header	
 end up	оказываться	Verbs	turn out / end up	prove to be	pill	turn out
 end up	попадать	Verbs	to hit / to end up / find oneself		pill	
 entirely	совсем	Base Adverbs	completely / entirely	utterly	cue	completely
 entirely	вполне	Base Adverbs	quite / fully / entirely	to a satisfying degree	cue	fully
 entirely	целиком	Derived Adverbs	entirely / whole	In one piece	header	whole
+equipment	техника	Nouns	technology / equipment	machines and gadgets; also skill	cue	technology
+equipment	оборудование	Nouns	equipment	fittings and gear for a task	cue	
+era	эпоха	Nouns	era	a period with its own character	cue	
+era	эра	Nouns	era	a counted calendar or geological age	cue	
+essay	эссе	Indeclinable Nouns	essay		header	
+essay	сочинение	Nouns	composition / essay	a written school or literary piece	header	composition
+essence	суть	Nouns	essence	everyday: the key point	cue	
+essence	сущность	Nouns	essence	bookish: inner being	cue	
+establishment	заведение	Nouns	establishment	a place of business or institution	cue	
+establishment	установление	Nouns	establishment	the act of founding or fixing	cue	
 even	даже	Particles	even	plain emphasis	cue	
 even	аж	Particles	even / as much as	a surprising amount	cue	
 even	хоть (particle)	Particles	at least / even	as a bare minimum	cue	
@@ -208,20 +510,57 @@ even if	хоть (conjunction)	Conjunctions	although / even if	casual	cue	althou
 even if	пусть / пускай	Conjunctions	even though / even if	granting it	cue	
 evening	вечер	Nouns	evening		header	
 evening	вечерний	Adjectives	evening		header	
+event	событие	Nouns	event	something that took place	cue	
+event	мероприятие	Nouns	event / measure	a planned official activity	cue	measure
 everywhere	везде	Base Adverbs	everywhere	everyday	cue	
 everywhere	всюду	Base Adverbs	everywhere	a touch bookish	cue	
+evil	зло (noun)	Nouns	evil		header	
+evil	злой	Adjectives	mean / evil / angry		header	mean
+examination	экзамен	Nouns	exam / examination		cue	
+examination	обследование	Nouns	examination		cue	
+exchange	обмен	Nouns	exchange		header	
+exchange	менять	Verbs	change / exchange		header	change
 excuse me	извините	Particles	excuse me / sorry	excuse my action / minor	cue	sorry
 excuse me	простите	Particles	excuse me / forgive me	deepest apologies / major	cue	
-expensive	дорогой	Adjectives	expensive / dear		header	
+existence	существование	Nouns	existence	plain fact of living or being there	cue	
+existence	бытие	Nouns	existence / being	a lofty, philosophical sense	cue	
+exit	выход	Nouns	exit / way out		header	
+exit	выходить	Verbs	go out / exit		header	
+expense	расход	Nouns	expense	money going out, also consumption	cue	
+expense	затрата	Nouns	expense / expenditure	an outlay of resources for a purpose	cue	
+expensive	дорогой	Adjectives	expensive / dear	high-priced, or cherished	header	dear
 expensive	дорого	Derived Adverbs	expensive		header	
-familiar	знакомый	Adjectives	familiar		header	
+experiment	опыт	Nouns	experience / experiment	gained know-how; a small trial	cue	
+experiment	эксперимент	Nouns	experiment	a formal scientific test	cue	
+extent	степень	Nouns	degree / extent	a level reached; also academic rank	cue	degree
+extent	протяжение	Nouns	extent / stretch	span of length or time	cue	
+faction	группировка	Nouns	grouping / faction	informal bloc, often criminal or military	cue	
+faction	фракция	Nouns	faction	a party's bloc in parliament	cue	
+factory	завод	Nouns	factory / plant	large industrial works	cue	plant
+factory	фабрика	Nouns	factory	mass making of consumer goods	cue	
+fall	падение	Nouns	fall		header	
+fall	падать	Verbs	fall		header	
+familiar	знакомый (adjective)	Adjectives	familiar		header	
 familiar	знакомо	Derived Adverbs	familiar		header	
 famous	известный	Adjectives	famous / well-known	widely known	cue	
 famous	знаменитый	Adjectives	famous	celebrated	cue	
 far	гораздо	Base Adverbs	much / far	very much more	cue	much
 far	намного	Base Adverbs	much / far	by a wide margin	cue	much
+feature	особенность	Nouns	feature / peculiarity	a distinguishing quality	cue	
+feature	черта	Nouns	feature / line	a trait; also a drawn stroke	cue	line
+feeling	чувство	Nouns	feeling	an emotion or inner sense	cue	
+feeling	ощущение	Nouns	sensation / feeling	a bodily or vague impression	cue	
 few	немного	Base Adverbs	a little bit / some / few	Neutral	cue	
 few	мало	Base Adverbs	little / few	not much	cue	little
+field	поле	Nouns	field	an open stretch of land	cue	
+field	месторождение	Nouns	deposit / field	an underground mineral resource site	cue	deposit
+fight	бой	Nouns	battle / fight	armed combat, a military clash	cue	
+fight	борьба	Nouns	struggle / fight	prolonged contest for a cause	cue	
+fight	драка	Nouns	fight	a brawl with fists	cue	
+figure	цифра	Nouns	digit / figure	a written numeral symbol	cue	
+figure	фигура	Nouns	figure	a shape or a person's outline	cue	
+film	фильм	Nouns	film / movie	a particular film	cue	movie
+film	плёнка	Nouns	film / tape	thin layer or recording medium	cue	tape
 fine	штраф	Nouns	fine / penalty	a money punishment	header	penalty
 fine	нормально	Derived Adverbs	normally / fine (going OK)		header	
 fire	огонь	Nouns	fire	fire as such	cue	
@@ -230,9 +569,17 @@ firm	фирма	Nouns	firm	a company	header
 firm	твёрдый	Adjectives	hard / firm	solid, not soft	header	hard
 first	первый (adjective)	Adjectives	first		header	
 first	первый (numeral)	Numerals	first		header	
+floor	пол	Nouns	floor	the surface underfoot	cue	
+floor	этаж	Nouns	floor / storey	a level of a building	cue	
+flow	течение	Nouns	current / flow	a drift; also a trend	cue	current
+flow	поток	Nouns	stream / flow	a mass moving together	cue	
 fly	муха	Nouns	fly	the insect	header	
 fly	летать	Verbs	to fly	habitually, round trips	cue	
 fly	лететь	Verbs	fly	one way	cue	
+food	еда	Nouns	food	everyday: what you eat	cue	
+food	пища	Nouns	food	bookish: nourishment	cue	
+fool	дурак	Nouns	fool	rude: a stupid man	cue	
+fool	дура	Nouns	fool	rude: a stupid woman	cue	
 for	за	Prepositions	behind (where/whom/what) / for (whom/what)	Beyond; in exchange	header+pill	behind
 for	для	Prepositions	for / for the sake of (whom/what)	intended for	header+pill	for the sake of
 for	ибо	Conjunctions	for / because	bookish	header	because
@@ -240,11 +587,18 @@ for some reason	зачем-то	Base Adverbs	for some reason	unknown purpose	cue
 for some reason	почему-то	Base Adverbs	for some reason	unknown cause	cue	
 for the sake of	ради	Prepositions	for the sake of (whom/what)	As a motive	cue	
 for the sake of	для	Prepositions	for / for the sake of (whom/what)	intended for	cue	for
+formation	формирование	Nouns	formation	the process of forming	cue	
+formation	строй	Nouns	system / formation	a social order; ranks lined up	cue	system
+frame	рамка	Nouns	frame	a border holding a picture	cue	
+frame	кадр	Nouns	frame / shot	one still image of a film	cue	shot
 friend	друг	Nouns	friend	male	cue	
 friend	подруга	Nouns	friend	female	cue	
+friend	приятель	Nouns	friend / buddy	a pleasant acquaintance, not close	cue	
 from	с / со	Prepositions	with (whom/what) / from / off of (where/what) / since (when) /	Off a surface	pill	since
 from	из / изо	Prepositions	from (where) / out of (what/where)	From inside	cue	
 from	от / ото	Prepositions	from / away from (whom/what/where)	From beside	cue	
+fruit	фрукт	Nouns	fruit	sweet and edible	cue	
+fruit	плод	Nouns	fruit	botanical product, or a result	cue	
 fully	вполне	Base Adverbs	quite / fully / entirely	to a satisfying degree	header	entirely
 fully	полностью	Derived Adverbs	completely / fully	in full	header	completely
 fun	весёлый	Adjectives	cheerful / fun		header	
@@ -253,20 +607,39 @@ funny	смешной	Adjectives	funny		header
 funny	смешно	Derived Adverbs	funny		header	
 future	будущее	Nouns	the future		header	
 future	будущий	Adjectives	future		header	
+gap	разрыв	Nouns	rupture / gap	a break in connection or distance	cue	
+gap	щель	Nouns	crack / gap	a narrow opening	cue	
 gather	собирать	Verbs	collect / gather	gather things up	cue	
 gather	собираться	Verbs	gather / intend to	Assemble	cue	
+general	генерал	Nouns	general		header	
+general	общий	Adjectives	general / common / shared		header	
 gently	нежно	Derived Adverbs	tenderly / gently	with affection	cue	
 gently	мягко	Derived Adverbs	softly / gently	Not harshly	cue	
+gift	подарок	Nouns	gift	everyday: a present you give	cue	
+gift	дар	Nouns	gift	elevated: bestowed talent or offering	cue	
+girl	девочка	Nouns	girl	polite, young child	cue	
+girl	девчонка	Nouns	girl	casual, teen or young woman	cue	
+girl	девка	Nouns	girl	coarse, derogatory	cue	
 glass	стекло	Nouns	glass	material	cue	
 glass	стакан	Nouns	glass	drinking	cue	
 go	идти	Verbs	go / set off	on foot, one way	cue	
 go	ездить	Verbs	go / ride	by vehicle, habitually	cue	ride
 go	ехать	Verbs	to go / ride / drive / travel	by vehicle, one way	cue	drive | ride
 go	ходить	Verbs	go	on foot, habitually	cue	
-good	добро	Nouns	good (as opposed to evil) / kindness		header	
+goal	цель	Nouns	goal / target	an aim one works towards	cue	
+goal	ворота	Nouns	gate / goal	the net frame on a pitch, or a large entrance	cue	
+good	добро	Nouns	good (as opposed to evil) / kindness	moral rightness, caring deeds	cue	
+good	благо	Nouns	good / benefit	bookish: welfare, wellbeing	cue	benefit
 good	хороший	Adjectives	good		header	
+grade	класс	Nouns	class / grade / classroom	school group or rank	cue	class
+grade	оценка	Nouns	assessment / grade	a mark for work done	cue	
+grade	сорт	Nouns	sort / grade	a quality category of goods	cue	
+guard	охрана	Nouns	guard / protection	standing watch over people or property	cue	protection
+guard	охранник	Nouns	guard	a hired person at a post	cue	
 half	наполовину	Base Adverbs	half / halfway		header	
 half	половина	Nouns	half		header	
+hand	рука	Nouns	hand / arm	the whole limb from the shoulder	cue	
+hand	кисть	Nouns	brush / hand	the end part past the wrist	cue	brush
 happen	происходить	Verbs	happen / occur	take place	cue	
 happen	случаться	Verbs	happen	By chance	cue	
 hard	тяжёлый	Adjectives	heavy / hard	Difficult	cue	
@@ -277,6 +650,12 @@ have	у	Prepositions	by / at (where/whom) / to have (possessed by whom)	at someo
 have	иметь	Verbs	to have / possess	bookish	header	
 have to	приходиться	Verbs	to have to / to fit / fall to	impersonal	header	
 have to	должен	Adjectives	must / have to / obliged to	Obliged, has a subject	header	
+head	голова	Nouns	head	the body part	cue	
+head	глава	Nouns	chapter / head	a leader; a section of text	cue	
+heat	тепло (noun)	Nouns	warmth / heat	mild and pleasant	cue	
+heat	жара	Nouns	heat	oppressive hot weather	cue	
+height	рост	Nouns	height / growth	how tall a person is, or growing	cue	
+height	высота	Nouns	height	how far up something extends	cue	
 hello	здравствуйте	Particles	hello	formal	cue	
 hello	привет	Particles	hello / hi	informal	cue	
 help	помощь	Nouns	help	The noun	header	
@@ -285,26 +664,44 @@ here	вот	Particles	here (is) / there (is)	Pointing near	header	there
 here	здесь	Base Adverbs	here	static location	cue	
 here	тут	Base Adverbs	here / just then	casual	cue	
 here	сюда	Base Adverbs	to here	destination	cue	
+hide	шкура	Nouns	hide		header	
+hide	прятать	Verbs	hide		header	
 high	высокий	Adjectives	tall / high		header	
 high	высоко	Derived Adverbs	high	up	header	
+highway	шоссе	Indeclinable Nouns	highway		header	
+highway	трасса	Nouns	route / highway	major road or marked track	header	route
 home	домой	Base Adverbs	to home	Direction	header	
 home	дом	Nouns	house / home		header	
 hope	надежда	Nouns	hope		header	
 hope	надеяться	Verbs	to hope / to rely on		header	
+horse	лошадь	Nouns	horse	the ordinary animal	cue	
+horse	конь	Nouns	horse	a steed, poetic or male	cue	
+hospital	больница	Nouns	hospital	for ordinary patients	cue	
+hospital	госпиталь	Nouns	hospital	military, for the wounded	cue	
 hot	жаркий	Adjectives	hot	weather	cue	
 hot	горячий	Adjectives	hot	to the touch	cue	
 hot	жарко	Derived Adverbs	hot	weather	cue	
 hot	горячо	Derived Adverbs	hot / passionately	To the touch	cue	
 hotel	гостиница	Nouns	hotel	the ordinary Russian word	cue	
 hotel	отель	Nouns	hotel	borrowed term, usually upscale/international	cue	
+household	хозяйство	Nouns	household / economy	managed home or farm and its upkeep	cue	economy
+household	семейство	Nouns	household	a family, bookish; or a biological group	cue	
 how much	сколько	Base Adverbs	how much / how many	counting	cue	
 how much	насколько	Base Adverbs	how much / as far as	to what degree	cue	
 however	однако	Conjunctions	however	Formal	header	
 however	впрочем	Base Adverbs	however / then again	on second thought	header	then again
 humid	влажный	Adjectives	damp / humid		header	
 humid	влажно	Derived Adverbs	humid		header	
+husband	муж	Nouns	husband	everyday: marriage partner	cue	
+husband	супруг	Nouns	husband / spouse	formal: marriage partner	cue	
+idea	идея	Nouns	idea	a thought or plan	cue	
+idea	представление	Nouns	idea / performance	a mental picture, or a show for an audience	cue	performance
 if	если	Conjunctions	if	conditional	header	
 if	ли / ль	Particles	whether / if	turns it into a question	header	
+image	образ	Nouns	image / manner	inner or literary figure; also a way	cue	manner
+image	изображение	Nouns	image / picture	a depiction on a surface or screen	cue	picture
+implementation	осуществление	Nouns	implementation / realization	making a plan come true	cue	realization
+implementation	внедрение	Nouns	implementation	bringing a new method into practice	cue	
 in	через	Prepositions	through / across (what/where) / in (when/time)	Crossing	pill	through
 in	в / во	Prepositions	in / at (where) / into (where/what)	inside	pill	at
 in addition	также	Conjunctions	also / in addition	same subject, an extra thing; more formal	header	also
@@ -317,18 +714,53 @@ in half	вдвое	Base Adverbs	twice as / in half	by a factor of two	cue
 in half	пополам	Base Adverbs	in half / fifty-fifty	into two equal parts	cue	
 in vain	зря	Base Adverbs	in vain / for nothing	needlessly	cue	
 in vain	даром	Base Adverbs	for free / in vain	for no return	cue	
+income	доход	Nouns	income	earnings, profit made	cue	
+income	приход	Nouns	arrival / income	coming on foot; money received	cue	arrival
+increase	повышение	Nouns	increase / promotion	a step up in level or rank	cue	
+increase	увеличение	Nouns	increase	growing larger in amount	cue	
 indeed	уж	Particles	really / indeed	adds intensity	header	really
 indeed	правда (adverb)	Base Adverbs	really / indeed / actually	asserts the whole clause	header	actually | really
+industry	отрасль	Nouns	branch / industry	a sector of economy or science	cue	branch
+industry	промышленность	Nouns	industry	factories and manufacturing as a whole	cue	
+influence	влияние	Nouns	influence	gradual sway	cue	
+influence	воздействие	Nouns	influence / effect	direct action upon something	cue	effect
+information	информация	Nouns	information	data in the broad modern sense	cue	
+information	сведение	Nouns	information	a single known fact, official	cue	
+instant	миг	Nouns	moment / instant	poetic: a mere blink	cue	moment
+instant	мгновение	Nouns	moment / instant	literary: a fleeting span	cue	moment
+instruction	указание	Nouns	instruction	guidance on how to proceed	cue	
+instruction	распоряжение	Nouns	order / instruction	an official administrative directive	cue	order
+instrument	инструмент	Nouns	tool / instrument	for hands or music	cue	tool
+instrument	прибор	Nouns	device / instrument	a measuring or household apparatus	cue	device
+intention	намерение	Nouns	intention	what one means to do	cue	
+intention	замысел	Nouns	plan / intention	an artistic or secret concept	cue	plan
 interesting	интересный	Adjectives	interesting		header	
 interesting	интересно	Derived Adverbs	interesting		header	
+introduction	введение	Nouns	introduction	a scholarly preface, or putting a rule in place	cue	
+introduction	знакомство	Nouns	getting acquainted / introduction	meeting someone for the first time	cue	
+introduction	вступление	Nouns	introduction / entry	a spoken or musical opening, or joining a group	cue	
+investigation	следствие	Nouns	consequence / investigation	a logical effect, or a formal criminal inquiry	cue	consequence
+investigation	расследование	Nouns	investigation	official or journalistic inquiry	cue	
+iron	железо	Nouns	iron	the metal	cue	
+iron	утюг	Nouns	iron	for clothes	cue	
 it	это (particle)	Particles	this (is) / that (is) / it (is)		header	that | this
 it	он	Pronouns	he / it	masculine	cue	
 it	она	Pronouns	she / it	feminine	cue	
 it	оно	Pronouns	it	neutral	cue	
+item	пункт	Nouns	point / item	a numbered entry in a list	cue	point
+item	штука	Nouns	piece / item	a single thing, colloquial	cue	piece
+jacket	куртка	Nouns	jacket	casual, short outdoor wear	cue	
+jacket	пиджак	Nouns	jacket	formal, part of a suit	cue	
+joke	шутка	Nouns	joke	a quick quip or prank	cue	
+joke	анекдот	Nouns	joke / anecdote	a short story with a punchline	cue	
+joke	шутить	Verbs	joke		header	
 just	просто (particle)	Particles	simply / just	plays it down	cue	simply
 just	всего (particle)	Particles	only / just / in total	just this much	cue	only
 just	просто (adverb)	Derived Adverbs	simply / just	manner: simply	header	simply
-kind	вид	Nouns	view / appearance / kind	Scenery, looks	header	view
+justice	правда (noun)	Nouns	truth / justice	what really happened; moral rightness	cue	truth
+justice	справедливость	Nouns	justice / fairness	equal treatment under the rules	cue	
+kind	вид	Nouns	view / appearance / kind	Scenery, looks	cue	appearance | view
+kind	род	Nouns	kind / gender	ancestral line, or a type of thing	cue	
 kind	добрый	Adjectives	kind	kind-hearted	header	
 lamp	бра	Indeclinable Nouns	wall sconce / lamp	Wall-mounted	header	
 lamp	лампа	Nouns	lamp	a free-standing lamp	header	
@@ -343,8 +775,16 @@ law	закон	Nouns	law	a statute	cue
 law	право	Nouns	right / law	As a field	cue	right
 lead	водить	Verbs	lead / drive (a car)	Habitually	cue	drive
 lead	вести	Verbs	lead / take	on foot, one way	cue	take
+leader	лидер	Nouns	leader	one who is out in front	cue	
+leader	руководитель	Nouns	manager / leader	the head of a team or project	cue	manager
+leader	вождь	Nouns	leader / chief	a tribal or historic ruler, lofty	cue	chief
+leave	отпуск	Nouns	vacation / leave	official time off work	header	vacation
 leave	уходить	Verbs	leave	on foot	cue	
 leave	оставлять	Verbs	to leave / abandon	Behind	cue	
+lecture	доклад	Nouns	report / lecture	a formal presentation to an audience	cue	report
+lecture	лекция	Nouns	lecture	a teaching talk by an instructor	cue	
+letter	письмо	Nouns	letter	written message sent to someone	cue	
+letter	буква	Nouns	letter	a character of the alphabet	cue	
 lie	ложь	Nouns	lie	an untruth	header	
 lie	лежать	Verbs	lie	be lying down	cue	
 lie	лгать	Verbs	lie	tell untruths	cue	
@@ -359,100 +799,200 @@ like	как (conjunction)	Conjunctions	like / as	Real comparison	cue	as
 like	словно	Conjunctions	as if / like	literary — a poetic simile	cue	as if
 like	вроде	Base Adverbs	like / kind of / sort of	hedging	header	
 like	любить	Verbs	to love / to like	you do the liking	header+pill	love
-like	нравиться	Verbs	to be pleasing to / to like		header+pill	
+like	нравиться	Verbs	to enjoy / to like		header+pill	
+limit	предел	Nouns	limit	the furthest point reachable	cue	
+limit	ограничение	Nouns	restriction / limit	a rule that holds something back	cue	
 line	линия	Nouns	line	a geometric line	cue	
-line	очередь	Nouns	line / queue / turn	People waiting	cue	
+line	очередь	Nouns	line / queue / turn	People waiting	cue	turn
 line	ряд	Nouns	row / line	a row of things	cue	
+line	черта	Nouns	feature / line	a trait; also a drawn stroke	cue	feature
+line of text	строка	Nouns	line of text	the standard word, a row of writing	cue	
+line of text	строчка	Nouns	line of text	a short, informal one; also stitching	cue	
+link	связь	Nouns	connection / link	relationship or communication between things	cue	connection
+link	ссылка	Nouns	link / reference / exile	pointer to a source, or banishment	cue	reference
+list	список	Nouns	list	a series of names	cue	
+list	перечень	Nouns	list / inventory	an official enumeration	cue	
 little	мало	Base Adverbs	little / few	not much	header	few
 little	маленький	Adjectives	small / little	not big	header	small
 lively	живой	Adjectives	alive / lively		header	
 lively	живо	Derived Adverbs	vividly / lively		header	
-look	взгляд	Nouns	look / glance / view	A gaze; opinion	header	view
+load	груз	Nouns	cargo / load	freight carried	cue	
+load	нагрузка	Nouns	load / workload	burden imposed on a system	cue	
+look	взгляд	Nouns	look / glance / view	A gaze; opinion	cue	view
+look	облик	Nouns	appearance / look	overall image, literary	cue	appearance
 look	смотреть	Verbs	look / watch	direct your eyes at	header	watch
+lord	господь	Nouns	Lord	God, in prayer	cue	
+lord	владыка	Nouns	ruler / lord	a mighty sovereign or a bishop	cue	
 lot	много	Base Adverbs	many / much / a lot	quantity	header	much
 lot	сильно	Derived Adverbs	strongly / a lot	intensity	header	
 love	любовь	Nouns	love		header	
 love	любить	Verbs	to love / to like	you do the liking	header	like
 low	низкий	Adjectives	low / short	Not tall	header	short
 low	низко	Derived Adverbs	low		header	
+machine	машина	Nouns	machine / car	a big mechanism or road vehicle	cue	
+machine	машинка	Nouns	machine	a small appliance or toy	cue	
+main	главный	Adjectives	main / chief	the highest in rank	cue	chief
+main	основной	Adjectives	basic / main / fundamental	the basis others rest on	cue	
+main thing	главное	Nouns	the main thing	the point that matters most	cue	
+main thing	основное	Nouns	the main thing	the bulk, the foundation	cue	
+major	майор	Nouns	major	an army officer	cue	
+major	специальность	Nouns	specialty / major	the field one trained in	cue	
+man	мужчина	Nouns	man	polite: an adult male	cue	
+man	мужик	Nouns	man / peasant	colloquial: a rough rustic fellow	cue	peasant
+management	управление	Nouns	management / administration	the act of directing; also a department	cue	administration
+management	начальство	Nouns	management / authorities	the superiors above you	cue	
+management	ведение	Nouns	management / conduct	carrying on of affairs	cue	
 manager	менеджер	Nouns	manager	a business manager	cue	
 manager	управляющий	Nouns	manager	the one in charge, an administrator	cue	
+manager	руководитель	Nouns	manager / leader	the head of a team or project	cue	leader
+manner	образ	Nouns	image / manner	inner or literary figure; also a way	cue	image
+manner	манера	Nouns	manner	someone's characteristic style	cue	
+march	март	Nouns	March	the third month	cue	
+march	поход	Nouns	hike / march	a long walk or military journey	cue	
 mean	значить	Verbs	mean / signify		header	
-mean	злой	Adjectives	mean / evil / angry		header	
-meaning	смысл	Nouns	meaning / sense	the point of it	cue	
+mean	злой	Adjectives	mean / evil / angry		header	evil
+meaning	смысл	Nouns	meaning / sense	the point of it	cue	sense
 meaning	значение	Nouns	meaning / significance	what it signifies	cue	
+measure	мера	Nouns	measure	a unit of quantity, or a step taken	cue	
+measure	мероприятие	Nouns	event / measure	a planned official activity	cue	event
+medal	орден	Nouns	medal / order	a star or cross honour; also a brotherhood	cue	order
+medal	медаль	Nouns	medal	a round disc award	cue	
+medicine	лекарство	Nouns	medicine	a drug you take	cue	
+medicine	медицина	Nouns	medicine	the field of healthcare	cue	
 meet	встречать	Verbs	meet	run into someone	pill	
 meet	знакомиться	Verbs	get acquainted / meet	for the first time	cue	
 meet	встречаться	Verbs	meet / date	an arranged meeting	cue	date
 meeting	свидание	Nouns	date / meeting	romantic	cue	date
 meeting	встреча	Nouns	meeting	any meeting	cue	
+meeting	собрание	Nouns	meeting / assembly	a gathering of members	cue	
+meeting	совещание	Nouns	meeting / conference	a working discussion of officials	cue	conference
+memory	память	Nouns	memory	the faculty of retaining	cue	
+memory	воспоминание	Nouns	memory / recollection	one remembered episode	cue	
+merit	достоинство	Nouns	dignity / merit	self-respect, or a good quality	cue	
+merit	заслуга	Nouns	merit	earned credit for achievements	cue	
+message	сообщение	Nouns	message / report	a short notice passed on	cue	report
+message	послание	Nouns	message	a formal, weighty letter or address	cue	
 method	способ	Nouns	way / method	Any way of doing it	cue	way
 method	метод	Nouns	method	Systematic, scientific	cue	
+method	методика	Nouns	method / methodology	a worked-out set of procedures	cue	
+middle	середина	Nouns	middle		header	
+middle	средний	Adjectives	middle / average / medium		header	average
+mine	мина	Nouns	mine / grimace		header	
+mine	мой	Pronouns	my / mine		header	
+misfortune	беда	Nouns	trouble / misfortune	a real calamity	cue	trouble
+misfortune	несчастье	Nouns	misfortune	bad luck striking	cue	
+moment	момент	Nouns	moment	a point in time	cue	
+moment	миг	Nouns	moment / instant	poetic: a mere blink	cue	instant
+moment	мгновение	Nouns	moment / instant	literary: a fleeting span	cue	instant
 more	ещё	Base Adverbs	still / yet (ongoing) / more (asking for more)	Not over yet	cue	still
 more	более	Base Adverbs	more	formal comparison	cue	
 morning	утро	Nouns	morning		header	
 morning	утренний	Adjectives	morning		header	
 most	наиболее	Base Adverbs	the most		header	
 most	самый	Pronouns	the most / the very		header	very
-move	ход	Nouns	move / course		header	
+motor	двигатель	Nouns	engine / motor	technical: a power unit	cue	
+motor	мотор	Nouns	motor	everyday: a power unit	cue	
+move	ход	Nouns	move / course	a step in a game or process	header	course
 move	двигаться	Verbs	to move		header	
 movie	кино	Indeclinable Nouns	cinema / movie	cinema, or film as a medium	header	
-movie	фильм	Nouns	film / movie	a particular film	header	
+movie	фильм	Nouns	film / movie	a particular film	header	film
 much	много	Base Adverbs	many / much / a lot	quantity	cue	lot
 much	гораздо	Base Adverbs	much / far	very much more	cue	far
 much	намного	Base Adverbs	much / far	by a wide margin	cue	far
 naive	наивный	Adjectives	naive		header	
 naive	наивно	Derived Adverbs	naive (it's naive) / naively		header	
-name	имя	Nouns	name		header	
+name	имя	Nouns	name	the first one, given at birth	cue	
+name	название	Nouns	name / title	the label of a thing or work	cue	title
 name	называть	Verbs	name / call	give a name to	header	call
 nation	народ	Nouns	people / nation	The populace	cue	people
 nation	нация	Nouns	nation	a nation state	cue	
+nature	природа	Nouns	nature	the natural world	cue	
+nature	натура	Nouns	nature / character	inborn makeup	cue	character
 near	около	Prepositions	near / around (whom/what/where/when)	Roughly	cue	around
 near	возле	Prepositions	by / near (whom/what/where)	right beside	cue	by
 near	вблизи	Prepositions	near (whom/what/where) / nearby	in the vicinity	cue	nearby
+near	близкий	Adjectives	close / near / dear	bound by family or friendship	header	close | dear
+near	близко	Derived Adverbs	close / near (it is nearby)		header	close
 nearby	вблизи	Prepositions	near (whom/what/where) / nearby	in the vicinity	header	near
 nearby	поблизости	Base Adverbs	nearby / in the vicinity	somewhere around here	cue	
 nearby	неподалёку	Base Adverbs	not far away / nearby	a short way off	cue	
-nearby	рядом	Base Adverbs	next to / nearby / side by side	right next to	cue	
+nearby	рядом	Base Adverbs	next to / nearby / side by side	right next to	header+pill	
 necessary	нужный	Adjectives	needed / necessary		header	
 necessary	нужно	Derived Adverbs	necessary		header	
+need	потребность	Nouns	need	a requirement to satisfy	cue	
+need	нужда	Nouns	need	want or hardship	cue	
+net	сеть	Nouns	network / net	web of connected nodes	cue	
+net	сетка	Nouns	net	mesh or grid pattern	cue	
 nevertheless	всё-таки	Particles	still / nevertheless	all the same	cue	still
 nevertheless	таки	Particles	after all / nevertheless	Colloquial	cue	after all
+news	известие	Nouns	news / notice	a formal notification received	cue	notice
+news	новость	Nouns	news	a fresh item of information	cue	
 nice	приятный	Adjectives	pleasant / nice		header	pleasant
 nice	приятно	Derived Adverbs	nice(ly) / pleasant(ly)		header	pleasant
 night	ночь	Nouns	night		header	
 night	ночной	Adjectives	night		header	
-nothing	ничего (particle)	Particles	nothing / it's OK / no problem	nothing; also 'it's fine'	header	
-nothing	ничто	Pronouns	nothing	As the subject	header	
+note	записка	Nouns	note	a short letter to someone	cue	
+note	заметка	Nouns	note	a jotted record or press item	cue	
+notice	известие	Nouns	news / notice	a formal notification received	header	news
+notice	замечать	Verbs	notice		header	
 now	сейчас	Base Adverbs	now / right now	this exact moment	cue	
 now	теперь	Base Adverbs	now / nowadays	as opposed to before	cue	
 nowhere	нигде	Base Adverbs	nowhere	no place at all	cue	
 nowhere	никуда	Base Adverbs	nowhere	to no place	cue	
 number	число	Nouns	number / date	A numeral; calendar day	cue	date
 number	номер	Nouns	number / hotel room	an assigned number	cue	
+number	численность	Nouns	number / size	headcount of a group	cue	size
+object	предмет	Nouns	object / school subject	a physical thing; a course of study	cue	
+object	объект	Nouns	object	a target of study or action, formal	cue	
 occasion	случай	Nouns	case / occasion	an instance	cue	
 occasion	раз	Nouns	time / occasion	counting occurrences	cue	time
+occasion	повод	Nouns	reason / occasion	a trigger or pretext	cue	reason
 of course	конечно	Particles	of course / certainly	obviously so	header	certainly
 of course	разумеется	Base Adverbs	of course / naturally		header	
+offense	обида	Nouns	resentment / offense	a hurt feeling	cue	
+offense	правонарушение	Nouns	offense	breaking of a law	cue	
+offer	предложение	Nouns	sentence / offer	words forming a complete thought; or a proposal	header	sentence
+offer	предлагать	Verbs	offer / suggest		header	
 office	бюро	Indeclinable Nouns	bureau / office	Agency	header	
-office	офис	Nouns	office	a workplace	header	
+office	офис	Nouns	office	a workplace	cue	
+office	кабинет	Nouns	office / study	a private working room in a building	cue	study
+office	контора	Nouns	office	old-fashioned: a small business premises	cue	
 often	зачастую	Base Adverbs	often / frequently		header	
 often	часто	Derived Adverbs	often		header	
+oil	масло	Nouns	butter / oil	fat for cooking or engines	cue	
+oil	нефть	Nouns	oil / petroleum	crude fuel from underground	cue	
+old woman	баба	Nouns	old woman	coarse slang, often a village wife	cue	
+old woman	старуха	Nouns	old woman	plain, sometimes harsh	cue	
+old woman	старушка	Nouns	old woman	affectionate, gentle	cue	
 once	однажды	Base Adverbs	once / one day	one particular time	cue	
 once	как-то	Base Adverbs	somehow / once (in the past) / somewhat	casual and vague	cue	somehow | somewhat
 once	когда-то	Base Adverbs	once / at one time	long ago	cue	
+one	единица	Nouns	one / unit	the digit; a single measure	header	unit
+one	один	Numerals	one		header	
 only	только	Particles	only	Neutral	cue	
 only	лишь	Particles	merely / only	Bookish	cue	
 only	всего (particle)	Particles	only / just / in total	just this much	cue	just
 only	единственный	Adjectives	only / sole	Describes a noun	header	
 open	открывать	Verbs	to open		header	
 open	открытый	Adjectives	open		header	
+opening	открытие	Nouns	discovery / opening	a revelation or ceremonial launch	cue	
+opening	отверстие	Nouns	opening	a hole in a surface	cue	
+operation	операция	Nouns	operation / surgery	a surgical or military procedure	cue	
+operation	эксплуатация	Nouns	exploitation / operation	using equipment or labor over time	cue	
 opposite	против	Prepositions	against / opposite (whom/what/where)	in conflict with	cue	
 opposite	напротив	Prepositions	opposite (whom/what/where) / on the contrary	across from	cue	
 or	либо	Conjunctions	either / or	Formal	cue	
 or	или / иль	Conjunctions	or	Everyday	cue	
-order	приказ	Nouns	order / command		header	command
+orange	апельсин	Nouns	orange		header	
+orange	оранжевый	Adjectives	orange		header	
+order	приказ	Nouns	order / command	a superior's binding demand	cue	command
+order	порядок	Nouns	order	tidy arrangement or sequence	cue	
+order	заказ	Nouns	order	goods requested from a seller	cue	
+order	распоряжение	Nouns	order / instruction	an official administrative directive	cue	instruction
+order	орден	Nouns	medal / order	a star or cross honour; also a brotherhood	cue	medal
 order	приказывать	Verbs	to order / to command		header	command
+origin	происхождение	Nouns	origin	where something comes from, ancestry	cue	
+origin	возникновение	Nouns	emergence / origin	the moment of coming into being	cue	
 other	другой	Adjectives	other / different	another one	cue	different
 other	иной	Adjectives	different / other	of another kind	cue	different
 outside	наружу	Base Adverbs	out / outside	going out	cue	
@@ -460,81 +1000,291 @@ outside	снаружи	Base Adverbs	outside / from the outside	on the outer side
 over	поверх	Prepositions	over / on top of (what/where)	Covering	cue	
 over	свыше	Prepositions	over / more than (how many)	above a number	cue	
 over	над / надо	Prepositions	above / over (where/what/whom)	Not touching	pill	above
+owner	хозяин	Nouns	owner / host	the master of a household	cue	
+owner	владелец	Nouns	owner	whoever holds a possession	cue	
+owner	собственник	Nouns	owner	the one with full property rights	cue	
+painting	картина	Nouns	picture / painting	a single framed artwork	cue	picture
+painting	живопись	Nouns	painting	the art as a discipline	cue	
+part	часть	Nouns	part	a portion of a whole	cue	
+part	деталь	Nouns	detail / part	a single component, or a fine feature	cue	detail
+particular	частность	Nouns	detail / particular	a single minor point within a bigger matter	header	detail
+particular	данный	Adjectives	given / present / particular	the one under discussion	header	present
 pass	проходить	Verbs	pass / go through	move past or through	cue	
 pass	передавать	Verbs	pass / hand over / convey	To someone else	cue	
 pass	сдавать	Verbs	take / pass / hand in	submit for assessment	cue	take
 past	мимо	Prepositions	past / by (whom/what/where)	Going past	header	by
 past	прошлое	Nouns	the past		header	
 past	прошлый	Adjectives	past / last	the one just gone	header	last
+path	путь	Nouns	way / path	a route	cue	way
+path	дорожка	Nouns	path / lane	a narrow walkway outdoors	cue	
+patient	больной (noun)	Nouns	patient	everyday: a sick person	cue	
+patient	пациент	Nouns	patient	formal: a person under medical care	cue	
+payment	оплата	Nouns	payment	the act of settling a bill	cue	
+payment	плата	Nouns	payment / fee	a fixed charge for a service	cue	
+payment	выплата	Nouns	payment / payout	money paid out to a recipient	cue	
+payment	платёж	Nouns	payment	a single transaction	cue	
+peace	мир	Nouns	world / peace	absence of war	cue	
+peace	покой	Nouns	peace / rest	stillness and calm	cue	rest
+peasant	мужик	Nouns	man / peasant	colloquial: a rough rustic fellow	cue	man
+peasant	крестьянин	Nouns	peasant	the proper term for a rural farmer	cue	
 penalty	пенальти	Indeclinable Nouns	penalty	in sports	header	
 penalty	штраф	Nouns	fine / penalty	a money punishment	header	fine
 people	люди	Nouns	people	persons, individuals	cue	
 people	народ	Nouns	people / nation	The populace	cue	nation
+performance	спектакль	Nouns	performance / show	a staged theatrical production	cue	show
+performance	представление	Nouns	idea / performance	a mental picture, or a show for an audience	cue	idea
+performance	исполнение	Nouns	execution / performance	an artist's rendition of a piece	cue	
+performance	выполнение	Nouns	performance / completion	carrying out a task or plan	cue	completion
+performance	выступление	Nouns	speech / performance	a public appearance before an audience	cue	speech
+performer	артист	Nouns	performer / artist	a stage or screen entertainer	cue	artist
+performer	исполнитель	Nouns	performer	one who plays or sings a work	cue	
 perhaps	пожалуй	Particles	perhaps / I suppose	leaning towards it	header	
 perhaps	возможно	Derived Adverbs	possibly / perhaps	weighing the odds	header	
-photograph	фотография	Nouns	photograph		header	
+personality	характер	Nouns	character / personality	temperament and moods	cue	character
+personality	личность	Nouns	personality	an individual with their own identity	cue	
+photograph	фотография	Nouns	photograph	the art, or a printed picture	cue	
+photograph	снимок	Nouns	photograph	a single shot, scans included	cue	
 photograph	фотографировать	Verbs	take photos / (to) photograph		header	
 piano	пианино	Indeclinable Nouns	piano	upright	cue	
 piano	фортепиано	Indeclinable Nouns	piano	the instrument in general	cue	
+picture	картина	Nouns	picture / painting	a single framed artwork	cue	painting
+picture	изображение	Nouns	image / picture	a depiction on a surface or screen	cue	image
+picture	картинка	Nouns	picture	a small illustration	cue	
+piece	кусок	Nouns	piece	a chunk broken off	cue	
+piece	произведение	Nouns	work / piece	creative, by an author	cue	work
+piece	штука	Nouns	piece / item	a single thing, colloquial	cue	item
+pilot	пилот	Nouns	pilot	a flyer or racer at the controls	cue	
+pilot	лётчик	Nouns	pilot	an aviator by profession	cue	
+pipe	трубка	Nouns	pipe / receiver	a small tube; a handset	cue	
+pipe	труба	Nouns	pipe	a large conduit or chimney	cue	
+plan	план	Nouns	plan	a detailed scheme	cue	
+plan	замысел	Nouns	plan / intention	an artistic or secret concept	cue	intention
+plant	завод	Nouns	factory / plant	large industrial works	cue	factory
+plant	растение	Nouns	plant	a growing green organism	cue	
+plate	тарелка	Nouns	plate	a dish for food	cue	
+plate	пластинка	Nouns	record / plate	a thin flat disc; vinyl	cue	record
+platform	площадка	Nouns	playground / platform	small flat open space	cue	
+platform	платформа	Nouns	platform	raised structure or technology base	cue	
+play	игра	Nouns	game / play	an activity with rules	cue	
+play	пьеса	Nouns	play	a written stage drama	cue	
+play	играть	Verbs	play		header	
 pleasant	приятный	Adjectives	pleasant / nice		header	nice
 pleasant	приятно	Derived Adverbs	nice(ly) / pleasant(ly)		header	nice
+plot	участок	Nouns	plot / section	a defined piece of land or work area	cue	section
+plot	сюжет	Nouns	plot / subject	the storyline or topic of a work	cue	subject
+point	точка	Nouns	point / dot	exact spot or mark	cue	
+point	пункт	Nouns	point / item	a numbered entry in a list	cue	item
+police	полиция	Nouns	police	the present-day force	cue	
+police	милиция	Nouns	police	the Soviet-era force	cue	
+position	положение	Nouns	position / situation	overall standing or state of things	cue	situation
+position	позиция	Nouns	position	a stance, or a place in a list	cue	
+position	должность	Nouns	position / post	the job one holds in an organization	cue	post
+post	должность	Nouns	position / post	the job one holds in an organization	cue	position
+post	пост	Nouns	post	a guarded station or a high office	cue	
+post	столб	Nouns	pole / post	an upright pillar of wood or concrete	cue	
+power	власть	Nouns	power / authority	ruling control over people	cue	authority
+power	мощность	Nouns	power / capacity	rated output of equipment	cue	
+preparation	подготовка	Nouns	preparation	getting ready or trained ahead of time	cue	
+preparation	препарат	Nouns	preparation / drug	a medical or lab product	cue	drug
 prepare	готовить	Verbs	prepare / cook	any cooking method	pill	cook
 prepare	готовиться	Verbs	prepare	get yourself ready	pill	
+presence	наличие	Nouns	presence	a thing being available	cue	
+presence	присутствие	Nouns	presence	a person being there	cue	
 present	настоящее	Nouns	the present		header	
-present	настоящий	Adjectives	real / genuine / present		header	
+present	настоящий	Adjectives	real / genuine / present	authentic, or current	cue	
+present	данный	Adjectives	given / present / particular	the one under discussion	cue	particular
+prince	князь	Nouns	prince	historic Russian title	cue	
+prince	принц	Nouns	prince	a foreign royal's son	cue	
+problem	проблема	Nouns	problem	a difficulty causing trouble	cue	
+problem	задача	Nouns	task / problem	an aim, or a puzzle to be solved	cue	task
+processing	обработка	Nouns	processing / treatment	working a material over technically	cue	treatment
+processing	оформление	Nouns	processing / design	giving a finished look or official form	cue	design
 product	продукт	Nouns	product / groceries	Food items	cue	
 product	товар	Nouns	goods / product	merchandise	cue	
+product	изделие	Nouns	product / article	a manufactured item	cue	article
+production	производство	Nouns	production	manufacturing in industry	cue	
+production	постановка	Nouns	staging / production	in theatre; setting a problem	cue	
+promise	обещание	Nouns	promise		header	
+promise	обещать	Verbs	promise		header	
+property	свойство	Nouns	property / quality	a characteristic trait	cue	quality
+property	собственность	Nouns	property	what someone legally owns	cue	
+property	имущество	Nouns	property / belongings	the owned items counted together	cue	
+protection	защита	Nouns	defense / protection	shielding against harm	cue	defense
+protection	охрана	Nouns	guard / protection	standing watch over people or property	cue	guard
+province	область	Nouns	region / province	administrative unit; also a field of knowledge	cue	region
+province	провинция	Nouns	province	country areas away from the capital	cue	
+provision	обеспечение	Nouns	provision / support	making sure needs are covered	cue	support
+provision	предоставление	Nouns	provision	the handing over of a right or service	cue	
+public	публика	Nouns	audience / public	spectators gathered at an event	cue	audience
+public	общественность	Nouns	the public	citizens as a whole, official wording	cue	
+publication	издание	Nouns	publication / edition	the issued printed work from a publisher	cue	
+publication	публикация	Nouns	publication	making something public, or a single article	cue	
+quality	качество	Nouns	quality	how good something is	cue	
+quality	свойство	Nouns	property / quality	a characteristic trait	cue	property
+quantity	количество	Nouns	quantity	how many or how much	cue	
+quantity	величина	Nouns	magnitude / quantity	a measurable size	cue	
+quarter	четверть	Nouns	quarter	one of four equal parts	cue	
+quarter	квартал	Nouns	block / quarter	a city area; three months	cue	block
 raise	поднимать	Verbs	lift / raise / pick up	lift physically	cue	lift
 raise	растить	Verbs	raise / grow	Bring up	cue	
+rank	звание	Nouns	title / rank	a conferred status or honour	cue	title
+rank	чин	Nouns	rank	a grade on an official ladder, old-fashioned	cue	
+rate	курс	Nouns	course / rate	heading, study programme, currency price	cue	course
+rate	ставка	Nouns	bet / rate	a wager or fixed charge	cue	bet
+reading	чтение	Nouns	reading	going through written text	cue	
+reading	показание	Nouns	testimony / reading	a witness's account, or a gauge's figure	cue	testimony
+reality	реальность	Nouns	reality	what exists, everyday	cue	
+reality	действительность	Nouns	reality	actual circumstances, bookish	cue	
+realization	реализация	Nouns	realization	formal carrying out; also selling off	cue	
+realization	осуществление	Nouns	implementation / realization	making a plan come true	cue	implementation
 really	уж	Particles	really / indeed	adds intensity	header	indeed
 really	правда (adverb)	Base Adverbs	really / indeed / actually	asserts the whole clause	header	actually | indeed
 really	ужасно	Derived Adverbs	terribly / awfully / really	Very badly	cue	terribly
 really	по-настоящему	Derived Adverbs	really / for real	genuinely	cue	
 reason	разум	Nouns	reason	the faculty of reason	cue	
 reason	причина	Nouns	cause / reason	the why	cue	cause
+reason	повод	Nouns	reason / occasion	a trigger or pretext	cue	occasion
+receipt	чек	Nouns	receipt / check	a printed slip of payment proof	cue	check
+receipt	получение	Nouns	receipt	the act of getting	cue	
+receipt	поступление	Nouns	admission / receipt	incoming arrival of funds or goods, or enrolling	cue	
 recognize	признавать	Verbs	admit / recognize	acknowledge	cue	
 recognize	узнавать	Verbs	find out / recognize	know by sight	cue	
+record	запись	Nouns	record / recording	something written or captured	cue	
+record	пластинка	Nouns	record / plate	a thin flat disc; vinyl	cue	plate
+reduction	снижение	Nouns	decrease / reduction	going lower in level	cue	
+reduction	сокращение	Nouns	reduction / abbreviation	cutting down; shortened form	cue	
+reference	справка	Nouns	certificate / reference	quick note from an office	cue	certificate
+reference	ссылка	Nouns	link / reference / exile	pointer to a source, or banishment	cue	link
+reflection	отражение	Nouns	reflection	what appears in a mirror	cue	
+reflection	размышление	Nouns	reflection	pondering deeply	cue	
 regarding	насчёт	Prepositions	about / regarding (whom/what)	Colloquial	cue	about
 regarding	относительно	Prepositions	regarding / concerning (whom/what)	formal	cue	
+region	край	Nouns	edge / region	outer rim; a distant land	cue	edge
+region	область	Nouns	region / province	administrative unit; also a field of knowledge	cue	province
+region	регион	Nouns	region	broad area, geographic or economic	cue	
+registration	учёт	Nouns	accounting / registration	tracking and recording continually	cue	
+registration	регистрация	Nouns	registration	official enrollment or check-in	cue	
+regret	сожаление	Nouns	regret		header	
+regret	жалеть	Verbs	regret / feel sorry for		header	
+release	выпуск	Nouns	release / issue	a published edition or graduating class	cue	
+release	освобождение	Nouns	liberation / release	being set free	cue	
+remark	замечание	Nouns	remark	a comment pointing out a fault	cue	
+remark	реплика	Nouns	remark	a quick interjected line	cue	
 remember	помнить	Verbs	remember	keep in memory	pill	
 remember	вспоминать	Verbs	remember / recall	bring to mind	pill	
-request	просьба	Nouns	request		header	
+report	сообщение	Nouns	message / report	a short notice passed on	cue	message
+report	доклад	Nouns	report / lecture	a formal presentation to an audience	cue	lecture
+report	отчёт	Nouns	report	a written account of results	cue	
+request	просьба	Nouns	request	a favour asked of someone	cue	
+request	запрос	Nouns	request / query	an inquiry for information or data	cue	
+request	заявка	Nouns	request / bid	formal application to take part or order	cue	
 request	просить	Verbs	ask (for) / request	ask for something	header	ask
 rescue	спасение	Nouns	rescue / salvation		header	
 rescue	спасать	Verbs	to save / to rescue		header	
-rest	отдых	Nouns	rest / vacation		header	
+reserve	запас	Nouns	supply / reserve	stock kept in store	cue	supply
+reserve	резерв	Nouns	reserve	kept back for official use	cue	
+rest	отдых	Nouns	rest / vacation	time spent relaxing	cue	vacation
+rest	покой	Nouns	peace / rest	stillness and calm	cue	peace
+rest	остаток	Nouns	remainder / rest	what is left over	cue	
 rest	отдыхать	Verbs	to rest / to relax		header	
+result	результат	Nouns	result	what an action or test yields	cue	
+result	итог	Nouns	result / total	the final sum-up	cue	
+return	возвращение	Nouns	return		header	
+return	возвращаться	Verbs	return / come back		header	
 ride	ездить	Verbs	go / ride	by vehicle, habitually	cue	go
 ride	ехать	Verbs	to go / ride / drive / travel	by vehicle, one way	cue	drive | go
 right	право	Nouns	right / law	As a field	header	law
 right	правильный	Adjectives	correct / right	Not wrong	cue	
 right	правый	Adjectives	right / right-wing	side	cue	
+ring	кольцо	Nouns	ring		header	
+ring	звонить	Verbs	call (phone) / ring		header	call
+rock	порода	Nouns	breed / rock	a type of stone or lineage	cue	
+rock	скала	Nouns	rock / cliff	a massive outcrop	cue	
+room	комната	Nouns	room	a lived-in space at home	cue	
+room	помещение	Nouns	room / premises	an indoor space for any official purpose	cue	
+round	тур	Nouns	tour / round		header	tour
+round	круглый	Adjectives	round		header	
+route	маршрут	Nouns	route	planned path of a journey	cue	
+route	трасса	Nouns	route / highway	major road or marked track	cue	highway
+rule	правило	Nouns	rule	a principle to follow	cue	
+rule	правление	Nouns	board / rule	a governing committee	cue	board
 run	бегать	Verbs	run	habitually, round trips	cue	
 run	бежать	Verbs	to run / to set off running	one way	cue	
 sad	грустный	Adjectives	sad		header	
 sad	грустно	Derived Adverbs	sad		header	
 sail	плавать	Verbs	swim / sail	habitually, round trips	cue	swim
 sail	плыть	Verbs	swim / sail	one way	cue	swim
+sample	образец	Nouns	sample	a pattern to copy	cue	
+sample	проба	Nouns	sample	a small portion taken for testing	cue	
+scarf	шарф	Nouns	scarf	a long one for the neck	cue	
+scarf	платок	Nouns	scarf / kerchief	a square one for head or shoulders	cue	
 scary	страшный	Adjectives	terrible / frightful / scary	frightening	header	terrible
 scary	страшно	Derived Adverbs	scary (it's scary) / terribly (very)	frighteningly	header	terribly
+search	поиск	Nouns	search		header	
+search	искать	Verbs	look for / search		header	
+season	пора (noun)	Nouns	time / season	a period; the right moment	cue	time
+season	сезон	Nouns	season	a yearly cycle of activity	cue	
+seat	место	Nouns	place / seat	a reserved spot	cue	
+seat	сиденье	Nouns	seat	the thing you sit on	cue	
 second	секунда	Nouns	second	the unit of time	header	
 second	второй	Numerals	second	Numeric	header	
 secret	секрет	Nouns	secret	Kept from others	cue	
 secret	тайна	Nouns	mystery / secret	Unexplained	cue	
+section	участок	Nouns	plot / section	a defined piece of land or work area	cue	plot
+section	раздел	Nouns	section	a titled division of a text	cue	
+sense	смысл	Nouns	meaning / sense	the point of it	cue	meaning
+sense	толк	Nouns	sense / use	worthwhile result; colloquial	cue	use
+sentence	предложение	Nouns	sentence / offer	words forming a complete thought; or a proposal	cue	offer
+sentence	приговор	Nouns	sentence / verdict	court's punishment decision	cue	
 seriously	всерьёз	Base Adverbs	seriously / in earnest	not joking	header	in earnest
 seriously	серьёзно	Derived Adverbs	seriously		header	
+service	услуга	Nouns	service / favor	a task done for someone	cue	
+service	служба	Nouns	service	official duty or career in an organization	cue	
+service	обслуживание	Nouns	service	attending to customers	cue	
+set	множество	Nouns	multitude / set	very many, or a mathematical collection	cue	
+set	набор	Nouns	set / kit	ready-made collection for a purpose	cue	
+set	задавать	Verbs	ask (a question) / set	set a question or task	header	ask
+shade	тень	Nouns	shadow / shade	the dark area where light is blocked	cue	
+shade	оттенок	Nouns	shade / tint	a subtle variation of colour	cue	
+share	доля	Nouns	share / portion	one's part of a whole	cue	
+share	акция	Nouns	share / campaign	a company stock; also a one-off event	cue	campaign
+share	делиться	Verbs	share		header	
+ship	корабль	Nouns	ship	large and seagoing	cue	
+ship	судно	Nouns	ship / vessel	any watercraft, official term	cue	vessel
+shop	магазин	Nouns	store / shop	a standard premises	cue	
+shop	лавка	Nouns	shop	a small, old-style one	cue	
 short	низкий	Adjectives	low / short	Not tall	cue	low
 short	короткий	Adjectives	short	not long	cue	
 short	коротко	Derived Adverbs	briefly / short	briefly, in speech	header	
+shot	кадр	Nouns	frame / shot	one still image of a film	cue	frame
+shot	выстрел	Nouns	shot	a gun being fired	cue	
+shout	крик	Nouns	shout		header	
+shout	кричать	Verbs	shout / give a shout		header	
 show	шоу	Indeclinable Nouns	show		header	
+show	спектакль	Nouns	performance / show	a staged theatrical production	header	performance
 show	показывать	Verbs	to show		header	
+side	сторона	Nouns	side	a direction or party	cue	
+side	бок	Nouns	side	a person's or animal's flank	cue	
+side	стенка	Nouns	wall / side	thin, of a container or box	cue	wall
+side	борт	Nouns	side / board	the edge of a ship or plane	cue	board
+sign	знак	Nouns	sign / mark	a deliberate symbol	cue	
+sign	признак	Nouns	sign / symptom	a telltale quality	cue	symptom
+silence	тишина	Nouns	silence	absence of sound	cue	
+silence	молчание	Nouns	silence	choosing not to speak	cue	
 simply	просто (particle)	Particles	simply / just	plays it down	header	just
 simply	попросту	Base Adverbs	simply / plainly		header	
 simply	просто (adverb)	Derived Adverbs	simply / just	manner: simply	header	just
 since	так как	Conjunctions	since / as	because	cue	as
-since	с тех пор, как	Conjunctions	since	From that time	cue	
+since	с тех пор, как	Conjunctions	since	from that time	cue	
 since	поскольку	Conjunctions	since / because	given that	cue	because
 since	с / со	Prepositions	with (whom/what) / from / off of (where/what) / since (when) /	Off a surface	header	from
+situation	ситуация	Nouns	situation	the circumstances at hand	cue	
+situation	положение	Nouns	position / situation	overall standing or state of things	cue	position
+situation	обстановка	Nouns	situation / setting	the surrounding atmosphere or furnishings	cue	
+size	размер	Nouns	size	dimensions, how big	cue	
+size	численность	Nouns	number / size	headcount of a group	cue	number
+skill	умение	Nouns	skill	an ability one has learned	cue	
+skill	мастерство	Nouns	skill	high craftsmanship	cue	
 sleep	сон	Nouns	sleep / dream	While asleep	header	dream
 sleep	спать	Verbs	to sleep		header	
 slightly	несколько	Base Adverbs	somewhat / slightly	formal	cue	somewhat
@@ -550,6 +1300,10 @@ so	настолько	Base Adverbs	so / so much / to such an extent	to such a de
 so	такой	Pronouns	such / that kind of / so (+ adjective)		header	
 so much	настолько	Base Adverbs	so / so much / to such an extent	to such a degree	cue	so
 so much	столько	Base Adverbs	so much / so many	this many	cue	
+soldier	солдат	Nouns	soldier	a rank-and-file fighter	cue	
+soldier	военный (noun)	Nouns	soldier	any member of the forces, any rank	cue	
+solution	решение	Nouns	decision / solution	an answer to a problem, or a choice made	cue	
+solution	раствор	Nouns	solution / mortar	a liquid mix, or building paste	cue	
 some day	как-нибудь	Base Adverbs	somehow / some day	any old way	cue	somehow
 some day	когда-нибудь	Base Adverbs	some day / ever	at any time	cue	
 somehow	как-нибудь	Base Adverbs	somehow / some day	any old way	cue	some day
@@ -562,45 +1316,118 @@ somewhere	куда-нибудь	Base Adverbs	somewhere / anywhere	to any place	c
 somewhere	куда-то	Base Adverbs	somewhere	to a place I can't name	cue	
 sorry	извините	Particles	excuse me / sorry	excuse my action / minor	header	excuse me
 sorry	жаль	Base Adverbs	it's a pity / sorry		header	
+space	пространство	Nouns	space	an expanse to occupy	cue	
+space	космос	Nouns	space / cosmos	the universe beyond Earth	cue	
+speech	речь	Nouns	speech	spoken language, or an address	cue	
+speech	выступление	Nouns	speech / performance	a public appearance before an audience	cue	performance
+sphere	сфера	Nouns	sphere	a realm of activity	cue	
+sphere	шар	Nouns	ball / sphere	a perfectly round solid body	cue	ball
+spring	весна	Nouns	spring		header	
+spring	весенний	Adjectives	spring		header	
+staff	штаб	Nouns	headquarters / staff	a military or organizing center	cue	
+staff	штат	Nouns	state / staff	a payroll roster; also a federal region	cue	state
+staff	персонал	Nouns	staff / personnel	workers as a group	cue	
+stage	этап	Nouns	stage	a leg of a project or journey	cue	
+stage	сцена	Nouns	stage / scene	where actors perform; also a dramatic moment	cue	
+stage	стадия	Nouns	stage	a phase of growth or illness	cue	
+stage	ступень	Nouns	step / stage	a level on a rising scale	cue	step
+stamp	печать	Nouns	stamp / seal / print	an inked impression, or the press	cue	
+stamp	марка	Nouns	stamp / brand	postal piece, or maker's label	cue	
+stand	стойка	Nouns	counter / stand		header	
+stand	стоять	Verbs	stand	State	header	
 start	старт	Nouns	start		header	
 start	начинать	Verbs	to begin / to start	begin an action	header+pill	
-start	становиться	Verbs	to become / to start (doing)		header+pill	
+start	становиться (verb)	Verbs	to become / to start (doing)		header+pill	
+state	государство	Nouns	state	a sovereign country	cue	
+state	состояние	Nouns	state / condition	how something currently is	cue	condition
+state	штат	Nouns	state / staff	a payroll roster; also a federal region	cue	staff
+statement	заявление	Nouns	statement / application	formal written submission	cue	application
+statement	высказывание	Nouns	statement	words someone has expressed	cue	
+stay	пребывание	Nouns	stay		header	
 stay	оставаться	Verbs	stay / remain	remain behind	cue	
 stay	останавливаться	Verbs	stop / stay (at a place)	come to a halt, or lodge	cue	stop
+step	шаг	Nouns	step	a single stride	cue	
+step	ступень	Nouns	step / stage	a level on a rising scale	cue	stage
+step	ступенька	Nouns	step / stair	a small riser you climb	cue	
 still	всё-таки	Particles	still / nevertheless	all the same	cue	nevertheless
-still	всё (particle)	Particles	still / all / constantly (keeps on)	Repeatedly	cue	all
+still	всё (particle)	Particles	still / constantly (keeps on)	Repeatedly	cue	
 still	ещё	Base Adverbs	still / yet (ongoing) / more (asking for more)	Not over yet	header	more
 stop	остановка	Nouns	stop		header	
 stop	останавливать	Verbs	stop	stop something else	cue	
 stop	останавливаться	Verbs	stop / stay (at a place)	come to a halt, or lodge	cue	stay
+story	история	Nouns	history / story	the past, or a tale told	cue	
+story	рассказ	Nouns	story	a brief tale, or the telling of it	cue	
+story	повесть	Nouns	novella / story	a mid-length prose work	cue	
+stove	плита	Nouns	stove / slab	a kitchen cooking top; flat block	cue	
+stove	печь (noun)	Nouns	stove / oven	a large brick furnace	cue	
+stove	печка	Nouns	stove	a small, homely one	cue	
 straight	напрямую	Base Adverbs	directly / straight		header	directly
 straight	прямой	Adjectives	straight / direct		header	
 straight	прямо	Derived Adverbs	straight / directly		header	directly
 strange	странный	Adjectives	strange		header	
 strange	странно	Derived Adverbs	strange (it's odd) / strangely		header	
+structure	структура	Nouns	structure	internal organization	cue	
+structure	устройство	Nouns	device / structure	a mechanism, or how it is arranged	cue	device
+structure	конструкция	Nouns	construction / structure	the assembled framework	cue	construction
+structure	строение	Nouns	structure / building	any built thing; also inner makeup	cue	building
+structure	сооружение	Nouns	structure / construction	a large engineering work	cue	construction
+structure	постройка	Nouns	structure	a built object, often small	cue	
+study	исследование	Nouns	research / study	a scientific inquiry with findings	cue	
+study	кабинет	Nouns	office / study	a private working room in a building	cue	office
+study	изучение	Nouns	study	learning a subject in depth	cue	
+study	учиться	Verbs	study / learn how to		header	
 stupid	глупый	Adjectives	stupid / silly		header	
 stupid	глупо	Derived Adverbs	stupid (it's stupid to) / stupidly		header	
+subject	субъект	Nouns	subject	an acting party, bearer of an action	cue	
+subject	сюжет	Nouns	plot / subject	the storyline or topic of a work	cue	plot
 summer	лето	Nouns	summer		header	
 summer	летний	Adjectives	summer		header	
 summon	звать	Verbs	call / summon / be named	Invite over	cue	call
 summon	вызывать	Verbs	call out / summon / cause	Send for	cue	cause
+supply	запас	Nouns	supply / reserve	stock kept in store	cue	reserve
+supply	поставка	Nouns	delivery / supply	a contracted shipment of goods	cue	delivery
+support	поддержка	Nouns	support	backing given to someone	cue	
+support	обеспечение	Nouns	provision / support	making sure needs are covered	cue	provision
+support	опора	Nouns	support	a load-bearing prop	cue	
 supposedly	якобы	Particles	supposedly / allegedly	doubting it	cue	
 supposedly	мол / дескать	Particles	supposedly / reportedly	reporting speech	cue	
 suspect	подозреваемый	Nouns	suspect		header	
 suspect	подозревать	Verbs	to suspect		header	
 swim	плавать	Verbs	swim / sail	habitually, round trips	cue	sail
 swim	плыть	Verbs	swim / sail	one way	cue	sail
+symptom	симптом	Nouns	symptom	an indication of illness	cue	
+symptom	признак	Nouns	sign / symptom	a telltale quality	cue	sign
+system	система	Nouns	system	an organized set of parts	cue	
+system	строй	Nouns	system / formation	a social order; ranks lined up	cue	formation
+table	стол	Nouns	table	furniture with legs	cue	
+table	таблица	Nouns	chart / table	rows and columns of data	cue	
+table	столовый	Adjectives	table / dining (as a modifier)		header	
 take	брать	Verbs	take	take hold of	cue	
 take	сдавать	Verbs	take / pass / hand in	submit for assessment	cue	pass
 take	вести	Verbs	lead / take	on foot, one way	cue	lead
 talk	говорить	Verbs	speak / talk / say / tell	the general verb	pill	tell
 talk	разговаривать	Verbs	talk / have a conversation	With someone	pill	
+tape	лента	Nouns	ribbon / tape	a long narrow band	cue	
+tape	плёнка	Nouns	film / tape	thin layer or recording medium	cue	film
+task	задача	Nouns	task / problem	an aim, or a puzzle to be solved	cue	problem
+task	задание	Nouns	task / assignment	a job handed to you by someone	cue	
+team	команда	Nouns	team / command	a squad; also a spoken signal	cue	command
+team	коллектив	Nouns	collective / team	everyone working together at one place	cue	
+team	бригада	Nouns	crew / team / brigade	a work gang under a foreman	cue	crew
+technology	технология	Nouns	technology	production process know-how	cue	
+technology	техника	Nouns	technology / equipment	machines and gadgets; also skill	cue	equipment
 tell	говорить	Verbs	speak / talk / say / tell	the general verb	pill	talk
 tell	рассказывать	Verbs	tell / narrate	recount at length	pill	
+term	срок	Nouns	term / deadline	a span of time allowed	cue	
+term	термин	Nouns	term	a technical word	cue	
 terrible	ужасный	Adjectives	terrible / awful	Bad quality	cue	
 terrible	страшный	Adjectives	terrible / frightful / scary	frightening	cue	scary
 terribly	ужасно	Derived Adverbs	terribly / awfully / really	Very badly	cue	really
 terribly	страшно	Derived Adverbs	scary (it's scary) / terribly (very)	frighteningly	cue	scary
+test	испытание	Nouns	trial / test	of strength or endurance	cue	
+test	тест	Nouns	test	a quick standardized quiz	cue	
+testimony	свидетельство	Nouns	certificate / testimony	official proof, or evidence in general	cue	certificate
+testimony	показание	Nouns	testimony / reading	a witness's account, or a gauge's figure	cue	reading
 that	что (conjunction)	Conjunctions	what / that	links a statement	header	what
 that	это (particle)	Particles	this (is) / that (is) / it (is)		header	it | this
 that	тот	Pronouns	that (one) / that (over there)	pointing at something farther	cue	
@@ -623,44 +1450,100 @@ there is nowhere	негде	Base Adverbs	there is nowhere (to)	no place to be	cu
 there is nowhere	некуда	Base Adverbs	there is nowhere (to go)	no place to go	cue	
 therefore	поэтому	Conjunctions	therefore		header	
 therefore	следовательно	Base Adverbs	consequently / therefore		header	
+third	треть	Nouns	third		header	
+third	третий	Numerals	third		header	
 this	это (particle)	Particles	this (is) / that (is) / it (is)		header	it | that
 this	этот	Pronouns	this (one) / this (right here)		header	
+thought	мысль	Nouns	thought	an idea in mind	cue	
+thought	дума	Nouns	duma / thought	a brooding reflection, poetic	cue	
 through	через	Prepositions	through / across (what/where) / in (when/time)	Crossing	cue	in
 through	сквозь	Prepositions	through (what/where)	Something dense	cue	
 time	время	Nouns	time	time in general	cue	
 time	раз	Nouns	time / occasion	counting occurrences	cue	occasion
+time	пора (noun)	Nouns	time / season	a period; the right moment	cue	season
+title	название	Nouns	name / title	the label of a thing or work	cue	name
+title	звание	Nouns	title / rank	a conferred status or honour	cue	rank
 too	тоже	Conjunctions	also / too	same action, different subject	header	also
 too	слишком	Base Adverbs	too / too much	excessively	cue	too much
 too	чересчур	Base Adverbs	too / too much	way over the top	cue	too much
 too much	слишком	Base Adverbs	too / too much	excessively	cue	too
 too much	чересчур	Base Adverbs	too / too much	way over the top	cue	too
+tool	инструмент	Nouns	tool / instrument	for hands or music	cue	instrument
+tool	орудие	Nouns	tool / gun	a weapon or heavy equipment	cue	
+tour	турне	Indeclinable Nouns	tour		header	
+tour	тур	Nouns	tour / round		header	round
+transport	транспорт	Nouns	transport		header	
 transport	возить	Verbs	transport / drive (someone)	by vehicle, habitually	cue	drive
 transport	везти	Verbs	transport / drive (someone)	by vehicle, one way	cue	drive
 treat	лечить	Verbs	treat / cure	medically	pill	
 treat	обращаться	Verbs	turn to / address (direct words to someone) / treat (behave towards)		pill	address
+treatment	обработка	Nouns	processing / treatment	working a material over technically	cue	processing
+treatment	лечение	Nouns	treatment	curing a patient	cue	
+trip	поездка	Nouns	trip	an ordinary outing there and back	cue	
+trip	путешествие	Nouns	journey / trip	long, exploratory travel	cue	
+trouble	беда	Nouns	trouble / misfortune	a real calamity	cue	misfortune
+trouble	неприятность	Nouns	trouble / unpleasantness	a minor irritation	cue	
+trust	доверие	Nouns	trust		header	
+trust	доверять	Verbs	trust / entrust		header	
+truth	правда (noun)	Nouns	truth / justice	what really happened; moral rightness	cue	justice
+truth	истина	Nouns	truth	a lasting, absolute fact	cue	
+turn	очередь	Nouns	line / queue / turn	People waiting	cue	line
+turn	поворот	Nouns	turn	a bend or change of course	cue	
+turn	оборот	Nouns	turn / turnover	a full rotation; sales volume	cue	
 turn out	получаться	Verbs	turn out / work out	Come out well	cue	
 turn out	оказываться	Verbs	turn out / end up	prove to be	cue	end up
 ugly	уродливый	Adjectives	ugly		header	
 ugly	уродливо	Derived Adverbs	ugly		header	
+union	союз	Nouns	union	an alliance or pact	cue	
+union	объединение	Nouns	association / union	a combined body; the joining of groups	cue	association
+unit	подразделение	Nouns	division / unit	a sub-part of an organization	cue	division
+unit	единица	Nouns	one / unit	the digit; a single measure	cue	one
+university	университет	Nouns	university	a broad academic institution with many faculties	cue	
+university	вуз	Nouns	university / college	abbreviated: any place of higher learning	cue	
 until	до	Prepositions	up to (where/what) / until / before (when)	As far as	header	before
 until	пока (conjunction)	Conjunctions	while / until (for as long as)	For the duration	header	while
 up	вверх	Base Adverbs	up / upwards	in an upward direction	cue	
 up	наверх	Base Adverbs	up / upstairs	going up to the top	cue	upstairs
 upstairs	наверх	Base Adverbs	up / upstairs	going up to the top	cue	up
 upstairs	наверху	Base Adverbs	above / upstairs	being up there	cue	above
+use	польза	Nouns	benefit / use	the gain it brings	cue	benefit
+use	использование	Nouns	use	employing something as a resource	cue	
+use	применение	Nouns	application / use	putting a method to work	cue	application
+use	пользование	Nouns	use	enjoying a facility over time	cue	
+use	толк	Nouns	sense / use	worthwhile result; colloquial	cue	sense
+vacation	отдых	Nouns	rest / vacation	time spent relaxing	cue	rest
+vacation	отпуск	Nouns	vacation / leave	official time off work	cue	leave
+value	ценность	Nouns	value		header	
+value	ценить	Verbs	value / evaluate		header	
 very	очень	Base Adverbs	very	intensifier	cue	
 very	весьма	Base Adverbs	very / highly	formal	cue	
 very	самый	Pronouns	the most / the very		header	most
-view	вид	Nouns	view / appearance / kind	Scenery, looks	cue	kind
+vessel	судно	Nouns	ship / vessel	any watercraft, official term	cue	ship
+vessel	сосуд	Nouns	vessel	a container for liquids	cue	
+view	вид	Nouns	view / appearance / kind	Scenery, looks	cue	appearance | kind
 view	взгляд	Nouns	look / glance / view	A gaze; opinion	cue	look
+village	деревня	Nouns	village	small, no church	cue	
+village	село	Nouns	village	larger, with a church	cue	
+vision	зрение	Nouns	eyesight / vision	the sense of sight	cue	
+vision	видение	Nouns	vision	an apparition or dream	cue	
+visit	визит	Nouns	visit	an official or social call	cue	
+visit	посещение	Nouns	visit	going to a place or institution, even regularly	cue	
+visit	жаловать	Verbs	come / visit	formal invitation	header	come
+volume	объём	Nouns	volume	the space occupied, amount	cue	
+volume	том (noun)	Nouns	volume	one book of a set	cue	
+wall	стена	Nouns	wall	a large, solid barrier	cue	
+wall	стенка	Nouns	wall / side	thin, of a container or box	cue	side
 warm	тёплый	Adjectives	warm		header	
-warm	тепло	Derived Adverbs	warm		header	
+warm	тепло (adverb)	Derived Adverbs	warm		header	
 watch	часы	Nouns	clock / watch	the timepiece	header	
 watch	смотреть	Verbs	look / watch	direct your eyes at	header+pill	look
 watch	наблюдать	Verbs	observe / watch	study attentively	header+pill	
-way	путь	Nouns	way / path	a route	cue	
+way	путь	Nouns	way / path	a route	cue	path
 way	способ	Nouns	way / method	Any way of doing it	cue	method
-well	ну	Particles	well / come on (urging)	Filler	header	
+weight	вес	Nouns	weight	how much it measures on scales	cue	
+weight	тяжесть	Nouns	heaviness / weight	the felt burden, physical or emotional	cue	
+well	ну	Particles	well / come on (urging)	Filler	header	come on
+well	колодец	Nouns	well		header	
 well	хорошо	Derived Adverbs	well	done well	header	
 wet	мокрый	Adjectives	wet		header	
 wet	мокро	Derived Adverbs	wet		header	
@@ -678,12 +1561,17 @@ while	когда (conjunction)	Conjunctions	when / while / as	at the time that	c
 while	пока (conjunction)	Conjunctions	while / until (for as long as)	For the duration	cue	until
 who	кто	Pronouns	who	people only	cue	
 who	который	Pronouns	which / who / that	refers back to a noun	cue	that | which
+whole	целое	Nouns	whole		header	
 whole	целый	Adjectives	whole / entire	entire, unbroken	header	
 whole	целиком	Derived Adverbs	entirely / whole	In one piece	header	entirely
-whole	весь	Pronouns	all / the whole / everything	determinative	header	all
+whole	весь	Pronouns	all / the whole / everything	determinative	header	
 why	почему	Base Adverbs	why	cause	cue	
 why	зачем	Base Adverbs	what for / why	purpose	cue	
 why	отчего	Base Adverbs	why	what led to it	cue	
+wife	жена	Nouns	wife	everyday: a married woman	cue	
+wife	супруга	Nouns	wife	formal: a spouse of a man	cue	
+winter	зима	Nouns	winter		header	
+winter	зимний	Adjectives	winter		header	
 wish	желание	Nouns	wish / desire		header	
 wish	желать	Verbs	to wish		header	
 with difficulty	кое-как	Base Adverbs	carelessly / with difficulty		header	
@@ -694,8 +1582,13 @@ wonderful	замечательный	Adjectives	wonderful	Worth noticing	cue
 wonderful	замечательно	Derived Adverbs	wonderful (it's wonderful) / wonderfully	Worth noticing	header	wonderfully
 wonderfully	прекрасно	Derived Adverbs	wonderfully	Fine, excellent	cue	
 wonderfully	замечательно	Derived Adverbs	wonderful (it's wonderful) / wonderfully	Worth noticing	cue	wonderful
-work	работа	Nouns	work / job		header	
+work	работа	Nouns	work / job	labor or employment	cue	
+work	произведение	Nouns	work / piece	creative, by an author	cue	piece
 work	работать	Verbs	to work		header	
+worker	рабочий	Nouns	worker	a manual or factory laborer	cue	
+worker	работник	Nouns	worker	anyone employed	cue	
+workshop	цех	Nouns	workshop / shop floor	a section of a factory	cue	
+workshop	мастерская	Nouns	workshop	a craftsperson's or artist's studio	cue	
 you	ты	Pronouns	you	one person, casual	cue	
 you	вы	Pronouns	you	several people, or polite	cue	
 young	молодой	Adjectives	young		header	
@@ -704,3 +1597,6 @@ your	твой	Pronouns	your / yours	one person's, casual	cue	yours
 your	ваш	Pronouns	your / yours	several people's, or polite	cue	yours
 yours	твой	Pronouns	your / yours	one person's, casual	cue	your
 yours	ваш	Pronouns	your / yours	several people's, or polite	cue	your
+youth	молодость	Nouns	youth	being young, in general	cue	
+youth	юноша	Nouns	youth / young man	a teenage boy	cue	
+youth	юность	Nouns	youth	poetic: adolescent years	cue	

@@ -23,6 +23,18 @@ rows are tagged `New` in the `Status` column. Pronouns and Numerals have their
 own field sets (see `mutable_words_plan.py`'s `FIELD_NAMES["Pronouns"]` /
 `FIELD_NAMES["Numerals"]` for the exact columns).
 
+## Stress marks
+
+Every Russian word displayed on a card carries its stress mark (combining
+acute, U+0301); one-syllable words and words with ё carry none. The displayed
+headword comes from the `Stress` column (verbs: `imperf / perf`),
+`immutable-stress.tsv` (immutable words, keyed by section and the source
+word list's Russian cell) and the `Russian Stressed` / `Variant Stressed`
+columns of `variant-pairs.tsv`; a missing entry falls back to the plain word.
+Identity always uses the plain word: GUIDs, audio filenames, TTS text, cue and
+case-government keys. Code that reads a headword back from a live note strips
+the marks first (`audio_naming.strip_stress`).
+
 ## Similarity groups and cues
 
 `similarity-groups.tsv` lists every group of words that share an English meaning.

@@ -16,7 +16,9 @@
      on the question side `#back` does not exist yet -- hence the deferral
      by one macrotask, since at parse time neither element is in the page
      yet. The stored voice must also be one of THIS note's own files, so a
-     global left by another note can never silence a render. -->
+     global left by another note can never silence a render.
+     The `?v=` query stops a device replaying its cached copy of a re-recorded
+     file that kept its name; `onerror` retries the bare name. -->
 <div id="audio"><span id="audio-data" class="hidden">{{Audio}}</span>
 <span id="audio-controls"></span></div>
 <script>
@@ -44,7 +46,12 @@
     var audio = document.createElement("audio");
     audio.id = "audio-player";
     audio.autoplay = !echo;
-    audio.src = chosen;
+    audio.onerror = function () {
+      audio.onerror = null;
+      audio.src = chosen;
+      if (audio.autoplay) audio.play();
+    };
+    audio.src = chosen + "?v=" + Date.now();
     var button = document.createElement("button");
     button.className = "audio-play";
     button.textContent = "▶";

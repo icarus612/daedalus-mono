@@ -9,6 +9,7 @@ from anki_tools import immutable_words_plan as iwp
 from anki_tools import mutable_words_plan as mwp
 from anki_tools import source_drift as sd
 from anki_tools import variant_pairs
+from anki_tools.audio_naming import strip_stress
 
 IMMUTABLE_TYPE = "Russian - Immutable Words (Ellis Version)"
 SHEETS = ("Nouns", "Verbs", "Adjectives", "Adverbs", "Pronouns", "Numerals")
@@ -137,9 +138,8 @@ def test_expected_verb_headword_is_the_imperfective(tmp_path):
     text, source_dir = write_source(tmp_path)
     verbs = mwp.parse_verbs(os.path.join(source_dir, "verbs.tsv"))
     by_guid = {e.guid: e for e in sd.expected_notes(text, source_dir)}
-    assert (
-        by_guid[verbs[0].guid].headword == by_guid[verbs[0].guid].fields["Imperfective"]
-    )
+    expected = by_guid[verbs[0].guid]
+    assert expected.headword == strip_stress(expected.fields["Imperfective"])
 
 
 def test_expected_notes_raises_for_a_missing_tsv(tmp_path):

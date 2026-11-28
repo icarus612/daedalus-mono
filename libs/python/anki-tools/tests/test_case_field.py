@@ -355,7 +355,7 @@ def test_bare_case_cells_collapse_and_commentary_survives(real_rows):
     }
     assert residual["для"] == "always"
     assert residual["насчёт"] == ""
-    assert sum(1 for v in residual.values() if v) == 1
+    assert sum(1 for v in residual.values() if v) == 16
     pairs = {p.headword: p for p in variant_pairs.load_pairs()}
     pair_residual = {
         head: case_field.residual_info_for_row("Prepositions", p.additional_info)

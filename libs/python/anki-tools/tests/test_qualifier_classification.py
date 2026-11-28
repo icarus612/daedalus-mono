@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from anki_tools import case_field, immutable_words_plan, mutable_words_plan
+from anki_tools import case_field, distinction, immutable_words_plan, mutable_words_plan
 
 PACKAGE_ROOT = Path(__file__).resolve().parent.parent
 DATA = PACKAGE_ROOT / "anki_tools" / "data"
@@ -50,8 +50,10 @@ UNBUILT_BASELINE_GUIDS = {
     "xd<pz27WOx",
     "KHgjP_?aB!",
     "Ax+e%5,2IT",
+    "rDT2u=eF|D",
+    "O0]+_v[FK=",
 }
-NEW_VERB_HEADWORDS = {
+NEW_HEADWORDS = {
     "лично",
     "страшно",
     "по-другому",
@@ -70,6 +72,45 @@ NEW_VERB_HEADWORDS = {
     "вести",
     "нести",
     "везти",
+    "оранжевый",
+    "голубой",
+    "фиолетовый",
+    "розовый",
+    "вторник",
+    "четверг",
+    "груша",
+    "виноград",
+    "клубника",
+    "ягода",
+    "капуста",
+    "мёд",
+    "пирог",
+    "печенье",
+    "мороженое",
+    "бутерброд",
+    "макароны",
+    "блин",
+    "раковина",
+    "душ",
+    "сковорода",
+    "чайник",
+    "щётка",
+    "утюг",
+    "пылесос",
+    "штора",
+    "мишка",
+    "кубик",
+    "шарик",
+    "велосипед",
+    "самокат",
+    "качели",
+    "горка",
+    "пазл",
+    "мел",
+    "фломастер",
+    "рюкзак",
+    "коляска",
+    "мультфильм",
 }
 CUE_SUPERSEDED_BY_CLASSIFICATION = {
     "по",
@@ -201,11 +242,13 @@ def test_built_english_distinction_equals_the_resulting_cue(notes, classificatio
         assert built == row["resulting English Distinction"], row["headword (keyed)"]
 
 
-def test_unclassified_notes_carry_no_cue(notes, classification):
+def test_unclassified_notes_carry_only_their_approved_cue(notes, classification):
     _, by_guid = classification
     for guid, note in notes.items():
         if guid not in by_guid:
-            assert note["fields"]["English Distinction"] == "", note["headword"]
+            assert note["fields"][
+                "English Distinction"
+            ] == distinction.english_distinction(note["headword"]), note["headword"]
 
 
 def expected_info(note, classified, routed):
@@ -312,12 +355,12 @@ def read_baseline() -> dict[str, str]:
     return {r["guid"]: r["Translation"] for r in read_tsv(BASELINE)}
 
 
-def test_guid_set_changes_only_by_the_pin_and_the_new_verbs(notes):
+def test_guid_set_changes_only_by_the_pin_and_the_new_words(notes):
     baseline = read_baseline()
-    assert len(baseline) == 1617
+    assert len(baseline) == 3094
     assert set(baseline) - set(notes) == UNBUILT_BASELINE_GUIDS
     added = set(notes) - set(baseline)
-    assert {notes[g]["headword"] for g in added} == NEW_VERB_HEADWORDS
+    assert {notes[g]["headword"] for g in added} == NEW_HEADWORDS
 
 
 def test_meaning_freeze_against_the_captured_baseline(notes):

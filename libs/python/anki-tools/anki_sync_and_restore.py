@@ -38,6 +38,7 @@ PACKAGES = (
 )
 BACKUP_ROOT = os.path.expanduser("~/anki-backups")
 STAGES = ("pull", "rebuild", "push", "all")
+KEPT_NOTETYPE_CONFLICTS = {"Russian - Mutable Pronouns (Ellis Version)"}
 
 _REQUIRED = {v.number: v.name for v in SyncStatusResponse.Required.DESCRIPTOR.values}
 _CHANGES = {
@@ -104,7 +105,7 @@ def pull(path: str, login) -> None:
             pass
 
 
-def rebuild(path: str) -> None:
+def rebuild(path: str, keep_live_notetypes: bool = False) -> None:
     from anki import import_export_pb2 as ie
 
     from anki_tools import phrase_due
@@ -115,6 +116,9 @@ def rebuild(path: str) -> None:
     assert DUE_TODAY == "0" and "!" not in DUE_TODAY, DUE_TODAY
     always = (
         ie.ImportAnkiPackageUpdateCondition.IMPORT_ANKI_PACKAGE_UPDATE_CONDITION_ALWAYS
+    )
+    never = (
+        ie.ImportAnkiPackageUpdateCondition.IMPORT_ANKI_PACKAGE_UPDATE_CONDITION_NEVER
     )
 
     col = Collection(path)
@@ -127,10 +131,10 @@ def rebuild(path: str) -> None:
                 ie.ImportAnkiPackageRequest(
                     package_path=package,
                     options=ie.ImportAnkiPackageOptions(
-                        merge_notetypes=True,
+                        merge_notetypes=not keep_live_notetypes,
                         with_scheduling=False,
                         update_notes=always,
-                        update_notetypes=always,
+                        update_notetypes=never if keep_live_notetypes else always,
                     ),
                 )
             )
@@ -139,8 +143,21 @@ def rebuild(path: str) -> None:
                 f"  {name}: {len(out.log.new)} new, {len(out.log.updated)} updated, "
                 f"{len(out.log.conflicting)} conflicting"
             )
-            if out.log.conflicting:
-                raise SystemExit(f"{name} reported conflicts; stopping")
+            kept_heads = {
+                note_fields.split("\x1f")[0]
+                for kept in KEPT_NOTETYPE_CONFLICTS
+                for note_fields in col.db.list(
+                    "select flds from notes where mid = ?",
+                    col.models.by_name(kept)["id"],
+                )
+            }
+            stray = [
+                e.fields[0]
+                for e in out.log.conflicting
+                if e.fields[0] not in kept_heads
+            ]
+            if out.log.conflicting and not (keep_live_notetypes and not stray):
+                raise SystemExit(f"{name} reported conflicts ({stray[:5]}); stopping")
 
         imported = review_state(col)
         if imported[1:] != before[1:]:

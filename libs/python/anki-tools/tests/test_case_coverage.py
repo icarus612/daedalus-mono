@@ -21,6 +21,46 @@ SOURCE_LIST = PACKAGE_ROOT / "tests" / "data" / "source-word-list.md"
 
 EXCLUDED_SHEETS = ("Nouns", "Adjectives", "Numerals")
 QUANTITY_WORDS = ("нет", "немного", "чуть-чуть", "вроде", "мало", "много", "сколько")
+OTHER_NON_PREPOSITION_GOVERNORS = frozenset(
+    {
+        "более",
+        "вдали",
+        "вдвоём",
+        "влево",
+        "вместе",
+        "внизу",
+        "вплотную",
+        "вправо",
+        "втроём",
+        "жаль",
+        "извините",
+        "изнутри",
+        "кругом",
+        "менее",
+        "можно",
+        "наверху",
+        "надо (adverb)",
+        "наедине",
+        "негде",
+        "некуда",
+        "нельзя",
+        "неподалёку",
+        "нечего",
+        "поблизости",
+        "поздравляю",
+        "помогите",
+        "пора (adverb)",
+        "привет",
+        "простите",
+        "прочь",
+        "рядом",
+        "сбоку",
+        "следом",
+        "снаружи",
+        "спасибо",
+        "столько",
+    }
+)
 
 
 def read_table(path: Path = GOVERNMENT) -> list[dict[str, str]]:
@@ -138,7 +178,7 @@ def test_each_quantity_word_governs_and_builds_genitive(word, immutable_rows, ca
     assert cases[row.guid] == "Genitive"
 
 
-def test_the_seven_quantity_words_are_all_the_non_preposition_immutable_governors(
+def test_non_preposition_immutable_governors_are_the_listed_words(
     table, immutable_rows
 ):
     by_guid = {r.guid: r for r in immutable_rows}
@@ -149,7 +189,7 @@ def test_the_seven_quantity_words_are_all_the_non_preposition_immutable_governor
         and row["cases"].strip()
         and by_guid[row["guid"]].pos != "Prepositions"
     }
-    assert others == set(QUANTITY_WORDS)
+    assert others == set(QUANTITY_WORDS) | OTHER_NON_PREPOSITION_GOVERNORS
 
 
 def test_every_verb_governor_builds_a_case(governors, verb_rows, cases):

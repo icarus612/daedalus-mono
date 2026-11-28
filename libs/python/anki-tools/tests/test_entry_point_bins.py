@@ -18,6 +18,7 @@ ENTRY_POINTS = [
     ("anki-renumber-russian-decks", "renumber_russian_decks"),
     ("anki-word-audio", "word_audio"),
     ("anki-source-drift", "source_drift_cli"),
+    ("anki-new-due", "new_due"),
 ]
 
 

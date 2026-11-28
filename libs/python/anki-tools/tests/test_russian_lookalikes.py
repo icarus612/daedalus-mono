@@ -71,3 +71,38 @@ def test_the_check_sees_pronoun_forms_and_pair_variants() -> None:
     assert len(seen["во"]) == 2
     assert len(seen["самого"]) == 2
     assert len(seen["ним"]) == 3
+
+
+RUN_SPELLINGS = (
+    "больной",
+    "взрослый",
+    "военный",
+    "заключённый",
+    "зло",
+    "знакомый",
+    "печь",
+    "пора",
+    "раненый",
+    "русский",
+    "святой",
+    "стать",
+    "тепло",
+    "том",
+    "тысяча",
+    "учёный",
+)
+
+
+def _unlabelled(seen: dict[str, dict[str, str]], spellings) -> list[str]:
+    return [
+        word for word in spellings if len(seen[word]) < 2 or "" in seen[word].values()
+    ]
+
+
+def test_every_same_spelling_pair_of_the_nouns_run_is_labelled_on_both_sides() -> None:
+    assert _unlabelled(_shown_spellings(), RUN_SPELLINGS) == []
+
+
+def test_the_labelled_both_sides_check_fails_on_an_unlabelled_pair() -> None:
+    seeded = {"зло": {"a": "noun", "b": ""}, "тепло": {"a": "noun", "b": "adverb"}}
+    assert _unlabelled(seeded, ["зло", "тепло"]) == ["зло"]

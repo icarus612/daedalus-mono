@@ -142,3 +142,25 @@ def test_the_selection_check_catches_the_shape_it_guards():
     rows = [(4, MUTABLE_NOUNS, ["школа"])]
     assert flagged_audio.words_to_regenerate(rows)
     assert flagged_audio.count_by_flag(rows)
+
+
+def test_pink_redoes_only_female_and_blue_only_male():
+    from anki_tools.flagged_audio import slots_for_gender, words_by_gender
+
+    rows = [
+        (5, IMMUTABLE, ["вместо"]),
+        (4, IMMUTABLE, ["около"]),
+        (5, IMMUTABLE, ["для"]),
+        (4, IMMUTABLE, ["для"]),
+        (1, "Russian - Mutable Nouns (Ellis Version)", ["дом"]),
+    ]
+    assert words_by_gender(rows) == {
+        ("double", "both"): ["для"],
+        ("double", "female"): ["вместо"],
+        ("double", "male"): ["около"],
+        ("single", "both"): ["дом"],
+    }
+    slots = ("f1", "f2", "m1", "m2")
+    assert slots_for_gender(slots, "female") == ["f1", "f2"]
+    assert slots_for_gender(slots, "male") == ["m1", "m2"]
+    assert slots_for_gender(slots, "both") == list(slots)

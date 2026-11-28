@@ -20,9 +20,12 @@ template side that renders that field so its own JavaScript does the picking
 and playing.
 """
 
+import csv
 import re
 from collections.abc import Mapping
 from dataclasses import dataclass
+from functools import lru_cache
+from pathlib import Path
 
 from anki_tools import card_audio, case_field, case_pill, distinction
 from anki_tools.anki_identity import guid_for_row
@@ -30,12 +33,17 @@ from anki_tools.audio_naming import (
     SLOTS,
     audio_field_value,
     build_filename,
+    stressed_headword,
     strip_qualifier,
 )
 
 # Deck the four part-of-speech subdecks hang off. The `2. ` prefix is the user's
 # choice; they renumber the sibling Russian decks themselves.
 DECK_ROOT = "Languages::Russian::3. Immutable Words"
+
+STRESS_PATH = (
+    Path(__file__).parent / "data" / "russian-vocabulary" / "immutable-stress.tsv"
+)
 
 # Source-document section heading (the English part, before the Russian gloss)
 # -> the subdeck leaf name. Order here is the document's order and fixes the
@@ -214,6 +222,7 @@ GUID_PINS: dict[tuple[str, str], str] = {
     ("Particles", "ничего (particle)"): "d:/Oppcf(9",
     ("Particles", "это (particle)"): "wl)uQ86OIg",
     ("Base Adverbs", "надо (adverb)"): "QT*;XCgS!i",
+    ("Base Adverbs", "пора (adverb)"): "QWHvqQ[-a~",
 }
 
 
@@ -245,7 +254,9 @@ class WordRow:
         )
 
     def fields(
-        self, government: Mapping[str, case_field.CaseGovernment] | None = None
+        self,
+        government: Mapping[str, case_field.CaseGovernment] | None = None,
+        stress: Mapping[tuple[str, str], str] | None = None,
     ) -> list[str]:
         """The field values, in FIELD_NAMES order.
 
@@ -267,6 +278,8 @@ class WordRow:
         """
         if government is None:
             government = case_field.default_government()
+        if stress is None:
+            stress = default_stress()
         entry = government.get(self.guid)
         translation = (
             case_pill.tint_lines(self.english, entry.line_cases)
@@ -276,7 +289,9 @@ class WordRow:
         audio_names = [build_filename(self.russian, slot) for slot in SLOTS]
         # `guid` still hashes the qualified text, so stripping here keeps GUIDs stable.
         return [
-            strip_qualifier(self.russian),
+            stressed_headword(
+                strip_qualifier(self.russian), stress.get((self.pos, self.russian), "")
+            ),
             translation,
             "",
             POS_FIELD_VALUE[self.pos],
@@ -287,6 +302,21 @@ class WordRow:
             distinction.qualifier_of(self.russian),
             distinction.english_distinction(self.russian),
         ]
+
+
+def load_stress(path: Path | str = STRESS_PATH) -> dict[tuple[str, str], str]:
+    """`(section, russian)` -> the stressed bare word, from `immutable-stress.tsv`."""
+    with open(path, encoding="utf-8", newline="") as handle:
+        return {
+            (row["section"], row["russian"]): row["stressed"]
+            for row in csv.DictReader(handle, delimiter="\t")
+        }
+
+
+@lru_cache(maxsize=1)
+def default_stress() -> dict[tuple[str, str], str]:
+    """`load_stress()`, memoised -- callers must not mutate it."""
+    return load_stress()
 
 
 def subdeck_name(pos: str, root: str = DECK_ROOT) -> str:

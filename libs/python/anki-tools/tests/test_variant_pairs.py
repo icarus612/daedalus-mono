@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from anki_tools import immutable_words_plan, variant_pairs
+from anki_tools.audio_naming import strip_stress
 
 SOURCE = Path(__file__).parent / "data" / "source-word-list.md"
 
@@ -40,8 +41,8 @@ def test_guids_are_unique():
 def test_fields_follow_field_names():
     for pair in variant_pairs.load_pairs():
         fields = dict(zip(variant_pairs.FIELD_NAMES, pair.fields(), strict=True))
-        assert fields["Russian"] == pair.russian
-        assert fields["Variant"] == pair.variant
+        assert strip_stress(fields["Russian"]) == pair.russian
+        assert strip_stress(fields["Variant"]) == pair.variant
         assert fields["Part of Speech"] in {
             "particle",
             "conjunction",

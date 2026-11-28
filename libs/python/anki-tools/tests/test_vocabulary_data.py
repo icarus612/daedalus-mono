@@ -54,6 +54,7 @@ EXPECTED_HEADERS = {
         "Additional Info",
         "Examples",
         "Status",
+        "Degrees",
     ],
     "verbs.tsv": [
         "#",
@@ -128,10 +129,10 @@ EXPECTED_HEADERS = {
 }
 
 EXPECTED_LINE_COUNTS = {
-    "nouns.tsv": 632,
+    "nouns.tsv": 2121,
     "verbs.tsv": 224,
-    "adjectives.tsv": 175,
-    "adverbs.tsv": 162,
+    "adjectives.tsv": 194,
+    "adverbs.tsv": 168,
     "pronouns.tsv": 31,
     "numerals.tsv": 56,
 }
@@ -139,7 +140,7 @@ EXPECTED_LINE_COUNTS = {
 DASH_VALUES = {"—", "–", "-", "--"}
 
 EXPECTED_DASH_COUNTS = {
-    ("nouns.tsv", "Plural"): 134,
+    ("nouns.tsv", "Plural"): 206,
     ("verbs.tsv", "я (1sg)"): 2,
     ("verbs.tsv", "ты (2sg)"): 2,
     ("verbs.tsv", "они (3pl)"): 2,
@@ -147,7 +148,7 @@ EXPECTED_DASH_COUNTS = {
     ("adjectives.tsv", "Short Form"): 7,
     ("adjectives.tsv", "Comparative"): 9,
     ("adjectives.tsv", "Opposite"): 8,
-    ("adverbs.tsv", "Comparative"): 40,
+    ("adverbs.tsv", "Comparative"): 45,
     ("adverbs.tsv", "Adverb"): 22,
     ("adverbs.tsv", "Stress"): 22,
     ("numerals.tsv", "Gender Forms"): 44,
@@ -208,6 +209,40 @@ def test_dash_only_cell_census():
     for key, count in actual_counts.items():
         if key not in EXPECTED_DASH_COUNTS:
             assert count == 0, f"unexpected dash-only cells at {key}: {count}"
+
+
+DEGREES_ANCHORS = {
+    "телефон": "0",
+    "автор": "0",
+    "министр": "1",
+    "федерация": "1",
+    "церковь": "1",
+    "брат": "2",
+    "нос": "2",
+    "вода": "2",
+    "стол": "3",
+    "город": "3",
+    "дом": "3",
+}
+
+
+def _noun_degrees():
+    rows = _read_rows("nouns.tsv")
+    header = rows[0]
+    return {
+        row[header.index("Russian")]: row[header.index("Degrees")] for row in rows[1:]
+    }
+
+
+def test_every_noun_has_a_degrees_value_from_zero_to_three():
+    rows = _read_rows("nouns.tsv")
+    column = rows[0].index("Degrees")
+    assert {row[column] for row in rows[1:]} <= {"0", "1", "2", "3"}
+
+
+def test_degrees_anchors_hold():
+    degrees = _noun_degrees()
+    assert {word: degrees[word] for word in DEGREES_ANCHORS} == DEGREES_ANCHORS
 
 
 def test_readme_states_tsvs_are_only_source():

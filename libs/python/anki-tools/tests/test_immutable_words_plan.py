@@ -36,7 +36,12 @@ from pathlib import Path
 import pytest
 
 from anki_tools.anki_identity import base91 as _base91
-from anki_tools.audio_naming import SLOTS, audio_field_value, parse_audio_filenames
+from anki_tools.audio_naming import (
+    SLOTS,
+    audio_field_value,
+    parse_audio_filenames,
+    strip_stress,
+)
 from anki_tools.audio_naming import build_filename as shared_build_filename
 from anki_tools.case_field import load_case_government
 from anki_tools.immutable_words_plan import (
@@ -611,9 +616,20 @@ def _build_harness(
         '  if (c.tagName === "button") { __buttonEl = c; }',
         "});",
         "",
+        "var __fallbackSrc = null;",
+        "if (__audioEl && __audioEl.onerror) {",
+        "  var __bustedSrc = __audioEl.src;",
+        "  var __playsBefore = __audioEl.playCount;",
+        "  __audioEl.onerror();",
+        "  __fallbackSrc = __audioEl.src;",
+        "  __audioEl.src = __bustedSrc;",
+        "  __audioEl.playCount = __playsBefore;",
+        "}",
+        "",
         "var __result = {",
         "  audioCreated: !!__audioEl,",
         "  audioSrc: __audioEl ? __audioEl.src : null,",
+        "  audioFallbackSrc: __fallbackSrc,",
         "  audioAutoplay: __audioEl ? __audioEl.autoplay : null,",
         "  choiceGlobal: window.__immutableWordsAudioChoice,",
         "  buttonCreated: !!__buttonEl,",
@@ -682,7 +698,8 @@ def test_rewrite_audio_playback_js_fresh_question_side_pick(node_executable):
     )
     assert result["audioCreated"] is True
     assert result["audioAutoplay"] is True
-    assert result["audioSrc"] == "a.mp3"
+    assert result["audioSrc"].startswith("a.mp3?v=")
+    assert result["audioFallbackSrc"] == "a.mp3"
     assert result["choiceGlobal"] == "a.mp3"
 
 
@@ -699,7 +716,8 @@ def test_rewrite_audio_playback_js_duplicate_answer_side_reuses_choice(node_exec
     )
     assert result["audioCreated"] is True
     assert result["audioAutoplay"] is False
-    assert result["audioSrc"] == "b.mp3"
+    assert result["audioSrc"].startswith("b.mp3?v=")
+    assert result["audioFallbackSrc"] == "b.mp3"
     assert result["choiceGlobal"] == "b.mp3"
 
 
@@ -719,7 +737,8 @@ def test_rewrite_audio_playback_js_answer_side_stale_global_from_other_note_rero
     )
     assert result["audioCreated"] is True
     assert result["audioAutoplay"] is True
-    assert result["audioSrc"] == "b.mp3"
+    assert result["audioSrc"].startswith("b.mp3?v=")
+    assert result["audioFallbackSrc"] == "b.mp3"
     assert result["choiceGlobal"] == "b.mp3"
 
 
@@ -738,7 +757,8 @@ def test_rewrite_audio_playback_js_answer_side_unset_global_also_rerolls(
     )
     assert result["audioCreated"] is True
     assert result["audioAutoplay"] is True
-    assert result["audioSrc"] == "c.mp3"
+    assert result["audioSrc"].startswith("c.mp3?v=")
+    assert result["audioFallbackSrc"] == "c.mp3"
     assert result["choiceGlobal"] == "c.mp3"
 
 
@@ -761,7 +781,8 @@ def test_rewrite_audio_playback_js_answer_side_own_notes_global_still_plays(
     )
     assert result["audioCreated"] is True
     assert result["audioAutoplay"] is True
-    assert result["audioSrc"] == "c.mp3"
+    assert result["audioSrc"].startswith("c.mp3?v=")
+    assert result["audioFallbackSrc"] == "c.mp3"
     assert result["choiceGlobal"] == "c.mp3"
 
 
@@ -780,7 +801,8 @@ def test_rewrite_audio_playback_js_front_side_echo_is_silent_and_keeps_the_voice
         forced_random=0.99,
     )
     assert result["audioAutoplay"] is False
-    assert result["audioSrc"] == "b.mp3"
+    assert result["audioSrc"].startswith("b.mp3?v=")
+    assert result["audioFallbackSrc"] == "b.mp3"
 
 
 def test_rewrite_audio_playback_js_a_stale_back_marker_cannot_silence_a_render(
@@ -799,7 +821,8 @@ def test_rewrite_audio_playback_js_a_stale_back_marker_cannot_silence_a_render(
         forced_random=0.4,  # floor(0.4 * 3) == 1 -> "b.mp3"
     )
     assert result["audioAutoplay"] is True
-    assert result["audioSrc"] == "b.mp3"
+    assert result["audioSrc"].startswith("b.mp3?v=")
+    assert result["audioFallbackSrc"] == "b.mp3"
 
 
 def test_rewrite_audio_playback_js_later_review_question_side_always_rerolls(
@@ -818,9 +841,10 @@ def test_rewrite_audio_playback_js_later_review_question_side_always_rerolls(
         forced_random=0.99,  # floor(0.99 * 3) == 2 -> "c.mp3", not "a.mp3"
     )
     assert result["audioAutoplay"] is True
-    assert result["audioSrc"] == "c.mp3"
+    assert result["audioSrc"].startswith("c.mp3?v=")
+    assert result["audioFallbackSrc"] == "c.mp3"
     assert result["choiceGlobal"] == "c.mp3"
-    assert result["audioSrc"] != "a.mp3"
+    assert result["audioFallbackSrc"] != "a.mp3"
 
 
 def test_rewrite_audio_playback_js_replay_button_wired_on_question_side(
@@ -1206,7 +1230,7 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
             populated += 1
 
     # Exact count: the rest are em-dash rows or restatements the classification dropped.
-    assert populated == 73
+    assert populated == 159
 
 
 # Populated info cells per section. Every section is four-column now:
@@ -1218,9 +1242,9 @@ def test_every_base_adverb_info_cell_reaches_the_additional_info_field(real_rows
 EXPECTED_INFO_COUNTS = {
     "Prepositions": (49, 49),
     "Conjunctions": (35, 21),
-    "Particles": (41, 30),
+    "Particles": (41, 31),
     "Indeclinable Nouns": (42, 42),
-    "Base Adverbs": (181, 73),
+    "Base Adverbs": (181, 159),
 }
 
 
@@ -1247,7 +1271,7 @@ def test_every_preposition_states_the_case_it_governs(real_rows):
 
 
 def test_every_indeclinable_noun_states_its_gender(real_rows):
-    genders = ("Neuter", "Masculine", "Feminine")
+    genders = ("Neutral", "Masculine", "Feminine")
     missing = [
         row.russian
         for row in real_rows
@@ -1598,11 +1622,11 @@ def test_word_row_guid_differs_when_russian_or_pos_differ():
 
 
 EXPECTED_EXAMPLES_COUNTS = {
-    "Prepositions": 0,
-    "Conjunctions": 4,
-    "Particles": 2,
+    "Prepositions": 15,
+    "Conjunctions": 10,
+    "Particles": 8,
     "Indeclinable Nouns": 40,
-    "Base Adverbs": 4,
+    "Base Adverbs": 119,
 }
 
 
@@ -1679,6 +1703,7 @@ QUALIFIED_ROWS = (
     ("Particles", "ничего (particle)", "ничего", "particle", "d:/Oppcf(9"),
     ("Particles", "это (particle)", "это", "particle", "wl)uQ86OIg"),
     ("Base Adverbs", "надо (adverb)", "надо", "adverb", "QT*;XCgS!i"),
+    ("Base Adverbs", "пора (adverb)", "пора", "adverb", "QWHvqQ[-a~"),
 )
 
 RUSSIAN_INDEX = 0
@@ -1699,7 +1724,7 @@ def test_qualifier_lives_only_in_russian_distinction(
     row = real_rows_by_source_text[(pos, source_text)]
 
     fields = row.fields()
-    assert fields[RUSSIAN_INDEX] == bare
+    assert strip_stress(fields[RUSSIAN_INDEX]) == bare
     assert "(" not in fields[RUSSIAN_INDEX]
     assert ")" not in fields[RUSSIAN_INDEX]
     assert fields[RUSSIAN_DISTINCTION_INDEX] == qualifier
@@ -1730,7 +1755,7 @@ def test_every_source_row_carrying_a_qualifier_is_in_the_table(real_rows):
 
 def test_no_russian_field_in_the_real_document_carries_a_parenthetical(real_rows):
     assert len(real_rows) == 348
-    assert len(QUALIFIED_ROWS) == 24
+    assert len(QUALIFIED_ROWS) == 25
     offenders = [row.russian for row in real_rows if "(" in row.fields()[RUSSIAN_INDEX]]
     assert offenders == []
 

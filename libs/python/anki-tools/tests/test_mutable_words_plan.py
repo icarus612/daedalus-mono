@@ -24,12 +24,14 @@ from anki_tools import (
     mutable_words_plan,
     prompt_hint,
 )
+from anki_tools.anki_identity import guid_for_row
 from anki_tools.audio_naming import (
     audio_field_value,
     build_filename,
     get_anki_collection_path,
     sanitize_word_slug,
     strip_qualifier,
+    strip_stress,
 )
 from anki_tools.mutable_words import SOURCE_NOTETYPE_ID
 
@@ -101,10 +103,10 @@ def _audio_field_for(word):
 
 
 def test_row_counts(nouns, verbs, adjectives, adverbs, pronouns, numerals):
-    assert len(nouns) == 631
+    assert len(nouns) == 2120
     assert len(verbs) == 223
-    assert len(adjectives) == 174
-    assert len(adverbs) == 141
+    assert len(adjectives) == 193
+    assert len(adverbs) == 147
     assert len(pronouns) == 30
     assert len(numerals) == 55
 
@@ -165,10 +167,10 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
     pronouns_cards = len(pronouns) * 2 + 2 * sum(len(p.forms()) for p in pronouns)
     numerals_cards = len(numerals) * 2
 
-    assert nouns_cards == 1262
+    assert nouns_cards == 4240
     assert verbs_cards == 856
-    assert adjectives_cards == 348
-    assert adverbs_cards == 282
+    assert adjectives_cards == 386
+    assert adverbs_cards == 294
     assert pronouns_cards == 470
     assert numerals_cards == 110
     assert (
@@ -178,7 +180,7 @@ def test_card_count_derivation(nouns, verbs, adjectives, adverbs, pronouns, nume
         + adverbs_cards
         + pronouns_cards
         + numerals_cards
-        == 3328
+        == 6356
     )
 
 
@@ -237,7 +239,23 @@ def test_no_duplicate_ids_or_addtitle_per_side():
 
 # Legitimate shared-audio slugs: same real word reused across rows/decks,
 # not a collision. See each row's Additional Info for why.
-_EXPECTED_DUPLICATE_SLUGS = {"первый"}
+_EXPECTED_DUPLICATE_SLUGS = {
+    "больной",
+    "взрослый",
+    "военный",
+    "заключённый",
+    "зло",
+    "знакомый",
+    "первый",
+    "печь",
+    "раненый",
+    "русский",
+    "святой",
+    "стать",
+    "тепло",
+    "тысяча",
+    "учёный",
+}
 
 
 def test_no_slug_collisions_across_all_base_words(
@@ -251,12 +269,12 @@ def test_no_slug_collisions_across_all_base_words(
         + [w for row in pronouns for w in row.base_words]
         + [w for row in numerals for w in row.base_words]
     )
-    assert len(all_words) == 1459
+    assert len(all_words) == 2973
 
     slugs = [sanitize_word_slug(w) for w in all_words]
     dupes = {slug: c for slug, c in Counter(slugs).items() if c > 1}
     assert set(dupes) == _EXPECTED_DUPLICATE_SLUGS, dupes
-    assert len(set(slugs)) == 1458
+    assert len(set(slugs)) == 2958
 
 
 def test_named_media_overlap_slugs_present(nouns, verbs, adjectives, adverbs):
@@ -314,7 +332,7 @@ def test_predicted_audio_matches_build_filename(nouns, verbs, adjectives, adverb
 
 def test_dash_only_plural_survives_into_fields(nouns):
     dash_rows = [row for row in nouns if row.plural == "—"]
-    assert len(dash_rows) == 134
+    assert len(dash_rows) == 206
 
     plural_idx = mutable_words_plan.FIELD_NAMES["Nouns"].index("Plural")
     assert dash_rows[0].fields()[plural_idx] == "—"
@@ -809,12 +827,42 @@ def test_no_duplicate_ids_once_frontside_expands(sheet, card_index):
 # here means every one of these notes re-imports as a duplicate instead of
 # updating, losing its scheduling.
 _QUALIFIED_HEADWORD_GUIDS = {
-    ("Nouns", "правда (noun)"): "OMBx{Do|O@",
+    ("Adjectives", "больной (adjective)"): "zYsym)dH|j",
+    ("Adjectives", "взрослый (adjective)"): "B07F@f}@9&",
+    ("Adjectives", "военный (adjective)"): "o$ceszR<5C",
+    ("Adjectives", "заключённый (adjective)"): "pYiP5$X|;<",
+    ("Adjectives", "знакомый (adjective)"): "t^.>wMddYw",
     ("Adjectives", "первый (adjective)"): "fX3LIC8l!>",
+    ("Adjectives", "раненый (adjective)"): "fxl;%C.:V0",
+    ("Adjectives", "русский (adjective)"): "OgFsH,_*(?",
+    ("Adjectives", "святой (adjective)"): "pCL67M<n)B",
+    ("Adjectives", "учёный (adjective)"): "J3(wq*w/Y`",
+    ("Adverbs", "зло (adverb)"): "EsD+YgsXnc",
     ("Adverbs", "просто (adverb)"): "v*^Y^8o93j",
     ("Adverbs", "согласно (adverb)"): "tL.M_0|Uet",
+    ("Adverbs", "тепло (adverb)"): "rD}7l|Qntg",
+    ("Nouns", "больной (noun)"): "o@+rm_V8^1",
+    ("Nouns", "взрослый (noun)"): "PO9/M2[qFa",
+    ("Nouns", "военный (noun)"): "f`_Dh?,z3}",
+    ("Nouns", "заключённый (noun)"): "h5j}Nw;q(O",
+    ("Nouns", "зло (noun)"): "z>U+8VKCe1",
+    ("Nouns", "знакомый (noun)"): "e7?ylni[5%",
+    ("Nouns", "печь (noun)"): "F`)C#lUNqg",
+    ("Nouns", "пора (noun)"): "POhjjpuH:C",
+    ("Nouns", "правда (noun)"): "OMBx{Do|O@",
+    ("Nouns", "раненый (noun)"): "r}MB5A%r0q",
+    ("Nouns", "русский (noun)"): "k5w2Xja2TM",
+    ("Nouns", "святой (noun)"): "C?E?K$(m!G",
+    ("Nouns", "стать (noun)"): ";s|(M%iPw",
+    ("Nouns", "тепло (noun)"): "uG!riVt38>",
+    ("Nouns", "тысяча (noun)"): "r_@G%5v]2x",
+    ("Nouns", "том (noun)"): "iUB7f+uWi}",
+    ("Nouns", "учёный (noun)"): "O$7z7Z?Aaf",
     ("Numerals", "первый (numeral)"): "B.OZ`5x]dH",
+    ("Numerals", "тысяча (numeral)"): "gb){z{|eCX",
     ("Pronouns", "что (pronoun)"): "gJ6S@(5[xc",
+    ("Verbs", "печь (verb)"): "kSl#$v8`X`",
+    ("Verbs", "становиться (verb)"): "m<ByTC4uI[",
 }
 
 
@@ -838,7 +886,7 @@ def test_qualified_headwords_keep_their_guids_and_drop_the_inline_qualifier(
                 if strip_qualifier(stored) == stored:
                     continue
                 found[(sheet, stored)] = row.guid
-                assert fields[field_names[0]] == strip_qualifier(stored)
+                assert strip_stress(fields[field_names[0]]) == strip_qualifier(stored)
                 assert "(" not in fields[field_names[0]]
                 assert fields[distinction.RUSSIAN_FIELD] == distinction.qualifier_of(
                     stored
@@ -1249,7 +1297,7 @@ def test_parse_adverbs_reads_the_case_column_including_split_rows(adverbs, tmp_p
     parsed = mutable_words_plan.parse_adverbs(
         _tsv_with_case(ADVERBS_TSV, tmp_path, "Genitive")
     )
-    assert len(parsed) == len(adverbs) == 141
+    assert len(parsed) == len(adverbs) == 147
     assert {row.case for row in parsed} == {"Genitive"}
     by_adverb = {row.adverb: row for row in parsed}
     for word in ("направо", "справа", "налево", "слева"):
@@ -1991,7 +2039,7 @@ def test_pronoun_card_count_derivation(
         + form_cards
         + 2 * len(numerals)
     )
-    assert total == 3328
+    assert total == 6356
 
 
 def test_form_lines_stay_top_aligned_and_wrap_normally() -> None:
@@ -2001,3 +2049,108 @@ def test_form_lines_stay_top_aligned_and_wrap_normally() -> None:
     assert "align-items: center" not in grid
     aspect = css.split(".form-line .title .aspect {", 1)[1].split("}", 1)[0]
     assert "white-space: normal" in aspect
+
+
+_HEAD_GUIDS_OF_RENAMED_ROWS = {
+    ("Adjectives", "больной (adjective)"): "zYsym)dH|j",
+    ("Adjectives", "русский (adjective)"): "OgFsH,_*(?",
+    ("Adjectives", "знакомый (adjective)"): "t^.>wMddYw",
+    ("Adverbs", "зло (adverb)"): "EsD+YgsXnc",
+    ("Adverbs", "тепло (adverb)"): "rD}7l|Qntg",
+    ("Verbs", "печь (verb)"): "kSl#$v8`X`",
+    ("Verbs", "становиться (verb)"): "m<ByTC4uI[",
+    ("Numerals", "тысяча (numeral)"): "gb){z{|eCX",
+}
+
+
+def _rows_by_sheet(nouns, verbs, adjectives, adverbs, pronouns, numerals):
+    return {
+        "Nouns": nouns,
+        "Verbs": verbs,
+        "Adjectives": adjectives,
+        "Adverbs": adverbs,
+        "Pronouns": pronouns,
+        "Numerals": numerals,
+    }
+
+
+def test_guid_pins_is_a_module_level_dict_of_the_renamed_rows():
+    assert isinstance(mutable_words_plan.GUID_PINS, dict)
+    assert set(mutable_words_plan.GUID_PINS) == set(_HEAD_GUIDS_OF_RENAMED_ROWS)
+
+
+def test_every_renamed_row_keeps_its_head_guid(
+    nouns, verbs, adjectives, adverbs, pronouns, numerals
+):
+    by_sheet = _rows_by_sheet(nouns, verbs, adjectives, adverbs, pronouns, numerals)
+    for (sheet, stored), head_guid in _HEAD_GUIDS_OF_RENAMED_ROWS.items():
+        row = next(r for r in by_sheet[sheet] if r.base_words[0] == stored)
+        assert row.guid == head_guid
+        assert row.guid != guid_for_row(stored, sheet)
+
+
+def test_unpinned_rows_keep_the_hashed_guid(
+    nouns, verbs, adjectives, adverbs, pronouns, numerals
+):
+    by_sheet = _rows_by_sheet(nouns, verbs, adjectives, adverbs, pronouns, numerals)
+    checked = 0
+    for sheet, rows in by_sheet.items():
+        assert rows
+        for row in rows:
+            if (sheet, row.base_words[0]) in mutable_words_plan.GUID_PINS:
+                continue
+            assert row.guid == guid_for_row(row.base_words[0], sheet)
+            checked += 1
+    assert checked == sum(len(rows) for rows in by_sheet.values()) - len(
+        mutable_words_plan.GUID_PINS
+    )
+
+
+@pytest.mark.parametrize(
+    "sheet", ["Nouns", "Verbs", "Adjectives", "Adverbs", "Pronouns", "Numerals"]
+)
+def test_a_pinned_headword_returns_the_pin_and_others_are_unaffected(
+    monkeypatch, sheet, nouns, verbs, adjectives, adverbs, pronouns, numerals
+):
+    rows = _rows_by_sheet(nouns, verbs, adjectives, adverbs, pronouns, numerals)[sheet]
+    target, other = rows[0], rows[1]
+    other_before = other.guid
+    monkeypatch.setattr(
+        mutable_words_plan,
+        "GUID_PINS",
+        {(sheet, target.base_words[0]): "PINNED-GUID"},
+    )
+    assert target.guid == "PINNED-GUID"
+    assert other.guid == other_before
+
+
+def test_a_pin_keyed_for_another_sheet_does_not_apply(
+    monkeypatch, nouns, verbs, adjectives, adverbs, pronouns, numerals
+):
+    by_sheet = _rows_by_sheet(nouns, verbs, adjectives, adverbs, pronouns, numerals)
+    for sheet, rows in by_sheet.items():
+        row = rows[0]
+        before = row.guid
+        wrong_sheet = "Verbs" if sheet != "Verbs" else "Nouns"
+        monkeypatch.setattr(
+            mutable_words_plan,
+            "GUID_PINS",
+            {(wrong_sheet, row.base_words[0]): "WRONG-SHEET"},
+        )
+        assert row.guid == before
+
+
+def test_no_two_nouns_rows_share_a_guid(nouns):
+    guids = [row.guid for row in nouns]
+    assert len(guids) == len(set(guids))
+
+
+def test_the_noun_guid_uniqueness_check_catches_a_duplicate(nouns):
+    guids = [row.guid for row in nouns] + [nouns[0].guid]
+    assert len(guids) != len(set(guids))
+
+
+def test_numeral_cards_show_the_genitive_row():
+    for card_index in (0, 1):
+        _, back = mutable_words_plan.build_template("Numerals", card_index)
+        assert '<div id="genitive">' in back

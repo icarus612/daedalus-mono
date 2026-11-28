@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-11-27 — anki-tools: top-2000 nouns live, ordered new queue, gender-aware audio flags
+
+- 1,514 new Mutable notes went live (the top-2000 noun batch plus 35 nouns for days, months, food, household items and kids' things, and 4 colour adjectives), with 2,996 recordings checked for gaps and confirmed on AnkiWeb.
+- New-card order (`anki-new-due`, 10 cards a day from 2026-12-07): days, months, colours, household and kids' things, food, then the new nouns closest to English (Degrees 0–1) by frequency. Words already studied keep their schedule.
+- `anki-flagged-audio --fix` redoes only the flagged gender: pink = female slots, blue = male slots, any other colour = both. It never was gender-aware before.
+- вместо is voiced from the spelling вме́ста, so its unstressed final о reduces.
+- A homograph's headword can carry both stresses (`за́мок / замо́к`); identity, audio and flag lookup still use the plain word.
+- `anki_sync_and_restore.rebuild(path, keep_live_notetypes=True)` imports notes without touching live note types; see the runbook.
+- Numeral cards show their Genitive row again (pronoun case fields no longer hide it).
+- English and cue edits made on the live cards were copied into the source before the import, so it overwrote none of them.
+
 ## 2026-11-05 — anki-tools: `anki-rebalance-due` --min/--max are hard bounds
 
 - `--min` and `--max` now hold on every day of the window in every mode (flat and `--sliding`); the exempt trailing-days tail is removed.

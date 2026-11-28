@@ -153,7 +153,7 @@ def test_a_key_that_is_not_a_gloss_line_is_caught():
     [
         ("в / во", {"Accusative", "Prepositional"}),
         ("на", {"Accusative", "Prepositional"}),
-        ("с / со", {"Instrumental", "Genitive"}),
+        ("с / со", {"Genitive", "Accusative", "Instrumental"}),
         ("за", {"Accusative", "Instrumental"}),
         ("под / подо", {"Accusative", "Instrumental"}),
         ("для", {"Genitive"}),

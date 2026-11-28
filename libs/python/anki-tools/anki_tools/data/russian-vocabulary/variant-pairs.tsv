@@ -1,22 +1,22 @@
-Deck	Russian	Variant	Register	Translation	Additional Info	Examples	Russian Distinction	English Distinction	GUID
-Particles	пусть	пускай	conversational	let			particle		Oy}R4$*3)M
-Conjunctions	пусть	пускай	conversational	even though / even if			conjunction	granting it	u]I&eN3T=v
-Conjunctions	чтобы	чтоб	conversational	so that / in order to	The verb after it takes the PAST form; infinitive if the subject does not change				l,,#bWA*.5
-Particles	мол	дескать	slightly old-fashioned	supposedly / reportedly	Colloquial; repeats someone's words, often doubting them, or puts a gesture or look into words			reporting speech	I@5YQBFJ1Z
-Prepositions	в	во	before some consonant clusters	in / at (where)<br>into (where/what)	Accusative for motion in; Prepositional for location		preposition	inside	NyZhE)yQL;
-Prepositions	с	со	before some consonant clusters	with (whom/what)<br>from / off of (where/what)<div>since (when)</div>	Instrumental for "with"; Genitive for "from / since"			Off a surface	glCs7HO_81
-Prepositions	к	ко	before some consonant clusters	to / toward (whom/what/where)	Dative — always			Plain direction	cgFjJ$GiX*
-Prepositions	о	об	before a vowel	about (whom/what)	Prepositional — обо before мне / всём			Neutral	ef}Y#mp3{g
-Prepositions	без	безо	before some consonant clusters	without (whom/what)	Genitive				uv3)*@XB~.
-Prepositions	из	изо	before some consonant clusters	from (where)<br>out of (what/where)	Genitive			From inside	kWpFW%g>/T
-Prepositions	от	ото	before some consonant clusters	from / away from (whom/what/where)	Genitive			From beside	xP+xM!q31L
-Prepositions	под	подо	before some consonant clusters	under / below (where/what/whom)	Accusative for motion; Instrumental for location				i^%k&akS;S
-Prepositions	над	надо	before some consonant clusters	above / over (where/what/whom)	Instrumental		preposition	Not touching	B=*m(FzW.n
-Prepositions	перед	передо	before some consonant clusters	in front of / before (where/whom/what/when)	Instrumental			Right in front	C+FyacC3k<
-Particles	бы	б	after a vowel, casual	would					n+Vp?5WPNT
-Particles	же	ж	after a vowel, casual	but / then / after all				Emphasis, not time	fB]voros#k
-Particles	ли	ль	after a vowel, poetic	whether / if				turns it into a question	xh#4ye,.e+
-Conjunctions	или	иль	poetic	or	Coordinating — comma only when repeated: или..., или...			Everyday	P0sxWzDEqM
-Particles	неужели	неужто	colloquial	is it possible?				Amazed	xd<pz27WOx
-Base Adverbs	наверное	наверно	conversational	probably					KHgjP_?aB!
-Particles	давай	давайте	plural or formal	let's	Imperative of давать				Ax+e%5,2IT
+Deck	Russian	Variant	Register	Translation	Additional Info	Examples	Russian Distinction	English Distinction	GUID	Russian Stressed	Variant Stressed
+Particles	пусть	пускай	conversational	let			particle		Oy}R4$*3)M	пусть	пуска́й
+Conjunctions	пусть	пускай	conversational	even though / even if			conjunction	granting it	u]I&eN3T=v	пусть	пуска́й
+Conjunctions	чтобы	чтоб	conversational	so that / in order to	The verb after it takes the PAST form; infinitive if the subject does not change				l,,#bWA*.5	что́бы	чтоб
+Particles	мол	дескать	slightly old-fashioned	supposedly / reportedly	Colloquial; repeats someone's words, often doubting them, or puts a gesture or look into words			reporting speech	I@5YQBFJ1Z	мол	де́скать
+Prepositions	в	во	before some consonant clusters	in / at (where)<br>into (where/what)	Accusative for motion in; Prepositional for location		preposition	inside	NyZhE)yQL;	в	во
+Prepositions	с	со	before some consonant clusters	with (whom/what)<br>from / off of (where/what)<div>since (when)</div>	Instrumental for "with"; Genitive for "from / since"			Off a surface	glCs7HO_81	с	со
+Prepositions	к	ко	before some consonant clusters	to / toward (whom/what/where)	Dative — always			Plain direction	cgFjJ$GiX*	к	ко
+Prepositions	о	об	before a vowel	about (whom/what)	Prepositional — обо before мне / всём			Neutral	ef}Y#mp3{g	о	об
+Prepositions	без	безо	before some consonant clusters	without (whom/what)	Genitive				uv3)*@XB~.	без	бе́зо
+Prepositions	из	изо	before some consonant clusters	from (where)<br>out of (what/where)	Genitive			From inside	kWpFW%g>/T	из	и́зо
+Prepositions	от	ото	before some consonant clusters	from / away from (whom/what/where)	Genitive			From beside	xP+xM!q31L	от	о́то
+Prepositions	под	подо	before some consonant clusters	under / below (where/what/whom)	Accusative for motion; Instrumental for location				i^%k&akS;S	под	по́до
+Prepositions	над	надо	before some consonant clusters	above / over (where/what/whom)	Instrumental		preposition	Not touching	B=*m(FzW.n	над	на́до
+Prepositions	перед	передо	before some consonant clusters	in front of / before (where/whom/what/when)	Instrumental			Right in front	C+FyacC3k<	пе́ред	пе́редо
+Particles	бы	б	after a vowel, casual	would					n+Vp?5WPNT	бы	б
+Particles	же	ж	after a vowel, casual	but / then / after all				Emphasis, not time	fB]voros#k	же	ж
+Particles	ли	ль	after a vowel, poetic	whether / if				turns it into a question	xh#4ye,.e+	ли	ль
+Conjunctions	или	иль	poetic	or	Coordinating — comma only when repeated: или..., или...			Everyday	P0sxWzDEqM	и́ли	иль
+Particles	неужели	неужто	colloquial	is it possible?				Amazed	xd<pz27WOx	неуже́ли	неу́жто
+Base Adverbs	наверное	наверно	conversational	probably					KHgjP_?aB!	наве́рное	наве́рно
+Particles	давай	давайте	plural or formal	let's / come on	Imperative of давать				Ax+e%5,2IT	дава́й	дава́йте

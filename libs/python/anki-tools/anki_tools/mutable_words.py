@@ -106,6 +106,8 @@ def build_note_types(
             qfmt, afmt = mutable_words_plan.build_template(sheet, card_index)
             template["qfmt"] = word_qualifier.add_qualifier_script(qfmt)
             template["afmt"] = word_qualifier.add_qualifier_script(afmt)
+            if sheet == "Pronouns" and card_index < 2:
+                template["bqfmt"] = "{{Russian}}"
             template["ord"] = card_index
             template["id"] = mutable_words_plan.build_template_id(sheet, card_index)
             templates.append(template)

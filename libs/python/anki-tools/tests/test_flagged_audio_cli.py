@@ -70,7 +70,7 @@ def test_main_reports_without_regenerating(monkeypatch, capsys):
     out = capsys.readouterr().out
     assert "Blue" in out and "Red" in out
     assert "школа" in out and "как (conjunction)" in out
-    assert "6 file(s)" in out
+    assert "5 file(s)" in out
     assert "report only" in out
 
 
@@ -82,12 +82,12 @@ def test_main_with_fix_drives_word_audio_once_per_mode(monkeypatch, capsys):
     )
     monkeypatch.setattr(
         "anki_tools.flagged_audio_cli.regenerate",
-        lambda mode, words: calls.append((mode, words)) or 0,
+        lambda mode, gender, words: calls.append(((mode, gender), words)) or 0,
     )
     assert main(["--collection", "ignored", "--fix"]) == 0
     assert dict(calls) == {
-        flagged_audio.MODE_SINGLE: ["школа"],
-        flagged_audio.MODE_DOUBLE: ["как (conjunction)"],
+        (flagged_audio.MODE_SINGLE, "male"): ["школа"],
+        (flagged_audio.MODE_DOUBLE, "both"): ["как (conjunction)"],
     }
     assert "cleared the flag on 2 regenerated card(s)" in capsys.readouterr().out
 
@@ -97,7 +97,7 @@ def test_main_returns_nonzero_when_a_regeneration_fails(monkeypatch):
     monkeypatch.setattr(
         "anki_tools.flagged_audio_cli.Collection", lambda path: _FakeCollection(rows)
     )
-    monkeypatch.setattr("anki_tools.flagged_audio_cli.regenerate", lambda m, w: 1)
+    monkeypatch.setattr("anki_tools.flagged_audio_cli.regenerate", lambda m, g, w: 1)
     assert main(["--collection", "ignored", "--fix"]) == 1
 
 
@@ -107,7 +107,7 @@ def test_fix_clears_only_the_picked_flags_after_success(monkeypatch):
     monkeypatch.setattr(
         "anki_tools.flagged_audio_cli.Collection", lambda path: collection
     )
-    monkeypatch.setattr("anki_tools.flagged_audio_cli.regenerate", lambda m, w: 0)
+    monkeypatch.setattr("anki_tools.flagged_audio_cli.regenerate", lambda m, g, w: 0)
     assert main(["--collection", "ignored", "--fix", "--flag", "4"]) == 0
     assert collection.cleared == (0, [0])
 
@@ -117,7 +117,7 @@ def test_failed_regeneration_leaves_flags(monkeypatch):
     monkeypatch.setattr(
         "anki_tools.flagged_audio_cli.Collection", lambda path: collection
     )
-    monkeypatch.setattr("anki_tools.flagged_audio_cli.regenerate", lambda m, w: 1)
+    monkeypatch.setattr("anki_tools.flagged_audio_cli.regenerate", lambda m, g, w: 1)
     assert main(["--collection", "ignored", "--fix"]) == 1
     assert not hasattr(collection, "cleared")
 
@@ -142,7 +142,7 @@ def test_the_fix_path_check_catches_the_shape_it_guards(monkeypatch):
     )
     monkeypatch.setattr(
         "anki_tools.flagged_audio_cli.regenerate",
-        lambda mode, words: reached.append(mode) or 0,
+        lambda mode, gender, words: reached.append(mode) or 0,
     )
     main(["--collection", "ignored", "--fix"])
     assert reached == [flagged_audio.MODE_SINGLE]
@@ -162,9 +162,9 @@ def test_fix_syncs_every_regenerated_file_after_clearing_flags(monkeypatch, sync
         "anki_tools.flagged_audio_cli.Collection",
         lambda path: _FakeCollection([(4, MUTABLE_NOUNS, ["школа"])]),
     )
-    monkeypatch.setattr("anki_tools.flagged_audio_cli.regenerate", lambda m, w: 0)
+    monkeypatch.setattr("anki_tools.flagged_audio_cli.regenerate", lambda m, g, w: 0)
     assert main(["--collection", "ignored", "--fix"]) == 0
-    assert synced == [["школа_f1.mp3", "школа_m2.mp3"]]
+    assert synced == [["школа_m2.mp3"]]
 
 
 def test_failed_sync_is_a_failure(monkeypatch):
@@ -176,7 +176,7 @@ def test_failed_sync_is_a_failure(monkeypatch):
         "anki_tools.flagged_audio_cli.Collection",
         lambda path: _FakeCollection([(4, MUTABLE_NOUNS, ["школа"])]),
     )
-    monkeypatch.setattr("anki_tools.flagged_audio_cli.regenerate", lambda m, w: 0)
+    monkeypatch.setattr("anki_tools.flagged_audio_cli.regenerate", lambda m, g, w: 0)
     assert main(["--collection", "ignored", "--fix"]) == 3
 
 
@@ -202,7 +202,7 @@ def _flagged_words(monkeypatch, collection):
     )
     monkeypatch.setattr(
         "anki_tools.flagged_audio_cli.regenerate",
-        lambda mode, words: calls.append(words) or 0,
+        lambda mode, gender, words: calls.append(words) or 0,
     )
     assert main(["--collection", "ignored", "--fix"]) == 0
     return calls
@@ -262,7 +262,7 @@ def test_flagged_pronoun_word_cards_still_resolve_to_the_headword(monkeypatch, o
     assert _flagged_words(monkeypatch, collection) == [["тот"]]
 
 
-def _forbidden_regenerate(mode, words):
+def _forbidden_regenerate(mode, gender, words):
     raise AssertionError(f"regenerate called without --fix: {mode} {words}")
 
 
